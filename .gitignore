@@ -21,5 +21,6 @@ qa/regresion-*/
 /sitio/data/
 /sitio/Respaldo/
 /sitio/NOTAS-INTERNAS.md
-/sitio/*.png
+/sitio/fallo-*.png
+/sitio/portada-*.png
 /sitio/resultado.json
