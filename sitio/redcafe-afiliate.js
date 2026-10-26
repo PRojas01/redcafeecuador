@@ -431,6 +431,7 @@
   var relojPasadas = null;
 
   function iniciar() {
+    if (!reactListo()) { setTimeout(iniciar, 250); return; }
     pasada();
     // Cada navegación SPA llamaba a iniciar() y arrancaba OTRO intervalo de 21
     // ciclos: navegando rápido quedaban varios a la vez haciendo pasada()
@@ -465,11 +466,23 @@
      después de `load`: cada milisegundo de más es un milisegundo de página en
      blanco bajo la cabecera. Se sondea rápido durante el primer segundo y
      luego `iniciar()` se encarga del resto. */
+  /* React tiene que terminar de «hidratar» la página antes de que se toque
+     su DOM: si se inserta algo antes, React ve un HTML distinto del que
+     esperaba (error #418) y vuelve a pintar todo. Ya está hidratado cuando
+     sus nodos llevan las propiedades internas __reactFiber…. */
+  function reactListo() {
+    var m = document.querySelector("main");
+    if (!m) return false;
+    for (var k in m) { if (k.indexOf("__reactFiber") === 0) return true; }
+    return false;
+  }
+
   function montarPronto() {
     if (!enAfiliate()) return;
     var intentos = 0;
     var reloj = setInterval(function () {
       intentos++;
+      if (!reactListo()) { if (intentos > 60) clearInterval(reloj); return; }
       if (portada()) {
         datosReales();
         plegarQueGanas();

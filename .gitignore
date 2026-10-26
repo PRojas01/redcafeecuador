@@ -18,3 +18,4 @@ qa/regresion-*/
 
 # Fotos subidas en local (en producción van a REDCAFE_UPLOADS)
 /sitio/uploads/
+/sitio/data/

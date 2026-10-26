@@ -1,3 +1,15 @@
+/* React debe terminar de «hidratar» la página antes de que esta capa toque su
+   DOM. Si se modifica antes, React ve un HTML distinto del que esperaba
+   (error #418) y vuelve a pintarla. Está hidratada cuando <main> lleva las
+   propiedades internas __reactFiber…; en páginas sin <main>, cuando existe
+   el <body> hidratado. */
+window.__redcafeReactListo = window.__redcafeReactListo || function () {
+  var m = document.querySelector("main") || document.body;
+  if (!m) return false;
+  for (var k in m) { if (k.indexOf("__reactFiber") === 0 || k.indexOf("__reactContainer") === 0) return true; }
+  return false;
+};
+
 (function () {
   "use strict";
 
@@ -1097,6 +1109,7 @@
   }
 
   function startEnhancements() {
+    if (!window.__redcafeReactListo()) { setTimeout(startEnhancements, 200); return; }
     run();
     var n = 0;
     var timer = setInterval(function () {
@@ -1117,6 +1130,9 @@
     if (window.__redcafeFinalTick) return;
     window.__redcafeFinalTick = setTimeout(function () {
       window.__redcafeFinalTick = null;
+      // Antes de la hidratación no se toca nada; el observador volverá a
+      // dispararse con los cambios que haga la propia hidratación.
+      if (!window.__redcafeReactListo()) return;
       run();
     }, 120);
   }).observe(document.documentElement, { childList: true, subtree: true });
@@ -1344,10 +1360,15 @@
     };
   }
 
+  // Igual que arriba: esperar a que React haya hidratado (máx. ~8 s).
+  function initTrasHidratar(n) {
+    if (window.__redcafeReactListo() || n > 40) { init(); return; }
+    setTimeout(function () { initTrasHidratar(n + 1); }, 200);
+  }
   if (document.readyState === "loading") {
-    document.addEventListener("DOMContentLoaded", init);
+    document.addEventListener("DOMContentLoaded", function () { initTrasHidratar(0); });
   } else {
-    init();
+    initTrasHidratar(0);
   }
 })();
 
