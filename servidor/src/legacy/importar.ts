@@ -217,8 +217,12 @@ async function secretos() {
   if (f) {
     const v = fs.readFileSync(f, "utf8").replace(/^﻿/, "").trim();
     const ya = await db.administrador.findUnique({ where: { id: "principal" } });
-    informe.push({ archivo: path.basename(f), destino: "Administrador", filas: ya ? 0 : 1, accion: ya ? "ya existía" : /^\$2[aby]\$/.test(v) ? "hash bcrypt conservado" : "texto plano → bcrypt" });
-    if (APLICAR && !ya && v) await db.administrador.create({ data: { id: "principal", passHash: /^\$2[aby]\$/.test(v) ? v : await bcrypt.hash(v, 10) } });
+    // La contraseña de administración de producción manda sobre la inicial del .env.
+    informe.push({ archivo: path.basename(f), destino: "Administrador", filas: 1, accion: (ya ? "sustituye a la inicial · " : "") + (/^\$2[aby]\$/.test(v) ? "hash bcrypt conservado" : "texto plano → bcrypt") });
+    if (APLICAR && v) {
+      const passHash = /^\$2[aby]\$/.test(v) ? v : await bcrypt.hash(v, 10);
+      await db.administrador.upsert({ where: { id: "principal" }, create: { id: "principal", passHash }, update: { passHash, provisionalHasta: null, resetTokenHash: null, resetExpira: null } });
+    }
   }
 }
 
