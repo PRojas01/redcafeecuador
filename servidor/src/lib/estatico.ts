@@ -29,6 +29,8 @@ export function prohibida(ruta: string): number {
   if (/^\/data(\/|$)/.test(ruta) || /^\/api\/api\//.test(ruta)) return 403;
   if (/(^|\/)\./.test(ruta)) return 403;
   if (/\.(log|bak|tmp|old|zip|sql|sha256)$/i.test(ruta) || /(^|\/)error_log$/i.test(ruta)) return 403;
+  // Contenido del preacuerdo sin puerta (lo bloqueaba su .htaccess).
+  if (/^\/socios\/redcafe-preacuerdo-estrategico-2026-a7f3c9\/index\.(html|txt)$/.test(ruta)) return 403;
   // Nunca se sirve código del servidor como archivo.
   if (/\.(php|phtml|phar|cgi|pl|py|sh)$/i.test(ruta)) return 404;
   return 0;

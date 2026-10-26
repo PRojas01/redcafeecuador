@@ -9,6 +9,7 @@ import { EstadoSesion, COOKIE_SESION } from "./lib/sesion.js";
 import { protegerOrigen } from "./lib/seguridad.js";
 import { cabecerasSeguridad, servirEstatico } from "./lib/estatico.js";
 import { modulos } from "./modulos/index.js";
+import { RUTA_PREACUERDO, paginaPreacuerdo } from "./modulos/socios.js";
 
 type Vars = { ip: string };
 
@@ -97,7 +98,16 @@ export function crearApp(opciones: { ipDe?: (c: any) => string } = {}) {
     return new Response(cuerpo, { status: estado, headers: h });
   });
 
-  // Páginas PHP sueltas que aún no se migran (p. ej. el preacuerdo de socios).
+  // Preacuerdo estratégico: el contenido solo sale si la sesión tiene un
+  // registro aceptado (la puerta que antes hacía su index.php).
+  app.get(RUTA_PREACUERDO, async (c) => {
+    const ses = await EstadoSesion.cargar(getCookie(c, COOKIE_SESION));
+    const r = await paginaPreacuerdo(ses);
+    cabecerasSeguridad(r.headers, esProduccion());
+    return r;
+  });
+
+  // Páginas PHP sueltas que aún no se migran.
   app.get("*", (c) => {
     const ruta = new URL(c.req.url).pathname;
     const phpIndex = path.join(config.sitio, ruta, "index.php");
