@@ -15,6 +15,7 @@ const CLAVES: Record<string, string> = {
   pedidos: "nro",
   cotizaciones: "nro",
   ordenes: "nro",
+  inventario: "owner_id",
 };
 /** Colecciones que en PHP eran un objeto (mapa) y no una lista. */
 const MAPAS = new Set(["notas-admin", "recordatorios-lote", "recordatorios-config", "visual-publicado", "visual-borrador", "metricas"]);

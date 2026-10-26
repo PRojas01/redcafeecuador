@@ -13,6 +13,16 @@ import { notificaciones } from "./notificaciones.js";
 import { chat } from "./chat.js";
 import { bandeja } from "./bandeja.js";
 import { metricas } from "./metricas.js";
+import { requerimientos } from "./requerimientos.js";
+import { empleos } from "./empleos.js";
+import { buscoEmpleo } from "./busco-empleo.js";
+import { cotizaciones } from "./cotizaciones.js";
+import { ratings } from "./ratings.js";
+import { servicios } from "./servicios.js";
+import { verificaciones } from "./verificaciones.js";
+import { menu } from "./menu.js";
+import { inventario } from "./inventario.js";
+import { stats } from "./stats.js";
 
 export const modulos: Record<string, Modulo> = {
   auth,
@@ -28,4 +38,14 @@ export const modulos: Record<string, Modulo> = {
   chat,
   bandeja,
   metricas,
+  requerimientos,
+  empleos,
+  "busco-empleo": buscoEmpleo,
+  cotizaciones,
+  ratings,
+  servicios,
+  verificaciones,
+  menu,
+  inventario,
+  stats,
 };
