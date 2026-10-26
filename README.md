@@ -1,4 +1,9 @@
-# redcafeecuador-sitio — área de trabajo (sitio estático + capa propia)
+# redcafeecuador — Red Café Ecuador
+
+Plataforma de redcafeecuador.com. El servidor nuevo (Node.js + PostgreSQL) está en
+[`servidor/`](servidor/) y se publica según [`servidor/DESPLIEGUE.md`](servidor/DESPLIEGUE.md).
+
+## Área de trabajo (sitio estático + capa propia)
 
 Copia de trabajo para corregir y mejorar **el sitio actual** (export estático de
 Next.js + PHP en GoDaddy) sin tocar el árbol que se sincroniza con el NAS
