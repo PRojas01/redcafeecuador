@@ -14,6 +14,7 @@
 //    lotes de demostración.
 //  · Los secretos (firma de apelaciones, bajas de correo, VAPID, token de
 //    respaldos) se conservan para que los enlaces y suscripciones sigan valiendo.
+import "../entorno.js"; // lee servidor/.env (DATABASE_URL, REDCAFE_CLAVE_DATOS)
 import fs from "node:fs";
 import path from "node:path";
 import { createPrivateKey, randomBytes } from "node:crypto";

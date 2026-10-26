@@ -2,6 +2,7 @@
 //   npm run agregar-cursos -- cursos-nuevos.json            simulación
 //   npm run agregar-cursos -- cursos-nuevos.json --aplicar  escribe
 // Añade a la Academia los cursos cuyo id no exista; nunca reemplaza.
+import "../entorno.js"; // lee servidor/.env (DATABASE_URL, REDCAFE_CLAVE_DATOS)
 import fs from "node:fs";
 import { db } from "../lib/db.js";
 import { listar, mutar, type Doc } from "../lib/docs.js";
