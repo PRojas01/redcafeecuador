@@ -17,7 +17,7 @@
     "db:migrate": "prisma migrate deploy",
     "db:generate": "prisma generate",
     "importar": "node dist/legacy/importar.js",
-    "postinstall": "prisma generate",
+    "postinstall": "prisma generate && npm run build",
     "agregar-cursos": "node dist/legacy/agregar-cursos.js",
     "produccion": "npm ci && npm run db:push && npm start",
     "db:preparar": "node dist/scripts/preparar-base.js",

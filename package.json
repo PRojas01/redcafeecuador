@@ -7,7 +7,7 @@
     "node": ">=22"
   },
   "scripts": {
-    "postinstall": "npm ci --prefix servidor --include=dev && npm run build --prefix servidor",
+    "postinstall": "npm ci --prefix servidor --include=dev",
     "build": "npm run build --prefix servidor",
     "db:push": "npm run db:push --prefix servidor",
     "importar": "npm run importar --prefix servidor --",
