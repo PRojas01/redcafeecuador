@@ -2,7 +2,7 @@
 
 
 Conexión de la cadena de valor del café ecuatoriano.
-Plataforma de redcafeecuador.com. El servidor nuevo (Node.js + PostgreSQL) está en
+Plataforma de redcafeecuador.com. El servidor nuevo (Node.js + MySQL) está en
 [`servidor/`](servidor/) y se publica según [`servidor/DESPLIEGUE.md`](servidor/DESPLIEGUE.md).
 
 ## Área de trabajo (sitio estático + capa propia)

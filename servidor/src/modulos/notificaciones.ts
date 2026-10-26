@@ -1,9 +1,9 @@
 // Port de api/notificaciones.php. El respaldo diario y la revisión de salud que
 // PHP disparaba desde la campana pasan a tareas del servidor/proveedor
-// (PITR de PostgreSQL y monitoreo), no a una petición de usuario.
-import { createHmac } from "node:crypto";
+// (copias de la base y monitoreo), no a una petición de usuario.
+import { createHmac, timingSafeEqual } from "node:crypto";
 import { fail, Cruda, type Ctx, type Modulo } from "../lib/http.js";
-import { buscarPor, conBloqueo, type Doc } from "../lib/docs.js";
+import { actualizarDonde, buscarPor, campoSql, conBloqueo, type Doc } from "../lib/docs.js";
 import { db, Prisma } from "../lib/db.js";
 import { tieneRol, todosLosMiembros, usuarioActual } from "../lib/usuarios.js";
 import { AVISOS_ADMIN_UID, notificar, registrarActividad } from "../lib/avisos.js";
@@ -49,8 +49,8 @@ const acciones: Modulo["acciones"] = {
   async contador(ctx) {
     const uidM = await actorUid(ctx);
     const r = await db.$queryRaw<{ n: bigint }[]>(Prisma.sql`
-      SELECT count(*) AS n FROM "Documento" WHERE coleccion = 'notificaciones' AND datos->>'uid' = ${uidM}
-        AND COALESCE((datos->>'leido')::boolean, false) = false`);
+      SELECT count(*) AS n FROM Documento WHERE coleccion = 'notificaciones' AND ${campoSql("uid")} = ${uidM}
+        AND COALESCE(${campoSql("leido")}, 'false') <> 'true'`);
     return { sin_leer: Number(r[0]?.n ?? 0) };
   },
 
@@ -59,10 +59,11 @@ const acciones: Modulo["acciones"] = {
     const id = str(ctx.in.id ?? ctx.query.id).trim();
     const todos = bool(ctx.in.todos ?? ctx.query.todos ?? false);
     if (!id && !todos) fail("Indica id o todos.", 422);
-    const n = await conBloqueo("notificaciones", (tx) => tx.$executeRaw(Prisma.sql`
-      UPDATE "Documento" SET datos = datos || jsonb_build_object('leido', true, 'leido_at', ${nowIso()}::text), actualizado = now()
-      WHERE coleccion = 'notificaciones' AND datos->>'uid' = ${uidM}
-        AND COALESCE((datos->>'leido')::boolean, false) = false ${todos ? Prisma.empty : Prisma.sql`AND datos->>'id' = ${id}`}`));
+    const ahora = nowIso();
+    const n = await actualizarDonde("notificaciones", "uid", uidM, (a) => {
+      if (a.leido === true || (!todos && str(a.id) !== id)) return null;
+      return { ...a, leido: true, leido_at: ahora };
+    });
     return { marcados: n };
   },
 
@@ -70,7 +71,7 @@ const acciones: Modulo["acciones"] = {
     const uidM = await actorUid(ctx);
     const id = str(ctx.in.id ?? ctx.query.id).trim();
     if (!id) fail("id requerido.", 422);
-    const n = await db.$executeRaw(Prisma.sql`DELETE FROM "Documento" WHERE coleccion = 'notificaciones' AND datos->>'uid' = ${uidM} AND datos->>'id' = ${id}`);
+    const n = await db.$executeRaw(Prisma.sql`DELETE FROM Documento WHERE coleccion = 'notificaciones' AND ${campoSql("uid")} = ${uidM} AND ${campoSql("id")} = ${id}`);
     if (!n) fail("Aviso no encontrado.", 404);
     return { borrado: id };
   },
@@ -127,7 +128,8 @@ const acciones: Modulo["acciones"] = {
 
   async baja_correo(ctx) {
     const uidM = str(ctx.query.u), t = str(ctx.query.t);
-    const valida = !!uidM && (await firmaBaja(uidM)) === t;
+    const esperada = uidM ? Buffer.from(await firmaBaja(uidM)) : Buffer.alloc(0), recibida = Buffer.from(str(t));
+    const valida = !!uidM && esperada.length === recibida.length && timingSafeEqual(esperada, recibida);
     if (valida) {
       const f = await db.usuario.findUnique({ where: { id: uidM } });
       if (f) {

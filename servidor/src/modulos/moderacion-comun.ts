@@ -1,6 +1,9 @@
 // Port de api/_moderacion.php: catálogo de infracciones, firma de enlaces de
 // apelación y vista para la persona sancionada.
 import { createHmac, randomBytes } from "node:crypto";
+import fs from "node:fs";
+import path from "node:path";
+import { config } from "../lib/config.js";
 import { db } from "../lib/db.js";
 import type { Doc } from "../lib/docs.js";
 import { fechaMs, str } from "../lib/util.js";
@@ -34,9 +37,19 @@ export const MOD_PUBLICACIONES: Record<string, { archivo: string; ocultable: boo
 /** Secreto persistente (equivale a data/.moderacion_secreto). */
 export async function secreto(nombre: string): Promise<string> {
   const f = await db.secreto.findUnique({ where: { nombre } });
-  if (f && f.valor.length >= 32) return f.valor;
-  const valor = randomBytes(32).toString("hex");
-  await db.secreto.upsert({ where: { nombre }, create: { nombre, valor }, update: { valor } });
+  let valor = f && f.valor.length >= 32 ? f.valor : "";
+  if (!valor) {
+    valor = randomBytes(32).toString("hex");
+    await db.secreto.upsert({ where: { nombre }, create: { nombre, valor }, update: { valor } });
+  }
+  // Solo en pruebas: la suite qa/ firma enlaces leyendo data/.<nombre>_secreto, como con PHP.
+  if (config.entorno === "prueba") {
+    try {
+      const dir = path.join(config.sitio, "data");
+      fs.mkdirSync(dir, { recursive: true });
+      fs.writeFileSync(path.join(dir, `.${nombre.replace(/-/g, "_")}_secreto`), valor, { mode: 0o600 });
+    } catch { /* sin carpeta de sitio en pruebas unitarias */ }
+  }
   return valor;
 }
 

@@ -2,7 +2,7 @@
 // entero sin bloqueo y se perdían mensajes; aquí cada mensaje es una fila y
 // «leído» se marca con un UPDATE atómico.
 import { fail, type Ctx, type Modulo } from "../lib/http.js";
-import { buscarPor, listar, mutar, conBloqueo, agregar, type Doc } from "../lib/docs.js";
+import { actualizarDonde, buscarPor, listar, mutar, conBloqueo, agregar, type Doc } from "../lib/docs.js";
 import { db, Prisma } from "../lib/db.js";
 import { cupo } from "../lib/seguridad.js";
 import { miembroRoles, usuarioActual } from "../lib/usuarios.js";
@@ -104,10 +104,14 @@ const acciones: Modulo["acciones"] = {
     let sala = (await buscarPor("messages", "room", rid)).sort((a, b) => str(a.ts).localeCompare(str(b.ts)));
     if (since) sala = sala.filter((m) => str(m.ts) > since);
     if (sala.length) {
-      await conBloqueo("messages", (tx) => tx.$executeRaw(Prisma.sql`
-        UPDATE "Documento" SET datos = jsonb_set(datos, '{read_by}', COALESCE(datos->'read_by', '{}'::jsonb) || jsonb_build_object(${u.id}::text, true)), actualizado = now()
-        WHERE coleccion = 'messages' AND datos->>'room' = ${rid} AND datos->>'from' <> ${u.id}
-          AND COALESCE((datos->'read_by'->>${u.id})::boolean, false) = false`));
+      const yo = str(u.id);
+      await actualizarDonde("messages", "room", rid, (m) => {
+        if (str(m.from) === yo) return null;
+        const leidos = m.read_by && typeof m.read_by === "object" && !Array.isArray(m.read_by) ? m.read_by : {};
+        if (leidos[yo] === true) return null;
+        m.read_by = { ...leidos, [yo]: true };
+        return m;
+      });
     }
     return { messages: sala };
   },

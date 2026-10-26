@@ -1,20 +1,20 @@
 # Publicar el servidor Node.js (GoDaddy)
 
 El servidor sustituye a `api/*.php` con el mismo contrato: el sitio estático
-(Next + capa propia) no cambia. Necesita **Node.js 22** (funciona desde 18.18) y **PostgreSQL 14+**.
+(Next + capa propia) no cambia. Necesita **Node.js 22** (funciona desde 18.18) y **MySQL 8 o MariaDB 10.6+** (la base que trae el cPanel).
 
 ## Qué plan de GoDaddy sirve
 
 | Plan | ¿Sirve? | Notas |
 |---|---|---|
-| **VPS** (o servidor dedicado) | Sí — recomendado | Control total: Node 22, PostgreSQL, nginx, pm2, HTTPS con certbot. |
-| Hosting compartido cPanel con «Setup Node.js App» | Solo si ofrece Node 22 y hay PostgreSQL | Muchas cuentas compartidas no traen PostgreSQL: se puede usar uno gestionado (Neon, Supabase, Render) en `DATABASE_URL`. Comprobar la versión de Node disponible antes. |
+| **VPS** (o servidor dedicado) | Sí | Control total: Node 22, MySQL, nginx, pm2, HTTPS con certbot. |
+| Hosting compartido cPanel con «Setup Node.js App» | Sí (el de Red Café: Node 22 + MySQL) | Todo queda en GoDaddy: aplicación Node y base MySQL del propio cPanel. |
 | Hosting compartido sin Node | No | Mantener el PHP corregido (`redcafe-actualizacion-20261024a-corregido.zip`). |
 
 ## Pasos comunes
 
 1. **Copia de seguridad** de producción (cPanel → Copias de seguridad + descarga de `public_html/data/`).
-2. Base de datos vacía y su usuario. Anota la URL `postgresql://usuario:clave@host:5432/redcafe`.
+2. Base de datos MySQL vacía y su usuario con **todos los privilegios** (cPanel → Bases de datos MySQL). URL: `mysql://usuario:clave@localhost:3306/base`.
 3. Clona el repositorio en el servidor (fuera de `public_html`):
    ```bash
    git clone git@github.com:PRojas01/redcafeecuador.git ~/redcafe
@@ -45,10 +45,9 @@ y `X-Forwarded-Proto $scheme`; HTTPS con `certbot --nginx -d redcafeecuador.com 
 ### cPanel compartido «Setup Node.js App» (el caso de Red Café)
 Comprobado: el cPanel ofrece **Node.js 22**.
 
-**Base de datos — elegir una (ver en cPanel → Bases de datos):**
-- Si aparece **«PostgreSQL Databases»**: crea la base y el usuario ahí. `DATABASE_URL="postgresql://usuario:clave@localhost:5432/base"`.
-- Si solo hay **MySQL**: usar un PostgreSQL gestionado (Neon, Supabase…) con `?sslmode=require`. Antes, comprobar desde la Terminal de cPanel que el hosting deja salir al puerto 5432:
-  `node -e "require('net').connect(5432,'HOST-DE-LA-BASE').on('connect',()=>{console.log('OK');process.exit()}).on('error',e=>{console.log(e.message);process.exit(1)})"`
+**Base de datos**: cPanel → «Bases de datos MySQL» → crea la base, el usuario y asígnale TODOS los privilegios.
+`DATABASE_URL="mysql://usuario:clave@localhost:3306/base"` (en cPanel el nombre lleva delante el usuario de la cuenta).
+`npm run db:push` crea las tablas y las deja en `utf8mb4_bin` (distingue mayúsculas y acentos en los identificadores).
 
 **Crear la aplicación** (cPanel → Setup Node.js App → Create Application):
 - Node.js version: **22** · Application mode: Production
@@ -81,4 +80,4 @@ después del cambio habría que exportarlos (`/api/admin.php?action=export`).
 ## Lo que hace solo el servidor
 Copia de seguridad diaria en `REDCAFE_RESPALDOS` (rotación 7/4/6), precio del
 café cada 6 h y revisión diaria de datos con aviso a la administración.
-Además, programa un `pg_dump` diario desde el sistema (cron) — es la copia completa.
+Además, activa las copias de seguridad de cPanel (incluyen la base MySQL) — son la copia completa.

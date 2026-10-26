@@ -51,7 +51,7 @@ async function editarMiembro(id: string, i: Doc) {
       data.cedulaCifrada = c ? cifrar(c) : "";
       data.cedulaHuella = c ? huella(c) : "";
     } else if (k === "roles" || k === "rol") {
-      const roles = validarRoles(k === "roles" ? v : [v, ...(f.roles ?? [])], null, true);
+      const roles = validarRoles(k === "roles" ? v : [v, ...(Array.isArray(f.roles) ? f.roles : [])], null, true);
       if (roles.length) { data.roles = roles; data.rol = roles[0]; }
     } else if (k === "verificado") data.verificado = v === true || v === "1" || v === "true";
     else if (k === "activo") data.activo = !(v === false || v === "0" || v === "false" || v === 0);

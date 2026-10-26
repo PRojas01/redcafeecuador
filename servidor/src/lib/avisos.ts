@@ -2,7 +2,7 @@
 // bitácora de la Red y novedades automáticas del muro. Nunca rompen la
 // operación que los llama.
 import { db, Prisma } from "./db.js";
-import { agregar, mutar, type Doc } from "./docs.js";
+import { agregar, campoSql, mutar, recortar, type Doc } from "./docs.js";
 import type { Ctx } from "./http.js";
 import { usuarioActual, miembroRoles, miembroEsPublico } from "./usuarios.js";
 import { cortar, enlaceInterno, nowIso, sha256, str, uid } from "./util.js";
@@ -43,19 +43,16 @@ async function podarAvisos() {
   // Se quedan los recientes y, de los viejos, solo los no leídos; tope global.
   const limite = new Date(Date.now() - AVISO_VIDA_DIAS * 86400_000).toISOString();
   await db.$executeRaw(Prisma.sql`
-    DELETE FROM "Documento" WHERE coleccion = 'notificaciones'
-      AND (datos->>'leido')::boolean IS TRUE AND (datos->>'ts') < ${limite}`);
-  await db.$executeRaw(Prisma.sql`
-    DELETE FROM "Documento" WHERE coleccion = 'notificaciones' AND orden IN (
-      SELECT orden FROM "Documento" WHERE coleccion = 'notificaciones'
-      ORDER BY orden DESC OFFSET ${AVISOS_MAX})`);
+    DELETE FROM Documento WHERE coleccion = 'notificaciones'
+      AND ${campoSql("leido")} = 'true' AND ${campoSql("ts")} < ${limite}`);
+  await recortar("notificaciones", AVISOS_MAX);
 }
 
 /** notificar_admins(): el mismo aviso para toda la administración. */
 export async function notificarAdmins(tipo: string, titulo: string, texto = "", enlace = "") {
   try {
     await notificar(AVISOS_ADMIN_UID, tipo, titulo, texto, enlace);
-    const admins = await db.usuario.findMany({ where: { OR: [{ admin: true }, { rol: "admin" }, { roles: { has: "admin" } }] }, select: { id: true } });
+    const admins = await db.usuario.findMany({ where: { OR: [{ admin: true }, { rol: "admin" }, { roles: { array_contains: "admin" } }] }, select: { id: true } });
     for (const a of admins) if (a.id !== AVISOS_ADMIN_UID) await notificar(a.id, tipo, titulo, texto, enlace);
   } catch (e) {
     console.error("[avisos] notificarAdmins", e);
@@ -85,9 +82,7 @@ export async function registrarActividad(ctx: Ctx | null, evento: string, datos:
       origen: ip ? sha256("redcafe|" + ip).slice(0, 10) : "",
     };
     await agregar("actividad", linea);
-    await db.$executeRaw(Prisma.sql`
-      DELETE FROM "Documento" WHERE coleccion = 'actividad' AND orden IN (
-        SELECT orden FROM "Documento" WHERE coleccion = 'actividad' ORDER BY orden DESC OFFSET ${BITACORA_MAX})`);
+    await recortar("actividad", BITACORA_MAX);
   } catch (e) {
     console.error("[avisos] registrarActividad", e);
   }

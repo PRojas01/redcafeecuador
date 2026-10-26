@@ -1,4 +1,4 @@
-// Sesiones opacas en PostgreSQL (sustituyen a $_SESSION de PHP).
+// Sesiones opacas en la base (MySQL) (sustituyen a $_SESSION de PHP).
 // La cookie lleva un token aleatorio; la base guarda solo su sha256.
 import { randomBytes } from "node:crypto";
 import { db } from "./db.js";

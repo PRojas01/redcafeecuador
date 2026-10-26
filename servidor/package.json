@@ -2,7 +2,7 @@
   "name": "redcafe-servidor",
   "version": "0.1.0",
   "private": true,
-  "description": "Red Café Ecuador — servidor Node + PostgreSQL que reemplaza api/*.php manteniendo el mismo contrato",
+  "description": "Red Café Ecuador — servidor Node + MySQL que reemplaza api/*.php manteniendo el mismo contrato",
   "type": "module",
   "engines": {
     "node": ">=18.18"
@@ -13,27 +13,28 @@
     "build": "tsc -p tsconfig.json && node -e \"require('fs').cpSync('src/datos','dist/datos',{recursive:true})\"",
     "typecheck": "tsc -p tsconfig.json --noEmit",
     "test": "vitest run",
-    "db:push": "prisma db push --skip-generate",
+    "db:push": "npm run build && prisma db push --skip-generate && npm run db:preparar",
     "db:migrate": "prisma migrate deploy",
     "db:generate": "prisma generate",
-    "importar": "tsx src/legacy/importar.ts",
+    "importar": "node dist/legacy/importar.js",
     "postinstall": "prisma generate",
-    "agregar-cursos": "tsx src/legacy/agregar-cursos.ts",
-    "produccion": "npm ci && npm run build && npm run db:push && npm start"
+    "agregar-cursos": "node dist/legacy/agregar-cursos.js",
+    "produccion": "npm ci && npm run db:push && npm start",
+    "db:preparar": "node dist/scripts/preparar-base.js"
   },
   "dependencies": {
     "@hono/node-server": "^1.19.17",
     "@prisma/client": "^6.19.3",
+    "@types/node": "^22.20.5",
     "bcryptjs": "^3.0.3",
     "hono": "^4.13.14",
     "prisma": "^6.19.3",
     "sharp": "^0.34.5",
+    "typescript": "5.9",
     "zod": "^4.6.7"
   },
   "devDependencies": {
-    "@types/node": "^22.20.5",
     "tsx": "^4.23.15",
-    "typescript": "5.9",
     "vitest": "^3.2.7"
   }
 }

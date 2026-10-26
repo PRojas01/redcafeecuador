@@ -32,7 +32,7 @@ export function protegerOrigen(ctx: Ctx, accion: string, host: string) {
 
 /**
  * check_rate_limit($accion, $max, $ventana): ventana deslizante por IP.
- * Devuelve false si se superó el cupo. En PostgreSQL y no en archivos.
+ * Devuelve false si se superó el cupo. En la base de datos y no en archivos.
  */
 export async function cupo(ctx: Ctx, accion: string, max = 10, ventanaSeg = 60): Promise<boolean> {
   await reinicioDePrueba();

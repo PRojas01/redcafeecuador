@@ -3,7 +3,7 @@
 // (miembros, documentos, consentimientos y códigos 2FA cifrados) en
 // .json.gz, fuera del sitio. NO entran sesiones, OTP, cupos ni secretos
 // (VAPID, firmas): un respaldo filtrado no entrega las llaves de la casa.
-// En producción esto complementa —no sustituye— el pg_dump diario.
+// En producción esto complementa —no sustituye— la copia de la base de cPanel.
 import fs from "node:fs";
 import path from "node:path";
 import { createHash, randomBytes, timingSafeEqual } from "node:crypto";
@@ -49,7 +49,7 @@ export async function crear(motivo: string) {
   ]);
   const bulto = {
     formato: "redcafe-respaldo/2", generado: nowIso(), motivo,
-    nota: "Copia lógica de las tablas listadas (JSON). No contiene sesiones, OTP, cupos ni secretos. La restauración completa se hace con el pg_dump diario.",
+    nota: "Copia lógica de las tablas listadas (JSON). No contiene sesiones, OTP, cupos ni secretos. La restauración completa se hace con la copia de la base (cPanel).",
     tablas: { usuarios, documentos, consentimientos, codigosRespaldo: codigos, administradores },
   };
   const gz = gzipSync(Buffer.from(JSON.stringify(bulto)), { level: 6 });

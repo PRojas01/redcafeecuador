@@ -1,4 +1,4 @@
-// Importador del sistema PHP: data/*.json → PostgreSQL.
+// Importador del sistema PHP: data/*.json → MySQL.
 //
 //   npm run importar -- <carpeta data/>                 simulación (no escribe)
 //   npm run importar -- <carpeta data/> --aplicar       importa
