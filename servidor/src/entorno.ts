@@ -17,3 +17,19 @@ if (fs.existsSync(archivo)) {
     process.env[m[1]] = v;
   }
 }
+
+// Plataformas con MySQL gestionado (GoDaddy Node.js Hosting y similares) dan
+// los datos de conexión por separado. Si falta DATABASE_URL, se arma con ellos.
+if (!process.env.DATABASE_URL) {
+  const e = process.env;
+  const de = (...n: string[]) => n.map((k) => e[k]).find((v) => v && v.trim() !== "")?.trim();
+  const host = de("DB_HOST", "MYSQL_HOST", "DATABASE_HOST", "MYSQLHOST", "DB_HOSTNAME");
+  const usuario = de("DB_USER", "DB_USERNAME", "MYSQL_USER", "MYSQL_USERNAME", "DATABASE_USER", "DATABASE_USERNAME", "MYSQLUSER");
+  const clave = de("DB_PASSWORD", "DB_PASS", "MYSQL_PASSWORD", "DATABASE_PASSWORD", "MYSQLPASSWORD") ?? "";
+  const base = de("DB_NAME", "DB_DATABASE", "MYSQL_DATABASE", "MYSQL_DB", "DATABASE_NAME", "MYSQLDATABASE");
+  const puerto = de("DB_PORT", "MYSQL_PORT", "DATABASE_PORT", "MYSQLPORT") ?? "3306";
+  if (host && usuario && base) {
+    const ssl = /^(1|true|required?)$/i.test(de("DB_SSL", "MYSQL_SSL") ?? "") ? "?sslaccept=accept_invalid_certs" : "";
+    e.DATABASE_URL = `mysql://${encodeURIComponent(usuario)}:${encodeURIComponent(clave)}@${host}:${puerto}/${encodeURIComponent(base)}${ssl}`;
+  }
+}

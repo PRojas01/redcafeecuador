@@ -2,6 +2,7 @@
 import "./entorno.js";
 import { serve } from "@hono/node-server";
 import { crearApp } from "./app.js";
+import { asegurarEsquema } from "./lib/esquema.js";
 import { config } from "./lib/config.js";
 import { purgarSesiones } from "./lib/sesion.js";
 import { purgarIntentos } from "./lib/seguridad.js";
@@ -14,6 +15,10 @@ const app = crearApp();
 for (const v of ["DATABASE_URL", "REDCAFE_CLAVE_DATOS"]) {
   if (!process.env[v]) console.warn(`[config] Falta ${v}: el sitio se sirve, pero la API responderá 503 hasta configurarla (ver servidor/DESPLIEGUE.md).`);
 }
+
+// La primera vez, crea las tablas. En segundo plano: el servidor empieza a
+// escuchar enseguida aunque la base tarde o falle (la API avisará).
+void asegurarEsquema().catch((e) => console.error("[esquema] No se pudieron crear las tablas:", e?.message ?? e));
 
 serve({ fetch: app.fetch, port: config.puerto, // Si la plataforma fija PORT (GoDaddy, Render…), hay que escuchar en todas las interfaces.
   hostname: process.env.HOST ?? (process.env.PORT ? "0.0.0.0" : "127.0.0.1") }, (info) => {
