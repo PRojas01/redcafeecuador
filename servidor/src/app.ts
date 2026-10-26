@@ -29,6 +29,9 @@ export function crearApp(opciones: { ipDe?: (c: any) => string } = {}) {
     await next();
   });
 
+  // /enviar-waitlist.php en la raíz era un alias de la API real.
+  app.all("/enviar-waitlist.php", (c) => c.redirect("/api/enviar-waitlist.php", 307));
+
   app.all("/api/:archivo{[A-Za-z0-9_.-]+\\.php}", async (c) => {
     const archivo = c.req.param("archivo").replace(/\.php$/, "");
     const https = esProduccion();

@@ -6,6 +6,7 @@ import { purgarSesiones } from "./lib/sesion.js";
 import { purgarIntentos } from "./lib/seguridad.js";
 import { programarPrecios } from "./modulos/precios.js";
 import { programarRespaldos } from "./modulos/respaldo.js";
+import { programarSalud } from "./lib/salud.js";
 
 const app = crearApp();
 
@@ -23,4 +24,5 @@ setInterval(() => {
 if (process.env.REDCAFE_ENTORNO !== "prueba") {
   programarPrecios();
   programarRespaldos();
+  programarSalud();
 }

@@ -18,7 +18,7 @@ const CLAVES: Record<string, string> = {
   inventario: "owner_id",
 };
 /** Colecciones que en PHP eran un objeto (mapa) y no una lista. */
-const MAPAS = new Set(["notas-admin", "recordatorios-lote", "recordatorios-config", "visual-publicado", "visual-borrador", "metricas", "slots", "imagenes", "media", "precios-cache"]);
+const MAPAS = new Set(["notas-admin", "recordatorios-lote", "recordatorios-config", "visual-publicado", "visual-borrador", "metricas", "slots", "imagenes", "media", "precios-cache", "inscripciones-cursos", "progreso-cursos"]);
 
 const claveDe = (col: string) => CLAVES[col] ?? "id";
 

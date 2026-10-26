@@ -38,6 +38,9 @@ import { push } from "./push.js";
 import { difusion } from "./difusion.js";
 import { admin } from "./admin.js";
 import { respaldo } from "./respaldo.js";
+import { cursos } from "./cursos.js";
+import { waitlist } from "./waitlist.js";
+import { agregarCursos } from "./agregar-cursos.js";
 
 export const modulos: Record<string, Modulo> = {
   auth,
@@ -79,4 +82,7 @@ export const modulos: Record<string, Modulo> = {
   difusion,
   admin,
   respaldo,
+  cursos,
+  "enviar-waitlist": waitlist,
+  "agregar-cursos": agregarCursos,
 };
