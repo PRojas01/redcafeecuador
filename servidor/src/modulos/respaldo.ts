@@ -49,7 +49,7 @@ export async function crear(motivo: string) {
   ]);
   const bulto = {
     formato: "redcafe-respaldo/2", generado: nowIso(), motivo,
-    nota: "Restaurar con: npm run restaurar -- <archivo> (vacía y repone las tablas listadas). No contiene sesiones, OTP, cupos ni secretos.",
+    nota: "Copia lógica de las tablas listadas (JSON). No contiene sesiones, OTP, cupos ni secretos. La restauración completa se hace con el pg_dump diario.",
     tablas: { usuarios, documentos, consentimientos, codigosRespaldo: codigos, administradores },
   };
   const gz = gzipSync(Buffer.from(JSON.stringify(bulto)), { level: 6 });

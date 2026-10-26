@@ -21,8 +21,9 @@ const CLAVES: Record<string, string> = {
 const MAPAS = new Set(["notas-admin", "recordatorios-lote", "recordatorios-config", "visual-publicado", "visual-borrador", "metricas", "slots", "imagenes", "media", "precios-cache", "inscripciones-cursos", "progreso-cursos"]);
 
 const claveDe = (col: string) => CLAVES[col] ?? "id";
+export const esMapa = (col: string) => MAPAS.has(col);
 
-function idDe(col: string, d: Doc, i: number): string {
+export function idDe(col: string, d: Doc, i: number): string {
   const v = d?.[claveDe(col)];
   if (v !== undefined && v !== null && String(v) !== "") return String(v);
   // Sin clave: una huella estable del contenido (raro; datos antiguos).
