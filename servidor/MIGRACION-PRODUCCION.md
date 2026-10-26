@@ -75,15 +75,11 @@ Qué se migra y qué no:
    - Application URL: **`nuevo.redcafeecuador.com`**
    - Application startup file: **`app.cjs`**
    - → **Create**.
-2. Arriba de la ficha de la aplicación cPanel muestra un comando como
-   `source /home/USUARIO/nodevenv/.../activate && cd ...`. Cópialo.
-3. cPanel → **Terminal**, pega ese comando y después:
-   ```bash
-   npm ci
-   npm run build
-   ```
-   (Si `npm ci` falla por memoria, repítelo una vez; si persiste, avísame.)
-4. En Setup Node.js App → **Restart**.
+2. En la ficha de la aplicación pulsa **Run NPM Install** (instala y compila; tarda unos minutos).
+   No hace falta la Terminal.
+3. Pulsa **Restart**.
+4. Entra en `https://nuevo.redcafeecuador.com/admin/` con la contraseña de
+   `REDCAFE_PASS_ADMIN_INICIAL` del `.env` (solo vale mientras la base no tenga una).
 5. Abre `https://nuevo.redcafeecuador.com/`: debe verse la portada. Aún sin datos.
 
 ## Fase 4 · Ensayo de la migración (el sitio PHP sigue funcionando)

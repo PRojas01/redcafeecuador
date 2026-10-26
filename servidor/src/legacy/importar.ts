@@ -127,7 +127,22 @@ async function colecciones() {
     if (APARTE.has(col) || NUNCA.test(col)) continue;
     let datos: unknown;
     try { datos = leer(path.join(DATA, nombre)); } catch { avisos.push(`${nombre}: JSON ilegible, omitido.`); continue; }
-    const existentes = await db.documento.count({ where: { coleccion: col } });
+    let existentes = await db.documento.count({ where: { coleccion: col } });
+    if (existentes) {
+      // Lo que la aplicación siembra sola (lotes y vídeos de ejemplo) no cuenta
+      // como dato: se reemplaza por el real.
+      const docs = await db.documento.findMany({ where: { coleccion: col }, select: { datos: true } });
+      const soloEjemplo = docs.every(({ datos }) => {
+        const d = datos as Doc;
+        if (Array.isArray(d?.items)) return d.items.every((x: Doc) => x?.ejemplo || x?.demo);
+        return !!(d?.demo || d?.ejemplo);
+      });
+      if (soloEjemplo) {
+        if (APLICAR) await db.documento.deleteMany({ where: { coleccion: col } });
+        avisos.push(`${col}: tenía solo contenido de ejemplo; se reemplaza por el real.`);
+        existentes = 0;
+      }
+    }
     const mapa = !Array.isArray(datos) && !!datos && typeof datos === "object" && (esMapa(col) || Object.keys(datos).length > 0);
     if (existentes) { informe.push({ archivo: nombre, destino: col, filas: 0, accion: `omitida: la base ya tiene ${existentes} documento(s)` }); continue; }
     if (mapa) {

@@ -38,7 +38,14 @@ export async function passAdminGuardada(): Promise<string> {
   }
   const fila = await db.administrador.findUnique({ where: { id: "principal" } });
   if (fila) return fila.passHash;
-  // Instalación nueva: contraseña aleatoria que se muestra una vez en el registro del servidor.
+  // Instalación nueva: la contraseña inicial puede venir del .env (sin Terminal
+  // no se ve el registro del servidor); si no, una aleatoria que sale en el registro.
+  const inicial = (process.env.REDCAFE_PASS_ADMIN_INICIAL ?? "").trim();
+  if (inicial.length >= 12) {
+    const hash = await bcrypt.hash(inicial, COSTE);
+    await db.administrador.createMany({ data: [{ id: "principal", passHash: hash }], skipDuplicates: true });
+    return (await db.administrador.findUnique({ where: { id: "principal" } }))!.passHash;
+  }
   const nueva = randomBytes(12).toString("hex");
   await db.administrador.create({ data: { id: "principal", passHash: await bcrypt.hash(nueva, COSTE) } });
   console.warn(`[admin] Contraseña inicial de administración: ${nueva} — cámbiala desde Ajustes.`);
