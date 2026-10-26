@@ -18,9 +18,10 @@ export const config = {
   entorno: (process.env.REDCAFE_ENTORNO ?? "desarrollo") as "desarrollo" | "produccion" | "prueba",
   // PORT lo fija el hosting (cPanel/Passenger, Render…); PUERTO es el nombre propio.
   puerto: Number(process.env.PORT ?? process.env.PUERTO ?? 8080),
-  sitio: ruta(process.env.REDCAFE_SITIO ?? "../staging"),
+  // Por defecto, el sitio estático que viaja en el repositorio (public_html/).
+  sitio: ruta(process.env.REDCAFE_SITIO ?? "../public_html"),
   // Archivos subidos por miembros y administración (se sirven en /uploads).
-  uploads: ruta(process.env.REDCAFE_UPLOADS ?? path.join(ruta(process.env.REDCAFE_SITIO ?? "../staging"), "uploads")),
+  uploads: ruta(process.env.REDCAFE_UPLOADS ?? path.join(ruta(process.env.REDCAFE_SITIO ?? "../public_html"), "uploads")),
   dominio: process.env.REDCAFE_DOMINIO ?? "https://redcafeecuador.com",
   // Clave de cifrado de datos personales: 32 bytes en hex.
   claveDatos(): Buffer {

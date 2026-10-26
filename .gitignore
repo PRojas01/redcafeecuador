@@ -14,3 +14,4 @@ servidor/.env.*
 qa/node_modules/
 qa/regresion-*/
 *.log
+/node_modules/

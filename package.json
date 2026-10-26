@@ -1,0 +1,16 @@
+{
+  "name": "redcafeecuador",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Red Café Ecuador — plataforma (servidor Node.js en servidor/, sitio estático en public_html/)",
+  "engines": {
+    "node": ">=22"
+  },
+  "scripts": {
+    "postinstall": "npm ci --prefix servidor --include=dev && npm run build --prefix servidor",
+    "build": "npm run build --prefix servidor",
+    "db:push": "npm run db:push --prefix servidor",
+    "importar": "npm run importar --prefix servidor --",
+    "start": "node servidor/app.cjs"
+  }
+}

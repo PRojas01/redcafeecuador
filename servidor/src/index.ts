@@ -11,7 +11,8 @@ import { programarSalud } from "./lib/salud.js";
 
 const app = crearApp();
 
-serve({ fetch: app.fetch, port: config.puerto, hostname: process.env.HOST ?? "127.0.0.1" }, (info) => {
+serve({ fetch: app.fetch, port: config.puerto, // Si la plataforma fija PORT (GoDaddy, Render…), hay que escuchar en todas las interfaces.
+  hostname: process.env.HOST ?? (process.env.PORT ? "0.0.0.0" : "127.0.0.1") }, (info) => {
   console.log(`Red Café Ecuador · servidor en http://${info.address}:${info.port} · sitio ${config.sitio} · entorno ${config.entorno}`);
 });
 
