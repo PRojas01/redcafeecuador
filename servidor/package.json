@@ -16,7 +16,10 @@
     "db:push": "prisma db push --skip-generate",
     "db:migrate": "prisma migrate deploy",
     "db:generate": "prisma generate",
-    "importar": "tsx src/legacy/importar.ts"
+    "importar": "tsx src/legacy/importar.ts",
+    "postinstall": "prisma generate",
+    "agregar-cursos": "tsx src/legacy/agregar-cursos.ts",
+    "produccion": "npm ci && npm run build && npm run db:push && npm start"
   },
   "dependencies": {
     "@hono/node-server": "^1.19.17",

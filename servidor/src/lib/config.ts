@@ -9,7 +9,8 @@ function req(nombre: string): string {
 
 export const config = {
   entorno: (process.env.REDCAFE_ENTORNO ?? "desarrollo") as "desarrollo" | "produccion" | "prueba",
-  puerto: Number(process.env.PUERTO ?? 8080),
+  // PORT lo fija el hosting (cPanel/Passenger, Render…); PUERTO es el nombre propio.
+  puerto: Number(process.env.PORT ?? process.env.PUERTO ?? 8080),
   sitio: path.resolve(process.env.REDCAFE_SITIO ?? "../staging"),
   // Archivos subidos por miembros y administración (se sirven en /uploads).
   uploads: path.resolve(process.env.REDCAFE_UPLOADS ?? path.join(path.resolve(process.env.REDCAFE_SITIO ?? "../staging"), "uploads")),

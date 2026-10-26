@@ -1,4 +1,5 @@
 // Arranque del servidor Red Café Ecuador.
+import "./entorno.js";
 import { serve } from "@hono/node-server";
 import { crearApp } from "./app.js";
 import { config } from "./lib/config.js";
