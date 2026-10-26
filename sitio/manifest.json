@@ -1,0 +1,32 @@
+{
+  "name": "Red Café Ecuador",
+  "short_name": "Red Café",
+  "description": "Plataforma abierta y digital para negocios, actores y servicios del café ecuatoriano.",
+  "id": "/",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#f7f0e5",
+  "theme_color": "#2b1d16",
+  "lang": "es-EC",
+  "categories": [
+    "business",
+    "shopping",
+    "education"
+  ],
+  "icons": [
+    {
+      "src": "/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}

@@ -1,0 +1,13 @@
+User-agent: *
+Allow: /
+
+# No indexar áreas internas o dinámicas
+Disallow: /admin/
+Disallow: /panel/
+Disallow: /chat/
+Disallow: /login/
+Disallow: /bar/gestion/
+Disallow: /api/
+Disallow: /data/
+
+Sitemap: https://redcafeecuador.com/sitemap.xml

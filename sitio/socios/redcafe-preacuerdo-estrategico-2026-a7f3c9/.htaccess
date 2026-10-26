@@ -1,0 +1,20 @@
+# El preacuerdo se sirve SOLO por index.php, que comprueba el registro de
+# aceptación antes de imprimir nada.
+#
+# Sin la primera línea, el DirectoryIndex del sitio entregaría index.html
+# —el contenido sin puerta, que queda de despliegues anteriores— y la
+# comprobación no serviría de nada.
+DirectoryIndex index.php index.html
+
+# Se bloquea por reescritura y no con Require/Deny a propósito: mod_rewrite ya
+# se usa en el .htaccess de la raíz, así que consta que este hosting lo admite.
+# Require all denied depende de un permiso (AllowOverride Limit) que no se puede
+# comprobar desde fuera, y un .htaccess rechazado devuelve 500 en toda la
+# carpeta: tumbaría las dos páginas en vez de protegerlas.
+#
+# index.html es el contenido sin puerta. index.txt no da cifras, pero enumera
+# qué hay dentro: proyección financiera, punto de equilibrio, valoración.
+<IfModule mod_rewrite.c>
+  RewriteEngine On
+  RewriteRule ^index\.(html|txt)$ - [F,L]
+</IfModule>

@@ -1,0 +1,7 @@
+Fotografias reales pendientes para reemplazar marcadores visuales.
+
+- productor-verificado-4x5.jpg: retrato de productor o productora en finca, luz natural, mirada a camara o labor visible. Proporcion 4:5. Peso maximo 250 KB.
+- local-bar-16x9.jpg: barra o fachada real de El Moral Bar Cafeteria, con maquina o servicio visible. Proporcion 16:9. Peso maximo 350 KB.
+- lote-cafe-4x3.jpg: saco, muestra de granos o mesa de catacion de un lote real publicado. Proporcion 4:3. Peso maximo 300 KB.
+
+No sustituir estos huecos con ilustraciones de personas. Las laminas SVG actuales son recurso visual temporal para origen, lote, secado y taza; las personas y locales requieren fotografia verificable.
