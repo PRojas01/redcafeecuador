@@ -28,6 +28,12 @@ import { precios, preciosRefresh } from "./precios.js";
 import { guias } from "./guias.js";
 import { recordatorios } from "./recordatorios.js";
 import { socios } from "./socios.js";
+import { contenido } from "./contenido.js";
+import { cms } from "./cms.js";
+import { visual } from "./visual.js";
+import { uploads } from "./uploads.js";
+import { imagenes } from "./imagenes.js";
+import { media } from "./media.js";
 
 export const modulos: Record<string, Modulo> = {
   auth,
@@ -59,4 +65,10 @@ export const modulos: Record<string, Modulo> = {
   guias,
   recordatorios,
   socios,
+  contenido,
+  cms,
+  visual,
+  uploads,
+  imagenes,
+  media,
 };

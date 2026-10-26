@@ -37,9 +37,17 @@ export function prohibida(ruta: string): number {
 }
 
 function resolver(ruta: string): string | null {
-  const raiz = config.sitio;
-  const destino = path.normalize(path.join(raiz, decodeURIComponent(ruta)));
-  if (!destino.startsWith(raiz)) return null;
+  // /uploads/ puede vivir fuera del sitio (REDCAFE_UPLOADS): un volumen persistente.
+  const enUploads = /^\/uploads\//.test(ruta);
+  const raiz = enUploads ? config.uploads : config.sitio;
+  let destino: string;
+  try {
+    destino = path.normalize(path.join(raiz, decodeURIComponent(enUploads ? ruta.slice("/uploads".length) : ruta)));
+  } catch {
+    return null;
+  }
+  if (destino !== raiz && !destino.startsWith(raiz + path.sep)) return null;
+  if (enUploads && !/\.(jpe?g|png|webp|pdf)$/i.test(destino)) return null;
   try {
     const st = fs.statSync(destino);
     if (st.isFile()) return destino;
@@ -73,6 +81,9 @@ export function servirEstatico(ruta: string, https: boolean): Response {
   h.set("Content-Type", TIPOS[ext] ?? "application/octet-stream");
   if ([".html", ".json", ".txt"].includes(ext)) h.set("Cache-Control", "no-store, no-cache, must-revalidate");
   else if ([".js", ".css"].includes(ext)) h.set("Cache-Control", "public, max-age=31536000, immutable");
-  if (archivo.includes(path.sep + "uploads" + path.sep)) h.set("Content-Disposition", "inline");
+  if (archivo.startsWith(config.uploads + path.sep)) {
+    h.set("Content-Disposition", "inline");
+    h.set("Content-Security-Policy", "default-src 'none'; img-src 'self'; style-src 'unsafe-inline'; sandbox");
+  }
   return new Response(fs.readFileSync(archivo), { status: estado, headers: h });
 }
