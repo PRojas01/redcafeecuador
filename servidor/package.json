@@ -20,7 +20,8 @@
     "postinstall": "prisma generate",
     "agregar-cursos": "node dist/legacy/agregar-cursos.js",
     "produccion": "npm ci && npm run db:push && npm start",
-    "db:preparar": "node dist/scripts/preparar-base.js"
+    "db:preparar": "node dist/scripts/preparar-base.js",
+    "sql:esquema": "node -e \"const{execSync:x}=require('child_process'),fs=require('fs');const f='prisma/esquema-mysql.sql';const s=fs.readFileSync(f,'utf8');const cab=s.slice(0,s.indexOf('-- CreateTable'));const sql=x('npx prisma migrate diff --from-empty --to-schema-datamodel prisma/schema.prisma --script').toString().replace(/COLLATE utf8mb4_unicode_ci/g,'COLLATE utf8mb4_bin');fs.writeFileSync(f,cab+sql.trim().replace(/\\n*$/,'')+'\\n\\nSET FOREIGN_KEY_CHECKS = 1;\\n')\""
   },
   "dependencies": {
     "@hono/node-server": "^1.19.17",

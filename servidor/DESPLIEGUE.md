@@ -21,7 +21,7 @@ Variables de entorno que hay que poner en el panel de GoDaddy (no van en el repo
 `DATABASE_URL` (mysql://…), `REDCAFE_CLAVE_DATOS` (openssl rand -hex 32), `REDCAFE_ENTORNO=produccion`,
 `REDCAFE_PROXY_CONFIABLE=1` y, si hay correo, `RESEND_API_KEY`. Sin `DATABASE_URL` el sitio se ve
 pero la API responde 503 «falta configurar la base de datos».
-La primera vez, crear las tablas: `npm run db:push` (desde la consola de GoDaddy o desde un equipo con acceso a la base).
+La primera vez, crear las tablas: importar `servidor/prisma/esquema-mysql.sql` en phpMyAdmin (base vacía → Importar), o `npm run db:push` desde una consola con acceso a la base.
 
 ## Pasos comunes
 
