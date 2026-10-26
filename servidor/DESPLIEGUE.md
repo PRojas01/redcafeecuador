@@ -1,7 +1,7 @@
 # Publicar el servidor Node.js (GoDaddy)
 
 El servidor sustituye a `api/*.php` con el mismo contrato: el sitio estático
-(Next + capa propia) no cambia. Necesita **Node.js 22+** y **PostgreSQL 14+**.
+(Next + capa propia) no cambia. Necesita **Node.js 22** (funciona desde 18.18) y **PostgreSQL 14+**.
 
 ## Qué plan de GoDaddy sirve
 
@@ -42,11 +42,30 @@ nginx como proxy a `127.0.0.1:8080` con `proxy_set_header X-Forwarded-For $proxy
 y `X-Forwarded-Proto $scheme`; HTTPS con `certbot --nginx -d redcafeecuador.com -d www.redcafeecuador.com`.
 `REDCAFE_PROXY_CONFIABLE=1`. Una sola instancia (las tareas diarias asumen una).
 
-### cPanel «Setup Node.js App»
-- Node.js version: 22 · Application root: `redcafe/servidor` · Application URL: el dominio
-- Application startup file: **`app.cjs`**
-- Variables de entorno: las del `.env` (o deja el `.env` en `servidor/`, se carga solo).
-- «Run NPM Install», luego en la terminal: `npm run build && npm run db:push`, y «Restart».
+### cPanel compartido «Setup Node.js App» (el caso de Red Café)
+Comprobado: el cPanel ofrece **Node.js 22**.
+
+**Base de datos — elegir una (ver en cPanel → Bases de datos):**
+- Si aparece **«PostgreSQL Databases»**: crea la base y el usuario ahí. `DATABASE_URL="postgresql://usuario:clave@localhost:5432/base"`.
+- Si solo hay **MySQL**: usar un PostgreSQL gestionado (Neon, Supabase…) con `?sslmode=require`. Antes, comprobar desde la Terminal de cPanel que el hosting deja salir al puerto 5432:
+  `node -e "require('net').connect(5432,'HOST-DE-LA-BASE').on('connect',()=>{console.log('OK');process.exit()}).on('error',e=>{console.log(e.message);process.exit(1)})"`
+
+**Crear la aplicación** (cPanel → Setup Node.js App → Create Application):
+- Node.js version: **22** · Application mode: Production
+- Application root: `redcafe/servidor` (el repositorio clonado o subido fuera de `public_html`)
+- Application URL: `redcafeecuador.com` · Application startup file: **`app.cjs`**
+- Guardar `servidor/.env` (a partir de `.env.ejemplo`). Las rutas relativas del `.env` se leen desde `servidor/`.
+
+**Instalar** (botón «Run NPM Install», o en la Terminal tras `source` del entorno virtual que muestra cPanel):
+```bash
+npm ci && npm run build && npm run db:push
+```
+Después, «Restart». Si `npm run build` se queda sin memoria en el compartido, compílalo en otro equipo y sube `dist/`.
+
+**Notas del compartido**
+- Passenger duerme la aplicación sin visitas: las tareas diarias (respaldo, revisión) se ponen al día al despertar, no se pierden.
+- El dominio deja de servir `public_html` en cuanto la aplicación toma la URL: deja el PHP corregido como plan de vuelta (se recupera borrando la aplicación Node).
+- `REDCAFE_PROXY_CONFIABLE=1` (Passenger va delante).
 
 ## Actualizar
 ```bash

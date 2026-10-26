@@ -6,7 +6,8 @@ import { cupo } from "../lib/seguridad.js";
 import { esAdmin, filtroVisible, requiereUsuario, tieneRol, todosLosMiembros, usuarioActual } from "../lib/usuarios.js";
 import { notificar, notificarAdmins, publicarAvisoComunidad, registrarActividad } from "../lib/avisos.js";
 import { bool, cortar, esNumerico, fechaMs, int, largo, num, nowIso, str, textoEntrada, uid, whatsappDigitos, whatsappDisplay } from "../lib/util.js";
-import semilla from "../datos/semilla-lotes.json" with { type: "json" };
+import { datosJson } from "../lib/json.js";
+const semilla = datosJson<any[]>("semilla-lotes.json");
 
 /** load_json('lotes', seed_lotes()): la primera vez se siembran los 6 lotes de muestra. */
 export async function lotesTodos(): Promise<Doc[]> {

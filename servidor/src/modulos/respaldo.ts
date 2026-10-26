@@ -19,7 +19,7 @@ const DIARIOS = 7, SEMANALES = 4, MENSUALES = 6, MAX_MB = 200;
 const PATRON = /^respaldo-(\d{8})-(\d{6})\.json\.gz$/;
 
 export function carpeta(): string {
-  const dir = path.resolve(process.env.REDCAFE_RESPALDOS ?? path.join(path.dirname(config.sitio), "redcafe-respaldos"));
+  const dir = process.env.REDCAFE_RESPALDOS ? path.resolve(config.raiz, process.env.REDCAFE_RESPALDOS) : path.join(path.dirname(config.sitio), "redcafe-respaldos");
   fs.mkdirSync(dir, { recursive: true, mode: 0o700 });
   return dir;
 }

@@ -1,5 +1,11 @@
 // Configuración leída una sola vez del entorno.
 import path from "node:path";
+import { fileURLToPath } from "node:url";
+
+// Las rutas relativas del .env se leen desde servidor/, no desde la carpeta
+// en la que se arranca (en cPanel/Passenger no siempre es la misma).
+const RAIZ = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..", "..");
+const ruta = (v: string) => path.resolve(RAIZ, v);
 
 function req(nombre: string): string {
   const v = process.env[nombre];
@@ -8,12 +14,13 @@ function req(nombre: string): string {
 }
 
 export const config = {
+  raiz: RAIZ,
   entorno: (process.env.REDCAFE_ENTORNO ?? "desarrollo") as "desarrollo" | "produccion" | "prueba",
   // PORT lo fija el hosting (cPanel/Passenger, Render…); PUERTO es el nombre propio.
   puerto: Number(process.env.PORT ?? process.env.PUERTO ?? 8080),
-  sitio: path.resolve(process.env.REDCAFE_SITIO ?? "../staging"),
+  sitio: ruta(process.env.REDCAFE_SITIO ?? "../staging"),
   // Archivos subidos por miembros y administración (se sirven en /uploads).
-  uploads: path.resolve(process.env.REDCAFE_UPLOADS ?? path.join(path.resolve(process.env.REDCAFE_SITIO ?? "../staging"), "uploads")),
+  uploads: ruta(process.env.REDCAFE_UPLOADS ?? path.join(ruta(process.env.REDCAFE_SITIO ?? "../staging"), "uploads")),
   dominio: process.env.REDCAFE_DOMINIO ?? "https://redcafeecuador.com",
   // Clave de cifrado de datos personales: 32 bytes en hex.
   claveDatos(): Buffer {

@@ -16,7 +16,7 @@
 //    respaldos) se conservan para que los enlaces y suscripciones sigan valiendo.
 import fs from "node:fs";
 import path from "node:path";
-import { createPrivateKey } from "node:crypto";
+import { createPrivateKey, randomBytes } from "node:crypto";
 import bcrypt from "bcryptjs";
 import { Prisma } from "@prisma/client";
 import { db } from "../lib/db.js";
@@ -95,7 +95,7 @@ async function miembros() {
   }
   informe.push({ archivo: "members.json", destino: "Usuario", filas: nuevos, accion: `${nuevos} nuevos · ${ya} ya estaban · ${malos} omitidos` });
 }
-const cryptoAleatorio = () => Buffer.from(crypto.getRandomValues(new Uint8Array(24))).toString("hex");
+const cryptoAleatorio = () => randomBytes(24).toString("hex");
 
 async function consentimientos() {
   const f = path.join(DATA, "consents.json");

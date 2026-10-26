@@ -5,7 +5,8 @@ import { fail, type Modulo } from "../lib/http.js";
 import { mapa, mutarMapa, type Doc } from "../lib/docs.js";
 import { requiereAdmin } from "../lib/usuarios.js";
 import { nowIso, str, today } from "../lib/util.js";
-import semilla from "../datos/semilla-media.json" with { type: "json" };
+import { datosJson } from "../lib/json.js";
+const semilla = datosJson<any[]>("semilla-media.json");
 
 async function leer(): Promise<Doc> {
   const m = await mapa("media");
