@@ -105,4 +105,4 @@ const acciones: Modulo["acciones"] = {
   },
 };
 
-export const visual: Modulo = { acciones, porDefecto: "published", noValida: { mensaje: "Accion no valida.", codigo: 400 } };
+export const visual: Modulo = { acciones, guardia: (ctx, a) => { if (a !== "published") requiereAdmin(ctx); }, porDefecto: "published", noValida: { mensaje: "Accion no valida.", codigo: 400 } };

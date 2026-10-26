@@ -53,6 +53,9 @@ export type Modulo = {
   noValida?: { mensaje: string; codigo: number };
   /** Acción por defecto si no viene ?action= (media.php usa «list»). */
   porDefecto?: string;
+  /** Comprobación previa a todas las acciones (p. ej. «solo administración»),
+   *  incluso a las que no existen: así responde 403 antes que 400, como PHP. */
+  guardia?: (ctx: Ctx, accion: string) => Promise<void> | void;
 };
 
 /** Lee el cuerpo como lo hacía input() en PHP. */

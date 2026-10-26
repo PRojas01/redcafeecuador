@@ -12,6 +12,7 @@ export const AVISO_PAGOS_VERSION = "2026-10-23";
 export const AVISO_PAGOS_TEXTO =
   "Red Café Ecuador no interviene en los pagos ni retiene dinero. No hagas transferencias ni depósitos si no estás seguro de la identidad de la otra parte. Verifica al vendedor, pide una muestra y acuerda la forma de pago por escrito antes de enviar dinero.";
 const AVISO_TIPOS = ["pedido", "pedido-estado", "mensaje", "curso", "curso-acceso", "lote", "servicio", "miembro", "reporte", "sistema"];
+import { pushEnSegundoPlano } from "./push.js";
 const AVISOS_MAX = 3000;
 const AVISO_VIDA_DIAS = 90;
 const BITACORA_MAX = 6000;
@@ -34,6 +35,8 @@ export async function notificar(uidDest: string, tipo: string, titulo: string, t
   } catch (e) {
     console.error("[avisos] notificar", e);
   }
+  // El push es auxiliar y no retrasa la respuesta (los recordatorios van sin push).
+  if (!(tipo === "sistema" && titulo.startsWith("Recordatorio"))) pushEnSegundoPlano(uidDest, titulo, texto, enlace);
 }
 
 async function podarAvisos() {

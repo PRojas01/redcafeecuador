@@ -68,6 +68,7 @@ export function crearApp(opciones: { ipDe?: (c: any) => string } = {}) {
         cuerpo = JSON.stringify({ ok: false, error: "Este servicio aún no está disponible en la nueva plataforma." });
       } else {
         const nombre = accion || modulo.porDefecto || "";
+        if (modulo.guardia) await modulo.guardia(ctx, nombre);
         const fn = modulo.acciones[nombre];
         if (!fn) throw new ErrorApi(modulo.noValida?.mensaje ?? "Acción no válida.", modulo.noValida?.codigo ?? 400);
         const res = await fn(ctx);
