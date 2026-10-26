@@ -94,3 +94,6 @@ export const fechaMs = (s: unknown): number => {
   const t = Date.parse(str(s));
   return Number.isFinite(t) ? t : 0;
 };
+
+/** sha1 hex (los ids de sala de chat del PHP usan sha1: se conservan). */
+export const sha1 = (s: string): string => createHash("sha1").update(s).digest("hex");
