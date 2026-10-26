@@ -11,7 +11,24 @@ El servidor sustituye a `api/*.php` con el mismo contrato: el sitio estático
 | Hosting compartido cPanel con «Setup Node.js App» | Sí (el de Red Café: Node 22 + MySQL) | Todo queda en GoDaddy: aplicación Node y base MySQL del propio cPanel. |
 | Hosting compartido sin Node | No | Mantener el PHP corregido (`redcafe-actualizacion-20261024a-corregido.zip`). |
 
-## Despliegue desde GitHub (GoDaddy conectado al repositorio)
+## GoDaddy Node.js Hosting (el plan elegido)
+Producto: https://www.godaddy.com/es/hosting/nodejs · Node.js 22 · MySQL gestionado por app.
+1. Conectar GitHub → repositorio `PRojas01/redcafeecuador`, rama `plataforma-node` (luego `main`).
+2. Variables de entorno (secretas, por entorno: preview y producción por separado): las de
+   `redcafe-produccion.env` — `REDCAFE_CLAVE_DATOS`, `REDCAFE_PASS_ADMIN_INICIAL`,
+   `REDCAFE_ENTORNO=produccion`, `REDCAFE_PROXY_CONFIABLE=1`, `REDCAFE_DOMINIO`.
+3. La base: la que crea la plataforma. El servidor lee sus datos de `DB_HOST`, `DB_PORT`,
+   `DB_USER`, `DB_PASSWORD`, `DB_NAME` (o `MYSQL_*`); si los nombres fueran otros,
+   definir `DATABASE_URL`. **Las tablas se crean solas** en el primer arranque.
+4. Desplegar. La plataforma hace `npm install` y `npm start` en la raíz; si no ejecutara
+   la instalación de `servidor/`, `npm start` la hace la primera vez (tarda unos minutos).
+5. Comprobar la URL de vista previa: portada, `/admin/` con `REDCAFE_PASS_ADMIN_INICIAL`,
+   registro de una cuenta de prueba.
+Pendiente de confirmar en el panel: carpeta persistente para fotos subidas (`REDCAFE_UPLOADS`).
+Datos reales: después, con el `.sql` generado por el importador e importado en el
+navegador de tablas/SQL de la base gestionada.
+
+## Despliegue desde GitHub (otras plataformas)
 GoDaddy instala y arranca **desde la raíz** del repositorio, rama `main`:
 - `npm install` → instala y compila `servidor/` (script `postinstall` del `package.json` raíz).
 - `npm start` → `node servidor/app.cjs`. Escucha en `PORT` (lo fija GoDaddy).
