@@ -1,0 +1,35 @@
+{
+  "name": "redcafe-servidor",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Red Café Ecuador — servidor Node + PostgreSQL que reemplaza api/*.php manteniendo el mismo contrato",
+  "type": "module",
+  "engines": {
+    "node": ">=22"
+  },
+  "scripts": {
+    "dev": "tsx watch src/index.ts",
+    "start": "node --enable-source-maps dist/index.js",
+    "build": "tsc -p tsconfig.json",
+    "typecheck": "tsc -p tsconfig.json --noEmit",
+    "test": "vitest run",
+    "db:push": "prisma db push --skip-generate",
+    "db:migrate": "prisma migrate deploy",
+    "db:generate": "prisma generate",
+    "importar": "tsx src/legacy/importar.ts"
+  },
+  "dependencies": {
+    "@hono/node-server": "^1.19.17",
+    "@prisma/client": "^6.19.3",
+    "bcryptjs": "^3.0.3",
+    "hono": "^4.13.14",
+    "zod": "^4.6.7"
+  },
+  "devDependencies": {
+    "@types/node": "^22.20.5",
+    "prisma": "^6.19.3",
+    "tsx": "^4.23.15",
+    "typescript": "5.9",
+    "vitest": "^3.2.7"
+  }
+}

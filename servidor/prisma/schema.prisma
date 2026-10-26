@@ -1,0 +1,174 @@
+// Red Café Ecuador — esquema de datos del servidor nuevo.
+//
+// Dos niveles (ver docs/ADR-002-modelo-de-datos.md):
+//  - Identidad y seguridad en tablas relacionales: usuarios, sesiones, 2FA,
+//    recuperación, consentimientos, administradores, límites de intentos.
+//  - El resto de colecciones del sistema PHP (lotes, pedidos, cursos…) en la
+//    tabla `Documento` (jsonb), con el mismo formato que devolvía la API PHP.
+//    Cada cambio va en una transacción con bloqueo por colección: se acabó la
+//    pérdida de escrituras de los archivos JSON. Se normaliza módulo a módulo.
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Usuario {
+  // Se conserva el id del sistema PHP (12 hex): los lotes, pedidos y
+  // mensajes migrados lo referencian.
+  id               String    @id
+  email            String    @unique // siempre en minúsculas
+  passHash         String    // bcrypt $2y$/$2b$ (compatible con PHP)
+  nombre           String
+  rol              String
+  roles            String[]
+  plan             String    @default("origen")
+  visibilidad      String    @default("publico")
+  provincia        String    @default("")
+  telefono         String    @default("")
+  whatsapp         String    @default("")
+  // Cédula/RUC cifrada (AES-256-GCM) más huella HMAC para buscar sin descifrar.
+  cedulaCifrada    String    @default("")
+  cedulaHuella     String    @default("")
+  verificado       Boolean   @default(false)
+  estado           String    @default("activo") // activo | inactivo | eliminado | ...
+  activo           Boolean   @default(true)
+  admin            Boolean   @default(false)    // miembro con permisos de administración
+  fundador         Boolean   @default(false)
+  dosFactores      Boolean   @default(false)
+  dosFactoresEn    DateTime?
+  passCambiadaEn   DateTime? // cierra las sesiones abiertas antes de esta fecha
+  // Campos de perfil y de moderación que no se consultan por columna
+  // (consentimientos, estado_validacion, motivo_rechazo, nota_admin, ...).
+  extra            Json      @default("{}")
+  creado           DateTime  @default(now())
+  actualizado      DateTime  @updatedAt
+
+  sesiones         Sesion[]
+  codigosRespaldo  CodigoRespaldo[]
+  otps             Otp[]
+  resets           RecuperacionPass[]
+
+  @@index([estado])
+}
+
+model Sesion {
+  // Se guarda el sha256 del token: quien lea la base no puede usar las sesiones.
+  tokenHash     String    @id
+  usuarioId     String?
+  usuario       Usuario?  @relation(fields: [usuarioId], references: [id], onDelete: Cascade)
+  admin         Boolean   @default(false)
+  adminDesde    DateTime?
+  pendiente2fa  String?   // id del usuario a medio verificar
+  recordar      Boolean   @default(false)
+  inicio        DateTime? // inicio de sesión: se compara con passCambiadaEn
+  datos         Json      @default("{}") // socio_id, socio_email, ...
+  creado        DateTime  @default(now())
+  expira        DateTime
+
+  @@index([usuarioId])
+  @@index([expira])
+}
+
+model CodigoRespaldo {
+  id         String   @id @default(uuid())
+  usuarioId  String
+  usuario    Usuario  @relation(fields: [usuarioId], references: [id], onDelete: Cascade)
+  // bcrypt (nuevos) o sha256 legacy importado del PHP.
+  hash       String
+  creado     DateTime @default(now())
+
+  @@index([usuarioId])
+}
+
+model Otp {
+  id         String   @id @default(uuid())
+  usuarioId  String
+  usuario    Usuario  @relation(fields: [usuarioId], references: [id], onDelete: Cascade)
+  proposito  String   // login | enable
+  hash       String
+  fallos     Int      @default(0)
+  expira     DateTime
+  creado     DateTime @default(now())
+
+  @@unique([usuarioId, proposito])
+}
+
+model RecuperacionPass {
+  id         String   @id @default(uuid())
+  usuarioId  String
+  usuario    Usuario  @relation(fields: [usuarioId], references: [id], onDelete: Cascade)
+  tokenHash  String   @unique // sha256 del token del enlace (24 bytes aleatorios)
+  expira     DateTime
+  ip         String   @default("")
+  creado     DateTime @default(now())
+}
+
+model Consentimiento {
+  id          String   @id @default(uuid())
+  usuarioId   String
+  email       String
+  ip          String
+  ua          String
+  terminos    Boolean
+  privacidad  Boolean
+  usoDatos    Boolean
+  marketing   Boolean
+  version     String   @default("v1")
+  ts          DateTime @default(now())
+
+  @@index([usuarioId])
+}
+
+model Administrador {
+  // Por ahora una cuenta (la contraseña de administración del sistema PHP);
+  // la Fase 1 del plan la sustituye por cuentas nominales con TOTP.
+  id                String    @id @default("principal")
+  passHash          String
+  provisionalHasta  DateTime?
+  resetTokenHash    String?
+  resetExpira       DateTime?
+  actualizado       DateTime  @updatedAt
+}
+
+model Intento {
+  id     BigInt   @id @default(autoincrement())
+  clave  String   // acción + IP (con hash)
+  ts     DateTime @default(now())
+
+  @@index([clave, ts])
+}
+
+model Documento {
+  coleccion   String
+  id          String
+  orden       BigInt   @default(autoincrement()) // orden de inserción, como el array PHP
+  datos       Json
+  creado      DateTime @default(now())
+  actualizado DateTime @updatedAt
+
+  @@id([coleccion, id])
+  @@index([coleccion, orden])
+}
+
+model Secreto {
+  // Secretos de la aplicación generados una vez (firma de apelaciones,
+  // enlaces de baja de correo...). Equivalen a data/.moderacion_secreto etc.
+  nombre  String @id
+  valor   String
+}
+
+model RegistroImportacion {
+  id          String   @id @default(uuid())
+  origen      String   // archivo data/*.json
+  legacyId    String
+  destino     String   // tabla o colección
+  destinoId   String
+  ts          DateTime @default(now())
+
+  @@unique([origen, legacyId])
+}
