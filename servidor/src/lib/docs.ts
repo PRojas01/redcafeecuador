@@ -126,3 +126,14 @@ export async function conBloqueo<T>(col: string, fn: (tx: Tx) => Promise<T>): Pr
     return fn(tx);
   });
 }
+
+/** Un documento suelto (p. ej. el avance de un miembro: coleccion «guias», id = uid). */
+export async function mutarUno(col: string, id: string, fn: (d: Doc) => Doc | Promise<Doc>): Promise<Doc> {
+  return db.$transaction(async (tx) => {
+    await tx.$executeRaw`SELECT pg_advisory_xact_lock(hashtext(${"doc:" + col + ":" + id}))`;
+    const f = await tx.documento.findUnique({ where: { coleccion_id: { coleccion: col, id } } });
+    const nuevo = await fn(structuredClone((f?.datos as Doc) ?? {}));
+    await tx.documento.upsert({ where: { coleccion_id: { coleccion: col, id } }, create: { coleccion: col, id, datos: nuevo }, update: { datos: nuevo } });
+    return nuevo;
+  });
+}

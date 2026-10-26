@@ -23,6 +23,9 @@ import { verificaciones } from "./verificaciones.js";
 import { menu } from "./menu.js";
 import { inventario } from "./inventario.js";
 import { stats } from "./stats.js";
+import { actividad } from "./actividad.js";
+import { precios, preciosRefresh } from "./precios.js";
+import { guias } from "./guias.js";
 
 export const modulos: Record<string, Modulo> = {
   auth,
@@ -48,4 +51,8 @@ export const modulos: Record<string, Modulo> = {
   menu,
   inventario,
   stats,
+  actividad,
+  precios,
+  "precios-refresh": preciosRefresh,
+  guias,
 };
