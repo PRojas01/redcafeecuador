@@ -36,6 +36,8 @@ import { imagenes } from "./imagenes.js";
 import { media } from "./media.js";
 import { push } from "./push.js";
 import { difusion } from "./difusion.js";
+import { admin } from "./admin.js";
+import { respaldo } from "./respaldo.js";
 
 export const modulos: Record<string, Modulo> = {
   auth,
@@ -75,4 +77,6 @@ export const modulos: Record<string, Modulo> = {
   media,
   push,
   difusion,
+  admin,
+  respaldo,
 };

@@ -5,6 +5,7 @@ import { config } from "./lib/config.js";
 import { purgarSesiones } from "./lib/sesion.js";
 import { purgarIntentos } from "./lib/seguridad.js";
 import { programarPrecios } from "./modulos/precios.js";
+import { programarRespaldos } from "./modulos/respaldo.js";
 
 const app = crearApp();
 
@@ -19,4 +20,7 @@ setInterval(() => {
 }, 3600_000).unref();
 
 // Precio del café: se refresca solo cada 6 h (fuera de pruebas).
-if (process.env.REDCAFE_ENTORNO !== "prueba") programarPrecios();
+if (process.env.REDCAFE_ENTORNO !== "prueba") {
+  programarPrecios();
+  programarRespaldos();
+}
