@@ -43,6 +43,9 @@ export function crearApp(opciones: { ipDe?: (c: any) => string } = {}) {
     h.set("X-Frame-Options", "DENY");
     if (https) h.set("Strict-Transport-Security", "max-age=31536000; includeSubDomains");
     if (archivo.startsWith("_")) return new Response("Not Found", { status: 404 });
+    if (!process.env.DATABASE_URL) {
+      return new Response(JSON.stringify({ ok: false, error: "Servicio en mantenimiento: falta configurar la base de datos (DATABASE_URL)." }), { status: 503, headers: h });
+    }
 
     const modulo: Modulo | undefined = modulos[archivo];
     const url = new URL(c.req.url);
