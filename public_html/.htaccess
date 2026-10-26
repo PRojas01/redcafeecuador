@@ -1,0 +1,73 @@
+Options -Indexes
+DirectoryIndex index.html index.php
+
+# Copias, respaldos y material interno que nunca deben servirse. Va con
+# mod_alias y no con RewriteRule porque Respaldo/ trae su propio .htaccess con
+# RewriteEngine On, y eso anula las reglas de reescritura de esta raíz: la
+# copia vieja de la API respondía en /Respaldo/api/*.php con sus propios datos.
+<IfModule mod_alias.c>
+RedirectMatch 404 ^/(Respaldo|_respaldos|context|actualizacion)(/|$)
+RedirectMatch 404 \.(md|toml|zlib)$
+# Los api/_*.php son piezas que otros endpoints incluyen; no se llaman solos.
+# Sin $ final: cubre también /api/_bootstrap.php/loquesea (PATH_INFO).
+RedirectMatch 404 ^/api/_[^/]*\.php
+</IfModule>
+
+<IfModule mod_rewrite.c>
+RewriteEngine On
+RewriteBase /
+
+# Un solo dominio: www.redcafeecuador.com → redcafeecuador.com (301). La cookie
+# de sesión es de cada dominio; quien entraba por www y tocaba un enlace del
+# sitio (escritos como https://redcafeecuador.com/…) quedaba «fuera» de su cuenta.
+RewriteCond %{HTTP_HOST} ^www\.redcafeecuador\.com$ [NC]
+RewriteRule ^ https://redcafeecuador.com%{REQUEST_URI} [R=301,L]
+
+# Forzar HTTPS (301) conservando host y URI completos.
+RewriteCond %{HTTPS} !=on
+RewriteRule ^ https://%{HTTP_HOST}%{REQUEST_URI} [R=301,L]
+
+# Bloquear datos, archivos ocultos y artefactos que no deben publicarse.
+RewriteRule ^data/ - [F,L]
+RewriteRule ^api/api/ - [F,L]
+RewriteRule (^|/)\. - [F,L]
+RewriteRule \.(log|bak|tmp|old|zip|sql|sha256)$ - [F,L,NC]
+# PHP regenera error_log en el servidor y no lleva extensión: exponía
+# trazas internas en /api/error_log (respondía 200).
+RewriteRule (^|/)error_log$ - [F,L,NC]
+
+# Mantener APIs, assets reales y archivos existentes sin redirecciones.
+RewriteCond %{REQUEST_FILENAME} -f [OR]
+RewriteCond %{REQUEST_FILENAME} -d
+RewriteRule ^ - [L]
+
+# Los lotes reales publicados no tienen carpeta exportada; usar la vista de marketplace.
+RewriteRule ^marketplace/([^/]+)/?$ /marketplace/index.html [L]
+
+# Lo mismo para los cursos: los que se publican después de compilar el sitio no
+# tienen carpeta propia y daban 404. La vista del curso la arma redcafe-academia.js
+# a partir del id de la dirección, así que sirve la página de la Academia.
+# Va DESPUÉS de la condición de archivo existente, así que las nueve carpetas
+# ya exportadas siguen sirviéndose tal cual.
+RewriteRule ^academia/([^/]+)/?$ /academia/index.html [L]
+</IfModule>
+
+<IfModule mod_headers.c>
+  # No anunciar la versión de PHP (X-Powered-By).
+  Header always unset X-Powered-By
+  Header unset X-Powered-By
+Header always set Strict-Transport-Security "max-age=31536000" env=HTTPS
+Header always set X-Frame-Options "SAMEORIGIN"
+# CSP mínima que no depende de los scripts en línea del export de Next:
+# impide incrustar el sitio en otros dominios, plugins y cambios de <base>.
+Header always set Content-Security-Policy "frame-ancestors 'self'; object-src 'none'; base-uri 'self'; upgrade-insecure-requests"
+Header always set Permissions-Policy "camera=(), microphone=(), payment=(), usb=(), geolocation=(self)"
+Header set X-Content-Type-Options "nosniff"
+Header set Referrer-Policy "strict-origin-when-cross-origin"
+<FilesMatch "\.(html|json|php)$">
+Header set Cache-Control "no-store, no-cache, must-revalidate"
+</FilesMatch>
+<FilesMatch "\.(js|css)$">
+Header set Cache-Control "public, max-age=31536000, immutable"
+</FilesMatch>
+</IfModule>

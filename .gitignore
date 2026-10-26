@@ -1,0 +1,16 @@
+local/cuentas-prueba.json
+local/sitio-*/
+local/publicada-src/
+plataforma_cafe/node_modules/
+plataforma_cafe/.next/
+plataforma_cafe/out/
+staging-*/
+referencia-starter/
+servidor/node_modules/
+servidor/dist/
+servidor/.env
+servidor/.env.*
+!servidor/.env.ejemplo
+qa/node_modules/
+qa/regresion-*/
+*.log

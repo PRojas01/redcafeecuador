@@ -1,0 +1,53 @@
+<<<css>>>
+<link rel="stylesheet" href="/redcafe-v60-final.css?v=__VERSION__"/>
+<<<inline>>>
+<script id="redcafe-v59-ticker-panel">
+(function(){
+  function addPanelLink(){
+    document.querySelectorAll('a').forEach(function(a){
+      if ((a.textContent || '').trim() !== 'Fuente oficial') return;
+      var parent = a.parentElement;
+      if (!parent || parent.querySelector('[data-redcafe-panel-precios]')) return;
+      var link = document.createElement('a');
+      link.href = '/servicios/precios/';
+      link.setAttribute('data-redcafe-panel-precios','1');
+      link.className = 'rounded-full border border-acento-claro bg-crema px-3 py-0.5 text-[10px] font-extrabold uppercase tracking-wider text-cafe shadow-sm transition hover:bg-acento-claro hover:text-cafe';
+      link.title = 'Abrir panel completo de precios';
+      link.textContent = 'Panel de precios';
+      parent.insertBefore(link, a);
+    });
+  }
+  addPanelLink();
+  var n = 0;
+  var timer = setInterval(function(){ addPanelLink(); if (++n > 30) clearInterval(timer); }, 500);
+  new MutationObserver(addPanelLink).observe(document.documentElement, {childList:true, subtree:true});
+})();
+</script><script id="redcafe-v59-home-colapsables">
+(function(){
+  function addHomeDetails(){
+    var heads = Array.from(document.querySelectorAll('h2'));
+    var h = heads.find(function(el){ return (el.textContent || '').trim() === '¿Formas parte del negocio del café ecuatoriano?'; });
+    if (!h) return;
+    var section = h.closest('section') || h.parentElement;
+    var p = h.parentElement && h.parentElement.querySelector('p.mt-3');
+    if (!p) return;
+    var existing = document.getElementById('redcafe-detalle-perfiles');
+    if (!existing) {
+      var box = document.createElement('details');
+      box.id = 'redcafe-detalle-perfiles';
+      box.className = 'mt-5 border border-cafe/10 bg-crema p-5';
+      box.innerHTML = "<summary class=\"cursor-pointer list-none font-semibold text-cafe\">Ver perfiles disponibles <span class=\"text-latte\">+</span></summary><div class=\"mt-5 grid gap-4 md:grid-cols-2 lg:grid-cols-3\"><a href=\"/afiliate/?rol=productor\" class=\"group border border-cafe/10 bg-white p-5 transition hover:border-latte hover:shadow-sm\"><p class=\"font-titulo text-xl font-bold text-cafe\">Productor</p><p class=\"mt-1 text-sm font-semibold text-filtrado-700\">Vende desde 1 libra hasta tu cosecha.</p><p class=\"mt-3 text-sm leading-relaxed text-pizarra-suave\">Publico mi café con finca, altura y proceso para vender directo y acordar condiciones con el comprador.</p><span class=\"mt-4 inline-block text-sm font-bold text-latte underline-offset-4 group-hover:underline\">Forma parte de la Red →</span></a><a href=\"/afiliate/?rol=vendedor\" class=\"group border border-cafe/10 bg-white p-5 transition hover:border-latte hover:shadow-sm\"><p class=\"font-titulo text-xl font-bold text-cafe\">Tostador / Comerciante</p><p class=\"mt-1 text-sm font-semibold text-filtrado-700\">Asegura tu abastecimiento sin depender de un solo proveedor.</p><p class=\"mt-3 text-sm leading-relaxed text-pizarra-suave\">Comparo lotes por finca, altura, proceso y trazabilidad. Coordino compras y capacito a mi equipo desde la Academia.</p><span class=\"mt-4 inline-block text-sm font-bold text-latte underline-offset-4 group-hover:underline\">Forma parte de la Red →</span></a><a href=\"/afiliate/?rol=comprador\" class=\"group border border-cafe/10 bg-white p-5 transition hover:border-latte hover:shadow-sm\"><p class=\"font-titulo text-xl font-bold text-cafe\">Comprador</p><p class=\"mt-1 text-sm font-semibold text-filtrado-700\">Compra directo a quien produce y descubre orígenes.</p><p class=\"mt-3 text-sm leading-relaxed text-pizarra-suave\">Encuentro café ecuatoriano con ficha de lote y contacto directo para comprar con más contexto.</p><span class=\"mt-4 inline-block text-sm font-bold text-latte underline-offset-4 group-hover:underline\">Forma parte de la Red →</span></a><a href=\"/afiliate/?rol=certificador\" class=\"group border border-cafe/10 bg-white p-5 transition hover:border-latte hover:shadow-sm\"><p class=\"font-titulo text-xl font-bold text-cafe\">Verificador / Catador</p><p class=\"mt-1 text-sm font-semibold text-filtrado-700\">Cobra por cada evaluación y hazte un nombre en el sector.</p><p class=\"mt-3 text-sm leading-relaxed text-pizarra-suave\">Evalúo lotes, audito fincas y emito informes técnicos verificables dentro de la Red.</p><span class=\"mt-4 inline-block text-sm font-bold text-latte underline-offset-4 group-hover:underline\">Forma parte de la Red →</span></a><a href=\"/afiliate/?rol=transportista\" class=\"group border border-cafe/10 bg-white p-5 transition hover:border-latte hover:shadow-sm\"><p class=\"font-titulo text-xl font-bold text-cafe\">Transportista</p><p class=\"mt-1 text-sm font-semibold text-filtrado-700\">Llena tus rutas con fletes que llegan de la Red.</p><p class=\"mt-3 text-sm leading-relaxed text-pizarra-suave\">Conecto fincas, tostadores y puertos. Cotizo rutas y construyo historial de entregas.</p><span class=\"mt-4 inline-block text-sm font-bold text-latte underline-offset-4 group-hover:underline\">Forma parte de la Red →</span></a><a href=\"/afiliate/?rol=pilador\" class=\"group border border-cafe/10 bg-white p-5 transition hover:border-latte hover:shadow-sm\"><p class=\"font-titulo text-xl font-bold text-cafe\">Pilador / Beneficiadero</p><p class=\"mt-1 text-sm font-semibold text-filtrado-700\">Mantén la piladora ocupada sin salir a buscar clientes.</p><p class=\"mt-3 text-sm leading-relaxed text-pizarra-suave\">Proceso pergamino a café oro, controlo merma y humedad, y recibo solicitudes de pilado.</p><span class=\"mt-4 inline-block text-sm font-bold text-latte underline-offset-4 group-hover:underline\">Forma parte de la Red →</span></a><a href=\"/afiliate/?rol=exportador\" class=\"group border border-cafe/10 bg-white p-5 transition hover:border-latte hover:shadow-sm\"><p class=\"font-titulo text-xl font-bold text-cafe\">Exportador</p><p class=\"mt-1 text-sm font-semibold text-filtrado-700\">Cierra contenedores con el origen ya documentado.</p><p class=\"mt-3 text-sm leading-relaxed text-pizarra-suave\">Conecto lotes auditados, dossier EUDR, verificadores, catadores y compradores globales.</p><span class=\"mt-4 inline-block text-sm font-bold text-latte underline-offset-4 group-hover:underline\">Forma parte de la Red →</span></a><a href=\"/afiliate/?rol=proveedor\" class=\"group border border-cafe/10 bg-white p-5 transition hover:border-latte hover:shadow-sm\"><p class=\"font-titulo text-xl font-bold text-cafe\">Proveedor de Equipos e Insumos</p><p class=\"mt-1 text-sm font-semibold text-filtrado-700\">Vende tus equipos a quien está montando su negocio ahora.</p><p class=\"mt-3 text-sm leading-relaxed text-pizarra-suave\">Para quienes venden maquinaria, insumos y materiales a la industria del café.</p><span class=\"mt-4 inline-block text-sm font-bold text-latte underline-offset-4 group-hover:underline\">Forma parte de la Red →</span></a><a href=\"/recetas/\" class=\"group border border-cafe/10 bg-white p-5 transition hover:border-latte hover:shadow-sm\"><p class=\"font-titulo text-xl font-bold text-cafe\">Amante del Café</p><p class=\"mt-1 text-sm font-semibold text-filtrado-700\">Toma mejor café en casa, y sabe de qué finca viene.</p><p class=\"mt-3 text-sm leading-relaxed text-pizarra-suave\">Descubre cafés de origen, aprende a catarlos y prepáralos con recetas claras.</p><span class=\"mt-4 inline-block text-sm font-bold text-latte underline-offset-4 group-hover:underline\">Descubre las recetas →</span></a><a href=\"/afiliate/?rol=asesor\" class=\"group border border-cafe/10 bg-white p-5 transition hover:border-latte hover:shadow-sm\"><p class=\"font-titulo text-xl font-bold text-cafe\">Asesor Experto</p><p class=\"mt-1 text-sm font-semibold text-filtrado-700\">Consigue clientes que ya saben que necesitan ayuda.</p><p class=\"mt-3 text-sm leading-relaxed text-pizarra-suave\">Ofrezco asesoría en agronomía, calidad, tueste, gestión o exportación.</p><span class=\"mt-4 inline-block text-sm font-bold text-latte underline-offset-4 group-hover:underline\">Forma parte de la Red →</span></a><a href=\"/afiliate/?rol=bar\" class=\"group border border-cafe/10 bg-white p-5 transition hover:border-latte hover:shadow-sm\"><p class=\"font-titulo text-xl font-bold text-cafe\">Bar / Cafetería</p><p class=\"mt-1 text-sm font-semibold text-filtrado-700\">Diferénciate sirviendo café con nombre y finca.</p><p class=\"mt-3 text-sm leading-relaxed text-pizarra-suave\">Muestro mi barra, menú digital, cafés de origen y necesidades de abastecimiento.</p><span class=\"mt-4 inline-block text-sm font-bold text-latte underline-offset-4 group-hover:underline\">Forma parte de la Red →</span></a><a href=\"/afiliate/?rol=barista\" class=\"group border border-cafe/10 bg-white p-5 transition hover:border-latte hover:shadow-sm\"><p class=\"font-titulo text-xl font-bold text-cafe\">Barista</p><p class=\"mt-1 text-sm font-semibold text-filtrado-700\">Capacítate y consigue barra donde crecer.</p><p class=\"mt-3 text-sm leading-relaxed text-pizarra-suave\">Me capacito en barra, manejo recetas y me vinculo a oportunidades del café de especialidad.</p><span class=\"mt-4 inline-block text-sm font-bold text-latte underline-offset-4 group-hover:underline\">Forma parte de la Red →</span></a></div>";
+      p.insertAdjacentElement('afterend', box);
+    }
+    if (section) {
+      Array.from(section.querySelectorAll('a.group')).forEach(function(card){
+        if (!card.closest('#redcafe-detalle-perfiles')) card.style.display = 'none';
+      });
+    }
+  }
+  addHomeDetails();
+  new MutationObserver(addHomeDetails).observe(document.documentElement, {childList:true, subtree:true});
+})();
+</script>
+<<<scripts>>>
+<script src="/redcafe-referencia.js?v=__VERSION__" defer></script><script src="/redcafe-ruta.js?v=__VERSION__" defer></script><script src="/redcafe-v60-final.js?v=__VERSION__" defer></script><script src="/redcafe-v60-mejoras-obligatorias.js?v=__VERSION__" defer></script><script src="/redcafe-notificaciones.js?v=__VERSION__" defer></script><script src="/redcafe-aviso-pedidos.js?v=__VERSION__" defer></script><script src="/redcafe-reportes.js?v=__VERSION__" defer></script><script src="/redcafe-empleos.js?v=__VERSION__" defer></script><script src="/redcafe-afiliate.js?v=__VERSION__" defer></script><script src="/redcafe-comunidad.js?v=__VERSION__" defer></script><script src="/redcafe-volver-panel.js?v=__VERSION__" defer></script><script src="/redcafe-mejoras-ui.js?v=__VERSION__" defer></script>

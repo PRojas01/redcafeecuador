@@ -1,0 +1,10 @@
+# Rutas donde la imagen NO sirve como compuerta porque muestran tiempo
+# relativo que avanza solo («hace 26 min» → «hace 35 min»). Medido: en
+# /comunidad/ dos capturas separadas nueve minutos difieren en 268 píxeles,
+# y son exactamente los de ese texto.
+#
+# En estas rutas el DOM sí compara al completo: el tiempo relativo se
+# normaliza ahí. Lo que se renuncia es a detectar por imagen un cambio de
+# diseño en ellas, y queda dicho en el informe de la comparación.
+/comunidad
+/panel

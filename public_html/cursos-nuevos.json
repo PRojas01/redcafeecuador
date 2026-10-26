@@ -1,0 +1,597 @@
+[
+ {
+  "id": "legacy-barista-en-casa",
+  "titulo": "Barista en Casa — tu inicio en el mundo del café",
+  "nivel": "Básico",
+  "categoria": "barismo",
+  "duracion": "8 horas presenciales",
+  "acceso": "aprobacion",
+  "autor": "Legacy Specialty Education · aliado de la Red",
+  "autor_id": "",
+  "descripcion": "Curso DE PAGO, dictado por nuestro aliado Legacy Specialty Education. Todo lo que hay que saber sobre la extracción de café y sus fórmulas: filtrados, métodos alternativos y desarrollo del olfato y el paladar. 8 horas presenciales. Valor: 159 USD, que se paga a Legacy.",
+  "introduccion": "ES UN CURSO DE PAGO. La matrícula en la Red es el primer paso y no implica cobro: reservas tu lugar, la administración te pone en contacto con Legacy y el pago se acuerda directamente con ellos.\n\nCurso dictado por Legacy Specialty Education, aliado de Red Café Ecuador. La matrícula se gestiona primero desde la Red; después te ponemos en contacto con Legacy para la fecha, el pago y la logística. Un curso orientado a desarrollar tu olfato y tu paladar para entender cuándo se consigue el balance perfecto en una bebida. Al terminar podrás extraer con distintos métodos con conocimiento, calidad y constancia. Dirección académica: David Miño.",
+  "objetivos": [
+   "Llenar una fórmula de extracción y replicar sabores con ella.",
+   "Distinguir métodos de inmersión y métodos de goteo, y cuándo usar cada uno.",
+   "Ajustar la molienda según el método y entender su efecto en el sabor.",
+   "Reconocer aromas y fragancias, y cómo se distribuyen los sabores en el paladar."
+  ],
+  "modulos": [
+   {
+    "titulo": "Introducción al barismo · Filtrados y métodos alternativos",
+    "minutos": 480,
+    "resumen": "Ocho horas en las que el estudiante recibe la teoría y la valida de inmediato con el paladar. Es el temario oficial de Legacy para este curso.",
+    "lecciones": [
+     {
+      "titulo": "El curso, de un vistazo",
+      "contenido": "Este es el temario oficial que entrega Legacy. El curso es PRESENCIAL en sus sedes; la Red gestiona tu matrícula y luego coordinas fecha directamente con ellos.\n\nSedes de Legacy: LA TEJEDORA, Distrito Creativo — Oswaldo Guayasamín, Av. Siena km 11, Cumbayá. Y en Quito: Avenida Rumipamba y 10 de Agosto (TERMALIMEX).\n\nCondiciones de Legacy: los pagos o abonos no son reembolsables. Se admite cambio de fecha hasta 10 días antes de que empiece el curso.",
+      "bloques": [
+       {
+        "tipo": "imagen",
+        "url": "/uploads/user-content/legacy-barista-en-casa.jpg",
+        "alt": "Portada del curso Barista en Casa de Legacy",
+        "pie": "Material original de Legacy Specialty Education."
+       }
+      ]
+     },
+     {
+      "titulo": "Paladar, aroma y migración de sabor",
+      "contenido": "• Papilas gustativas y su distribución en la lengua.\n• Aromas y fragancias que el ser humano puede diferenciar.\n• Migración de sabor."
+     },
+     {
+      "titulo": "Ratio, turbulencia y preinfusión",
+      "contenido": "• Ratio: cantidad de agua frente a cantidad de café.\n• Turbulencias y preinfusiones."
+     },
+     {
+      "titulo": "Métodos de inmersión frente a métodos de goteo",
+      "contenido": "• Diferencias, cuándo conviene cada uno y qué aporta al perfil de la taza."
+     },
+     {
+      "titulo": "Molienda",
+      "contenido": "• Molienda y velocidad de migración de sabor.\n• Molienda según el método de extracción y sus cualidades físicas."
+     },
+     {
+      "titulo": "La fórmula de extracción",
+      "contenido": "• Cómo llenar una fórmula de extracción.\nCon el conocimiento adquirido se pueden llenar las fórmulas para replicar sabores: es lo que da la confianza de repetir un buen café y no depender de la suerte."
+     }
+    ]
+   }
+  ],
+  "materiales": [
+   {
+    "tipo": "archivo",
+    "titulo": "Pensum oficial (PDF de Legacy)",
+    "url": "/uploads/user-content/legacy-pensum-barista-en-casa.pdf",
+    "nota": "Documento original del aliado, tal cual lo entrega."
+   },
+   {
+    "tipo": "enlace",
+    "titulo": "Escribir a Legacy por WhatsApp",
+    "url": "https://wa.me/593998569355?text=Hola%20Legacy,%20vengo%20de%20Red%20Cafe%20Ecuador.%20Me%20interesa%20el%20curso%20Barista%20en%20Casa.",
+    "nota": "Consultas sobre fechas, cupos y forma de pago. Atiende el equipo de Legacy."
+   },
+   {
+    "tipo": "enlace",
+    "titulo": "Sitio web de Legacy",
+    "url": "https://legacycafesas.com/",
+    "nota": "Academia, cafetería, consultoría y desarrollo de producto."
+   },
+   {
+    "tipo": "enlace",
+    "titulo": "Legacy en Instagram",
+    "url": "https://www.instagram.com/legacyacademics/",
+    "nota": "@legacyacademics — la cuenta de la academia."
+   },
+   {
+    "tipo": "enlace",
+    "titulo": "Legacy Specialty Coffee en Instagram",
+    "url": "https://www.instagram.com/legacy_specialty_coffee/"
+   },
+   {
+    "tipo": "enlace",
+    "titulo": "Legacy en Facebook",
+    "url": "https://www.facebook.com/LegacySpecialtyCoffee"
+   }
+  ],
+  "recursos": [
+   "Legacy Specialty Education — Pensum Barista en Casa (documento del aliado).",
+   "Dirección académica: David Miño."
+  ],
+  "cierre": "Para reservar cupo: matricúlate aquí y la administración de la Red te pone en contacto con Legacy. Condiciones de Legacy: los pagos o abonos no son reembolsables. Se admite cambio de fecha hasta 10 días antes de que empiece el curso."
+ },
+ {
+  "id": "legacy-barismo-profesional",
+  "titulo": "Barismo Profesional — el curso completo",
+  "nivel": "Intermedio",
+  "categoria": "barismo",
+  "duracion": "25 h presenciales + 50 h de práctica",
+  "acceso": "aprobacion",
+  "autor": "Legacy Specialty Education · aliado de la Red",
+  "autor_id": "",
+  "descripcion": "Curso DE PAGO, dictado por nuestro aliado Legacy Specialty Education. Para trabajar como barista e iniciarte en el tueste y la cata a nivel profesional: espresso, texturización de leche, arte latte y manejo de barra real. Valor: 399 USD, que se paga a Legacy.",
+  "introduccion": "ES UN CURSO DE PAGO. La matrícula en la Red es el primer paso y no implica cobro: reservas tu lugar, la administración te pone en contacto con Legacy y el pago se acuerda directamente con ellos.\n\nCurso dictado por Legacy Specialty Education, aliado de Red Café Ecuador. La matrícula se gestiona primero desde la Red; después te ponemos en contacto con Legacy para la fecha, el pago y la logística. Tres módulos que van desde las bases hasta lo profesional, con horas reales de práctica en la cafetería de Legacy. Al completar el curso entras en su listado de bolsa de empleo para optar a trabajar como profesional de barismo. Dirección académica: David Miño.",
+  "objetivos": [
+   "Preparar café con precisión y coherencia en métodos alternativos.",
+   "Manejar la máquina de espresso y calibrar molienda y sabor.",
+   "Texturizar leche y hacer figuras de arte latte (corazón y tulipán).",
+   "Organizar y operar una barra profesional (mise en place) y el menú clásico de bebidas."
+  ],
+  "modulos": [
+   {
+    "titulo": "Módulo 1 · Introducción al barismo, filtrados y métodos alternativos",
+    "minutos": 480,
+    "resumen": "Al terminar podrás preparar café con precisión y coherencia, dominando métodos alternativos y desarrollando olfato y paladar a nivel profesional.",
+    "lecciones": [
+     {
+      "titulo": "El curso, de un vistazo",
+      "contenido": "Temario oficial de Legacy. Curso PRESENCIAL. Incluye 25 horas de clases, 25 horas de práctica autónoma en arte latte y 25 horas de práctica en barra profesional (opcional).\n\nSedes de Legacy: LA TEJEDORA, Distrito Creativo — Oswaldo Guayasamín, Av. Siena km 11, Cumbayá. Y en Quito: Avenida Rumipamba y 10 de Agosto (TERMALIMEX).\n\nCondiciones de Legacy: los pagos o abonos no son reembolsables. Se admite cambio de fecha hasta 10 días antes de que empiece el curso.",
+      "bloques": [
+       {
+        "tipo": "imagen",
+        "url": "/uploads/user-content/legacy-barismo-profesional.jpg",
+        "alt": "Portada del curso Barismo Profesional de Legacy",
+        "pie": "Material original de Legacy Specialty Education."
+       }
+      ]
+     },
+     {
+      "titulo": "Sensorial y fundamentos de extracción",
+      "contenido": "• Papilas gustativas y su distribución en la lengua.\n• Aromas y fragancias que puede distinguir el ser humano.\n• Migración de sabor.\n• Ratio: proporción ideal de agua y café.\n• Turbulencias y preinfusiones."
+     },
+     {
+      "titulo": "Molienda y métodos",
+      "contenido": "• Molienda: influencia en la velocidad de migración del sabor.\n• Métodos de inmersión frente a métodos de goteo.\n• Tipos de molienda según el método de extracción."
+     },
+     {
+      "titulo": "Fórmula de extracción y principios de cata",
+      "contenido": "• Cómo llenar correctamente una fórmula de extracción.\n• Principios básicos de cata."
+     }
+    ]
+   },
+   {
+    "titulo": "Módulo 2 · Introducción al espresso y texturización de leche",
+    "minutos": 480,
+    "resumen": "Técnicas profesionales para el espresso y la texturización inicial de la leche, más las bases del arte latte. Se aplica lo sensorial del módulo 1 para calibrar el sabor.",
+    "lecciones": [
+     {
+      "titulo": "La máquina y la extracción",
+      "contenido": "• Introducción y manejo de la máquina de espresso.\n• Migración de sabor en el espresso.\n• Ratios ideales para espresso.\n• Los pasos clave de la extracción perfecta."
+     },
+     {
+      "titulo": "Calibración",
+      "contenido": "• Calibración de molienda para espresso.\n• Calibración sensorial del sabor.\n• Réplica de fórmulas de espresso."
+     },
+     {
+      "titulo": "Leche y arte latte",
+      "contenido": "• Técnicas básicas para texturizar leche.\n• Introducción al arte latte."
+     }
+    ]
+   },
+   {
+    "titulo": "Módulo 3 · Manejo de estación, espresso, arte latte y bebidas clásicas",
+    "minutos": 600,
+    "resumen": "Al terminar estarás preparado para manejar una barra profesional con precisión técnica, controlar temperaturas y presentar bebidas con calidad profesional.",
+    "lecciones": [
+     {
+      "titulo": "Calibración avanzada y arte latte",
+      "contenido": "• Calibración precisa del espresso con tres perfiles distintos de café.\n• Arte latte: figuras de corazón y tulipán."
+     },
+     {
+      "titulo": "La barra: organización y menú",
+      "contenido": "• Organización profesional (mise en place) de una barra de café.\n• Preparación del menú clásico de bebidas: con agua, con leche y dulces.\n• Práctica intensiva en barra real."
+     }
+    ]
+   }
+  ],
+  "materiales": [
+   {
+    "tipo": "archivo",
+    "titulo": "Pensum oficial (PDF de Legacy)",
+    "url": "/uploads/user-content/legacy-pensum-barismo-profesional.pdf",
+    "nota": "Documento original del aliado, tal cual lo entrega."
+   },
+   {
+    "tipo": "enlace",
+    "titulo": "Escribir a Legacy por WhatsApp",
+    "url": "https://wa.me/593998569355?text=Hola%20Legacy,%20vengo%20de%20Red%20Cafe%20Ecuador.%20Me%20interesa%20el%20curso%20Barismo%20Profesional.",
+    "nota": "Consultas sobre fechas, cupos y forma de pago. Atiende el equipo de Legacy."
+   },
+   {
+    "tipo": "enlace",
+    "titulo": "Sitio web de Legacy",
+    "url": "https://legacycafesas.com/",
+    "nota": "Academia, cafetería, consultoría y desarrollo de producto."
+   },
+   {
+    "tipo": "enlace",
+    "titulo": "Legacy en Instagram",
+    "url": "https://www.instagram.com/legacyacademics/",
+    "nota": "@legacyacademics — la cuenta de la academia."
+   },
+   {
+    "tipo": "enlace",
+    "titulo": "Legacy Specialty Coffee en Instagram",
+    "url": "https://www.instagram.com/legacy_specialty_coffee/"
+   },
+   {
+    "tipo": "enlace",
+    "titulo": "Legacy en Facebook",
+    "url": "https://www.facebook.com/LegacySpecialtyCoffee"
+   }
+  ],
+  "recursos": [
+   "Legacy Specialty Education — Pensum Barismo Profesional (documento del aliado).",
+   "Dirección académica: David Miño.",
+   "Al completar el curso, Legacy incluye al alumno en su bolsa de empleo."
+  ],
+  "cierre": "Para reservar cupo: matricúlate aquí y la administración de la Red te pone en contacto con Legacy. Condiciones de Legacy: los pagos o abonos no son reembolsables. Se admite cambio de fecha hasta 10 días antes de que empiece el curso."
+ },
+ {
+  "id": "legacy-barista-avanzado",
+  "titulo": "Barista Avanzado — cafeología aplicada",
+  "nivel": "Avanzado",
+  "categoria": "barismo",
+  "duracion": "27 horas + prácticas en tostadora",
+  "acceso": "aprobacion",
+  "autor": "Legacy Specialty Education · aliado de la Red",
+  "autor_id": "",
+  "descripcion": "Curso DE PAGO, dictado por nuestro aliado Legacy Specialty Education. Recorre la cadena completa —finca, café verde, exportación, tueste y extracción— con salida a finca, catación y práctica en tostadora. El valor lo confirma Legacy al reservar cupo: no consta en su pensum.",
+  "introduccion": "ES UN CURSO DE PAGO. La matrícula en la Red es el primer paso y no implica cobro: reservas tu lugar, la administración te pone en contacto con Legacy y el pago se acuerda directamente con ellos.\n\nCurso dictado por Legacy Specialty Education, aliado de Red Café Ecuador. La matrícula se gestiona primero desde la Red; después te ponemos en contacto con Legacy para la fecha, el pago y la logística. Para baristas que quieren entender el café más allá de la barra. Incluye inmersión directa en origen: visita a finca cafetera, interacción con exportadores y horas prácticas en tostadora profesional. Dirección académica: David Miño.",
+  "objetivos": [
+   "Ampliar el conocimiento técnico del barista sobre la cadena completa del café.",
+   "Comprender cómo los procesos en finca influyen en el perfil sensorial.",
+   "Desarrollar habilidades avanzadas de catación y análisis de café.",
+   "Introducir los fundamentos del tueste y su impacto en la extracción.",
+   "Entregar herramientas reales para desenvolverse profesionalmente en la industria."
+  ],
+  "modulos": [
+   {
+    "titulo": "Día 1 · Salida de campo a finca cafetera",
+    "minutos": 420,
+    "resumen": "Finca Frajares, noroccidente de Pichincha. Salida desde Legacy Café Cumbayá a las 09h00 y retorno aproximado a las 16h00. Transporte y alimentación incluidos.",
+    "lecciones": [
+     {
+      "titulo": "El curso, de un vistazo",
+      "contenido": "Temario oficial de Legacy. Curso PRESENCIAL con salidas de campo.\n\nSedes de Legacy: LA TEJEDORA, Distrito Creativo — Oswaldo Guayasamín, Av. Siena km 11, Cumbayá. Y en Quito: Avenida Rumipamba y 10 de Agosto (TERMALIMEX).\n\nCondiciones de Legacy: los pagos o abonos no son reembolsables. Se admite cambio de fecha hasta 10 días antes de que empiece el curso.",
+      "bloques": [
+       {
+        "tipo": "imagen",
+        "url": "/uploads/user-content/legacy-barista-avanzado.jpg",
+        "alt": "Portada del curso Barista Avanzado de Legacy",
+        "pie": "Material original de Legacy Specialty Education."
+       }
+      ]
+     },
+     {
+      "titulo": "El origen de los sabores, antes del tueste",
+      "contenido": "• Germinación de semillas.\n• Variedades genéticas de café.\n• Procesos de fermentación.\n• Procesos de secado.\n• Comprensión del origen de los sabores del café antes del tueste."
+     }
+    ]
+   },
+   {
+    "titulo": "Día 2 · Agua y extracción avanzada",
+    "minutos": 240,
+    "resumen": "El agua es uno de los factores más determinantes en la extracción del café.",
+    "lecciones": [
+     {
+      "titulo": "Química del agua y extracción",
+      "contenido": "• Cata comparativa de aguas.\n• Química del agua aplicada al café.\n• Extracción avanzada.\n• Extracción con dos tipos distintos de agua.\n• Relación entre ratio y molienda.\n• Extracción utilizando método Paragon."
+     }
+    ]
+   },
+   {
+    "titulo": "Día 3 · Análisis sensorial avanzado",
+    "minutos": 240,
+    "resumen": "Sesión intensiva de catación para desarrollar habilidades sensoriales.",
+    "lecciones": [
+     {
+      "titulo": "Catación comparativa",
+      "contenido": "• Cata de distintos procesos de fermentación.\n• Cata de distintas genéticas de café.\n• Cata de defectos.\n• Cata comparativa de perfiles de tueste."
+     }
+    ]
+   },
+   {
+    "titulo": "Día 4 · Fundamentos del tueste",
+    "minutos": 240,
+    "resumen": "Introducción técnica al proceso de tueste del café.",
+    "lecciones": [
+     {
+      "titulo": "Cómo se comporta el grano en el tueste",
+      "contenido": "• Reglas básicas del tueste.\n• Rendimiento del café.\n• Rate of Rise (RoR).\n• Desarrollo del café.\n• Primer crack.\n• Fuerzas endotérmicas.\n• Fuerzas exotérmicas."
+     }
+    ]
+   },
+   {
+    "titulo": "Día 5 · Práctica de tueste",
+    "minutos": 240,
+    "resumen": "Sesión práctica en tostadora aplicando los conceptos aprendidos.",
+    "lecciones": [
+     {
+      "titulo": "En la tostadora",
+      "contenido": "• Práctica de tueste.\n• Cata comparativa de distintos perfiles de tueste."
+     }
+    ]
+   },
+   {
+    "titulo": "Día 6 · Evaluación y práctica final",
+    "minutos": 240,
+    "resumen": "Cierre del curso con evaluación y retroalimentación técnica.",
+    "lecciones": [
+     {
+      "titulo": "Evaluación",
+      "contenido": "• Práctica aplicada.\n• Evaluación final del curso.\n• Retroalimentación técnica."
+     }
+    ]
+   },
+   {
+    "titulo": "Práctica profesional en tostadora",
+    "minutos": 600,
+    "resumen": "10 horas de práctica en tostadora y una semana de práctica en la tostadora de Cafexporto, trabajando bajo supervisión.",
+    "lecciones": [
+     {
+      "titulo": "Qué incluye y qué no",
+      "contenido": "Las horas de práctica en Cafexporto están INCLUIDAS en el curso.\n\nIMPORTANTE — corren por cuenta de cada estudiante:\n• Alimentación\n• Hospedaje\n• Transporte"
+     },
+     {
+      "titulo": "La semana en Cafexporto, día a día",
+      "contenido": "Lunes — Inducción, recorrido de la planta (trillado, clasificadora, densimétrica) y tueste de al menos cinco perfiles en LINK para la mesa de cata.\nMartes — Cata de los perfiles, control de calidad y recolección de muestras.\nMiércoles — Identificación de defectos en café verde y filtrados en V60.\nJueves — Cata con puntuación y comparación con el equipo de cata.\nViernes — Visita a la Hacienda La Papaya: banco genético, poscosecha y el sistema de monitoreo Integrated Coffee Pulse."
+     },
+     {
+      "titulo": "Requisitos de Legacy para las prácticas en Cafexporto",
+      "contenido": "Legacy exige, para garantizar el estándar:\n1. Formación: haber completado Barista Profesional y/o Avanzado, con un mínimo de 6 Nucleus Camp.\n2. Barra: graduarse de un curso profesional y cumplir al menos 40 horas de práctica en barra.\n3. Tueste: operar con destreza la tostadora LINK, 5 horas de tueste, y aprobar prueba teórica y práctica.\n4. Material técnico: leer y comprender la Guía de Defectos del Café Verde de la SCA.\n5. Cata: acompañar sesiones de cata con regularidad y participar en un mínimo de sesiones en Legacy."
+     }
+    ]
+   }
+  ],
+  "materiales": [
+   {
+    "tipo": "archivo",
+    "titulo": "Pensum oficial (PDF de Legacy)",
+    "url": "/uploads/user-content/legacy-pensum-barista-avanzado.pdf",
+    "nota": "Documento original del aliado, con el cronograma completo."
+   },
+   {
+    "tipo": "enlace",
+    "titulo": "Escribir a Legacy por WhatsApp",
+    "url": "https://wa.me/593998569355?text=Hola%20Legacy%2C%20vengo%20de%20Red%20Caf%C3%A9%20Ecuador.%20Me%20interesa%20el%20curso%20Barista%20Avanzado.",
+    "nota": "Consultas sobre fechas, cupos y forma de pago. Atiende el equipo de Legacy."
+   },
+   {
+    "tipo": "enlace",
+    "titulo": "Sitio web de Legacy",
+    "url": "https://legacycafesas.com/",
+    "nota": "Academia, cafetería, consultoría y desarrollo de producto."
+   },
+   {
+    "tipo": "enlace",
+    "titulo": "Legacy en Instagram",
+    "url": "https://www.instagram.com/legacyacademics/",
+    "nota": "@legacyacademics — la cuenta de la academia."
+   },
+   {
+    "tipo": "enlace",
+    "titulo": "Legacy Specialty Coffee en Instagram",
+    "url": "https://www.instagram.com/legacy_specialty_coffee/"
+   },
+   {
+    "tipo": "enlace",
+    "titulo": "Legacy en Facebook",
+    "url": "https://www.facebook.com/LegacySpecialtyCoffee"
+   }
+  ],
+  "recursos": [
+   "Legacy Specialty Education — Pensum Barista Avanzado (documento del aliado).",
+   "SCA — Guía de Defectos del Café Verde (lectura exigida por Legacy).",
+   "Prácticas en la exportadora Cafexporto y visita a Hacienda La Papaya."
+  ],
+  "cierre": "Para reservar cupo: matricúlate aquí y la administración de la Red te pone en contacto con Legacy. Condiciones de Legacy: los pagos o abonos no son reembolsables. Se admite cambio de fecha hasta 10 días antes de que empiece el curso."
+ },
+ {
+  "id": "cafe-de-especialidad-de-la-finca-a-la-taza",
+  "titulo": "Introducción al café de calidad: de la finca a la taza",
+  "nivel": "Básico",
+  "categoria": "calidad",
+  "duracion": "1 h 30 min + degustación presencial",
+  "acceso": "abierto",
+  "autor": "Red Café Ecuador",
+  "autor_id": "",
+  "descripcion": "CURSO GRATUITO de Red Café Ecuador. Qué es un café de especialidad y qué hace falta en cada eslabón para conseguirlo: finca, beneficio, pilado, tueste y taza. Para que productor, comprador, tostador, barista y consumidor hablen el mismo idioma. Hora y media en línea, más una sesión presencial de degustación.",
+  "introduccion": "Gratuito para cualquier miembro de la Red: basta con tener cuenta y pulsar matricularme. Hora y media de lectura en línea, a tu ritmo, más una sesión presencial de degustación que se agenda por provincia.\n\n«Café de especialidad» es hoy la etiqueta más usada y peor entendida del sector. No es una palabra de marketing: es una medición, con protocolos y umbrales concretos. Y no la consigue un solo eslabón: se gana en la finca, se conserva en el beneficio y el pilado, se revela en el tueste y se demuestra en la taza — o se pierde en cualquiera de esos pasos.\n\nEste curso recorre la cadena completa en ese orden. Al final sabrá qué mirar, qué preguntar y qué exigir según el lugar que ocupe: vendiendo, comprando, tostando, sirviendo o simplemente tomándose un café.",
+  "objetivos": [
+   "Explicar qué distingue a un café de especialidad de uno comercial, con criterios medibles.",
+   "Reconocer los requisitos de cada eslabón: finca, beneficio, pilado, almacenamiento y tueste.",
+   "Leer una ficha técnica de café verde y saber qué preguntas hacer antes de comprar o vender.",
+   "Identificar los defectos más frecuentes y en qué punto de la cadena se originan.",
+   "Participar en una catación básica y describir lo que percibe con vocabulario útil."
+  ],
+  "modulos": [
+   {
+    "titulo": "1 · Qué es café de especialidad (y qué no)",
+    "minutos": 15,
+    "resumen": "La diferencia entre especialidad, café de origen y café comercial no está en el envase: está en una medición con reglas escritas.",
+    "lecciones": [
+     {
+      "titulo": "Cómo está armado este curso",
+      "contenido": "Seis módulos en línea, de lectura, que siguen el recorrido del café en el orden en que ocurre: qué es la especialidad, la finca, el pilado, el tueste, la taza y la negociación. Hora y media en total, a tu ritmo, y el avance se guarda en tu perfil.\n\nAl final hay una séptima parte presencial: una degustación guiada que se agenda por provincia. No hace falta para terminar el curso, pero es donde lo leído se vuelve criterio.\n\nEs gratuito para cualquier miembro de la Red.",
+      "bloques": [
+       {
+        "tipo": "imagen",
+        "url": "/uploads/user-content/redcafe-curso-calidad.jpg",
+        "alt": "Cereza, pergamino, café tostado y una taza servida",
+        "pie": "El mismo grano en cuatro momentos: cosecha, beneficio, tueste y taza."
+       }
+      ]
+     },
+     {
+      "titulo": "La definición corta, y por qué importa",
+      "contenido": "Un café se considera de especialidad cuando, evaluado con el protocolo de catación de la Specialty Coffee Association (SCA) por un catador acreditado, alcanza al menos 80 puntos sobre 100 y su muestra de café verde cumple los límites de defectos de grado especialidad.\n\nDos consecuencias que conviene tener claras desde el principio:\n\n• No lo decide quien vende. Lo decide una evaluación con protocolo, hecha por alguien formado para ello. Decir «mi café es de especialidad» sin una cata que lo respalde es una afirmación sin sustento.\n• El puntaje describe una muestra, no una finca ni una marca para siempre. Cambia con la cosecha, el lote, el beneficio y hasta el tueste con que se evaluó.\n\nDesde 2024 la SCA viene incorporando el Coffee Value Assessment (CVA), que separa la evaluación descriptiva de la afectiva. Si va a certificar o negociar con puntaje, confirme con su catador qué protocolo y qué versión se usó."
+     },
+     {
+      "titulo": "Especialidad, origen, orgánico: no son lo mismo",
+      "contenido": "Se confunden a diario y significan cosas distintas:\n\n• Especialidad — calidad medida en taza y en grano verde. Es un resultado.\n• Origen único / single origin — trazabilidad: se sabe de dónde viene. No garantiza calidad.\n• Orgánico — una certificación sobre el manejo agrícola. No mide sabor.\n• Comercio justo — un esquema de precio y relación comercial. Tampoco mide sabor.\n\nUn café puede ser orgánico, de origen único, de comercio justo… y puntuar 76. Y uno sin ninguna certificación puede puntuar 86."
+     },
+     {
+      "titulo": "Qué gana cada eslabón cuando el café sube de calidad",
+      "contenido": "• Productor — sale de la referencia de bolsa y negocia por taza. Exige más trabajo en cosecha y beneficio, y no todo el volumen llega.\n• Comprador y exportador — un producto diferenciable con historia verificable.\n• Tostador — margen para un perfil propio; un café malo no se arregla tostando.\n• Barista y cafetería — una carta que se sostiene y un cliente que vuelve.\n• Consumidor — sabe qué está pagando y por qué."
+     }
+    ]
+   },
+   {
+    "titulo": "2 · En la finca: donde se gana o se pierde",
+    "minutos": 18,
+    "resumen": "La calidad no se añade después. El techo lo pone la finca; lo que viene detrás solo puede conservarlo o estropearlo.",
+    "lecciones": [
+     {
+      "titulo": "Variedad, altura y sombra",
+      "contenido": "• Variedad — determina el potencial de taza y la resistencia a enfermedades. En Ecuador conviven Typica, Bourbón, Caturra, Sidra, Geisha y mejoradas como Catiguá y Costa Rica 95, entre otras. El INIAP mantiene recomendaciones por zona: consúltelas antes de sembrar, no después.\n• Altura — no es un sello de calidad por sí sola, pero a mayor altitud el grano suele madurar más lento y desarrollar más acidez y dulzor.\n• Sombra — regula temperatura y humedad y alarga la vida productiva del cafetal."
+     },
+     {
+      "titulo": "Cosecha selectiva: el paso que más pesa",
+      "contenido": "Recolectar solo cereza madura es, en la práctica, la decisión que más afecta la taza y la que más se descuida.\n\n• Un grano verde aporta astringencia; uno sobremaduro o fermentado en la planta aporta sabores a vinagre o moho.\n• La cereza madura debe estar firme y de color uniforme según la variedad — rojo intenso o amarillo, según corresponda.\n• Pasar varias veces por el mismo lote cuesta más jornales, y es exactamente lo que separa un café de 78 de uno de 84.\n\nQué anotar: fecha de cada pase, kilos de cereza y a qué lote va."
+     },
+     {
+      "titulo": "Beneficio: lavado, natural, honey",
+      "contenido": "El beneficio decide buena parte del perfil:\n\n• Lavado — se despulpa, fermenta y lava. Perfil más limpio, acidez más marcada.\n• Natural — se seca la cereza entera. Más cuerpo y notas a fruta madura; más riesgo de defecto si el secado falla.\n• Honey / semilavado — se despulpa sin lavar del todo, dejando mucílago. Punto intermedio.\n\nEn todos: la fermentación se controla por tiempo Y temperatura, no por costumbre. Pasarse produce sabores a vinagre, cebolla o fermento que ya no se corrigen.\n\nQué anotar: hora de inicio y fin, temperatura ambiente y cómo se cortó la fermentación."
+     },
+     {
+      "titulo": "Secado: el error más caro",
+      "contenido": "El objetivo es llegar a una humedad estable, habitualmente entre 10 % y 12 %, y hacerlo de forma pareja.\n\n• Secar demasiado rápido o al sol directo del mediodía agrieta el grano.\n• Secar de menos deja el café expuesto a hongos y a perder calidad en semanas.\n• Un secado desigual da tueste desigual, y eso sí se nota en la taza.\n\nUn medidor de humedad calibrado cuesta mucho menos que un lote rechazado. Verifique el valor exigido por su comprador: puede ser más estricto."
+     }
+    ]
+   },
+   {
+    "titulo": "3 · Pilado, clasificación y almacenamiento",
+    "minutos": 14,
+    "resumen": "Aquí el café ya no mejora. Solo se conserva o se arruina.",
+    "lecciones": [
+     {
+      "titulo": "Trilla y clasificación",
+      "contenido": "Del pergamino sale el café verde u oro. Se clasifica por:\n\n• Tamaño (criba o malla) — uniformidad para que el tueste sea parejo.\n• Densidad — el grano denso suele venir de mayor altitud y maduración lenta.\n• Color y defectos — manual o por máquina clasificadora.\n\nLa uniformidad no es estética: un lote disparejo se tuesta disparejo, y eso baja el puntaje."
+     },
+     {
+      "titulo": "Defectos: cuáles son y de dónde vienen",
+      "contenido": "El protocolo de la SCA para café verde distingue defectos primarios (categoría 1) y secundarios (categoría 2). Para grado especialidad, la muestra no debe presentar defectos primarios completos y el total de defectos completos es muy limitado en una muestra de 350 g. Confirme los umbrales vigentes con su catador o con el documento de la SCA antes de comprometer un lote.\n\nDe dónde viene cada uno, que es lo útil:\n• Negro, agrio, fermentado → cosecha de cereza pasada o fermentación descontrolada.\n• Mohoso → secado insuficiente o almacenamiento húmedo.\n• Broca → plaga en campo.\n• Partido, mordido, cortado → mal ajuste de la despulpadora o de la trilla.\n• Pergamino, cáscara → trilla incompleta.\n\nCasi todos se originan antes del pilado. Por eso el pilador no puede salvar un café: solo puede evitar empeorarlo."
+     },
+     {
+      "titulo": "Almacenar sin perder lo ganado",
+      "contenido": "• Lugar fresco, seco y ventilado, sin contacto directo con el piso ni la pared.\n• Lejos de combustibles, agroquímicos, cebolla, pescado: el café absorbe olores.\n• Sacos limpios, y para lotes finos conviene barrera de humedad (tipo GrainPro o similar).\n• Un café de especialidad se vende fresco. Cada mes de bodega le resta."
+     }
+    ]
+   },
+   {
+    "titulo": "4 · Tueste: revelar, no maquillar",
+    "minutos": 12,
+    "resumen": "El tueste no crea calidad; la muestra o la esconde.",
+    "lecciones": [
+     {
+      "titulo": "Qué pasa dentro del grano",
+      "contenido": "El tueste transforma azúcares y ácidos en los compuestos que dan aroma y sabor. Los hitos que todo comprador debería poder nombrar:\n\n• Fase de secado — el grano pierde humedad.\n• Reacción de Maillard y caramelización — se forma el color y buena parte del aroma.\n• Primer crack — el grano se expande y suena; a partir de ahí se juega el desarrollo.\n• Desarrollo — el tiempo después del primer crack define acidez y cuerpo.\n\nUn tueste demasiado claro deja sabor a hierba y acidez agresiva; uno demasiado oscuro tapa el origen con amargor y notas a quemado. Ninguno de los dos arregla un café defectuoso."
+     },
+     {
+      "titulo": "Tueste para cata y tueste para venta",
+      "contenido": "No son el mismo. Para evaluar un café se usa un tueste claro y estandarizado, pensado para que se note lo que el grano trae, no la habilidad del tostador. Si le ofrecen un puntaje, pregunte con qué tueste se evaluó."
+     }
+    ]
+   },
+   {
+    "titulo": "5 · La taza: cómo se sabe que un café es bueno",
+    "minutos": 16,
+    "resumen": "La catación es un método, no una opinión. Y se puede aprender lo suficiente para dejar de comprar a ciegas.",
+    "lecciones": [
+     {
+      "titulo": "El protocolo, en breve",
+      "contenido": "La catación estandarizada existe para que dos personas en dos países evalúen lo mismo de la misma manera. En líneas generales:\n\n• Proporción fija de café y agua — el protocolo de la SCA usa aproximadamente 8,25 g por 150 ml.\n• Molienda gruesa y uniforme, recién molida.\n• Agua limpia, sin sabor propio, cerca de 93 °C.\n• Se huele en seco, se huele al verter, se rompe la costra a los 4 minutos y se prueba cuando baja de temperatura.\n\nConfirme los valores exactos con el documento vigente de la SCA: los protocolos se revisan."
+     },
+     {
+      "titulo": "Qué se evalúa y qué significa cada cosa",
+      "contenido": "• Fragancia y aroma — en seco y en húmedo.\n• Sabor y sabor residual — lo que domina y lo que queda.\n• Acidez — se juzga por calidad, no por cantidad: brillante y dulce es buena; avinagrada, no.\n• Cuerpo — la sensación en boca, de ligera a densa.\n• Balance — si nada se dispara ni falta.\n• Uniformidad, taza limpia y dulzor — que todas las tazas del lote se parezcan y no haya sabores extraños.\n\nLos puntajes altos no vienen de un rasgo espectacular, sino de que no falle nada."
+     },
+     {
+      "titulo": "Cinco preguntas antes de comprar un café",
+      "contenido": "Si no es catador, con estas cinco ya no compra a ciegas:\n\n1. ¿Tiene puntaje de catación? ¿Quién lo cató, cuándo y con qué protocolo?\n2. ¿De qué lote y de qué cosecha es la muestra que probé?\n3. ¿Qué humedad tiene y cuándo se midió?\n4. ¿Qué beneficio se usó y cómo se controló la fermentación?\n5. ¿Cuánto volumen hay con esa misma calidad?\n\nLa quinta es la que más disgustos evita: muestras excelentes con lotes que no alcanzan."
+     }
+    ]
+   },
+   {
+    "titulo": "6 · Comprar y vender con criterio",
+    "minutos": 15,
+    "resumen": "Lo mínimo para que una negociación no dependa de la confianza a ciegas.",
+    "lecciones": [
+     {
+      "titulo": "La ficha técnica: qué debe decir",
+      "contenido": "Un lote serio se presenta con: finca y productor · provincia y altitud · variedad · proceso · fecha de cosecha · humedad y fecha de medición · puntaje, catador y fecha · cantidad disponible y presentación · precio y condiciones.\n\nSi falta la mitad, no es que el café sea malo: es que nadie lo ha medido. Y lo que no se mide no se puede negociar por calidad."
+     },
+     {
+      "titulo": "Muestra, contramuestra y acuerdo",
+      "contenido": "• Muestra representativa — del lote real, no de lo mejor del lote.\n• Contramuestra — las dos partes guardan una porción sellada de lo que se acordó.\n• Por escrito — cantidad, calidad acordada, humedad máxima, plazo, forma de pago y qué pasa si el lote llega distinto.\n\nRed Café Ecuador no interviene en los pagos ni retiene dinero. Verifique a la otra parte, pida muestra y acuerde por escrito antes de mover dinero."
+     },
+     {
+      "titulo": "Trazabilidad: ya no es opcional",
+      "contenido": "Los mercados exigentes piden saber de dónde viene cada saco. Para el mercado europeo, el reglamento de deforestación (EUDR) obliga a demostrar el origen con datos de geolocalización del predio.\n\nConviene tenerlo ordenado desde ahora: quien no pueda demostrar el origen quedará fuera de esos compradores, tenga el café que tenga. Consulte el calendario vigente: las fechas de aplicación se han movido más de una vez."
+     }
+    ]
+   },
+   {
+    "titulo": "7 · Sesión presencial: degustación guiada",
+    "minutos": 0,
+    "resumen": "Dos horas presenciales que se agendan aparte, por provincia. No cuentan dentro de la hora y media en línea. Lo anterior se entiende leyendo; esto solo se aprende probando.",
+    "lecciones": [
+     {
+      "titulo": "Qué se hace en la sesión",
+      "contenido": "• Cata comparativa de tres a cinco cafés de distintos orígenes y procesos.\n• Un café con defecto evidente al lado de uno limpio: es la forma más rápida de aprender a reconocerlo.\n• Comparación del mismo café en dos tuestes distintos.\n• Ejercicio de descripción con vocabulario común, para dejar de decir «rico» y empezar a decir qué.\n• Llenado de una ficha de cata sencilla, para llevársela."
+     },
+     {
+      "titulo": "Cómo se agenda",
+      "contenido": "Las sesiones se convocan por zona, según cuántos miembros haya inscritos. Al matricularse queda en la lista; cuando haya fecha para su provincia le avisamos por la campana y por WhatsApp.\n\nLos módulos en línea se pueden hacer antes, y es lo recomendable: la sesión rinde mucho más si llega con el vocabulario aprendido."
+     }
+    ]
+   }
+  ],
+  "materiales": [
+   {
+    "tipo": "enlace",
+    "titulo": "Avisarme cuando haya degustación en mi provincia",
+    "url": "https://wa.me/593968641376?text=Hola%2C%20termin%C3%A9/estoy%20haciendo%20el%20curso%20de%20caf%C3%A9%20de%20calidad%20y%20quiero%20que%20me%20avisen%20de%20la%20pr%C3%B3xima%20sesi%C3%B3n%20presencial%20de%20degustaci%C3%B3n%20en%20mi%20provincia.",
+    "nota": "Escribe por WhatsApp a Red Café Ecuador y te anotamos en la lista de tu zona."
+   },
+   {
+    "tipo": "enlace",
+    "titulo": "Panel de precios de la Red",
+    "url": "/servicios/precios/",
+    "nota": "La referencia mensual con su fuente, para negociar con datos."
+   },
+   {
+    "tipo": "enlace",
+    "titulo": "Servicios de catación en la Red",
+    "url": "/marketplace/?ver=servicios",
+    "nota": "Catadores y laboratorios que ofrecen evaluación de lotes."
+   },
+   {
+    "tipo": "enlace",
+    "titulo": "Mis guías de finca y de negocio",
+    "url": "/panel/?ver=guias",
+    "nota": "El paso a paso operativo, con bitácoras de cosecha, fermentación y secado."
+   },
+   {
+    "tipo": "enlace",
+    "titulo": "Specialty Coffee Association",
+    "url": "https://sca.coffee/",
+    "nota": "Protocolos de catación y de clasificación de café verde. Consulte siempre la versión vigente."
+   },
+   {
+    "tipo": "enlace",
+    "titulo": "INIAP — Programa Nacional de Café",
+    "url": "https://www.iniap.gob.ec/",
+    "nota": "Recomendaciones por zona para Ecuador: variedades, manejo y poscosecha."
+   }
+  ],
+  "recursos": [
+   "Specialty Coffee Association (SCA) — protocolo de catación y clasificación de café verde.",
+   "SCA — Coffee Value Assessment (CVA), vigente desde 2024.",
+   "INIAP — Programa Nacional de Café: variedades y manejo recomendados para Ecuador.",
+   "Agrocalidad — Buenas Prácticas Agrícolas.",
+   "Reglamento (UE) 2023/1115 sobre productos libres de deforestación (EUDR)."
+  ],
+  "cierre": "Si se lleva una sola idea: la calidad no se añade al final, se conserva desde la cereza. Cada eslabón puede bajar el puntaje; ninguno puede subirlo por su cuenta.\n\nLas cifras y umbrales de este curso provienen de protocolos que se revisan periódicamente. Antes de certificar, exportar o cerrar un contrato, confirme los valores vigentes con su catador y con la entidad competente."
+ }
+]

@@ -1,0 +1,65 @@
+<!doctype html>
+<meta charset="utf-8">
+<title>Marca · Red Café Ecuador</title>
+<style>
+  body{margin:0;background:#FBFAF7;color:#14140F;font-family:Inter,system-ui,sans-serif;font-size:15px;line-height:1.6}
+  .env{max-width:900px;margin:0 auto;padding:40px 20px 80px}
+  h1{font-size:1.9rem;margin:0 0 4px;letter-spacing:-.025em}
+  h2{font-size:1.05rem;margin:38px 0 12px;padding-bottom:6px;border-bottom:2px solid #14140F}
+  .rot{font-family:ui-monospace,Menlo,monospace;font-size:.66rem;letter-spacing:.14em;text-transform:uppercase;color:#5C5A50}
+  .fila{display:flex;flex-wrap:wrap;gap:16px;margin:14px 0}
+  .caja{border:1px solid #E4E1D9;background:#fff;padding:22px;display:flex;flex-direction:column;align-items:center;gap:10px;min-width:150px}
+  .caja.osc{background:#3B1A0C;border-color:#2A1207}
+  .caja.osc .rot{color:#D98E52}
+  .tam{display:flex;align-items:flex-end;gap:24px;border:1px solid #E4E1D9;background:#fff;padding:20px}
+  .tam div{display:flex;flex-direction:column;align-items:center;gap:6px}
+  table{border-collapse:collapse;width:100%;font-size:.9rem}
+  td,th{text-align:left;padding:7px 9px;border-bottom:1px solid #E4E1D9}
+  th{font-family:ui-monospace,Menlo,monospace;font-size:.65rem;letter-spacing:.09em;text-transform:uppercase;color:#5C5A50}
+  code{font-family:ui-monospace,Menlo,monospace;font-size:.85em;background:#F3F1EA;padding:1px 5px}
+  .nota{border-left:3px solid #A94E17;padding:10px 14px;background:#fff;margin:16px 0;max-width:68ch}
+</style>
+<div class="env">
+  <p class="rot">Manual de marca · 19 de agosto de 2026</p>
+  <h1>Red Café Ecuador</h1>
+  <p>Dos arcos con flecha girando alrededor de un grano. La bandera va aparte.</p>
+
+  <h2>Logotipo</h2>
+  <div class="fila">
+    <div class="caja"><img src="icono.png" height="110" alt="Icono"><span class="rot">icono</span></div>
+    <div class="caja osc"><img src="monocromo.png" height="110" alt="Monocromo"><span class="rot">monocromo</span></div>
+    <div class="caja"><img src="horizontal.png" height="110" alt="Horizontal"><span class="rot">horizontal</span></div>
+  </div>
+
+  <h2>Bandera — elemento aparte</h2>
+  <div class="fila">
+    <div class="caja"><img src="bandera-ecuador.webp" height="70" alt="Bandera del Ecuador"><span class="rot">oficial, con escudo</span></div>
+    <div class="caja osc"><span style="display:flex;align-items:center;gap:10px;color:#FBFAF7"><img src="icono.png" height="34" alt=""><span style="font-family:Georgia,serif;font-size:1.1rem;line-height:1.1">Red Café<span style="display:flex;align-items:center;gap:6px;font-family:ui-monospace,monospace;font-size:.58rem;letter-spacing:.18em;color:#D98E52">ECUADOR <img src="bandera-ecuador.webp" height="13" alt=""></span></span></span><span class="rot">en la cabecera</span></div>
+  </div>
+
+  <h2>Tamaños mínimos</h2>
+  <div class="tam">
+    <div><img src="icono.png" height="16" alt=""><span class="rot">16</span></div>
+    <div><img src="icono.png" height="24" alt=""><span class="rot">24</span></div>
+    <div><img src="icono.png" height="32" alt=""><span class="rot">32</span></div>
+    <div><img src="icono.png" height="48" alt=""><span class="rot">48</span></div>
+  </div>
+
+  <h2>Paleta</h2>
+  <table>
+    <tr><th>Uso</th><th>Color</th></tr>
+    <tr><td>Café — cabecera, pie, logotipo</td><td><code>#3B1A0C</code></td></tr>
+    <tr><td>Poso — héroe</td><td><code>#2A1207</code></td></tr>
+    <tr><td>Acento sobre papel</td><td><code>#A94E17</code></td></tr>
+    <tr><td>Acento sobre café</td><td><code>#D98E52</code></td></tr>
+    <tr><td>Papel — fondo</td><td><code>#FBFAF7</code></td></tr>
+    <tr><td>Tinta — texto</td><td><code>#14140F</code></td></tr>
+  </table>
+
+  <h2>Reglas de uso</h2>
+  <div class="nota">
+    <b>La bandera nunca va dentro del logotipo.</b> Se coloca al lado, y se retira en cualquier soporte de un solo color: sello, bordado, grabado o documento en blanco y negro.<br><br>
+    <b>El escudo es el oficial.</b> No se redibuja ni se simplifica: se usa el archivo tal cual. Por debajo de 24 px de alto se pierde, así que en esos tamaños la bandera se omite.<br><br>
+    <b>El monocromo usa <code>currentColor</code></b>: hereda el color del contexto y funciona en ambos sentidos sin duplicar archivo.
+  </div>
+</div>

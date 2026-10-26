@@ -1,0 +1,70 @@
+MIT License
+
+Copyright (c) 2026 Pedro Rojas — SolucionesPro (Ecuador)
+Contacto: hola@redcafeecuador.com
+Sitio: https://redcafeecuador.com
+
+Se concede permiso, sin cargo alguno, a cualquier persona que obtenga una
+copia de este software y archivos de documentación asociados (el "Software"),
+a utilizar el Software sin restricción, incluyendo sin limitación los
+derechos de uso, copia, modificación, fusión, publicación, distribución,
+sublicencia y/o venta de copias del Software, y a permitir a las personas a
+las que se les proporcione el Software a hacer lo mismo, sujeto a las
+siguientes condiciones:
+
+El aviso de copyright anterior y este aviso de permiso se incluirán en todas
+las copias o partes sustanciales del Software.
+
+EL SOFTWARE SE PROPORCIONA "TAL CUAL", SIN GARANTÍA DE NINGÚN TIPO, EXPRESA
+O IMPLÍCITA, INCLUYENDO PERO NO LIMITADO A GARANTÍAS DE COMERCIABILIDAD,
+IDONEIDAD PARA UN PROPÓSITO PARTICULAR Y NO INFRACCIÓN. EN NINGÚN CASO LOS
+AUTORES O TITULARES DEL COPYRIGHT SERÁN RESPONSABLES POR NINGUNA RECLAMACIÓN,
+DAÑO U OTRA RESPONSABILIDAD, YA SEA EN UNA ACCIÓN DE CONTRATO, AGRAVIO O DE
+OTRA FORMA, DERIVADA DE, FUERA DE O EN CONEXIÓN CON EL SOFTWARE O EL USO U
+OTROS TRATOS EN EL SOFTWARE.
+
+================================================================================
+INFORMACIÓN DEL PROYECTO
+================================================================================
+
+Nombre comercial: Red Café Ecuador
+Dominio:          redcafeecuador.com
+Autor / Owner:    Pedro Rojas — SolucionesPro
+País:             Ecuador
+
+================================================================================
+ACTIVOS DE MARCA Y PROPIEDAD INTELECTUAL
+================================================================================
+
+- La marca "Red Café Ecuador", el logotipo y elementos visuales asociados
+  son propiedad de Pedro Rojas / SolucionesPro y están protegidos por las
+  leyes de propiedad intelectual de Ecuador.
+
+- Los datos publicados en la plataforma (lotes, perfiles, cataciones, fotos)
+  pertenecen a los miembros que los publican. La plataforma solo actúa como
+  intermediaria de visualización y no reclama propiedad sobre ellos.
+
+- El código fuente del frontend (Next.js) y del backend PHP se distribuye
+  bajo esta licencia MIT, salvo componentes de terceros que mantienen sus
+  propias licencias.
+
+- Los textos legales (Política de Privacidad, Términos y Condiciones,
+  Política de Cookies, Política de Uso de Datos) son autoría de SolucionesPro
+  para uso exclusivo de esta plataforma y cumplen con la LOPDP de Ecuador.
+
+================================================================================
+USO PERMITIDO
+================================================================================
+
+- Implementación de esta plataforma para运营 una red de café en Ecuador.
+- Adaptación del código a otros sectores de comercio agrícola ecuatoriano.
+- Forks y modificaciones respetando los términos de la licencia MIT.
+
+================================================================================
+USO NO PERMITIDO
+================================================================================
+
+- Suplantar la marca "Red Café Ecuador" en servicios no autorizados.
+- Vender el código fuente o porciones sustanciales sin atribución.
+- Usar los textos legales en plataformas de terceros sin autorización.
+- Eliminar o modificar los avisos de copyright y licencia.

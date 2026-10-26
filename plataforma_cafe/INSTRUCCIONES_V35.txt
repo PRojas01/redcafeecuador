@@ -1,0 +1,90 @@
+═══════════════════════════════════════════════════════════════
+  INSTRUCCIONES DE DESPLIEGUE — Red Café Ecuador v35
+  Fecha: 24 de agosto de 2026
+═══════════════════════════════════════════════════════════════
+
+RESUMEN DE CAMBIOS (v34 → v35)
+──────────────────────────────
+1. PAYPAL: Integración de PayPal como método de pago alternativo
+   a transferencia bancaria. Botón de PayPal en la página de
+   contratación de servicios.
+
+2. ÓRDENES DE SERVICIOS:
+   - Nueva pestaña "Mis órdenes" en el panel de usuario
+   - Nuevo tab "Órdenes" en el panel admin con gestión de estados
+   - Endpoint confirm_paypal para verificar pagos vía API PayPal
+
+3. CATÁLOGO SINCRONIZADO: data/servicios.json sincronizado con
+   SERVICIOS_PAGADOS del frontend (13 servicios).
+
+4. FACTURACIÓN: Rediseñada como "Próximamente" con:
+   - Landing page con aviso por email/WhatsApp
+   - Funcionalidad de "vista previa" movida a /servicios/factura/preview
+   - Próximamente: integración con proveedor SRI externo
+
+ARCHIVOS MODIFICADOS
+────────────────────
+• lib/data.ts          — Agregado campo paypal_item_id a ServicioPago
+• lib/config.ts        — Agregado paypalClientId y paypalCurrency
+• lib/api.ts           — Agregados endpoints de órdenes (ordenMisOrdenes, etc.)
+• public/api/servicios.php — Nuevo endpoint confirm_paypal + all
+• public/data/servicios.json — Sincronizado con frontend
+• app/servicios/contratar/ClientPage.tsx — Rediseñado con tabs Transferencia/PayPal
+• app/servicios/contratar/page.tsx — Fix import
+• app/servicios/factura/ClientPage.tsx — Rediseñado como "Próximamente"
+• app/servicios/factura/page.tsx — Metadata actualizada
+• app/panel/page.tsx   — Agregada pestaña "Mis órdenes" + componente OrdenesPanel
+• app/admin/page.tsx   — Agregado tab "Órdenes" + componente OrdenesAdminTab
+
+ARCHIVOS NUEVOS
+───────────────
+• components/PayPalButton.tsx — Componente de botón PayPal
+• app/servicios/factura/preview/page.tsx — Página de vista previa
+• app/servicios/factura/preview/ClientPage.tsx — Cliente de vista previa
+
+VARIABLES DE ENTORNO REQUERIDAS
+────────────────────────────────
+Para PayPal (agregar en cPanel → Variables de entorno):
+
+  NEXT_PUBLIC_PAYPAL_CLIENT_ID=tu_client_id_de_paypal
+  PAYPAL_CLIENT_ID=tu_client_id_de_paypal
+  PAYPAL_CLIENT_SECRET=tu_client_secret_de_paypal
+  PAYPAL_MODE=live    (o "sandbox" para pruebas)
+
+Para obtener credenciales PayPal:
+1. Crear cuenta de negocios en https://www.paypal.com/business
+2. Ir a https://developer.paypal.com/dashboard/applications
+3. Crear app → copiar Client ID y Secret
+4. Para sandbox: usar credenciales de sandbox
+5. Para producción: usar credenciales live
+
+PASOS DE DESPLIEGUE
+───────────────────
+1. Subir todo el contenido del ZIP a public_html/ en GoDaddy cPanel
+2. Asegurar que los permisos de data/ sean 0755 o 0777 (para escritura PHP)
+3. Configurar las variables de entorno de PayPal en cPanel
+4. Verificar que .htaccess permita el acceso a /api/servicios.php
+5. Probar el flujo de PayPal en sandbox primero
+6. Verificar que data/ordenes.json se cree correctamente al hacer una orden
+
+NOTAS IMPORTANTES
+─────────────────
+• PayPal requiere cuenta de negocios (Business) para recibir pagos
+• En sandbox, usar tarjetas de prueba de PayPal Developer
+• La facturación SRI real requiere integración con proveedor externo
+  (Alegra, Facto, etc.) — pendiente para v36+
+• El botón de PayPal solo aparece si NEXT_PUBLIC_PAYPAL_CLIENT_ID
+  está configurado. Si no está configurado, se muestra un mensaje
+  indicando que PayPal no está disponible.
+
+VERIFICACIÓN POST-DESPLIEGUE
+────────────────────────────
+□ Ir a /servicios/contratar?servicio=asesoria-negocio
+□ Verificar que aparezcan ambas opciones: Transferencia y PayPal
+□ Si PayPal está configurado, el botón debe renderizarse
+□ Crear una orden de transferencia → verificar en panel admin
+□ Probar flujo PayPal en sandbox
+□ Ir a /panel → Mis órdenes → verificar que aparezcan las órdenes
+□ Ir a /admin → Órdenes → verificar gestión de estados
+□ Ir a /servicios/factura → verificar landing "Próximamente"
+□ Ir a /servicios/factura/preview → verificar herramienta de referencia

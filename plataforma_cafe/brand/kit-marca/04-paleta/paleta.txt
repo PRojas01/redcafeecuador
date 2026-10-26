@@ -1,0 +1,91 @@
+PALETA — RED CAFÉ ECUADOR
+==========================================================================
+
+Los valores CMYK son una conversión aproximada para imprenta: pídele al
+impresor una prueba de color antes de una tirada grande.
+
+Café — cabecera, pie, logotipo
+  HEX  #3B1A0C
+  RGB  59, 26, 12
+  CMYK 0, 56, 80, 77
+  Uso  Color principal. Fondo de cabecera y pie.
+
+Poso — héroe
+  HEX  #2A1207
+  RGB  42, 18, 7
+  CMYK 0, 57, 83, 84
+  Uso  Fondos oscuros de sección.
+
+Acento sobre papel
+  HEX  #A94E17
+  RGB  169, 78, 23
+  CMYK 0, 54, 86, 34
+  Uso  Enlaces y detalles SOBRE FONDO CLARO. 5,3:1.
+
+Acento sobre café
+  HEX  #DFA066
+  RGB  223, 160, 102
+  CMYK 0, 28, 54, 13
+  Uso  Enlaces y detalles SOBRE FONDO OSCURO. 7,0:1.
+
+Papel — fondo
+  HEX  #FBFAF7
+  RGB  251, 250, 247
+  CMYK 0, 0, 2, 2
+  Uso  Fondo general del sitio.
+
+Tinta — texto
+  HEX  #14140F
+  RGB  20, 20, 15
+  CMYK 0, 0, 25, 92
+  Uso  Texto principal. 17,7:1 sobre papel.
+
+Texto secundario
+  HEX  #5C5A50
+  RGB  92, 90, 80
+  CMYK 0, 2, 13, 64
+  Uso  Descripciones. 6,6:1 sobre papel.
+
+Línea
+  HEX  #E4E1D9
+  RGB  228, 225, 217
+  CMYK 0, 1, 5, 11
+  Uso  Bordes y separadores de 1px.
+
+Verde — estado correcto
+  HEX  #3F6B4A
+  RGB  63, 107, 74
+  CMYK 41, 0, 31, 58
+  Uso  Señales de confirmación.
+
+Bandera · amarillo
+  HEX  #FFDD00
+  RGB  255, 221, 0
+  CMYK 0, 13, 100, 0
+  Uso  Solo bandera. No usar como color de marca.
+
+Bandera · azul
+  HEX  #0033A0
+  RGB  0, 51, 160
+  CMYK 100, 68, 0, 37
+  Uso  Solo bandera.
+
+Bandera · rojo
+  HEX  #EF3340
+  RGB  239, 51, 64
+  CMYK 0, 79, 73, 6
+  Uso  Solo bandera.
+
+REGLA QUE NO SE PUEDE SALTAR
+--------------------------------------------------------------------------
+El acento tiene DOS versiones y no son intercambiables:
+  · #A94E17 solo sobre fondos claros
+  · #DFA066 solo sobre fondos oscuros
+Usar el claro sobre el café da 2,8:1 y el texto se vuelve ilegible.
+
+TIPOGRAFÍA
+--------------------------------------------------------------------------
+Titulares y texto: Inter (SIL Open Font License, gratuita)
+Nombre de la marca: DM Serif Display (SIL Open Font License, gratuita)
+Datos y etiquetas: cualquier monoespaciada del sistema
+Ambas se descargan en fonts.google.com y pueden alojarse sin coste ni permiso.

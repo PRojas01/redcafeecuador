@@ -1,0 +1,27 @@
+<<<css>>>
+<link rel="stylesheet" href="/redcafe-v60-final.css?v=__VERSION__"/>
+<<<inline>>>
+<script id="redcafe-v59-ticker-panel">
+(function(){
+  function addPanelLink(){
+    document.querySelectorAll('a').forEach(function(a){
+      if ((a.textContent || '').trim() !== 'Fuente oficial') return;
+      var parent = a.parentElement;
+      if (!parent || parent.querySelector('[data-redcafe-panel-precios]')) return;
+      var link = document.createElement('a');
+      link.href = '/servicios/precios/';
+      link.setAttribute('data-redcafe-panel-precios','1');
+      link.className = 'rounded-full border border-acento-claro bg-crema px-3 py-0.5 text-[10px] font-extrabold uppercase tracking-wider text-cafe shadow-sm transition hover:bg-acento-claro hover:text-cafe';
+      link.title = 'Abrir panel completo de precios';
+      link.textContent = 'Panel de precios';
+      parent.insertBefore(link, a);
+    });
+  }
+  addPanelLink();
+  var n = 0;
+  var timer = setInterval(function(){ addPanelLink(); if (++n > 30) clearInterval(timer); }, 500);
+  new MutationObserver(addPanelLink).observe(document.documentElement, {childList:true, subtree:true});
+})();
+</script>
+<<<scripts>>>
+<script src="/redcafe-referencia.js?v=__VERSION__" defer></script><script src="/redcafe-ruta.js?v=__VERSION__" defer></script><script src="/redcafe-v60-final.js?v=__VERSION__" defer></script><script src="/redcafe-v60-mejoras-obligatorias.js?v=__VERSION__" defer></script><script src="/redcafe-notificaciones.js?v=__VERSION__" defer></script><script src="/redcafe-aviso-pedidos.js?v=__VERSION__" defer></script><script src="/redcafe-reportes.js?v=__VERSION__" defer></script><script src="/redcafe-empleos.js?v=__VERSION__" defer></script><script src="/redcafe-afiliate.js?v=__VERSION__" defer></script><script src="/redcafe-comunidad.js?v=__VERSION__" defer></script><script src="/redcafe-volver-panel.js?v=__VERSION__" defer></script><script src="/redcafe-mejoras-ui.js?v=__VERSION__" defer></script>

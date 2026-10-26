@@ -1,0 +1,6 @@
+<<<css>>>
+<link rel="stylesheet" href="/redcafe-v60-final.css?v=__VERSION__"/>
+<<<inline>>>
+
+<<<scripts>>>
+
