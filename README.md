@@ -1,5 +1,7 @@
 # redcafeecuador — Red Café Ecuador
 
+
+Conexión de la cadena de valor del café ecuatoriano.
 Plataforma de redcafeecuador.com. El servidor nuevo (Node.js + PostgreSQL) está en
 [`servidor/`](servidor/) y se publica según [`servidor/DESPLIEGUE.md`](servidor/DESPLIEGUE.md).
 
