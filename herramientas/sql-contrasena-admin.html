@@ -20,6 +20,7 @@ small{color:#6b5848}#msg{margin-top:10px;font-weight:600}
 <label>Repítela<input id="p2" type="password" autocomplete="new-password"></label>
 <button onclick="generar()">Descargar archivo SQL</button>
 <div id="msg"></div>
+<textarea id="salida" readonly rows="4" style="display:none;width:100%;box-sizing:border-box;margin-top:8px;font-family:ui-monospace,monospace" onclick="this.select()"></textarea>
 <p><small>La primera vez que entres a /admin/ con esta contraseña, el servidor la guarda cifrada (bcrypt) y la copia legible desaparece de la base. Borra el archivo .sql de tu equipo después de importarlo.</small></p>
 <script>
 function esc(s){return s.replace(/\\/g,"\\\\").replace(/'/g,"''")}
@@ -27,15 +28,11 @@ function generar(){
   var a=p1.value,b=p2.value,m=document.getElementById("msg");
   if(a.length<12){m.textContent="Debe tener 12 caracteres o más.";return}
   if(a!==b){m.textContent="Las dos contraseñas no coinciden.";return}
-  var sql="-- Red Café Ecuador: fija la contraseña de administración.\n"+
-    "INSERT INTO `Administrador` (`id`,`passHash`,`provisionalHasta`,`resetTokenHash`,`resetExpira`,`actualizado`)\n"+
-    "VALUES ('principal','"+esc(a)+"',NULL,NULL,NULL,NOW(3))\n"+
-    "ON DUPLICATE KEY UPDATE `passHash`=VALUES(`passHash`),`provisionalHasta`=NULL,`resetTokenHash`=NULL,`resetExpira`=NULL,`actualizado`=NOW(3);\n"+
-    "-- Quita el bloqueo por intentos fallidos del admin.\n"+
-    "DELETE FROM `Intento` WHERE `clave` LIKE 'admin_login:%';\n";
-  var u=URL.createObjectURL(new Blob([sql],{type:"application/sql"}));
+  var sql="UPDATE `Administrador` SET `passHash`='"+esc(a)+"', `provisionalHasta`=NULL, `resetTokenHash`=NULL, `resetExpira`=NULL WHERE `id`='principal'";
+  salida.value=sql; salida.style.display="block";
+  var u=URL.createObjectURL(new Blob([sql+";\n"],{type:"application/sql"}));
   var e=document.createElement("a");e.href=u;e.download="redcafe-admin.sql";document.body.appendChild(e);e.click();e.remove();
-  p1.value=p2.value="";m.textContent="Listo: se descargó redcafe-admin.sql.";
+  p1.value=p2.value="";m.textContent="Listo. Copia la línea de abajo y pégala en la consulta SQL (o importa redcafe-admin.sql).";
 }
 </script>
 </body>
