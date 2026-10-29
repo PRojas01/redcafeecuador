@@ -47,13 +47,15 @@ export function crearApp(opciones: { ipDe?: (c: any) => string } = {}) {
       }
     }
     const datos = {
-      version: "2026-10-29d",
+      version: "2026-10-29e",
       entorno: config.entorno,
       base_de_datos: base,
       clave_datos: /^[0-9a-f]{64}$/i.test(process.env.REDCAFE_CLAVE_DATOS ?? "") ? "ok" : process.env.REDCAFE_CLAVE_DATOS ? "formato incorrecto (64 hex)" : "falta",
       admin_con_contraseña: admin,
-      pass_inicial: (process.env.REDCAFE_PASS_ADMIN_INICIAL ?? "").trim().length >= 12,
-      pass_restablecer: (process.env.REDCAFE_PASS_ADMIN_RESTABLECER ?? "").trim().length >= 12,
+      clave_datos_largo: (process.env.REDCAFE_CLAVE_DATOS ?? "").length,
+      pass_inicial: describirPass(process.env.REDCAFE_PASS_ADMIN_INICIAL),
+      pass_restablecer: describirPass(process.env.REDCAFE_PASS_ADMIN_RESTABLECER),
+      variables_redcafe: Object.keys(process.env).filter((k) => /^REDCAFE_|^DB_|^MYSQL_|^DATABASE_/.test(k)).sort(),
       importacion: process.env.REDCAFE_IMPORTACION === "1",
       proxy_confiable: process.env.REDCAFE_PROXY_CONFIABLE === "1",
       host: c.req.header("host") ?? "",
@@ -61,6 +63,10 @@ export function crearApp(opciones: { ipDe?: (c: any) => string } = {}) {
       proto_reenviado: c.req.header("x-forwarded-proto") ?? "",
     };
     return c.json(datos, 200, { "Cache-Control": "no-store" });
+    function describirPass(v?: string) {
+      if (v === undefined) return "no llega";
+      return v.length >= 12 ? `ok (${v.length} caracteres)` : `muy corta (${v.length} caracteres)`;
+    }
   });
 
   app.all("/enviar-waitlist.php", (c) => c.redirect("/api/enviar-waitlist.php", 307));

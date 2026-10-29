@@ -33,3 +33,14 @@ if (!process.env.DATABASE_URL) {
     e.DATABASE_URL = `mysql://${encodeURIComponent(usuario)}:${encodeURIComponent(clave)}@${host}:${puerto}/${encodeURIComponent(base)}${ssl}`;
   }
 }
+
+// Paneles de hosting: a veces el valor se pega con espacios, saltos de línea o
+// comillas alrededor. Se limpian en las variables que lo toleran.
+for (const v of ["REDCAFE_CLAVE_DATOS", "REDCAFE_PASS_ADMIN_INICIAL", "REDCAFE_PASS_ADMIN_RESTABLECER", "REDCAFE_IMPORTACION", "REDCAFE_ENTORNO", "REDCAFE_PROXY_CONFIABLE"]) {
+  const crudo = process.env[v];
+  if (crudo === undefined) continue;
+  let limpio = crudo.trim();
+  if (/^(["']).*\1$/s.test(limpio)) limpio = limpio.slice(1, -1).trim();
+  if (v === "REDCAFE_CLAVE_DATOS") limpio = limpio.replace(/\s+/g, "");
+  process.env[v] = limpio;
+}
