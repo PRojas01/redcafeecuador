@@ -35,6 +35,8 @@
     var datos = new FormData();
     datos.append("paquete", f);
     datos.append("clave", clave);
+    var modo = document.querySelector('input[name="modo"]:checked');
+    datos.append("modo", modo ? modo.value : "inicial");
     $("simular").disabled = true; $("aplicar").disabled = true;
     texto($("mensaje"), accion === "aplicar" ? "Importando… no cierres esta página." : "Descifrando y simulando…");
     fetch("/api/importacion.php?action=" + accion, { method: "POST", body: datos, credentials: "include" })
@@ -60,9 +62,16 @@
 
   $("simular").addEventListener("click", function () { enviar("simular"); });
   $("aplicar").addEventListener("click", function () {
-    if (window.confirm("¿Importar los datos reales en la base? Lo que ya exista no se duplica.")) enviar("aplicar");
+    var sinc = (document.querySelector('input[name="modo"]:checked') || {}).value === "sincronizar";
+    var aviso = sinc
+      ? "¿Sincronizar con el sitio antiguo? Los miembros existentes se actualizan y el contenido de cada colección del paquete SUSTITUYE al de la base."
+      : "¿Importar los datos reales en la base? Lo que ya exista no se duplica.";
+    if (window.confirm(aviso)) enviar("aplicar");
   });
   $("paquete").addEventListener("change", function () { simulado = null; $("aplicar").disabled = true; });
+  Array.prototype.forEach.call(document.querySelectorAll('input[name="modo"]'), function (r) {
+    r.addEventListener("change", function () { simulado = null; $("aplicar").disabled = true; texto($("mensaje"), "Cambiaste el modo: vuelve a simular."); });
+  });
 
   fetch("/api/importacion.php?action=estado", { credentials: "include" })
     .then(function (r) { return r.json().then(function (j) { return { codigo: r.status, j: j }; }); })
@@ -71,7 +80,8 @@
       if (x.codigo === 403) { $("estado").innerHTML = ""; texto($("estado"), "Primero entra como administrador en /admin/ y vuelve a esta página.", "error"); return; }
       if (!x.j.ok) return texto($("estado"), x.j.error || "No disponible.", "error");
       var d = x.j.data;
-      texto($("estado"), "Base actual: " + d.usuarios + " miembros y " + d.documentos + " registros de contenido." + (d.ya_importado ? " Ya se importó antes: lo repetido no se duplica." : ""));
+      texto($("estado"), "Base actual: " + d.usuarios + " miembros y " + d.documentos + " registros de contenido." + (d.ya_importado ? " Ya se importó antes: para traer los cambios del sitio antiguo usa «Sincronizar»." : ""));
+      if (d.ya_importado) { var r = document.querySelector('input[name="modo"][value="sincronizar"]'); if (r) r.checked = true; }
       $("form").hidden = false;
     })
     .catch(function () { texto($("estado"), "Error de conexión.", "error"); });

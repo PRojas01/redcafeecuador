@@ -37,6 +37,24 @@ ni por ningún archivo del servidor nuevo.
 Para el corte definitivo se repite desde el paso 1 con el respaldo de ese día.
 Lo que ya se importó no se duplica.
 
+## Importaciones repetidas (mientras el sitio antiguo sigue vivo)
+
+Hasta el cambio de dominio, los miembros siguen usando redcafeecuador.com. Para traer
+lo que cambie allí, repite el proceso con un respaldo nuevo y elige el modo
+**Sincronizar** en `/admin/importar/`:
+
+- El sitio antiguo manda: los miembros que ya existen se actualizan con sus datos del
+  paquete (nombre, perfiles, teléfono, cédula, contraseña, 2FA…). Los nuevos se crean.
+- Cada colección que trae el paquete (lotes, publicaciones, cursos, servicios…)
+  **sustituye** a la de la base, y las páginas también.
+- Los miembros que están en la base pero no en el paquete no se tocan (se avisa cuántos).
+- La contraseña del admin de la plataforma nueva **no** cambia.
+- Las fotos nuevas se añaden; las que ya estaban se conservan.
+
+Lo que alguien cree en la plataforma nueva antes del cambio de dominio se pierde en la
+siguiente sincronización (salvo los miembros nuevos): úsala solo para revisar.
+Primero **Simular**, siempre. Entre importaciones deja `REDCAFE_IMPORTACION` apagada.
+
 ## Qué protege cada capa
 
 - **El navegador no puede filtrar nada:** la página prohíbe cualquier conexión de red

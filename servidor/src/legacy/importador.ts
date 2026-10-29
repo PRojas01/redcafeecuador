@@ -13,6 +13,11 @@
 //    lotes de demostración.
 //  · Los secretos (firma de apelaciones, bajas de correo, VAPID, token de
 //    respaldos) se conservan para que los enlaces y suscripciones sigan valiendo.
+//  · Modo «sincronizar» (importaciones repetidas mientras el sitio antiguo sigue
+//    vivo): el sitio antiguo manda. Los miembros que ya existen se actualizan con
+//    sus datos (incluido el hash de la contraseña), el contenido de cada colección
+//    del paquete sustituye al de la base y las páginas se reemplazan. La
+//    contraseña de administración de la base NO se toca.
 import { createPrivateKey, randomBytes } from "node:crypto";
 import bcrypt from "bcryptjs";
 import { Prisma } from "@prisma/client";
@@ -25,8 +30,11 @@ export type Fuente = Map<string, Buffer>;
 export type Informe = { archivo: string; destino: string; filas: number; accion: string };
 export type Resultado = { aplicado: boolean; informe: Informe[]; avisos: string[] };
 
-export async function importar(F: Fuente, opciones: { aplicar: boolean; fechas?: Map<string, string> }): Promise<Resultado> {
+export type Modo = "inicial" | "sincronizar";
+
+export async function importar(F: Fuente, opciones: { aplicar: boolean; fechas?: Map<string, string>; modo?: Modo }): Promise<Resultado> {
   const APLICAR = opciones.aplicar;
+  const SINCRONIZAR = opciones.modo === "sincronizar";
   const fechas = opciones.fechas;
   const informe: Informe[] = [];
   const avisos: string[] = [];
@@ -52,7 +60,7 @@ export async function importar(F: Fuente, opciones: { aplicar: boolean; fechas?:
     if (!F.has("members.json")) return;
     const lista = leer("members.json");
     if (!Array.isArray(lista)) { avisos.push("members.json no es una lista: no se importa."); return; }
-    let nuevos = 0, ya = 0, malos = 0;
+    let nuevos = 0, ya = 0, malos = 0, actualizados = 0;
     const vistos = new Set<string>();
     for (const m of lista as Doc[]) {
       const email = String(m?.email ?? "").trim().toLowerCase();
@@ -60,13 +68,18 @@ export async function importar(F: Fuente, opciones: { aplicar: boolean; fechas?:
       if (!id || !email) { malos++; avisos.push(`Miembro sin id o correo (${id || email || "?"}): omitido.`); continue; }
       if (vistos.has(email)) { malos++; avisos.push(`Correo repetido en members.json (${email}): se importa solo el primero.`); continue; }
       vistos.add(email);
-      if (await db.usuario.findFirst({ where: { OR: [{ id }, { email }] }, select: { id: true } })) { ya++; continue; }
-      nuevos++;
+      const existente = await db.usuario.findFirst({ where: { OR: [{ id }, { email }] }, select: { id: true, email: true } });
+      if (existente && !SINCRONIZAR) { ya++; continue; }
+      if (existente && existente.id !== id) { malos++; avisos.push(`Miembro ${id}: su correo ya lo usa otra cuenta (${existente.id}); no se toca.`); continue; }
+      if (existente) actualizados++; else nuevos++;
       if (!APLICAR) continue;
       let passHash = String(m.pass ?? "");
       const extra: Doc = {};
       for (const [k, v] of Object.entries(m)) if (!COLUMNAS.has(k)) extra[k] = v;
-      if (!/^\$2[aby]\$/.test(passHash)) {
+      if (!/^\$2[aby]\$/.test(passHash) && existente) {
+        // Ya estaba: se conserva la contraseña que tenga en la base.
+        passHash = "";
+      } else if (!/^\$2[aby]\$/.test(passHash)) {
         // Sin hash válido: cuenta sin contraseña utilizable; entrará con «olvidé mi contraseña».
         passHash = await bcrypt.hash(cryptoAleatorio(), 10);
         extra.requiere_nueva_pass = true;
@@ -76,24 +89,34 @@ export async function importar(F: Fuente, opciones: { aplicar: boolean; fechas?:
       const roles = [...new Set((Array.isArray(m.roles) && m.roles.length ? m.roles : [m.rol]).map((r: unknown) => String(r ?? "").trim()).filter(Boolean))] as string[];
       const cedula = String(m.cedula ?? "").trim();
       const codigos = Array.isArray(m.backup_codes) ? m.backup_codes.map(String).filter(Boolean) : [];
-      await db.$transaction(async (tx) => {
-        await tx.usuario.create({
-          data: {
-            id, email, passHash, nombre: String(m.nombre ?? "").slice(0, 100) || email, rol: roles[0] ?? String(m.rol ?? "amante"), roles,
+      const datos = {
+            email, nombre: String(m.nombre ?? "").slice(0, 100) || email, rol: roles[0] ?? String(m.rol ?? "amante"), roles,
             plan: String(m.plan ?? "origen"), visibilidad: m.visibilidad === "registrados" ? "registrados" : "publico",
             provincia: String(m.provincia ?? ""), telefono: String(m.telefono ?? ""), whatsapp: String(m.whatsapp ?? ""),
             cedulaCifrada: cedula ? cifrar(cedula) : "", cedulaHuella: cedula ? huella(cedula) : "",
             verificado: !!m.verificado, estado: String(m.estado ?? "activo"), activo: m.activo === undefined ? true : !!m.activo,
             admin: !!(m.admin || m.is_admin), fundador: !!m.fundador,
             dosFactores: !!m.two_factor_enabled, dosFactoresEn: fecha(m.two_factor_updated_at), passCambiadaEn: fecha(m.pass_changed_at),
-            creado: fecha(m.created_at) ?? new Date(), extra: extra as Prisma.InputJsonValue,
-          },
-        });
+            extra: extra as Prisma.InputJsonValue,
+      };
+      await db.$transaction(async (tx) => {
+        if (existente) {
+          await tx.usuario.update({ where: { id }, data: { ...datos, ...(passHash ? { passHash } : {}) } });
+          await tx.codigoRespaldo.deleteMany({ where: { usuarioId: id } });
+        } else {
+          await tx.usuario.create({ data: { id, passHash, ...datos, creado: fecha(m.created_at) ?? new Date() } });
+        }
         if (codigos.length) await tx.codigoRespaldo.createMany({ data: codigos.map((hash: string) => ({ usuarioId: id, hash })) });
         await anotar(tx, "members.json", id, "Usuario", id);
       });
     }
-    informe.push({ archivo: "members.json", destino: "Usuario", filas: nuevos, accion: `${nuevos} nuevos · ${ya} ya estaban · ${malos} omitidos` });
+    if (SINCRONIZAR) {
+      const enPaquete = new Set([...vistos]);
+      const todos = await db.usuario.findMany({ select: { email: true } });
+      const soloAqui = todos.filter((u) => !enPaquete.has(u.email.toLowerCase())).length;
+      if (soloAqui) avisos.push(`${soloAqui} miembro(s) están en la base pero no en el paquete (altas en la plataforma nueva o bajas en la antigua): no se tocan.`);
+    }
+    informe.push({ archivo: "members.json", destino: "Usuario", filas: nuevos + actualizados, accion: SINCRONIZAR ? `${nuevos} nuevos · ${actualizados} actualizados · ${malos} omitidos` : `${nuevos} nuevos · ${ya} ya estaban · ${malos} omitidos` });
   }
   const cryptoAleatorio = () => randomBytes(24).toString("hex");
 
@@ -142,12 +165,17 @@ export async function importar(F: Fuente, opciones: { aplicar: boolean; fechas?:
         }
       }
       const mapa = !Array.isArray(datos) && !!datos && typeof datos === "object" && (esMapa(col) || Object.keys(datos).length > 0);
-      if (existentes) { informe.push({ archivo: nombre, destino: col, filas: 0, accion: `omitida: la base ya tiene ${existentes} documento(s)` }); continue; }
+      const reemplazar = SINCRONIZAR && existentes > 0;
+      if (existentes && !SINCRONIZAR) { informe.push({ archivo: nombre, destino: col, filas: 0, accion: `omitida: la base ya tiene ${existentes} documento(s)` }); continue; }
+      const antes = reemplazar ? ` · sustituye ${existentes} de la base` : "";
       if (mapa) {
-        informe.push({ archivo: nombre, destino: col, filas: 1, accion: "mapa" });
+        informe.push({ archivo: nombre, destino: col, filas: 1, accion: "mapa" + antes });
         if (APLICAR) {
-          await db.documento.create({ data: { coleccion: col, id: "_", datos: datos as Prisma.InputJsonValue } });
-          await anotar(db, nombre, "*", col, "_");
+          await db.$transaction(async (tx) => {
+            if (reemplazar) await tx.documento.deleteMany({ where: { coleccion: col } });
+            await tx.documento.create({ data: { coleccion: col, id: "_", datos: datos as Prisma.InputJsonValue } });
+            await anotar(tx, nombre, "*", col, "_");
+          });
         }
         continue;
       }
@@ -161,9 +189,10 @@ export async function importar(F: Fuente, opciones: { aplicar: boolean; fechas?:
         vistos.add(id);
         return { coleccion: col, id, datos: d as Prisma.InputJsonValue };
       });
-      informe.push({ archivo: nombre, destino: col, filas: filas.length, accion: demo ? `${demo} lote(s) demo no migrados` : "lista" });
-      if (APLICAR && filas.length) {
+      informe.push({ archivo: nombre, destino: col, filas: filas.length, accion: (demo ? `${demo} lote(s) demo no migrados` : "lista") + antes });
+      if (APLICAR && (filas.length || reemplazar)) {
         await db.$transaction(async (tx) => {
+          if (reemplazar) await tx.documento.deleteMany({ where: { coleccion: col } });
           for (const f of filas) await tx.documento.create({ data: f }); // uno a uno: conserva el orden
           await anotar(tx, nombre, "*", col, String(filas.length));
         }, { timeout: 120_000 });
@@ -175,7 +204,9 @@ export async function importar(F: Fuente, opciones: { aplicar: boolean; fechas?:
   async function paginas() {
     const enPaginas = [...F.keys()].filter((k) => k.startsWith("paginas/")).map((k) => k.slice(8));
     if (!enPaginas.length) return;
-    if (await db.documento.count({ where: { coleccion: "paginas" } })) { informe.push({ archivo: "paginas/", destino: "paginas", filas: 0, accion: "omitida: ya hay páginas" }); return; }
+    const hay = await db.documento.count({ where: { coleccion: "paginas" } });
+    if (hay && !SINCRONIZAR) { informe.push({ archivo: "paginas/", destino: "paginas", filas: 0, accion: "omitida: ya hay páginas" }); return; }
+    if (hay && APLICAR) await db.documento.deleteMany({ where: { coleccion: "paginas" } });
     const mds = enPaginas.filter((f) => /^[a-z0-9][a-z0-9\-_]{1,80}\.md$/.test(f));
     for (const f of mds) {
       const slug = f.slice(0, -3);
@@ -210,7 +241,9 @@ export async function importar(F: Fuente, opciones: { aplicar: boolean; fechas?:
       }
     }
     const f = F.has(".redcafe_admin_pass") ? ".redcafe_admin_pass" : "";
-    if (f) {
+    if (f && SINCRONIZAR) {
+      informe.push({ archivo: f, destino: "Administrador", filas: 0, accion: "no se toca: se conserva la contraseña de la plataforma nueva" });
+    } else if (f) {
       const v = texto(f).replace(/^﻿/, "").trim();
       const ya = await db.administrador.findUnique({ where: { id: "principal" } });
       // La contraseña de administración de producción manda sobre la inicial del .env.

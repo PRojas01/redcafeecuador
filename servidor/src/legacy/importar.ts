@@ -2,6 +2,7 @@
 //
 //   npm run importar -- <carpeta data/>                 simulación (no escribe)
 //   npm run importar -- <carpeta data/> --aplicar       importa
+//   ... --aplicar --sincronizar   el sitio antiguo manda: actualiza miembros y sustituye colecciones
 //   opciones: --pass-admin <archivo .redcafe_admin_pass>
 //
 // La lógica está en importador.ts; aquí solo se lee la carpeta.
@@ -38,10 +39,10 @@ function leerCarpeta(): { fuente: Fuente; fechas: Map<string, string> } {
 }
 
 async function main() {
-  if (!DATA || !fs.existsSync(DATA)) { console.error("Uso: npm run importar -- <carpeta data/> [--aplicar] [--pass-admin <archivo>]"); process.exit(2); }
+  if (!DATA || !fs.existsSync(DATA)) { console.error("Uso: npm run importar -- <carpeta data/> [--aplicar] [--sincronizar] [--pass-admin <archivo>]"); process.exit(2); }
   console.log(`Importador Red Café · origen ${DATA} · modo ${APLICAR ? "APLICAR" : "SIMULACIÓN (no se escribe nada)"}\n`);
   const { fuente, fechas } = leerCarpeta();
-  const { informe, avisos } = await importar(fuente, { aplicar: APLICAR, fechas });
+  const { informe, avisos } = await importar(fuente, { aplicar: APLICAR, fechas, modo: args.includes("--sincronizar") ? "sincronizar" : "inicial" });
   const ancho = Math.max(...informe.map((i) => i.archivo.length), 10);
   for (const i of informe) console.log(`${i.archivo.padEnd(ancho)}  → ${i.destino.padEnd(24)} ${String(i.filas).padStart(5)}  ${i.accion}`);
   if (avisos.length) { console.log("\nAvisos:"); for (const a of avisos) console.log("  · " + a); }

@@ -107,13 +107,14 @@ async function ejecutar(ctx: Ctx, aplicar: boolean) {
   if (clave.length < 12) fail("Falta la contraseña del paquete.", 422);
   const paquete = await abrirPaquete(Buffer.from(await archivo.arrayBuffer()), clave);
   const { fuente, subidas } = separar(paquete);
-  const r = await importar(fuente, { aplicar });
+  const modo = str(ctx.in.modo) === "sincronizar" ? "sincronizar" : "inicial";
+  const r = await importar(fuente, { aplicar, modo });
   r.informe.push(guardarSubidas(subidas, aplicar));
   await registrarActividad(ctx, "importacion", {
-    detalle: (aplicar ? "Importación aplicada" : "Simulación de importación") + ` (paquete del ${str(paquete.generado).slice(0, 10) || "?"})`,
+    detalle: (aplicar ? "Importación aplicada" : "Simulación de importación") + (modo === "sincronizar" ? " · sincronizar" : "") + ` (paquete del ${str(paquete.generado).slice(0, 10) || "?"})`,
     objeto_tipo: "importacion",
   });
-  return { ...r, generado: paquete.generado ?? null };
+  return { ...r, modo, generado: paquete.generado ?? null };
 }
 
 export const importacion: Modulo = {
