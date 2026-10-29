@@ -21,7 +21,7 @@ for (const v of ["DATABASE_URL", "REDCAFE_CLAVE_DATOS"]) {
 void asegurarEsquema().catch((e) => console.error("[esquema] No se pudieron crear las tablas:", e?.message ?? e));
 
 serve({ fetch: app.fetch, port: config.puerto, // Si la plataforma fija PORT (GoDaddy, Render…), hay que escuchar en todas las interfaces.
-  hostname: process.env.HOST ?? (process.env.PORT ? "0.0.0.0" : "127.0.0.1") }, (info) => {
+  hostname: process.env.HOST || (process.env.PORT ? "0.0.0.0" : "127.0.0.1") }, (info) => {
   console.log(`Red Café Ecuador · servidor en http://${info.address}:${info.port} · sitio ${config.sitio} · entorno ${config.entorno}`);
 });
 
