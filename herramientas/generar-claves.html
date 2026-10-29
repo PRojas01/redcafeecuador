@@ -30,12 +30,18 @@ small{color:#6b5848}
   <button onclick="copiar('admin')">Copiar</button>
 </div>
 
+<div class="fila">
+  <b>Bloque para «Pegar .env» en GoDaddy</b> <small>(pestaña Vista previa y también Publicar)</small>
+  <textarea id="env" readonly rows="3" style="width:100%;box-sizing:border-box;font-family:ui-monospace,monospace;padding:8px;border:1px solid #ccb;border-radius:6px"></textarea>
+  <button onclick="copiar('env')">Copiar bloque</button>
+</div>
+
 <button onclick="generar()">Generar otras</button>
 
 <script>
 function hex(n){return Array.from(crypto.getRandomValues(new Uint8Array(n)),b=>b.toString(16).padStart(2,"0")).join("")}
 function pass(n){const a="ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnpqrstuvwxyz23456789";const r=crypto.getRandomValues(new Uint32Array(n));return Array.from(r,x=>a[x%a.length]).join("").replace(/(.{5})(?=.)/g,"$1-")}
-function generar(){datos.value=hex(32);admin.value=pass(20)}
+function generar(){datos.value=hex(32);admin.value=pass(20);env.value="REDCAFE_CLAVE_DATOS="+datos.value+"\nREDCAFE_PASS_ADMIN_RESTABLECER="+admin.value}
 function copiar(id){const e=document.getElementById(id);e.select();navigator.clipboard?navigator.clipboard.writeText(e.value):document.execCommand("copy")}
 generar();
 </script>
