@@ -47,12 +47,15 @@ export function crearApp(opciones: { ipDe?: (c: any) => string } = {}) {
       }
     }
     const datos = {
-      version: "2026-10-29e",
+      version: "2026-10-29f",
       entorno: config.entorno,
       base_de_datos: base,
       clave_datos: /^[0-9a-f]{64}$/i.test(process.env.REDCAFE_CLAVE_DATOS ?? "") ? "ok" : process.env.REDCAFE_CLAVE_DATOS ? "formato incorrecto (64 hex)" : "falta",
       admin_con_contraseña: admin,
       clave_datos_largo: (process.env.REDCAFE_CLAVE_DATOS ?? "").length,
+      // Solo si el valor NO sirve: su forma (letra→a, número→9, símbolos tal cual), para ver si llega un marcador del panel en vez del secreto.
+      clave_datos_forma: /^[0-9a-f]{64}$/i.test(process.env.REDCAFE_CLAVE_DATOS ?? "") ? "" : forma(process.env.REDCAFE_CLAVE_DATOS),
+      arrancado_hace_min: Math.round(process.uptime() / 60),
       pass_inicial: describirPass(process.env.REDCAFE_PASS_ADMIN_INICIAL),
       pass_restablecer: describirPass(process.env.REDCAFE_PASS_ADMIN_RESTABLECER),
       variables_redcafe: Object.keys(process.env).filter((k) => /^REDCAFE_|^DB_|^MYSQL_|^DATABASE_/.test(k)).sort(),
@@ -63,8 +66,12 @@ export function crearApp(opciones: { ipDe?: (c: any) => string } = {}) {
       proto_reenviado: c.req.header("x-forwarded-proto") ?? "",
     };
     return c.json(datos, 200, { "Cache-Control": "no-store" });
+    function forma(v?: string) {
+      return (v ?? "").replace(/[A-Za-z]/g, "a").replace(/[0-9]/g, "9");
+    }
     function describirPass(v?: string) {
       if (v === undefined) return "no llega";
+      if (v.length < 12) return `muy corta (${v.length} caracteres, forma ${forma(v)})`;
       return v.length >= 12 ? `ok (${v.length} caracteres)` : `muy corta (${v.length} caracteres)`;
     }
   });
