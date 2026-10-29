@@ -76,3 +76,20 @@ export async function provisionalCaducada(): Promise<boolean> {
   const f = await db.administrador.findUnique({ where: { id: "principal" } });
   return !!f?.provisionalHasta && f.provisionalHasta.getTime() < Date.now();
 }
+
+/**
+ * Rescate: si REDCAFE_PASS_ADMIN_RESTABLECER tiene 12+ caracteres, al arrancar
+ * se fija como contraseña de administración (si no lo es ya). Pensado para
+ * cuando la base ya tenía una contraseña que nadie conoce. Se borra la
+ * variable después de entrar.
+ */
+export async function restablecerPassAdminDesdeEntorno() {
+  const nueva = (process.env.REDCAFE_PASS_ADMIN_RESTABLECER ?? "").trim();
+  if (!nueva) return;
+  if (nueva.length < 12) { console.warn("[admin] REDCAFE_PASS_ADMIN_RESTABLECER necesita 12 caracteres o más; se ignora."); return; }
+  if (candidatos().length) return; // modo archivo (solo pruebas)
+  const fila = await db.administrador.findUnique({ where: { id: "principal" } });
+  if (fila && esHash(fila.passHash) && (await bcrypt.compare(nueva, fila.passHash))) return;
+  await escribirPassAdmin(nueva);
+  console.warn("[admin] Contraseña de administración restablecida desde REDCAFE_PASS_ADMIN_RESTABLECER. Borra esa variable ahora.");
+}

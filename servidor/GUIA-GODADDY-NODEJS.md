@@ -90,6 +90,9 @@ de tener miembros.
 - [ ] La **portada** carga.
 - [ ] El **Marketplace** muestra 6 lotes de ejemplo (con la base vacía es lo normal).
 - [ ] **`/admin/`** → entra con la contraseña de `REDCAFE_PASS_ADMIN_INICIAL`.
+  Esa variable solo cuenta la primera vez (base sin contraseña de admin). Si no la acepta, crea
+  `REDCAFE_PASS_ADMIN_RESTABLECER` con una contraseña nueva (12+ caracteres), redespliega, entra
+  y **borra la variable** enseguida.
 - [ ] **Registrarse** con una cuenta de prueba e iniciar sesión.
 - [ ] En la sección Base de datos, la tabla `Usuario` tiene esa cuenta de prueba.
 
