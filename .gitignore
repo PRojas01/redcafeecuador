@@ -34,3 +34,5 @@ redcafe-anonimo*.json
 *.zip
 .redcafe_admin_pass
 respaldo-*.json.gz
+/paridad
+/redcafe-respaldos/

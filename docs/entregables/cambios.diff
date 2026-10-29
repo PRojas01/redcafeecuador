@@ -1,0 +1,1356 @@
+diff -ru /tmp/claude-0/-home-user/f5dcd5fa-2ea6-5702-9647-81b56d7014d3/scratchpad/orig/api/_bootstrap.php ./api/_bootstrap.php
+--- /tmp/claude-0/-home-user/f5dcd5fa-2ea6-5702-9647-81b56d7014d3/scratchpad/orig/api/_bootstrap.php	2026-10-24 10:09:30.000000000 +0000
++++ ./api/_bootstrap.php	2026-10-26 14:17:12.680382019 +0000
+@@ -354,9 +354,54 @@
+     unset($_SESSION['user']);
+     return null;
+   }
++  // Cambiar o restablecer la contraseña cierra las demás sesiones abiertas:
++  // si alguien entró con la contraseña robada, deja de tener acceso en cuanto
++  // el titular la cambia. Las sesiones sin marca de inicio (anteriores a esta
++  // versión) solo caen si la contraseña cambió después de desplegarla.
++  $cambio = miembro_pass_cambiada_en((string)($u['id'] ?? ''));
++  if ($cambio > 0 && $cambio > (float)($_SESSION['login_at'] ?? 0)) {
++    unset($_SESSION['user']);
++    return null;
++  }
+   return $u;
+ }
+ 
++/** Momento (epoch) del último cambio de contraseña del miembro, o 0. */
++function miembro_pass_cambiada_en(string $uid): float {
++  static $mapa = null;
++  if ($uid === '') return 0;
++  if ($mapa === null) {
++    $mapa = [];
++    foreach (load_json('members', []) as $m) {
++      if (!empty($m['pass_changed_at'])) $mapa[(string)($m['id'] ?? '')] = (float)$m['pass_changed_at'];
++    }
++  }
++  return $mapa[$uid] ?? 0;
++}
++
++/** Marca el inicio de la sesión actual (para invalidarla si cambia la contraseña). */
++function marcar_inicio_sesion(): void {
++  // Con microsegundos: con segundos enteros, una sesión abierta en el mismo
++  // segundo del cambio sobrevivía.
++  $_SESSION['login_at'] = microtime(true);
++}
++
++/**
++ * Texto libre que llega del navegador: solo escalares, sin caracteres de
++ * control (salvo saltos de línea si se piden) y con tope de longitud. Un
++ * objeto o una lista en un campo de texto se guardaban tal cual y rompían
++ * las vistas que esperan una cadena.
++ */
++function texto_entrada($valor, int $max, bool $multilinea = false): string {
++  if (is_array($valor) || is_object($valor)) return '';
++  $v = (string)$valor;
++  $v = $multilinea
++    ? preg_replace('/[\x00-\x08\x0B\x0C\x0E-\x1F\x7F]/u', '', $v)
++    : preg_replace('/[\x00-\x1F\x7F]/u', ' ', $v);
++  $v = trim((string)$v);
++  return mb_substr($v, 0, $max);
++}
++
+ /**
+  * Medida vigente que impide usar la cuenta: suspensión o bloqueo activos, o
+  * cuenta cerrada/inactiva. Devuelve la sanción (o un marcador) o null.
+@@ -431,11 +476,25 @@
+ }
+ 
+ function sanitize_user(array $u): array {
+-  unset($u['pass']);
++  // Nunca salen del servidor: la contraseña y los códigos de respaldo del
++  // 2FA. Los códigos se guardaban como sha256 de 8 caracteres hexadecimales
++  // y se devolvían en auth.php?action=me también a quien solo había pasado
++  // la contraseña: se descifraban en una hora y el 2FA quedaba anulado.
++  unset($u['pass'], $u['backup_codes'], $u['pass_changed_at'], $u['pass_reset_by']);
+   $u['roles'] = miembro_roles($u);
+   return $u;
+ }
+ 
++/** Lo mínimo para la pantalla del código 2FA: quien solo pasó la contraseña. */
++function usuario_pendiente_publico(array $u): array {
++  $email = (string)($u['email'] ?? '');
++  return [
++    'id'     => (string)($u['id'] ?? ''),
++    'nombre' => (string)($u['nombre'] ?? ''),
++    'email'  => $email !== '' ? substr($email, 0, 3) . '***' : '',
++  ];
++}
++
+ /**
+  * Proyección PÚBLICA de un miembro: la que puede ver alguien sin cuenta.
+  *
+diff -ru /tmp/claude-0/-home-user/f5dcd5fa-2ea6-5702-9647-81b56d7014d3/scratchpad/orig/api/auth.php ./api/auth.php
+--- /tmp/claude-0/-home-user/f5dcd5fa-2ea6-5702-9647-81b56d7014d3/scratchpad/orig/api/auth.php	2026-10-24 10:09:30.000000000 +0000
++++ ./api/auth.php	2026-10-26 14:29:51.874854859 +0000
+@@ -79,6 +79,20 @@
+   }
+ }
+ 
++/** Planes del catálogo: los de fábrica (lib/data.ts) y los que añada la administración. */
++function registro_plan_valido($plan): string {
++  $plan = is_string($plan) ? strtolower(trim($plan)) : '';
++  $validos = ['semilla', 'cosecha', 'origen', 'comprador', 'granel', 'barra', 'barista', 'certificador',
++              'proveedor', 'amante', 'transportista', 'pilador', 'exportador', 'asesor'];
++  foreach (['contenido-planes', 'planes'] as $archivo) {
++    if (!file_exists(DATA_DIR . '/' . $archivo . '.json')) continue;   // leer no debe crear archivos
++    foreach (load_json($archivo, []) as $p) {
++      if (is_array($p) && !empty($p['id'])) $validos[] = strtolower((string)$p['id']);
++    }
++  }
++  return ($plan !== '' && in_array($plan, $validos, true)) ? $plan : 'origen';
++}
++
+ // --- Registro ---
+ if ($action === 'register') {
+   // Limita altas masivas desde la misma IP sin bloquear registros legítimos.
+@@ -86,18 +100,23 @@
+     fail('Demasiados registros seguidos. Vuelve a intentarlo en una hora.', 429);
+   }
+ 
+-  $nombre = trim($in['nombre'] ?? '');
+-  $email = strtolower(trim($in['email'] ?? ''));
+-  $pass = $in['pass'] ?? '';
+-  $rol = (string)($in['rol'] ?? '');
++  $nombre = texto_entrada($in['nombre'] ?? '', 101);
++  $email = strtolower(texto_entrada($in['email'] ?? '', 254));
++  $pass = is_string($in['pass'] ?? null) ? $in['pass'] : '';
++  $rol = is_string($in['rol'] ?? null) ? $in['rol'] : '';
+   $roles = validar_roles_miembro($in['roles'] ?? [$rol], $rol ?: null, true);
+   $rol = $roles[0];
+-  $plan = $in['plan'] ?? '';
++  // El formulario de alta deja elegir plan («Puedes cambiarlo»), así que se
++  // respeta la elección, pero solo si es un plan del catálogo: antes se
++  // guardaba cualquier texto («premium-oro»). Desconocido → plan por defecto.
++  $plan = registro_plan_valido($in['plan'] ?? '');
+ 
+   // Additional fields (optional)
+-  $telefono = trim($in['telefono'] ?? '');
+-  $cedula   = trim($in['cedula'] ?? '');
+-  $provincia = trim($in['provincia'] ?? '');
++  $telefono = texto_entrada($in['telefono'] ?? '', 30);
++  $cedula   = texto_entrada($in['cedula'] ?? '', 20);
++  $provincia = texto_entrada($in['provincia'] ?? '', 80);
++  if ($telefono !== '' && !preg_match('/^[0-9+()\-\s.]{7,30}$/', $telefono)) fail('Teléfono inválido.', 422);
++  if ($cedula !== '' && !preg_match('/^[0-9A-Za-z\-]{5,20}$/', $cedula)) fail('Cédula o RUC inválido.', 422);
+ 
+   // Aceptación de políticas (LOPDP Ecuador: guardar evidencia de consentimiento)
+   // Visibilidad del perfil: pública o solo para miembros con cuenta.
+@@ -117,9 +136,6 @@
+   if (strlen($pass) < 8) fail('Contraseña mínimo 8 caracteres.', 422);
+   if (strlen($pass) > 200) fail('Contraseña demasiado larga.', 422);
+ 
+-  $members = load_json('members', []);
+-  if (find_member($members, $email)) fail('Ese correo ya está registrado.', 409);
+-
+   $id = uid();
+   $m = [
+     'id' => $id,
+@@ -145,12 +161,20 @@
+     'fundador' => (gmdate('Y-m-d') <= REGISTRO_GRATIS_HASTA),
+     'created_at' => now_iso(),
+   ];
+-  $members[] = $m;
+-  save_json('members', $members);
++  // Leer-comprobar-escribir dentro del bloqueo. Con load_json + save_json,
++  // de 10 altas simultáneas se perdían 7: cada persona recibía «ok» y una
++  // sesión, pero su cuenta no quedaba guardada. El correo repetido también se
++  // comprueba aquí dentro, o dos altas a la vez con el mismo correo pasaban.
++  $duplicado = false;
++  mutate_json('members', [], function (array $members) use ($m, $email, &$duplicado) {
++    if (find_member($members, $email)) { $duplicado = true; return $members; }
++    $members[] = $m;
++    return $members;
++  });
++  if ($duplicado) fail('Ese correo ya está registrado.', 409);
+ 
+   // Log de consentimientos (evidencia para LOPDP)
+-  $consents = load_json('consents', []);
+-  $consents[] = [
++  mutate_json('consents', [], fn(array $consents) => array_merge($consents, [[
+     'id' => uid(),
+     'member_id' => $id,
+     'email' => $email,
+@@ -161,8 +185,7 @@
+     'acepta_uso_datos' => $aceptaUsoDatos,
+     'acepta_marketing' => $aceptaMarketing,
+     'ts' => now_iso(),
+-  ];
+-  save_json('consents', $consents);
++  ]]));
+ 
+   // Email de bienvenida (transaccional, no bloquea el registro)
+   @include_once __DIR__ . '/mailer.php';
+@@ -198,6 +221,7 @@
+   // Regenerar sesión para evitar fixation
+   session_regenerate_id(true);
+   $_SESSION['user'] = sanitize_user($m);
++  marcar_inicio_sesion();
+   ok(['user' => $_SESSION['user']]);
+ }
+ 
+@@ -257,6 +281,7 @@
+     // fallaba: un secreto de acceso guardado en un registro. Eliminado.)
+ 
+     // Guardar usuario pendiente y devolver requires_2fa
++    session_regenerate_id(true);
+     $_SESSION['2fa_pending_user'] = $m['id'];
+     $_SESSION['2fa_remember'] = $remember;
+     refresh_session_cookie($remember);
+@@ -273,6 +298,7 @@
+   session_regenerate_id(true);
+   $_SESSION['user'] = sanitize_user($m);
+   $_SESSION['remember'] = $remember;
++  marcar_inicio_sesion();
+   refresh_session_cookie($remember);
+   ok(['user' => $_SESSION['user']]);
+ }
+@@ -283,7 +309,10 @@
+   session_destroy();
+   // Borrar cookie de sesión
+   $params = session_get_cookie_params();
+-  setcookie(session_name(), '', time() - 3600, $params['path'], $params['domain'], $params['secure'], $params['httponly']);
++  setcookie(session_name(), '', [
++    'expires' => time() - 3600, 'path' => $params['path'], 'domain' => $params['domain'],
++    'secure' => $params['secure'], 'httponly' => $params['httponly'], 'samesite' => 'Lax',
++  ]);
+   ok();
+ }
+ 
+@@ -306,7 +335,10 @@
+     $members = load_json('members', []);
+     foreach ($members as $m) {
+       if (($m['id'] ?? '') === $pendingId) {
+-        ok(['user' => sanitize_user($m), 'requires_2fa' => true]);
++        // Sin usuario: el panel y la barra de navegación, al ver requires_2fa
++        // sin user, llevan a /login para terminar la verificación. Con el
++        // usuario completo (como antes) el panel se daba por iniciado.
++        ok(['user' => null, 'requires_2fa' => true]);
+         return;
+       }
+     }
+@@ -388,24 +420,28 @@
+     fail('El enlace de recuperación no es válido o ya caducó.', 401);
+   }
+ 
+-  $members = load_json('members', []);
+   $found = false;
+-  foreach ($members as &$m) {
+-    if (($m['id'] ?? '') === ($match['member_id'] ?? '')) {
+-      $m['pass'] = password_hash($new, PASSWORD_BCRYPT);
+-      $m['updated_at'] = now_iso();
+-      $m['pass_reset_at'] = now_iso();
+-      $found = true;
+-      break;
++  mutate_json('members', [], function (array $members) use ($match, $new, &$found) {
++    foreach ($members as &$m) {
++      if (($m['id'] ?? '') === ($match['member_id'] ?? '')) {
++        $m['pass'] = password_hash($new, PASSWORD_BCRYPT);
++        $m['updated_at'] = now_iso();
++        $m['pass_reset_at'] = now_iso();
++        $m['pass_changed_at'] = microtime(true);   // cierra las sesiones abiertas
++        $found = true;
++        break;
++      }
+     }
+-  }
+-  unset($m);
++    unset($m);
++    return $members;
++  });
+   if (!$found) fail('Usuario no encontrado.', 404);
+ 
+-  unset($tokens[$matchIndex]);
+-  $tokens = array_values(array_filter($tokens, fn($r) => (int)($r['expira'] ?? 0) > $now));
+-  save_json('members', $members);
+-  save_json('password-resets', $tokens);
++  // El enlace es de un solo uso: se retira dentro del bloqueo.
++  mutate_json('password-resets', [], function (array $tokens) use ($matchIndex, $now) {
++    unset($tokens[$matchIndex]);
++    return array_values(array_filter($tokens, fn($r) => (int)($r['expira'] ?? 0) > $now));
++  });
+   ok(['changed' => true]);
+ }
+ 
+@@ -462,38 +498,41 @@
+ 
+ // --- Cambio de contraseña del usuario autenticado ---
+ if ($action === 'change_password') {
+-  // Aceptar tanto sesión completa como 2fa_pending_user (usuario con código OTP pendiente)
++  // Exige la sesión COMPLETA. Antes bastaba la verificación 2FA pendiente:
++  // quien tenía la contraseña robada, pero no el código, podía cambiarla y
++  // dejar fuera al titular.
+   $u = current_user();
+-  $pendingId = $_SESSION['2fa_pending_user'] ?? null;
+-  if (!$u && !$pendingId) fail('No autenticado.', 401);
+-
+-  $userId = $u['id'] ?? $pendingId;
+-
+-  $current = $in['current'] ?? '';
+-  $new     = $in['new'] ?? '';
+-  $confirm = $in['confirm'] ?? '';
++  if (!$u) fail('No autenticado.', 401);
++  $userId = (string)$u['id'];
++  if (!check_rate_limit('change_password', 10, 3600)) fail('Demasiados intentos. Espera una hora.', 429);
++
++  $current = is_string($in['current'] ?? null) ? $in['current'] : '';
++  $new     = is_string($in['new'] ?? null) ? $in['new'] : '';
++  $confirm = is_string($in['confirm'] ?? null) ? $in['confirm'] : '';
+ 
+   if (strlen($new) < 8) fail('La nueva contraseña debe tener mínimo 8 caracteres.', 422);
+   if (strlen($new) > 200) fail('La nueva contraseña es demasiado larga.', 422);
+   if ($new !== $confirm) fail('La confirmación no coincide.', 422);
+ 
+-  $members = load_json('members', []);
+-  $found = false;
+-  foreach ($members as &$m) {
+-    if (($m['id'] ?? '') === $userId) {
+-      if (!password_verify($current, $m['pass'] ?? '')) {
+-        fail('La contraseña actual es incorrecta.', 401);
+-      }
++  $resultado = 'no-encontrado';
++  mutate_json('members', [], function (array $members) use ($userId, $current, $new, &$resultado) {
++    foreach ($members as &$m) {
++      if (($m['id'] ?? '') !== $userId) continue;
++      if (!password_verify($current, $m['pass'] ?? '')) { $resultado = 'mal'; return $members; }
+       $m['pass'] = password_hash($new, PASSWORD_BCRYPT);
+       $m['updated_at'] = now_iso();
+-      $found = true;
++      $m['pass_changed_at'] = microtime(true);
++      $resultado = 'ok';
+       break;
+     }
+-  }
+-  unset($m);
+-  if (!$found) fail('Usuario no encontrado.', 404);
+-
+-  save_json('members', $members);
++    unset($m);
++    return $members;
++  });
++  if ($resultado === 'mal') fail('La contraseña actual es incorrecta.', 401);
++  if ($resultado !== 'ok') fail('Usuario no encontrado.', 404);
++  // Esta sesión sigue abierta; las demás (otros dispositivos) se cierran.
++  session_regenerate_id(true);
++  marcar_inicio_sesion();
+   ok(['changed' => true]);
+ }
+ 
+@@ -510,21 +549,22 @@
+   if (strlen($new) > 200) fail('La nueva contraseña es demasiado larga.', 422);
+   if ($new !== $confirm) fail('La confirmación no coincide.', 422);
+ 
+-  $members = load_json('members', []);
+   $found = false;
+-  foreach ($members as &$m) {
+-    if (($m['id'] ?? '') === $targetId) {
+-      $m['pass'] = password_hash($new, PASSWORD_BCRYPT);
+-      $m['updated_at'] = now_iso();
+-      $m['pass_reset_by'] = $_SESSION['admin_login_at'] ?? 'admin';
+-      $found = true;
+-      break;
++  mutate_json('members', [], function (array $members) use ($targetId, $new, &$found) {
++    foreach ($members as &$m) {
++      if (($m['id'] ?? '') === $targetId) {
++        $m['pass'] = password_hash($new, PASSWORD_BCRYPT);
++        $m['updated_at'] = now_iso();
++        $m['pass_changed_at'] = microtime(true);
++        $m['pass_reset_by'] = $_SESSION['admin_login_at'] ?? 'admin';
++        $found = true;
++        break;
++      }
+     }
+-  }
+-  unset($m);
++    unset($m);
++    return $members;
++  });
+   if (!$found) fail('Miembro no encontrado.', 404);
+-
+-  save_json('members', $members);
+   ok(['changed' => true, 'id' => $targetId]);
+ }
+ 
+@@ -592,7 +632,25 @@
+ }
+ 
+ if ($action === 'admin_reset_password') {
+-  $token = $in['token'] ?? $_GET['token'] ?? '';
++  $token = (string)($in['token'] ?? $_GET['token'] ?? '');
++  // Abrir el enlace (GET) solo muestra un botón. Los antivirus y los
++  // previsualizadores de correo abren los enlaces solos: antes ese primer GET
++  // gastaba el token y generaba una contraseña nueva que nadie veía, dejando
++  // a la administración fuera del panel.
++  if (($_SERVER['REQUEST_METHOD'] ?? 'GET') !== 'POST') {
++    header('Content-Type: text/html; charset=utf-8');
++    header("Content-Security-Policy: default-src 'none'; style-src 'unsafe-inline'; form-action 'self'");
++    echo '<!doctype html><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Restablecer contraseña</title>'
++       . '<body style="font:16px/1.6 system-ui;max-width:34rem;margin:3rem auto;padding:0 1rem;color:#14140F">'
++       . '<h1 style="font-size:1.35rem">Restablecer la contraseña de administrador</h1>'
++       . '<p>Pulsa el botón para generar una contraseña nueva. Se mostrará una sola vez.</p>'
++       . '<form method="post" action="/api/auth.php?action=admin_reset_password">'
++       . '<input type="hidden" name="token" value="' . htmlspecialchars($token, ENT_QUOTES) . '">'
++       . '<button type="submit" style="font:inherit;padding:.6rem 1.2rem;background:#A94E17;color:#fff;border:0;border-radius:6px;cursor:pointer">Generar contraseña nueva</button>'
++       . '</form></body>';
++    exit;
++  }
++  if (!check_rate_limit('admin_reset_password', 10, 3600)) fail('Demasiados intentos. Espera una hora.', 429);
+   $archivo = __DIR__ . '/../data/.admin_reset_token';
+   $guardado = file_exists($archivo) ? json_decode((string) file_get_contents($archivo), true) : null;
+ 
+diff -ru /tmp/claude-0/-home-user/f5dcd5fa-2ea6-5702-9647-81b56d7014d3/scratchpad/orig/api/comunidad.php ./api/comunidad.php
+--- /tmp/claude-0/-home-user/f5dcd5fa-2ea6-5702-9647-81b56d7014d3/scratchpad/orig/api/comunidad.php	2026-10-24 10:09:30.000000000 +0000
++++ ./api/comunidad.php	2026-10-26 14:15:59.181441382 +0000
+@@ -79,12 +79,12 @@
+   }
+ 
+   if (!$u) fail('No autenticado.', 401);
+-  $text = trim($in['text'] ?? '');
+-  $titulo = trim($in['titulo'] ?? '');
++  $text = texto_entrada($in['text'] ?? '', 4001, true);
++  $titulo = texto_entrada($in['titulo'] ?? '', 161);
+   if ($titulo === '' || $text === '') fail('Título y texto requeridos.', 422);
+   if (mb_strlen($text) > 4000) fail('Texto demasiado largo.', 422);
++  if (mb_strlen($titulo) > 160) fail('Título demasiado largo (máx. 160).', 422);
+   $imagenes = comunidad_imagenes_validas($in['imagenes'] ?? []);
+-  $posts = load_json('posts', []);
+   $p = [
+     'id' => uid(),
+     'titulo' => $titulo,
+@@ -97,8 +97,7 @@
+     'likes' => [],
+     'comments' => [],
+   ];
+-  $posts[] = $p;
+-  save_json('posts', $posts);
++  mutate_json('posts', [], function (array $posts) use ($p) { $posts[] = $p; return $posts; });
+   ok(['post' => $p]);
+ }
+ 
+@@ -125,9 +124,12 @@
+   }
+ 
+   if (!$u) fail('No autenticado.', 401);
+-  $id = $in['id'] ?? '';
+-  $text = trim($in['text'] ?? '');
++  $id = texto_entrada($in['id'] ?? '', 40);
++  $text = texto_entrada($in['text'] ?? '', 2001, true);
+   if (!$id || $text === '') fail('Falta id o text.', 422);
++  // Sin tope, un solo comentario de 300 KB inflaba el muro que descarga
++  // cada visitante.
++  if (mb_strlen($text) > 2000) fail('Comentario demasiado largo (máx. 2000).', 422);
+   $posts = mutate_json('posts', [], function($posts) use ($id, $u, $text) {
+     foreach ($posts as &$p) {
+       if (($p['id'] ?? '') === $id) {
+@@ -189,10 +191,11 @@
+   if (!$u) $u = ['id' => 'admin', 'nombre' => 'Administración', 'rol' => 'admin'];
+   $id = trim((string)($in['id'] ?? ''));
+   if ($id === '') fail('id requerido.', 422);
+-  $titulo = trim((string)($in['titulo'] ?? ''));
+-  $text = trim((string)($in['text'] ?? ''));
++  $titulo = texto_entrada($in['titulo'] ?? '', 161);
++  $text = texto_entrada($in['text'] ?? '', 4001, true);
+   if ($titulo === '' || $text === '') fail('Título y texto requeridos.', 422);
+   if (mb_strlen($text) > 4000) fail('Texto demasiado largo.', 422);
++  if (mb_strlen($titulo) > 160) fail('Título demasiado largo (máx. 160).', 422);
+ 
+   $actual = null;
+   foreach (load_json('posts', []) as $p) {
+@@ -239,8 +242,7 @@
+   if (!$objetivo) fail('Post no encontrado.', 404);
+   $autorizado = (($objetivo['autor_id'] ?? '') === ($u['id'] ?? '')) || !empty($_SESSION['admin']);
+   if (!$autorizado) fail('No autorizado: solo el autor o un administrador puede borrar.', 403);
+-  $posts = array_values(array_filter($posts, fn($p) => ($p['id'] ?? '') !== $id));
+-  save_json('posts', $posts);
++  mutate_json('posts', [], fn(array $posts) => array_values(array_filter($posts, fn($p) => ($p['id'] ?? '') !== $id)));
+   ok();
+ }
+ 
+diff -ru /tmp/claude-0/-home-user/f5dcd5fa-2ea6-5702-9647-81b56d7014d3/scratchpad/orig/api/lotes.php ./api/lotes.php
+--- /tmp/claude-0/-home-user/f5dcd5fa-2ea6-5702-9647-81b56d7014d3/scratchpad/orig/api/lotes.php	2026-10-24 10:09:30.000000000 +0000
++++ ./api/lotes.php	2026-10-26 14:14:58.687776130 +0000
+@@ -601,13 +601,13 @@
+   $lote = [
+     'id' => uid(),
+     'categoria' => $categoria,
+-    'finca' => trim($in['finca']),
++    'finca' => texto_entrada($in['finca'], 120),
+     'productor' => $u['nombre'],
+     'productor_id' => $u['id'],
+     'visibilidad' => $visLote,
+-    'provincia' => trim($in['provincia']),
+-    'variedad' => trim($in['variedad']),
+-    'proceso' => trim((string)($in['proceso'] ?? '')),
++    'provincia' => texto_entrada($in['provincia'], 80),
++    'variedad' => texto_entrada($in['variedad'], 80),
++    'proceso' => texto_entrada($in['proceso'] ?? '', 80),
+     // La altura es un dato de la finca, no un cero: 0 msnm no existe en la
+     // caficultura ecuatoriana. Sin dato se deja vacío y la ficha lo omite.
+     'altura' => (isset($in['altura']) && is_numeric($in['altura']) && (int)$in['altura'] > 0)
+@@ -629,20 +629,20 @@
+     'pesoSacoLb' => (isset($in['pesoSacoLb']) && is_numeric($in['pesoSacoLb']) && (float)$in['pesoSacoLb'] > 0)
+                       ? max(1, min(500, (int)round((float)$in['pesoSacoLb'])))
+                       : null,
+-    'stockSacos' => intval($in['stockSacos'] ?? 0),
+-    'stockQuintales' => intval($in['stockQuintales'] ?? 0),
++    'stockSacos' => max(0, min(100000, intval($in['stockSacos'] ?? 0))),
++    'stockQuintales' => max(0, min(100000, intval($in['stockQuintales'] ?? 0))),
+     // «Convencional» no es un valor neutro: afirma que el café NO está
+     // certificado. A un productor con sello orgánico que no rellenó el campo,
+     // la plataforma le estaba publicando lo contrario de lo que tiene, y eso
+     // le cuesta dinero. Sin dato no se afirma nada.
+-    'certificacion' => trim((string)($in['certificacion'] ?? '')),
++    'certificacion' => texto_entrada($in['certificacion'] ?? '', 80),
+     // Notas de cata: de aquí sale el color del perfil de taza en el catálogo.
+-    'descripcion' => mb_substr(trim($in['descripcion'] ?? ''), 0, 400),
+-    'emoji' => trim($in['emoji'] ?? '☕'),
++    'descripcion' => texto_entrada($in['descripcion'] ?? '', 400, true),
++    'emoji' => texto_entrada($in['emoji'] ?? '☕', 8) ?: '☕',
+     // La venta mínima es un compromiso comercial del vendedor. Anunciar
+     // «desde 1 lb» a quien solo vende por sacos le trae consultas que no
+     // puede atender. Sin dato: a convenir.
+-    'ventaMinima' => trim((string)($in['ventaMinima'] ?? '')),
++    'ventaMinima' => texto_entrada($in['ventaMinima'] ?? '', 40),
+     // El sello no se hereda del rol de quien publica: se concede mirando el
+     // lote, en api/verificaciones.php. Antes, todo lo que subía la
+     // administración nacía «verificado» sin que nadie hubiera revisado nada.
+@@ -667,9 +667,8 @@
+     }
+   }
+   if ($gpsText !== '') {
+-    $lote['trazabilidad'] = ['gps' => $gpsText];
++    $lote['trazabilidad'] = ['gps' => mb_substr($gpsText, 0, 120)];
+   }
+-  $data = load_json('lotes', seed_lotes());
+   $lote = lote_aplicar_ficha($lote, $in);
+   if ($categoria === 'terminado') {
+     $lote['estado'] = 'tostado';
+@@ -686,8 +685,10 @@
+     $lote['stockSacos'] = 0;
+     $lote['stockQuintales'] = 0;
+   }
+-  $data[] = $lote;
+-  save_json('lotes', $data);
++  mutate_json('lotes', seed_lotes(), function (array $data) use ($lote) {
++    $data[] = $lote;
++    return $data;
++  });
+   publicar_aviso_comunidad('lote', $lote);
+   registrar_actividad('lote-publicado', [
+     'objeto_tipo' => 'lote',
+@@ -722,8 +723,20 @@
+   $esAdmin = !empty($_SESSION['admin']) || ($u && miembro_tiene_rol($u, 'admin'));
+   $id = trim((string)($in['id'] ?? ($_GET['id'] ?? '')));
+   if ($id === '') fail('id requerido.', 422);
+-  $data = load_json('lotes', seed_lotes());
++  // Los mismos límites que al publicar. Antes la edición aceptaba stock y
++  // precio negativos, textos sin tope y hasta objetos en lugar de texto.
++  foreach (['precioSaco','precioQuintal','stockSacos','stockQuintales','unidades','precioUnidad'] as $n) {
++    if (isset($in[$n]) && is_numeric($in[$n]) && floatval($in[$n]) < 0) {
++      fail('El valor de ' . $n . ' no puede ser negativo.', 422);
++    }
++  }
++  foreach (['lat' => [-5, 2], 'lng' => [-82, -75]] as $c => [$min, $max]) {
++    if (isset($in[$c]) && is_numeric($in[$c]) && ((float)$in[$c] < $min || (float)$in[$c] > $max)) {
++      fail('La ubicación debe estar dentro de Ecuador continental.', 422);
++    }
++  }
+   $updated = null;
++  mutate_json('lotes', seed_lotes(), function (array $data) use ($id, $in, $actorId, $esAdmin, &$updated) {
+   foreach ($data as &$l) {
+     if (($l['id'] ?? '') !== $id) continue;
+     $owner = lote_owner_id($l);
+@@ -735,10 +748,16 @@
+       $d = mb_strtolower(trim((string)$in['disponibilidad']));
+       if (in_array($d, DISPONIBILIDADES_LOTE, true)) $l['disponibilidad'] = $d;
+     }
+-    foreach (['finca','provincia','variedad','proceso','certificacion','descripcion','ventaMinima','visibilidad'] as $field) {
++    $topes = ['finca' => 120, 'provincia' => 80, 'variedad' => 80, 'proceso' => 80,
++              'certificacion' => 80, 'descripcion' => 400, 'ventaMinima' => 40];
++    foreach ($topes as $field => $max) {
+       if (!array_key_exists($field, $in)) continue;
+-      $valor = is_string($in[$field]) ? trim($in[$field]) : $in[$field];
+-      if ((string)($l[$field] ?? '') !== (string)$valor) $l[$field] = $valor;
++      $valor = texto_entrada($in[$field], $max, $field === 'descripcion');
++      if (in_array($field, ['finca', 'provincia', 'variedad'], true) && $valor === '') continue;
++      if ((string)($l[$field] ?? '') !== $valor) $l[$field] = $valor;
++    }
++    if (array_key_exists('visibilidad', $in)) {
++      $l['visibilidad'] = $in['visibilidad'] === 'registrados' ? 'registrados' : 'publico';
+     }
+     if (array_key_exists('pesoSacoLb', $in)) {
+       $peso = $in['pesoSacoLb'];
+@@ -748,7 +767,7 @@
+     }
+     foreach (['stockSacos','stockQuintales'] as $field) {
+       if (!array_key_exists($field, $in)) continue;
+-      $valor = intval($in[$field]);
++      $valor = max(0, min(100000, intval($in[$field])));
+       if (intval($l[$field] ?? 0) !== $valor) $l[$field] = $valor;
+     }
+     // Marcarlo disponible o reservado sin sacos lo dejaría agotado en silencio.
+@@ -810,8 +829,9 @@
+     break;
+   }
+   unset($l);
++  return $data;
++  });
+   if (!$updated) fail('Lote no encontrado.', 404);
+-  save_json('lotes', $data);
+   ok(['lote' => $updated]);
+ }
+ 
+@@ -951,8 +971,7 @@
+   if (!$objetivo) fail('Lote no encontrado.', 404);
+   $autorizado = lote_owner_id($objetivo) === $actorId || $esAdmin;
+   if (!$autorizado) fail('No autorizado: solo el productor dueño o un administrador puede borrar.', 403);
+-  $data = array_values(array_filter($data, fn($l) => ($l['id'] ?? '') !== $id));
+-  save_json('lotes', $data);
++  mutate_json('lotes', seed_lotes(), fn(array $data) => array_values(array_filter($data, fn($l) => ($l['id'] ?? '') !== $id)));
+   ok();
+ }
+ 
+diff -ru /tmp/claude-0/-home-user/f5dcd5fa-2ea6-5702-9647-81b56d7014d3/scratchpad/orig/api/mailer.php ./api/mailer.php
+--- /tmp/claude-0/-home-user/f5dcd5fa-2ea6-5702-9647-81b56d7014d3/scratchpad/orig/api/mailer.php	2026-10-24 10:09:30.000000000 +0000
++++ ./api/mailer.php	2026-10-26 14:15:59.183158696 +0000
+@@ -22,6 +22,9 @@
+ }
+ 
+ function mailer_wrap(string $inner): string {
++  // Las constantes no se interpolan dentro de un heredoc: «{MAIL_BRAND_URL}»
++  // salía literal y los enlaces del pie de TODOS los correos estaban rotos.
++  $marca = MAIL_BRAND_URL;
+   return <<<HTML
+ <!DOCTYPE html>
+ <html lang="es">
+@@ -62,9 +65,9 @@
+               Red Café Ecuador — Comunidad de productores, tostadores y cafeterías de especialidad.
+             </p>
+             <p style="margin:0;font-size:12px;color:#6f5747;font-family:Arial,sans-serif;">
+-              <a href="{MAIL_BRAND_URL}" style="color:#6f3f1f;font-weight:700;text-decoration:none;">Visita la plataforma</a>
++              <a href="{$marca}" style="color:#6f3f1f;font-weight:700;text-decoration:none;">Visita la plataforma</a>
+               &nbsp;·&nbsp;
+-              <a href="{MAIL_BRAND_URL}terminos-y-condiciones" style="color:#6f5747;text-decoration:none;">Términos y privacidad</a>
++              <a href="{$marca}terminos-y-condiciones" style="color:#6f5747;text-decoration:none;">Términos y privacidad</a>
+             </p>
+             <p style="margin:12px 0 0;font-size:11px;color:#6f5747;font-family:Arial,sans-serif;">
+               Recibes este correo porque tienes una cuenta o interacción en Red Café Ecuador.
+@@ -239,6 +242,9 @@
+            . 'MIME-Version: 1.0' . "\r\n"
+            . 'Content-Type: text/html; charset=utf-8' . "\r\n";
+ 
++  // Asunto con tildes y emoji: sin codificar (RFC 2047) muchos clientes lo
++  // muestran con caracteres rotos.
++  $subject = mb_encode_mimeheader(str_replace(["\r", "\n"], ' ', $subject), 'UTF-8', 'B', "\r\n");
+   $ok = $to !== '' && @mail($to, $subject, $body, $headers);
+   mailer_debug_log($to, $subject, $ok);
+   return $ok;
+diff -ru /tmp/claude-0/-home-user/f5dcd5fa-2ea6-5702-9647-81b56d7014d3/scratchpad/orig/api/marketplace-servicios.php ./api/marketplace-servicios.php
+--- /tmp/claude-0/-home-user/f5dcd5fa-2ea6-5702-9647-81b56d7014d3/scratchpad/orig/api/marketplace-servicios.php	2026-10-24 10:09:30.000000000 +0000
++++ ./api/marketplace-servicios.php	2026-10-26 14:15:59.182682557 +0000
+@@ -316,7 +316,6 @@
+   // perfil del miembro. Si quien publica no dice nada, el servicio sale público;
+   // solo queda «solo miembros» si el miembro lo pide expresamente en el form.
+   $vis = ($in['visibilidad'] ?? 'publico') === 'registrados' ? 'registrados' : 'publico';
+-  $items = load_json('servicios-terceros', []);
+   $servicio = [
+     'id' => uid(),
+     'titulo' => $titulo,
+@@ -341,8 +340,7 @@
+     'oculto' => false,
+     'created_at' => now_iso(),
+   ];
+-  $items[] = $servicio;
+-  save_json('servicios-terceros', $items);
++  mutate_json('servicios-terceros', [], function (array $items) use ($servicio) { $items[] = $servicio; return $items; });
+   publicar_aviso_comunidad('servicio', $servicio);
+   registrar_actividad('servicio-publicado', [
+     'objeto_tipo' => 'servicio',
+@@ -368,8 +366,7 @@
+   if (!$objetivo) fail('Servicio no encontrado.', 404);
+   $autorizado = (servicio_owner_id($objetivo) === ($u['id'] ?? '')) || !empty($_SESSION['admin']);
+   if (!$autorizado) fail('No autorizado.', 403);
+-  $items = array_values(array_filter($items, fn($s) => ($s['id'] ?? '') !== $id));
+-  save_json('servicios-terceros', $items);
++  mutate_json('servicios-terceros', [], fn(array $items) => array_values(array_filter($items, fn($s) => ($s['id'] ?? '') !== $id)));
+   ok();
+ }
+ 
+@@ -377,17 +374,22 @@
+   $u = servicio_usuario_o_admin();
+   $id = trim((string)($in['id'] ?? ($_GET['id'] ?? '')));
+   if ($id === '') fail('id requerido.', 422);
+-  $items = load_json('servicios-terceros', []);
+   $updated = null;
++  mutate_json('servicios-terceros', [], function (array $items) use ($id, $in, $u, &$updated) {
+   foreach ($items as &$s) {
+     if (($s['id'] ?? '') !== $id) continue;
+     $owner = servicio_owner_id($s);
+     if ($owner !== ($u['id'] ?? '') && !miembro_tiene_rol($u, 'admin')) {
+       fail('No autorizado: solo el dueño o un administrador puede editar este servicio.', 403);
+     }
+-    foreach (['titulo','descripcion','provincia','cobertura','unidad','visibilidad'] as $field) {
+-      if (array_key_exists($field, $in)) $s[$field] = is_string($in[$field]) ? trim($in[$field]) : $in[$field];
++    // Los mismos topes que al publicar; antes la edición los saltaba.
++    foreach (['titulo' => 90, 'descripcion' => 600, 'provincia' => 80, 'cobertura' => 120, 'unidad' => 40] as $field => $max) {
++      if (!array_key_exists($field, $in)) continue;
++      $v = texto_entrada($in[$field], $max, $field === 'descripcion');
++      if ($v === '' && in_array($field, ['titulo', 'descripcion'], true)) continue;
++      $s[$field] = $v;
+     }
++    if (array_key_exists('visibilidad', $in)) $s['visibilidad'] = $in['visibilidad'] === 'registrados' ? 'registrados' : 'publico';
+     if (array_key_exists('categoria', $in)) $s['categoria'] = categoria_servicio_valida((string)$in['categoria']);
+     if (array_key_exists('precio', $in)) $s['precio'] = max(0, floatval($in['precio']));
+     if (array_key_exists('imagenes', $in)) $s['imagenes'] = servicio_imagenes_validas($in['imagenes']);
+@@ -397,8 +399,9 @@
+     break;
+   }
+   unset($s);
++  return $items;
++  });
+   if (!$updated) fail('Servicio no encontrado.', 404);
+-  save_json('servicios-terceros', $items);
+   ok(['servicio' => $updated]);
+ }
+ 
+diff -ru /tmp/claude-0/-home-user/f5dcd5fa-2ea6-5702-9647-81b56d7014d3/scratchpad/orig/api/members.php ./api/members.php
+--- /tmp/claude-0/-home-user/f5dcd5fa-2ea6-5702-9647-81b56d7014d3/scratchpad/orig/api/members.php	2026-10-24 10:09:30.000000000 +0000
++++ ./api/members.php	2026-10-26 14:14:37.960835330 +0000
+@@ -22,7 +22,7 @@
+ // --- Listado PÚBLICO: sin cuenta, solo quien aceptó ser visible ---
+ if ($action === 'publicos') {
+   $members = load_json('members', []);
+-  $vis = array_values(array_filter($members, 'miembro_es_publico'));
++  $vis = array_values(array_filter($members, fn($m) => miembro_es_publico($m) && !cuenta_restringida((string)($m['id'] ?? ''))));
+   ok(['members' => array_map('miembro_publico', $vis), 'total' => count($vis)]);
+ }
+ 
+@@ -46,11 +46,11 @@
+ // --- Actualizar perfil (solo el propio usuario) ---
+ if ($action === 'update') {
+   $u = require_user();
+-  $nombre = trim($in['nombre'] ?? '');
+-  $email = strtolower(trim($in['email'] ?? ''));
+-  $telefono = trim($in['telefono'] ?? '');
+-  $whatsapp = trim($in['whatsapp'] ?? '');
+-  $provincia = trim($in['provincia'] ?? '');
++  $nombre = texto_entrada($in['nombre'] ?? '', 101);
++  $email = strtolower(texto_entrada($in['email'] ?? '', 254));
++  $telefono = texto_entrada($in['telefono'] ?? '', 31);
++  $whatsapp = texto_entrada($in['whatsapp'] ?? '', 31);
++  $provincia = texto_entrada($in['provincia'] ?? '', 81);
+   if (mb_strlen($nombre) < 2 || mb_strlen($nombre) > 100) fail('Nombre inválido.', 422);
+   if (!filter_var($email, FILTER_VALIDATE_EMAIL)) fail('Correo electrónico inválido.', 422);
+   if (strlen($telefono) > 30 || strlen($whatsapp) > 30) fail('Número de contacto demasiado largo.', 422);
+@@ -58,31 +58,33 @@
+   if ($whatsapp !== '' && !preg_match('/^[0-9+()\-\s.]{7,30}$/', $whatsapp)) fail('WhatsApp inválido.', 422);
+   if (mb_strlen($provincia) > 80) fail('Provincia demasiado larga.', 422);
+ 
+-  $members = load_json('members', []);
+-  foreach ($members as $otro) {
+-    if (($otro['id'] ?? '') !== $u['id'] && strcasecmp($otro['email'] ?? '', $email) === 0) {
+-      fail('Ese correo ya está registrado en otra cuenta.', 409);
+-    }
+-  }
+-
+-  $found = false;
++  $resultado = 'no-encontrado';
+   $updated = null;
+-  foreach ($members as &$m) {
+-    if (($m['id'] ?? '') === $u['id']) {
+-      $m['nombre'] = $nombre;
+-      $m['email'] = $email;
+-      $m['telefono'] = $telefono;
+-      $m['whatsapp'] = $whatsapp;
+-      $m['provincia'] = $provincia;
+-      $m['updated_at'] = now_iso();
+-      $found = true;
+-      $updated = $m;
+-      break;
+-    }
+-  }
+-  unset($m);
+-  save_json('members', $members);
+-  if (!$found) fail('Miembro no encontrado.', 404);
++  mutate_json('members', [], function (array $members) use ($u, $nombre, $email, $telefono, $whatsapp, $provincia, &$resultado, &$updated) {
++    foreach ($members as $otro) {
++      if (($otro['id'] ?? '') !== $u['id'] && strcasecmp($otro['email'] ?? '', $email) === 0) {
++        $resultado = 'duplicado';
++        return $members;
++      }
++    }
++    foreach ($members as &$m) {
++      if (($m['id'] ?? '') === $u['id']) {
++        $m['nombre'] = $nombre;
++        $m['email'] = $email;
++        $m['telefono'] = $telefono;
++        $m['whatsapp'] = $whatsapp;
++        $m['provincia'] = $provincia;
++        $m['updated_at'] = now_iso();
++        $resultado = 'ok';
++        $updated = $m;
++        break;
++      }
++    }
++    unset($m);
++    return $members;
++  });
++  if ($resultado === 'duplicado') fail('Ese correo ya está registrado en otra cuenta.', 409);
++  if ($resultado !== 'ok') fail('Miembro no encontrado.', 404);
+   $_SESSION['user'] = sanitize_user($updated ?? []);
+   ok(['user' => $_SESSION['user']]);
+ }
+@@ -147,26 +149,25 @@
+   $u = require_user();
+   $roles = validar_roles_miembro($in['roles'] ?? [], $in['rol'] ?? null);
+ 
+-  $members = load_json('members', []);
+-  $found = false;
+-  foreach ($members as &$m) {
+-    if (($m['id'] ?? '') === $u['id']) {
+-      $actuales = miembro_roles($m);
+-      $bloqueos = bloqueos_quitar_perfiles($u['id'], $actuales, $roles);
+-      if ($bloqueos) {
+-        fail(implode(' ', $bloqueos), 409, ['bloqueos' => $bloqueos]);
+-      }
++  $actual = null;
++  foreach (load_json('members', []) as $m) { if (($m['id'] ?? '') === $u['id']) { $actual = $m; break; } }
++  if (!$actual) fail('Miembro no encontrado.', 404);
++  $bloqueos = bloqueos_quitar_perfiles($u['id'], miembro_roles($actual), $roles);
++  if ($bloqueos) fail(implode(' ', $bloqueos), 409, ['bloqueos' => $bloqueos]);
++  $updated = null;
++  mutate_json('members', [], function (array $members) use ($u, $roles, &$updated) {
++    foreach ($members as &$m) {
++      if (($m['id'] ?? '') !== $u['id']) continue;
+       $m['rol'] = $roles[0];
+       $m['roles'] = $roles;
+       $m['updated_at'] = now_iso();
+-      $found = true;
+       $updated = $m;
+       break;
+     }
+-  }
+-  unset($m);
+-  if (!$found) fail('Miembro no encontrado.', 404);
+-  save_json('members', $members);
++    unset($m);
++    return $members;
++  });
++  if (!$updated) fail('Miembro no encontrado.', 404);
+   $_SESSION['user'] = sanitize_user($updated ?? []);
+   ok(['user' => $_SESSION['user']]);
+ }
+@@ -176,16 +177,18 @@
+   require_admin();
+   $id = trim($in['id'] ?? '');
+   if (!$id) fail('ID requerido.', 422);
+-  $members = load_json('members', []);
+-  foreach ($members as &$m) {
+-    if (($m['id'] ?? '') === $id) {
+-      $m['verificado'] = true;
+-      $m['estado_validacion'] = 'verificado';
+-      $m['fecha_verificacion'] = now_iso();
+-      break;
++  mutate_json('members', [], function (array $members) use ($id) {
++    foreach ($members as &$m) {
++      if (($m['id'] ?? '') === $id) {
++        $m['verificado'] = true;
++        $m['estado_validacion'] = 'verificado';
++        $m['fecha_verificacion'] = now_iso();
++        break;
++      }
+     }
+-  }
+-  save_json('members', $members);
++    unset($m);
++    return $members;
++  });
+   ok();
+ }
+ 
+@@ -202,10 +205,10 @@
+     fail('Estado inválido.', 422);
+   }
+ 
+-  $members = load_json('members', []);
+-  $found = false;
+-  foreach ($members as &$m) {
+-    if (($m['id'] ?? '') === $id) {
++  $found = null;
++  mutate_json('members', [], function (array $members) use ($id, $estado, $motivo, $nota, &$found) {
++    foreach ($members as &$m) {
++      if (($m['id'] ?? '') !== $id) continue;
+       $m['estado_validacion'] = $estado;
+       $m['verificado'] = ($estado === 'verificado');
+       if ($estado === 'verificado') {
+@@ -213,14 +216,16 @@
+       } else {
+         $m['fecha_verificacion'] = $estado === 'pendiente' ? null : ($m['fecha_verificacion'] ?? null);
+       }
+-      if ($motivo) $m['motivo_rechazo'] = $motivo;
+-      if ($nota) $m['nota_admin'] = $nota;
+-      $found = true;
++      if ($motivo) $m['motivo_rechazo'] = mb_substr($motivo, 0, 500);
++      if ($nota) $m['nota_admin'] = mb_substr($nota, 0, 1000);
++      $found = $m;
+       break;
+     }
+-  }
++    unset($m);
++    return $members;
++  });
+   if (!$found) fail('Miembro no encontrado.', 404);
+-  save_json('members', $members);
++  $m = $found;
+   ok(['member' => sanitize_user($m)]);
+ }
+ 
+diff -ru /tmp/claude-0/-home-user/f5dcd5fa-2ea6-5702-9647-81b56d7014d3/scratchpad/orig/api/moderacion.php ./api/moderacion.php
+--- /tmp/claude-0/-home-user/f5dcd5fa-2ea6-5702-9647-81b56d7014d3/scratchpad/orig/api/moderacion.php	2026-10-24 10:09:30.000000000 +0000
++++ ./api/moderacion.php	2026-10-26 14:15:59.183607155 +0000
+@@ -393,7 +393,7 @@
+ 
+   $finales = ['entregado', 'cancelado'];   // estados de pedidos.php: Solicitado, Aceptado, En camino, Entregado, Cancelado
+   $abiertos = array_values(array_filter(load_json('pedidos', []), function ($p) use ($uid, $finales) {
+-    $es = in_array($uid, [(string)($p['solicitante_id'] ?? ''), (string)($p['productor_id'] ?? '')], true);
++    $es = in_array($uid, [(string)($p['solicitante_id'] ?? ''), (string)($p['productor_id'] ?? ''), (string)($p['proveedor_id'] ?? '')], true);
+     return $es && !in_array(mb_strtolower((string)($p['estado'] ?? '')), $finales, true);
+   }));
+   if (count($abiertos)) {
+@@ -422,7 +422,7 @@
+   // Pedidos ya cerrados: se conservan para la contraparte (art. 18 num. 2) sin datos de contacto.
+   mutate_json('pedidos', [], function ($ps) use ($uid) {
+     foreach ($ps as &$p) {
+-      foreach (['solicitante_id' => 'solicitante', 'productor_id' => 'productor'] as $k => $nombreCampo) {
++      foreach (['solicitante_id' => 'solicitante', 'productor_id' => 'productor', 'proveedor_id' => 'proveedor'] as $k => $nombreCampo) {
+         if ((string)($p[$k] ?? '') !== $uid) continue;
+         $p[$nombreCampo] = 'Miembro que dejó la Red';
+         foreach (['email', 'telefono', 'whatsapp', $nombreCampo . '_email', $nombreCampo . '_telefono', $nombreCampo . '_whatsapp'] as $c) unset($p[$c]);
+diff -ru /tmp/claude-0/-home-user/f5dcd5fa-2ea6-5702-9647-81b56d7014d3/scratchpad/orig/api/pedidos.php ./api/pedidos.php
+--- /tmp/claude-0/-home-user/f5dcd5fa-2ea6-5702-9647-81b56d7014d3/scratchpad/orig/api/pedidos.php	2026-10-24 10:09:30.000000000 +0000
++++ ./api/pedidos.php	2026-10-26 14:30:06.225837489 +0000
+@@ -91,13 +91,13 @@
+     fail('Demasiados pedidos seguidos. Vuelve a intentarlo en una hora.', 429);
+   }
+ 
+-  $loteId = trim($in['loteId'] ?? '');
++  $loteId = texto_entrada($in['loteId'] ?? '', 60);
+   $sacos = floatval($in['sacos'] ?? 0);
+-  $total = floatval($in['total'] ?? 0);
++  $totalCliente = floatval($in['total'] ?? 0);
+ 
+   // Validaciones
+   if ($sacos <= 0 || $sacos > 10000) fail('Cantidad de sacos inválida.', 422);
+-  if ($total <= 0 || $total > 1000000) fail('Total inválido.', 422);
++  if ($totalCliente < 0 || $totalCliente > 1000000) fail('Total inválido.', 422);
+ 
+   $origenRol = 'comprador';
+   foreach (['vendedor','bar','barista'] as $perfilPedido) {
+@@ -120,6 +120,25 @@
+   // ?: y no ??: un productor_id vacío ("") también debe recurrir a published_by.
+   $productorId = (string)(($lote['productor_id'] ?? '') ?: ($lote['published_by'] ?? ''));
+   if ($productorId !== '' && $productorId === ($u['id'] ?? '')) fail('No puedes hacer un pedido de tu propio lote.', 422);
++  // Cantidad y precio los decide el lote, no el navegador. Antes se aceptaba
++  // cualquier total (9999 sacos por $0,01) y los viveros, el café tostado y
++  // los lotes «a convenir» no se podían pedir: el botón enviaba total 0 y la
++  // API respondía «Total inválido».
++  $porUnidad = (string)($lote['categoria'] ?? 'verde') === 'terminado'
++    || in_array(mb_strtolower((string)($lote['estado'] ?? '')), ['semilla', 'plantula'], true);
++  $existencias = $porUnidad
++    ? (float)($lote['unidades'] ?? 0)
++    : (float)($lote['stockSacos'] ?? 0) + (float)($lote['stockQuintales'] ?? 0);
++  if (mb_strtolower((string)($lote['disponibilidad'] ?? '')) === 'agotado' || $existencias <= 0) {
++    fail('Este lote está agotado. Escribe al vendedor para preguntar por el próximo.', 409);
++  }
++  if ($sacos > $existencias) {
++    fail('Solo hay ' . (0 + $existencias) . ($porUnidad ? ' unidades' : ' sacos') . ' disponibles.', 422);
++  }
++  // Misma regla que la ficha y el panel (total = sacos × precioSaco): así el
++  // total que ve el comprador y el que se registra nunca difieren.
++  $precio = $porUnidad ? (float)($lote['precioUnidad'] ?? 0) : (float)($lote['precioSaco'] ?? 0);
++  $total = $precio > 0 ? round($precio * $sacos, 2) : 0.0;   // 0 = precio a convenir
+   $finca = mb_substr(trim((string)($lote['finca'] ?? '')), 0, 200);
+   $productor = mb_substr(trim((string)($lote['productor'] ?? '')), 0, 200);
+ 
+@@ -132,6 +151,7 @@
+     'productor_id' => $productorId,
+     'sacos' => $sacos,
+     'total' => $total,
++    'precio_a_convenir' => $total <= 0,
+     'estado' => 'Solicitado',
+     'fecha' => today(),
+     'origenRol' => $origenRol,
+@@ -165,7 +185,7 @@
+ 
+   notificar($productorId, 'pedido',
+     'Nuevo pedido #' . $nro . ' de ' . $u['nombre'],
+-    $sacos . ' saco(s) de ' . $finca . ' por $' . number_format($total, 2) . '. Revísalo en tu panel.',
++    $sacos . ($porUnidad ? ' unidad(es)' : ' saco(s)') . ' de ' . $finca . ($total > 0 ? ' por $' . number_format($total, 2) : ' (precio a convenir)') . '. Revísalo en tu panel.',
+     '/panel/');
+   registrar_actividad('pedido-creado', [
+     'objeto_tipo' => 'pedido',
+@@ -186,7 +206,7 @@
+           'nombre'  => $mi['nombre'],
+           'nro'     => (string)$nro,
+           'cliente' => $u['nombre'],
+-          'total'   => '$' . number_format($total, 2),
++          'total'   => $total > 0 ? '$' . number_format($total, 2) : 'A convenir',
+         ]);
+         break;
+       }
+@@ -206,13 +226,44 @@
+     fail('Demasiadas solicitudes de servicio seguidas. Vuelve a intentarlo en una hora.', 429);
+   }
+ 
+-  $servicioId = trim((string)($in['servicioId'] ?? $in['servicio_id'] ?? ''));
+-  $titulo = trim((string)($in['titulo'] ?? $in['servicio'] ?? 'Servicio'));
+-  $proveedor = trim((string)($in['proveedor'] ?? 'Red Café Ecuador'));
+-  $proveedorId = trim((string)($in['proveedorId'] ?? $in['proveedor_id'] ?? 'redcafe'));
+-  $cantidad = max(1, intval($in['cantidad'] ?? 1));
+-  $total = max(0, floatval($in['total'] ?? 0));
+-  if ($servicioId === '' || mb_strlen($titulo) < 2) fail('Servicio inválido.', 422);
++  $servicioId = texto_entrada($in['servicioId'] ?? $in['servicio_id'] ?? '', 120);
++  $titulo = texto_entrada($in['titulo'] ?? $in['servicio'] ?? 'Servicio', 120);
++  $cantidad = max(1, min(1000, intval($in['cantidad'] ?? 1)));
++  if ($servicioId === '') fail('Servicio inválido.', 422);
++
++  // Proveedor, título y precio salen del catálogo, no del navegador. Antes
++  // cualquiera podía poner proveedorId = otro miembro y «proveedor» = «Red
++  // Café Ecuador»: le llegaba a esa persona un aviso con el texto que quisiera
++  // el remitente (un «pago pendiente», por ejemplo).
++  $servicio = null;
++  foreach (load_json('servicios-terceros', []) as $st) {
++    if (is_array($st) && (string)($st['id'] ?? '') === $servicioId && empty($st['oculto']) && publicacion_visible($st)) { $servicio = $st; break; }
++  }
++  if ($servicio) {
++    $proveedorId = (string)($servicio['proveedor_id'] ?? $servicio['owner_id'] ?? '');
++    if ($proveedorId === (string)$u['id']) fail('No puedes solicitar tu propio servicio.', 422);
++    $proveedor = (string)($servicio['proveedor'] ?? '');
++    $titulo = mb_substr((string)($servicio['titulo'] ?? $titulo), 0, 120);
++    $precioUnit = (float)($servicio['precio'] ?? 0);
++  } else {
++    // Servicio oficial de la plataforma (o uno que el catálogo ya no lista):
++    // lo atiende la administración.
++    foreach (load_json('servicios', []) as $so) {
++      if (is_array($so) && (string)($so['id'] ?? '') === $servicioId) {
++        $titulo = mb_substr((string)($so['nombre'] ?? $titulo), 0, 120);
++        $precioUnit = (float)($so['precio'] ?? 0);
++        break;
++      }
++    }
++    // Se conserva cuál de los dos identificadores oficiales usaba la página
++    // («redcafe» en el marketplace, «redcafe_admin» en el catálogo antiguo):
++    // el panel y el chat de la administración dependen de ese valor.
++    $pedidoProv = (string)($in['proveedorId'] ?? $in['proveedor_id'] ?? '');
++    $proveedorId = $pedidoProv === 'redcafe_admin' ? 'redcafe_admin' : 'redcafe';
++    $proveedor = 'Red Café Ecuador';
++  }
++  if (mb_strlen($titulo) < 2) fail('Servicio inválido.', 422);
++  $total = isset($precioUnit) && $precioUnit > 0 ? round($precioUnit * $cantidad, 2) : 0.0;
+ 
+   $nro = 0; // se asigna al guardar, dentro del bloqueo
+   $p = [
+@@ -240,10 +291,15 @@
+     return $todos;
+   });
+ 
+-  notificar($proveedorId, 'pedido',
+-    'Nueva solicitud #' . $nro . ' de ' . $u['nombre'],
+-    $titulo . ' · ' . $cantidad . ' unidad(es). Revísala en tu panel.',
+-    '/panel/');
++  if ($proveedorId === 'redcafe' || $proveedorId === 'redcafe_admin') {
++    notificar_admins('pedido', 'Nueva solicitud de servicio #' . $nro . ' de ' . $u['nombre'],
++      $titulo . ' · ' . $cantidad . ' unidad(es).', '/admin/');
++  } else {
++    notificar($proveedorId, 'pedido',
++      'Nueva solicitud #' . $nro . ' de ' . $u['nombre'],
++      $titulo . ' · ' . $cantidad . ' unidad(es). Revísala en tu panel.',
++      '/panel/');
++  }
+   registrar_actividad('servicio-solicitado', [
+     'objeto_tipo' => 'pedido',
+     'objeto_id'   => (string)$nro,
+@@ -269,7 +325,8 @@
+   }
+   if (!$objetivo) fail('Pedido no encontrado.', 404);
+   $esAdmin = miembro_tiene_rol($u, 'admin');
+-  $esDueno = ($objetivo['productor_id'] ?? '') !== '' && ($objetivo['productor_id'] ?? '') === $u['id'];
++  $esDueno = (($objetivo['productor_id'] ?? '') !== '' && ($objetivo['productor_id'] ?? '') === $u['id'])
++    || (($objetivo['proveedor_id'] ?? '') !== '' && ($objetivo['proveedor_id'] ?? '') === $u['id']);
+   if (!$esAdmin && !$esDueno) fail('No autorizado: solo el productor dueño o un administrador puede avanzar.', 403);
+ 
+   $estados = ['Solicitado', 'Aceptado', 'En camino', 'Entregado'];
+@@ -414,7 +471,8 @@
+ 
+   $data = mutate_json('pedidos', [], function($todos) use ($nro, $u, &$found, &$updated) {
+     foreach ($todos as &$p) {
+-      if (intval($p['nro'] ?? 0) === $nro && ($p['solicitante_id'] ?? '') === $u['id']) {
++      if (intval($p['nro'] ?? 0) === $nro && ($p['solicitante_id'] ?? '') === $u['id']
++          && !in_array($p['estado'] ?? '', ['Cancelado', 'Entregado'], true)) {
+         $p['estado'] = 'Entregado';
+         $p['updated_at'] = now_iso();
+         $p['confirmed_by'] = $u['id'];
+@@ -425,7 +483,7 @@
+     return $todos;
+   });
+ 
+-  if (!$found) fail('Pedido no encontrado o no eres el solicitante.', 404);
++  if (!$found) fail('Pedido no encontrado, ya cerrado (entregado o cancelado) o no eres el solicitante.', 404);
+   foreach (['productor_id', 'proveedor_id'] as $campo) {
+     $otro = (string)($updated[$campo] ?? '');
+     if ($otro !== '') {
+diff -ru /tmp/claude-0/-home-user/f5dcd5fa-2ea6-5702-9647-81b56d7014d3/scratchpad/orig/api/twofactor.php ./api/twofactor.php
+--- /tmp/claude-0/-home-user/f5dcd5fa-2ea6-5702-9647-81b56d7014d3/scratchpad/orig/api/twofactor.php	2026-10-24 10:09:30.000000000 +0000
++++ ./api/twofactor.php	2026-10-26 14:14:06.546668347 +0000
+@@ -48,7 +48,7 @@
+ }
+ 
+ function otp_write_all(array $data): bool {
+-  $tmp = OTP_FILE . '.tmp';
++  $tmp = OTP_FILE . '.' . bin2hex(random_bytes(4)) . '.tmp';
+   $fp = fopen($tmp, 'w');
+   if (!$fp) return false;
+   flock($fp, LOCK_EX);
+@@ -82,6 +82,20 @@
+   return hash('sha256', $code . 'redcafe_salt_2026');
+ }
+ 
++/** Códigos de respaldo: bcrypt. Antes sha256 con sal fija, rompible en una hora. */
++function backup_hash(string $code): string {
++  return password_hash(strtoupper($code), PASSWORD_BCRYPT);
++}
++
++/** Acepta el formato nuevo (bcrypt) y el antiguo (sha256) de los ya emitidos. */
++function backup_verifica(string $code, string $guardado): bool {
++  if (str_starts_with($guardado, '$2y$')) return password_verify(strtoupper($code), $guardado);
++  return hash_equals($guardado, otp_hash($code));
++}
++
++/** Máximo de códigos erróneos antes de anular el código vigente. */
++const OTP_MAX_FALLOS = 5;
++
+ function otp_send_email(string $to, string $nombre, string $code): bool {
+   // Usar plantilla HTML de marca si mailer.php está disponible
+   if (file_exists(__DIR__ . '/mailer.php')) {
+@@ -153,20 +167,32 @@
+ }
+ 
+ function user_set_2fa(string $userId, bool $enabled): bool {
+-  $members = load_json('members', []);
+   $found = false;
+-  foreach ($members as &$m) {
+-    if (($m['id'] ?? '') === $userId) {
+-      $m['two_factor_enabled'] = $enabled;
+-      $m['two_factor_updated_at'] = gmdate('c');
+-      $found = true;
+-      break;
++  mutate_json('members', [], function (array $members) use ($userId, $enabled, &$found) {
++    foreach ($members as &$m) {
++      if (($m['id'] ?? '') === $userId) {
++        $m['two_factor_enabled'] = $enabled;
++        $m['two_factor_updated_at'] = gmdate('c');
++        if (!$enabled) $m['backup_codes'] = [];
++        $found = true;
++        break;
++      }
+     }
+-  }
+-  unset($m);
+-  if (!$found) return false;
+-  save_json('members', $members);
+-  return true;
++    unset($m);
++    return $members;
++  });
++  return $found;
++}
++
++/** Guarda (o borra, con []) los códigos de respaldo ya cifrados del miembro. */
++function user_set_backup(string $userId, array $hashes): void {
++  mutate_json('members', [], function (array $members) use ($userId, $hashes) {
++    foreach ($members as &$m) {
++      if (($m['id'] ?? '') === $userId) { $m['backup_codes'] = $hashes; break; }
++    }
++    unset($m);
++    return $members;
++  });
+ }
+ 
+ // ─── Router ────────────────────────────────────────────────────────────────
+@@ -192,37 +218,50 @@
+     // Primero probar como código OTP activo
+     $all = otp_clean_expired();
+     $matched = false;
++    $clave = null;
+     foreach ($all as $k => $row) {
+-      if (($row['user_id'] ?? '') === $pendingId) {
+-        if (hash_equals($row['code_hash'] ?? '', otp_hash($code))) {
+-          // OK, borrar OTP usado
+-          unset($all[$k]);
+-          otp_write_all($all);
+-          $matched = true;
+-          break;
+-        }
+-      }
++      if (($row['user_id'] ?? '') === $pendingId && empty($row['purpose'])) { $clave = $k; break; }
+     }
+-
+-    // Si no match, probar como backup code
+-    if (!$matched) {
+-      $members = load_json('members', []);
+-      foreach ($members as &$m) {
+-        if (($m['id'] ?? '') === $pendingId) {
+-          $codes = $m['backup_codes'] ?? [];
+-          foreach ($codes as $bc) {
+-            if (hash_equals((string)$bc, otp_hash($code))) {
+-              // Backup code válido, marcar usado (referencia: persiste en $members)
+-              $m['backup_codes'] = array_values(array_filter($codes, fn($c) => $c !== $bc));
++    if ($clave !== null && hash_equals($all[$clave]['code_hash'] ?? '', otp_hash($code))) {
++      unset($all[$clave]);
++      otp_write_all($all);
++      $matched = true;
++    }
++
++    // Si no match, probar como código de respaldo (cada uno sirve una vez)
++    if (!$matched && preg_match('/^[A-Z0-9]{4}-[A-Z0-9]{4}$/i', $code)) {
++      mutate_json('members', [], function (array $members) use ($pendingId, $code, &$matched) {
++        foreach ($members as &$m) {
++          if (($m['id'] ?? '') !== $pendingId) continue;
++          $codes = (array)($m['backup_codes'] ?? []);
++          foreach ($codes as $i => $bc) {
++            if (backup_verifica($code, (string)$bc)) {
++              array_splice($codes, $i, 1);
++              $m['backup_codes'] = array_values($codes);
+               $matched = true;
+-              break 2;
++              break;
+             }
+           }
+           break;
+         }
++        unset($m);
++        return $members;
++      });
++    }
++
++    // El límite por IP no basta: con muchas IP se probaban códigos sin fin.
++    // Tras OTP_MAX_FALLOS errores el código se anula y hay que pedir otro.
++    if (!$matched && $clave !== null) {
++      $all = otp_read_all();
++      if (isset($all[$clave])) {
++        $all[$clave]['fallos'] = (int)($all[$clave]['fallos'] ?? 0) + 1;
++        if ($all[$clave]['fallos'] >= OTP_MAX_FALLOS) {
++          unset($all[$clave]);
++          otp_write_all($all);
++          fail('Demasiados códigos incorrectos. Pide un código nuevo.', 401);
++        }
++        otp_write_all($all);
+       }
+-      unset($m);
+-      if ($matched) save_json('members', $members);
+     }
+ 
+     if (!$matched) fail('Código incorrecto o expirado.', 401);
+@@ -244,6 +283,7 @@
+     session_regenerate_id(true);
+     $_SESSION['user'] = sanitize_user($user);
+     $_SESSION['remember'] = $remember;
++    marcar_inicio_sesion();
+     refresh_session_cookie($remember);
+ 
+     ok(['user' => $_SESSION['user'], 'two_factor_used' => true]);
+@@ -325,16 +365,7 @@
+ 
+     // Generar backup codes
+     $plainCodes = backup_generate_codes();
+-    $hashedCodes = array_map(fn($c) => otp_hash($c), $plainCodes);
+-    $members = load_json('members', []);
+-    foreach ($members as &$m) {
+-      if (($m['id'] ?? '') === $u['id']) {
+-        $m['backup_codes'] = $hashedCodes;
+-        break;
+-      }
+-    }
+-    unset($m);
+-    save_json('members', $members);
++    user_set_backup((string)$u['id'], array_map('backup_hash', $plainCodes));
+ 
+     ok([
+       'sent'         => true,
+@@ -348,6 +379,7 @@
+   case 'confirm_enable_2fa': {
+     $u = current_user();
+     if (!$u) fail('No autenticado.', 401);
++    if (!check_rate_limit('otp_confirm', 10, 600)) fail('Demasiados intentos. Espera 10 minutos.', 429);
+ 
+     $in = input();
+     $code = trim($in['code'] ?? '');
+@@ -369,6 +401,7 @@
+   case 'disable_2fa': {
+     $u = current_user();
+     if (!$u) fail('No autenticado.', 401);
++    if (!check_rate_limit('otp_disable', 10, 600)) fail('Demasiados intentos. Espera 10 minutos.', 429);
+ 
+     $in = input();
+     $code = trim($in['code'] ?? '');
+@@ -403,18 +436,7 @@
+       }
+     }
+ 
+-    user_set_2fa($u['id'], false);
+-
+-    // Limpiar backup codes
+-    $members = load_json('members', []);
+-    foreach ($members as &$m) {
+-      if (($m['id'] ?? '') === $u['id']) {
+-        $m['backup_codes'] = [];
+-        break;
+-      }
+-    }
+-    unset($m);
+-    save_json('members', $members);
++    user_set_2fa($u['id'], false);   // también borra los códigos de respaldo
+ 
+     ok(['disabled' => true]);
+   }
+@@ -423,6 +445,7 @@
+   case 'regenerate_backup': {
+     $u = current_user();
+     if (!$u) fail('No autenticado.', 401);
++    if (!check_rate_limit('otp_regenerate', 10, 600)) fail('Demasiados intentos. Espera 10 minutos.', 429);
+ 
+     if (!user_2fa_enabled($u['id'])) fail('Activa 2FA primero.');
+ 
+@@ -443,16 +466,7 @@
+     if (!$matched) fail('Código OTP incorrecto.', 401);
+ 
+     $plainCodes = backup_generate_codes();
+-    $hashedCodes = array_map(fn($c) => otp_hash($c), $plainCodes);
+-    $members = load_json('members', []);
+-    foreach ($members as &$m) {
+-      if (($m['id'] ?? '') === $u['id']) {
+-        $m['backup_codes'] = $hashedCodes;
+-        break;
+-      }
+-    }
+-    unset($m);
+-    save_json('members', $members);
++    user_set_backup((string)$u['id'], array_map('backup_hash', $plainCodes));
+ 
+     ok(['backup_codes' => $plainCodes]);
+   }
+--- /tmp/claude-0/-home-user/f5dcd5fa-2ea6-5702-9647-81b56d7014d3/scratchpad/orig/sw.js	2026-10-24 10:09:30.000000000 +0000
++++ sw.js	2026-10-26 14:15:59.184008876 +0000
+@@ -40,7 +40,8 @@
+     data = { titulo: "Red Café Ecuador", cuerpo: event.data ? event.data.text() : "" };
+   }
+   const title = data.titulo || "Red Café Ecuador";
+-  const url = data.url && data.url.startsWith("/") ? data.url : "/";
++  // "//otro-dominio" también empieza por "/": solo rutas internas.
++  const url = typeof data.url === "string" && data.url.startsWith("/") && !data.url.startsWith("//") ? data.url : "/";
+   event.waitUntil(
+     self.registration.showNotification(title, {
+       body: data.cuerpo || "",
