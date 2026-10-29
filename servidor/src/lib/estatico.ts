@@ -59,7 +59,11 @@ function resolver(ruta: string): string | null {
     /* no existe */
   }
   // Lotes y cursos creados después del build no tienen carpeta propia.
-  if (/^\/marketplace\/[^/]+\/?$/.test(ruta)) return path.join(raiz, "marketplace/index.html");
+  if (/^\/marketplace\/[^/]+\/?$/.test(ruta)) {
+    // La ficha genérica lee el id de la dirección; si el build aún no la trae, el listado.
+    const ficha = path.join(raiz, "marketplace/ficha/index.html");
+    return fs.existsSync(ficha) ? ficha : path.join(raiz, "marketplace/index.html");
+  }
   if (/^\/academia\/[^/]+\/?$/.test(ruta)) return path.join(raiz, "academia/index.html");
   return null;
 }

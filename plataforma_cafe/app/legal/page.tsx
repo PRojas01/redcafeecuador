@@ -175,7 +175,7 @@ export default function LegalPage() {
  <Bloque titulo="Membresía y costos">
         <P>
           Crear y mantener tu perfil en Red Café Ecuador es gratuito. El registro es
-          gratuito hasta el 31 de diciembre de 2026, y quien se afilie antes de esa
+          gratuito, y quien se afilie antes de esa
           fecha conserva esas condiciones de acceso gratuito.
         </P>
         <Lista

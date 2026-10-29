@@ -207,3 +207,4 @@ caso("CON-01", "Integridad", f"{N} escrituras simultáneas sin pérdida", guarda
 # ---------------------------------------------------------------- informe
 ok = sum(1 for x in RES if x[3])
 print(json.dumps({"etiqueta": ETIQ, "ok": ok, "total": len(RES), "casos": RES}, ensure_ascii=False))
+sys.exit(0 if ok == len(RES) else 1)

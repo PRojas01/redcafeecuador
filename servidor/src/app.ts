@@ -11,6 +11,7 @@ import { cabecerasSeguridad, servirEstatico } from "./lib/estatico.js";
 import { modulos } from "./modulos/index.js";
 import { RUTA_PREACUERDO, paginaPreacuerdo } from "./modulos/socios.js";
 import { db } from "./lib/db.js";
+import { sitemapXml } from "./lib/sitemap.js";
 
 type Vars = { ip: string };
 
@@ -34,7 +35,8 @@ export function crearApp(opciones: { ipDe?: (c: any) => string } = {}) {
   });
 
   // /enviar-waitlist.php en la raíz era un alias de la API real.
-  // Diagnóstico sin secretos: qué falta para que el sitio funcione.
+  // Diagnóstico sin secretos: qué falta para que el sitio funcione. Público solo
+  // el resumen; el detalle, con sesión de administración.
   app.get("/estado-servidor", async (c) => {
     let base = "sin configurar";
     let admin = false;
@@ -46,16 +48,31 @@ export function crearApp(opciones: { ipDe?: (c: any) => string } = {}) {
         base = "error: " + String(e?.code ?? e?.name ?? "desconocido");
       }
     }
-    const datos = {
-      version: "2026-10-29f",
+    const resumen = {
+      version: "2026-10-29g",
       entorno: config.entorno,
       base_de_datos: base,
       clave_datos: /^[0-9a-f]{64}$/i.test(process.env.REDCAFE_CLAVE_DATOS ?? "") ? "ok" : process.env.REDCAFE_CLAVE_DATOS ? "formato incorrecto (64 hex)" : "falta",
       admin_con_contraseña: admin,
+      arrancado_hace_min: Math.round(process.uptime() / 60),
+      // Lo que vive dentro de la carpeta de la app se pierde si el hosting la
+      // reconstruye en cada despliegue: fotos y respaldos deben ir fuera.
+      fotos: dentroDeLaApp(config.uploads) ? "dentro de la app: se pierden al redesplegar (definir REDCAFE_UPLOADS)" : "carpeta propia",
+      respaldos: process.env.REDCAFE_RESPALDOS && !dentroDeLaApp(path.resolve(config.raiz, process.env.REDCAFE_RESPALDOS))
+        ? "carpeta propia"
+        : "dentro de la app: se pierden al redesplegar (definir REDCAFE_RESPALDOS)",
+    };
+    // El detalle (nombres de variables, largos, cabeceras) solo para una sesión
+    // de administración: a cualquier otro le basta saber si el sitio está sano.
+    const ses = await EstadoSesion.cargar(getCookie(c, COOKIE_SESION)).catch(() => null);
+    if (!ses?.d.admin) {
+      return c.json({ ...resumen, detalle: "Entra como administrador para ver el detalle." }, 200, { "Cache-Control": "no-store" });
+    }
+    const datos = {
+      ...resumen,
       clave_datos_largo: (process.env.REDCAFE_CLAVE_DATOS ?? "").length,
       // Solo si el valor NO sirve: su forma (letra→a, número→9, símbolos tal cual), para ver si llega un marcador del panel en vez del secreto.
       clave_datos_forma: /^[0-9a-f]{64}$/i.test(process.env.REDCAFE_CLAVE_DATOS ?? "") ? "" : forma(process.env.REDCAFE_CLAVE_DATOS),
-      arrancado_hace_min: Math.round(process.uptime() / 60),
       pass_inicial: describirPass(process.env.REDCAFE_PASS_ADMIN_INICIAL),
       pass_restablecer: describirPass(process.env.REDCAFE_PASS_ADMIN_RESTABLECER),
       variables_redcafe: Object.keys(process.env).filter((k) => /^REDCAFE_|^DB_|^MYSQL_|^DATABASE_/.test(k)).sort(),
@@ -66,6 +83,10 @@ export function crearApp(opciones: { ipDe?: (c: any) => string } = {}) {
       proto_reenviado: c.req.header("x-forwarded-proto") ?? "",
     };
     return c.json(datos, 200, { "Cache-Control": "no-store" });
+    function dentroDeLaApp(dir: string) {
+      const rel = path.relative(path.dirname(config.raiz), dir);
+      return !rel.startsWith("..") && !path.isAbsolute(rel);
+    }
     function forma(v?: string) {
       return (v ?? "").replace(/[A-Za-z]/g, "a").replace(/[0-9]/g, "9");
     }
@@ -74,6 +95,11 @@ export function crearApp(opciones: { ipDe?: (c: any) => string } = {}) {
       if (v.length < 12) return `muy corta (${v.length} caracteres)`;
       return v.length >= 12 ? `ok (${v.length} caracteres)` : `muy corta (${v.length} caracteres)`;
     }
+  });
+
+  app.get("/sitemap.xml", async () => {
+    const h = new Headers({ "Content-Type": "application/xml; charset=utf-8", "Cache-Control": "public, max-age=3600" });
+    return new Response(await sitemapXml(), { headers: h });
   });
 
   app.all("/enviar-waitlist.php", (c) => c.redirect("/api/enviar-waitlist.php", 307));

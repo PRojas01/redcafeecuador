@@ -117,3 +117,8 @@ Las personas entran con **su misma contraseña de siempre**.
 ## Pendiente de confirmar en tu panel
 - La **carpeta persistente** para fotos subidas (las que no se borran al volver a
   desplegar). Cuando la veas, se pone en la variable `REDCAFE_UPLOADS`.
+- La misma carpeta sirve para los **respaldos diarios**: `REDCAFE_RESPALDOS`
+  (por ejemplo una subcarpeta `respaldos` dentro de ella).
+- Para comprobarlo, abre `/estado-servidor`: las líneas `fotos` y `respaldos`
+  dicen «carpeta propia» cuando ya están fuera de la app. Con sesión de
+  administrador se ve además el detalle de variables.

@@ -2,13 +2,16 @@
 
 import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
-import { api, getStoredSession, type Post, type ApiUser } from "@/lib/api";
+import { api, getStoredSession, type ApiUser } from "@/lib/api";
 import { EstadoError } from "@/components/EstadoError";
 import { EstadoVacio } from "@/components/EstadoVacio";
 import { CulturaCafe, NoticiasSector } from "@/components/CulturaYNoticias";
+import { MuroComunidad, type EntradaMuro } from "@/components/MuroComunidad";
+import { CostesRed } from "@/components/CostesRed";
 
 export default function ComunidadPage() {
-  const [posts, setPosts] = useState<Post[]>([]);
+  const [posts, setPosts] = useState<EntradaMuro[]>([]);
+  const [cargando, setCargando] = useState(true);
   const [me, setMe] = useState<ApiUser | null>(null);
   const [titulo, setTitulo] = useState("");
   const [text, setText] = useState("");
@@ -23,9 +26,10 @@ export default function ComunidadPage() {
     const local = getStoredSession();
     if (local) setMe(local);
     const [p, m] = await Promise.all([api.postsList(), api.me()]);
-    if (p.ok && p.data) setPosts((p.data as { posts: Post[] }).posts);
+    if (p.ok && p.data) setPosts(((p.data as { posts?: EntradaMuro[] }).posts) ?? []);
     else setPosts([]);
     if (!p.ok) setErrorCarga(true);
+    setCargando(false);
     if (m.ok && m.data) {
       const user = (m.data as { user: ApiUser | null }).user ?? null;
       if (user || !local) setMe(user);
@@ -67,18 +71,6 @@ export default function ComunidadPage() {
     if ((files?.length ?? 0) > elegidas.length) setError("Puedes adjuntar hasta 6 imágenes JPG, PNG o WebP de máximo 2 MB.");
   };
 
-  const toggleLike = async (id: string) => {
-    if (!me) return;
-    await api.postLike(id);
-    cargar();
-  };
-
-  const comentar = async (id: string) => {
-    if (!me) return;
-    const t = window.prompt("Tu comentario");
-    if (t && t.trim()) { await api.postComment(id, t.trim()); cargar(); }
-  };
-
   const irAFormulario = () => {
     if (!me) return;
     formRef.current?.scrollIntoView({ behavior: "smooth", block: "center" });
@@ -86,12 +78,13 @@ export default function ComunidadPage() {
   };
 
   return (
+    <>
     <div className="mx-auto max-w-3xl px-4 py-10">
       <p className="text-sm font-semibold uppercase tracking-widest text-green-700">
         Comunidad
       </p>
       <h1 className="mt-1 font-titulo text-3xl font-bold text-coffee-900 md:text-4xl">
-        La conversación del café ecuatoriano
+        Conexiones del café ecuatoriano
       </h1>
       <p className="mt-2 max-w-2xl text-text-secondary">
         Comparte experiencias, preguntas, oportunidades, recetas, eventos y conocimiento
@@ -146,70 +139,39 @@ export default function ComunidadPage() {
         </div>
       )}
 
-      <div className="mt-8 space-y-4">
+      <div className="mt-8">
         {errorCarga ? (
           <EstadoError
             titulo="No pudimos cargar las publicaciones"
             descripcion="Vuelve a intentarlo en un momento."
             onReintentar={cargar}
           />
-        ) : posts.length === 0 ? (
-          <EstadoVacio
-            icono="comunidad"
-            titulo="Comparte algo con la Red"
-            descripcion="Publica una pregunta, experiencia u oportunidad para iniciar una conversación."
-            cta="Crear publicación"
-            href={me ? undefined : "/afiliate"}
-            onCta={me ? irAFormulario : undefined}
-          />
         ) : (
-          posts.map((p) => (
-          <article key={p.id} className="card p-5">
-            <div className="flex items-center justify-between gap-2">
-              <p className="font-semibold text-coffee-900">{p.autor}</p>
-              <span className="badge">{p.autor_rol}</span>
-            </div>
-            <h2 className="mt-1 font-titulo text-xl font-bold text-coffee-900">{p.titulo}</h2>
-            <p className="mt-2 whitespace-pre-line text-sm text-text-secondary">{p.text}</p>
-            {p.imagenes && p.imagenes.length > 0 && (
-              <div className="mt-3 grid gap-2 sm:grid-cols-2">
-                {p.imagenes.map((src) => (
-                  <img
-                    key={src}
-                    src={src}
-                    alt={`Imagen de ${p.titulo}`}
-                    className="aspect-[4/3] w-full rounded-xl border border-border-soft object-cover"
-                    loading="lazy"
-                  />
-                ))}
-              </div>
-            )}
-            <p className="mt-2 text-xs text-text-muted">{new Date(p.created_at).toLocaleString()}</p>
-            <div className="mt-3 flex flex-wrap gap-2">
-              <button onClick={() => toggleLike(p.id)} disabled={!me} className="rounded-full border border-green-700/50 px-3 py-1 text-xs font-semibold text-green-700 hover:bg-green-100 disabled:opacity-50">
-                ♥ {p.likes?.length ?? 0}
-              </button>
-              <button onClick={() => comentar(p.id)} disabled={!me} className="rounded-full border border-gold-500/60 px-3 py-1 text-xs font-semibold text-coffee-700 hover:bg-cream-200 disabled:opacity-50">
-                {p.comments?.length ?? 0} comentarios
-              </button>
-            </div>
-            {p.comments && p.comments.length > 0 && (
-              <div className="mt-3 space-y-2 border-l-2 border-border-soft pl-3">
-                {p.comments.map((c) => (
-                  <div key={c.id} className="text-xs">
-                    <span className="font-semibold text-coffee-900">{c.autor}:</span>{" "}
-                    <span className="text-text-secondary">{c.text}</span>
-                  </div>
-                ))}
-              </div>
-            )}
-          </article>
-          )))}
-        </div>
+          <MuroComunidad
+            entradas={posts}
+            yo={me}
+            recargar={cargar}
+            cargando={cargando}
+            vacio={
+              <EstadoVacio
+                icono="comunidad"
+                titulo="Comparte algo con la Red"
+                descripcion="Publica una pregunta, experiencia u oportunidad para iniciar una conversación."
+                cta="Crear publicación"
+                href={me ? undefined : "/afiliate"}
+                onCta={me ? irAFormulario : undefined}
+              />
+            }
+          />
+        )}
+      </div>
 
         {/* Cultura del café y noticias del sector (antes al final de la portada). */}
         <CulturaCafe />
         <NoticiasSector />
       </div>
+      {/* «Qué cuesta y qué no» al pie (antes lo añadía la capa al cargar). */}
+      <CostesRed />
+    </>
   );
 }

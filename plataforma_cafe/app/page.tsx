@@ -3,6 +3,7 @@ import { Icono, type IconoNombre } from "@/components/Icono";
 import { InicioPanelRedirect } from "@/components/InicioPanelRedirect";
 import { VideoTransformacion } from "@/components/VideoTransformacion";
 import { AccesoPortada } from "@/components/AccesoPortada";
+import { CifrasRed, FranjaPrecio, ProvinciasReales } from "@/components/PortadaDatos";
 import { CamasSecado, FincaTerrazas } from "@/components/Lamina";
 import { CONFIG, waLink } from "@/lib/config";
 
@@ -27,8 +28,6 @@ const PERFILES: Array<{
   { href: "/afiliate?rol=bar", icono: "bar", titulo: "Bar / Cafetería", bajada: "Diferénciate sirviendo café con nombre y finca.", texto: "Muestro mi barra, menú digital, cafés de origen y necesidades de abastecimiento." },
   { href: "/afiliate?rol=barista", icono: "barista", titulo: "Barista", bajada: "Capacítate y consigue barra donde crecer.", texto: "Me capacito en barra, manejo recetas y me vinculo a oportunidades del café de especialidad." },
 ];
-
-const PROVINCIAS = ["Loja", "Zamora Chinchipe", "Pichincha", "Manabí", "Sucumbíos", "Orellana"];
 
 export default function HomePage() {
   return (
@@ -78,6 +77,10 @@ export default function HomePage() {
           </div>
         </div>
       </section>
+
+      {/* Cifras reales de la Red y franja del precio (antes las pintaba la capa al cargar) */}
+      <CifrasRed />
+      <FranjaPrecio />
 
       {/* 2. Forma parte (antes copia de la capa sobre dos secciones ocultas) */}
       <AccesoPortada />
@@ -150,11 +153,8 @@ export default function HomePage() {
             <p className="mt-3 max-w-2xl text-pizarra-suave">
               Explora productores, fincas, cafés y actores de diferentes provincias del Ecuador.
             </p>
-            <div className="mt-6 flex flex-wrap gap-2">
-              {PROVINCIAS.map((p) => (
-                <span key={p} className="rounded-full border border-cafe/15 bg-white px-4 py-2 text-sm font-semibold text-pizarra">{p}</span>
-              ))}
-            </div>
+            {/* Provincias reales con lotes y miembros (antes seis provincias de muestra que la capa sustituía) */}
+            <ProvinciasReales />
             <Link href="/marketplace" className="btn-primary mt-8 min-h-11">Explorar Marketplace</Link>
           </div>
           <div className="relative overflow-hidden rounded-2xl border border-cafe/10 bg-white shadow-md">

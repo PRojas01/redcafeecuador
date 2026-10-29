@@ -1,7 +1,8 @@
 import Link from "next/link";
 import { SERVICIOS_EXTRA, SERVICIOS_PAGADOS } from "@/lib/data";
 import { Icono } from "@/components/Icono";
-import { CONFIG } from "@/lib/config";
+import { waLink } from "@/lib/config";
+import { Intermediacion, PrecioServicio } from "@/components/ServiciosVivos";
 
 export const metadata = {
   title: "Servicios para el sector cafetero",
@@ -38,7 +39,8 @@ const COPY_ESPECIAL: Record<string, { nombre: string; descripcion: string }> = {
 };
 
 const TITULO_EXTRA: Record<string, string> = {
-	trazabilidad: "Expediente de trazabilidad",
+	// Distinto de «Expediente de trazabilidad» (el servicio que se contrata): esta explica el EUDR.
+	trazabilidad: "Trazabilidad y EUDR: cómo funciona",
 	certificacion: "Verificación y documentación",
 };
 
@@ -62,6 +64,9 @@ export default function ServiciosPage() {
 				</div>
 			</section>
 
+			{/* Servicio oficial de intermediación (antes lo añadía la capa al cargar) */}
+			<Intermediacion />
+
 			<section className="py-14">
 				<div className="mx-auto max-w-6xl px-4">
 					{/* ── PRIMER BLOQUE: HERRAMIENTAS PARA TODOS ── */}
@@ -69,7 +74,7 @@ export default function ServiciosPage() {
 						Herramientas disponibles para todos
 					</h2>
 					<p className="mt-1 max-w-2xl text-pizarra/70">
-						Crea tu perfil gratis hasta el {CONFIG.registroGratisTexto} y utiliza las herramientas básicas de la Red.
+						Crea tu perfil gratis y utiliza las herramientas básicas de la Red.
 					</p>
 
 					<div className="mt-6 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
@@ -126,10 +131,7 @@ export default function ServiciosPage() {
 												<p className="mt-1 flex-1 text-sm text-pizarra/80">
 													{copy?.descripcion ?? s.descripcion}
 												</p>
-												<p className="mt-3 text-lg font-bold text-cereza">
-													<span className="rotulo mr-1 align-middle text-text-secondary">desde</span>${s.precio}
-													<span className="text-sm font-normal text-pizarra/60"> {s.unidad}</span>
-												</p>
+												<PrecioServicio id={s.id} nombre={copy?.nombre ?? s.nombre} precio={s.precio} unidad={s.unidad} />
 											</Link>
 										);
 									})}
@@ -145,6 +147,23 @@ export default function ServiciosPage() {
 					<div className="mt-3 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
 						{SERVICIOS_EXTRA.map((s) => {
 							const ruta = rutaServicio(s.id);
+							// Soporte y Comunidad va directo a WhatsApp (antes la capa copiaba la tarjeta con ese enlace).
+							if (s.id === "soporte") {
+								return (
+									<a
+										key={s.id}
+										href={waLink("Hola, quiero soporte de la Red Café Ecuador.")}
+										target="_blank"
+										rel="noreferrer"
+										className="group flex flex-col rounded-2xl border border-border-soft bg-surface p-6 shadow-sm transition hover:shadow-md"
+									>
+										<Icono nombre={iconoServicio(s.id)} className="h-7 w-7 text-cereza" />
+										<p className="mt-3 font-titulo text-lg font-bold text-cafe">{TITULO_EXTRA[s.id] ?? s.titulo}</p>
+										<p className="mt-1 flex-1 text-sm text-pizarra/80">{s.descripcion}</p>
+										<span className="mt-4 text-sm font-semibold text-cereza group-hover:underline">Escribir por WhatsApp →</span>
+									</a>
+								);
+							}
 							return (
 								<Link
 									key={s.id}

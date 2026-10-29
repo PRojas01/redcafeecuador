@@ -175,48 +175,7 @@
 
   /* ── Aviso permanente ────────────────────────────────────────────── */
   // La advertencia del diálogo se ve una vez por sesión. En el marketplace
-  // queda además a la vista, sin depender de que nadie pulse nada.
-
-  function avisoFijo() {
-    if (document.getElementById("redcafe-avisopago-fijo")) return;
-
-    /* Solo en el listado del marketplace, no en la ficha de un lote.
-       ------------------------------------------------------------------
-       Antes entraba en las dos, y en la ficha causaba dos problemas: se
-       añadía como último hijo del <main> compitiendo con la propia ficha, que
-       también se añade ahí, así que acababa antes o después de ella según cuál
-       ganara la carrera —medido: el aviso aparecía en dos posiciones distintas
-       entre dos cargas de la misma página—; y encima ni se veía, porque la
-       regla que aísla la ficha oculta todo hermano que no sea ella. Un nodo
-       invisible que además desordenaba la página. */
-    if (!/^\/marketplace\/?$/.test(location.pathname)) return;
-    var main = document.querySelector("main");
-    if (!main) return;
-
-    var nota = el("aside", {
-      id: "redcafe-avisopago-fijo",
-      className: "redcafe-avisopago-fijo",
-      "data-redcafe-propio": "1"
-    });
-    nota.appendChild(el("strong", {}, "Opera con cuidado."));
-    nota.appendChild(el("span", {},
-      " Red Café Ecuador no cobra, no retiene dinero ni garantiza las operaciones entre miembros. " +
-      "No transfieras dinero si no estás seguro de la identidad de la otra parte: verifica al vendedor, " +
-      "pide una muestra y acuerda por escrito la forma de pago."));
-    var enlace = el("a", { href: "/terminos-y-condiciones/" }, "Términos y condiciones");
-    nota.appendChild(document.createTextNode(" "));
-    nota.appendChild(enlace);
-
-    // Se añade como último hijo del <main>, sin tocar ni vaciar lo que React
-    // ya puso ahí.
-    main.appendChild(nota);
-  }
-
-  if (document.readyState === "complete") setTimeout(avisoFijo, 1200);
-  else window.addEventListener("load", function () { setTimeout(avisoFijo, 1200); }, { once: true });
-  [2500, 4500].forEach(function (t) { setTimeout(avisoFijo, t); });
-  // Next navega sin recargar: hay que volver a montar al cambiar de ruta.
-  document.addEventListener("redcafe:ruta", function () { setTimeout(avisoFijo, 1200); });
+  // queda además a la vista: ese aviso fijo ya lo pinta React.
 
   /* aviso-contacto 2026-10-23 */
   /* ── Salir a WhatsApp ─────────────────────────────────────────────

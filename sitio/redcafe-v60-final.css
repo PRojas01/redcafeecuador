@@ -108,45 +108,6 @@
   padding: .85rem 1rem;
 }
 
-.redcafe-profile-intro {
-  border: 1px solid rgba(140,30,14, .12);
-  background: #fff;
-  color: var(--rce-pizarra);
-  font-family: var(--font-cuerpo);
-  margin-top: 1rem;
-  padding: 1rem;
-}
-
-.redcafe-profile-intro h3 {
-  color: var(--rce-cafe);
-  font-family: var(--font-titulo);
-  font-size: 1.25rem;
-  font-weight: 700;
-  line-height: 1.15;
-}
-
-.redcafe-profile-intro p,
-.redcafe-profile-intro li {
-  color: rgba(47, 42, 36, .82);
-  line-height: 1.55;
-}
-
-.redcafe-profile-intro ul {
-  display: grid;
-  gap: .35rem;
-  margin-top: .8rem;
-}
-
-#redcafe-afiliate-login {
-  border-color: rgba(247, 240, 223, .38) !important;
-  color: var(--rce-crema) !important;
-}
-
-#redcafe-afiliate-login:hover {
-  border-color: var(--rce-acento) !important;
-  color: var(--rce-acento) !important;
-}
-
 body[data-redcafe-route="/marketplace/"] #lotes-grid,
 .redcafe-service-grid,
 .redcafe-panel-orders-grid {
@@ -971,18 +932,6 @@ footer li {
 }
 .redcafe-pub-ayuda { color: #5e5850; font-size: .68rem; font-style: normal; }
 
-/* ============================================================
-   Ficha de lote: evita ver dos versiones de la página
-   En /marketplace/<id>/ el servidor entrega el marketplace completo y la ficha
-   del lote la compone el JS. Mientras llega, se oculta el listado para que no
-   se vea primero el marketplace entero y después la ficha.
-   ============================================================ */
-html[data-redcafe-lote="1"] main > *:not(#redcafe-lote-detalle) { display: none !important; }
-html[data-redcafe-lote="1"] main::before {
-  content: none;
-}
-html[data-redcafe-lote="1"] main:has(#redcafe-lote-detalle)::before { content: none; }
-
 /* Panel · Mis pedidos y solicitudes */
 .redcafe-pub-titulo-2 { margin-top: 2rem; }
 .redcafe-ped-card {
@@ -1610,38 +1559,9 @@ a.redcafe-aviso-titulo:hover { text-decoration: underline; }
   padding: .18rem .6rem;
 }
 
-/* Registro: nada de ver la portada de React y que a los 700 ms cambie
-   -------------------------------------------------------------------
-   `redcafe-afiliate.js` marca el <html> en cuanto se ejecuta y aquí se
-   esconde la portada original. El hueco se reserva con `min-height` para que
-   la página no dé un salto cuando entra la nuestra. La marca se retira sola a
-   los 4 s si la portada propia no llegó a montarse. */
-html[data-redcafe-afiliate="1"] main > div > section:first-child {
-  display: none !important;
-}
-html[data-redcafe-afiliate="1"] main > div:has(> section:first-child) {
-  min-height: 60vh;
-}
-html[data-redcafe-afiliate="1"] #redcafe-afiliate-portada {
-  min-height: 0;
-}
-
-/* El orden de la página de registro: título y «cómo funciona», luego los
-   perfiles, y al final lo que se puede leer después de decidir. Se hace con
-   `order` porque el contenedor es de React: reordenar con CSS no toca su
-   árbol, mover los nodos sí lo rompería. */
-.redcafe-afil-orden { display: flex; flex-direction: column; }
-.redcafe-afil-orden > #redcafe-afiliate-portada { order: 1; }
-.redcafe-afil-orden > #afiliar-form { order: 2; }
-.redcafe-afil-orden > #redcafe-afil-vermas { order: 3; }
-.redcafe-afil-orden > #redcafe-afil-ventajas { order: 4; }
-.redcafe-afil-orden > [data-redcafe-plegada="1"] { order: 5; }
-.redcafe-afil-orden > #redcafe-afil-datos { order: 6; }
-/* La portada de React queda oculta, pero si algún día se mostrara iría antes. */
-.redcafe-afil-orden > section:first-child { order: 0; }
-
+/* La línea de datos va al pie de la página, sobre fondo claro. */
 #redcafe-afil-datos {
-  margin: 0 auto; max-width: 72rem; padding: 1rem 1rem 2rem;
+  border-top: 0; color: #5c5a50; margin: 0 auto; max-width: 72rem; padding: 1rem 1rem 2rem; text-align: center;
 }
 
 /* Las ventajas salieron del camino crítico: ahora se despliegan con
@@ -2120,6 +2040,9 @@ header.sticky.bg-cafe {
   }
   [data-redcafe-fijo="1"] > * { flex: 1 1 auto; }
   html.redcafe-con-boton-fijo body { padding-bottom: 5.5rem; }
+  /* <main> y el pie comparten z-index 1: sin esto, al llegar al pie la barra
+     fija quedaba debajo de él y el botón no se podía pulsar. */
+  html.redcafe-con-boton-fijo:not(#rc-t1):not(#rc-t2) body > main { z-index: 2; }
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -4099,11 +4022,6 @@ html[data-rc-vista="curso"] body > main > *:not([data-redcafe-propio]) {
   display: none !important;
 }
 
-/* La tabla y el gráfico React quedan como respaldo cuando el histórico propio
-   no carga. Con datos del histórico se muestra un solo gráfico. */
-main[data-redcafe-precio-propio="listo"] [data-precios-respaldo] {
-  display: none;
-}
 
 /* ===== Fusión: menú móvil propio en las rutas donde React ya no arranca ===== */
 html:not(#rc-t1):not(#rc-t2) header details.redcafe-more.redcafe-menu-abierto {

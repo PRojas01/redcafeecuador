@@ -19,6 +19,7 @@ import { Modal } from "@/components/Modal";
 import { Icono } from "@/components/Icono";
 import { Toast, useToast } from "@/components/Toast";
 import { CotizacionesPanel } from "@/components/CotizacionesPanel";
+import { AtajosPanel } from "@/components/AtajosPanel";
 
 interface Prod { id: string; fecha: string; variedad: string; quintales: number; calidad: string }
 interface Venta { id: string; fecha: string; destino: string; quintales: number; precio: number; total: number }
@@ -55,7 +56,7 @@ function tabsPorRol(rol: Exclude<Rol, "admin">): { id: string; l: string }[] {
   const comun = [{ id: "marketplace_pedidos", l: "Solicitudes Marketplace" }, { id: "mis_publicaciones", l: "Mis publicaciones" }, { id: "publicar_servicio", l: "Publicar servicio" }, { id: "servicios", l: "Servicios para mí" }, { id: "ordenes", l: "Mis órdenes" }, { id: "cotizaciones", l: "Cotizaciones" }];
  if (rol === "productor") return [
   { id: "productor", l: "Producción y venta" },
-  { id: "publicar", l: "Publicar lote" },
+  { id: "publicar", l: "Publicar lote de café" },
   { id: "bandeja", l: "Pedidos recibidos" },
   { id: "plan", l: "Planificación" },
   { id: "inventario", l: "Finanzas e inventario" },
@@ -342,9 +343,11 @@ function PanelContent() {
  { id: "certificados", l: "Informes técnicos" },
  { id: "cuenta", l: "Mi cuenta" },
  ];
- const nombreVista = (v: string) => tabs.find((t) => t.id === v)?.l ?? (v === "publicar" ? "Publicar lote" : "Sección del panel");
+ const nombreVista = (v: string) => tabs.find((t) => t.id === v)?.l ?? (v === "publicar" ? "Publicar lote de café" : "Sección del panel");
 
  return (
+ <>
+ <AtajosPanel roles={(sesion.roles?.length ? sesion.roles : [sesion.rol]).map(String)} />
  <div className="mx-auto max-w-6xl px-4 py-10">
  <div className="flex flex-wrap items-center justify-between gap-4">
  <div>
@@ -468,6 +471,7 @@ function PanelContent() {
  )}
  </div>
  </div>
+ </>
  );
 }
 
@@ -769,7 +773,7 @@ const [certificacion, setCertificacion] = useState("Convencional");
   )}
   </div>
   </div>
- <button disabled={subiendo} className="mt-4 w-full rounded-full bg-hoja px-4 py-2.5 font-semibold text-crema hover:bg-hoja/90 disabled:opacity-60">{subiendo ? "Publicando..." : "Publicar lote"}</button>
+ <button disabled={subiendo} className="mt-4 w-full rounded-full bg-hoja px-4 py-2.5 font-semibold text-crema hover:bg-hoja/90 disabled:opacity-60">{subiendo ? "Publicando..." : "Publicar lote de café"}</button>
  </form>
  {ok && <p className="mt-3 rounded-xl bg-hoja/15 p-3 text-center text-sm font-semibold text-hoja">{ok}</p>}
  </div>
@@ -3458,7 +3462,7 @@ function MisPublicacionesMarketplace({ sesion }: { sesion: ApiUser }) {
         <p className="rounded-xl border border-cafe/10 bg-white p-4 text-sm text-pizarra/60">Cargando…</p>
       ) : lotes.length === 0 ? (
         <p className="rounded-xl border border-cafe/10 bg-white p-4 text-sm text-pizarra/60">
-          Aún no has publicado lotes. Ve a <strong>Publicar lote</strong> en este panel.
+          Aún no has publicado lotes. Ve a <strong>Publicar lote de café</strong> en este panel.
        </p>
       ) : (
         <ul className="space-y-3">

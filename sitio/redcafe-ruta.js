@@ -35,17 +35,7 @@
     { sel: "#redcafe-registro-actividad",   ruta: "/panel" },
     { sel: "#redcafe-empleos-panel",        ruta: "/panel" },
     { sel: "#redcafe-mis-reportes",         ruta: "/panel" },
-    { sel: "#redcafe-lotes-propio",         ruta: "/marketplace" },
-    { sel: "#redcafe-servicios-propio",     ruta: "/marketplace" },
-    { sel: "#redcafe-empleos-propio",       ruta: "/marketplace" },
-    { sel: "#redcafe-market-barra",         ruta: "/marketplace" },
-    { sel: "#redcafe-avisopago-fijo",       ruta: "/marketplace" },
-    { sel: ".redcafe-empleos-tab",          ruta: "/marketplace" },
-    { sel: "#redcafe-afiliate-portada",     ruta: "/afiliate" },
-    { sel: "#redcafe-muro",                 ruta: "/comunidad" },
-    { sel: "#redcafe-lote-detalle",         ruta: "/marketplace" },
-    { sel: "#redcafe-solicitudes-curso",    ruta: "/academia" },
-    { sel: "#redcafe-grafico-precios",      ruta: "/servicios/precios" }
+    { sel: "#redcafe-solicitudes-curso",    ruta: "/academia" }
   ];
 
   // Marcas que dejan los módulos para no repetirse. Viven en nodos que
@@ -54,10 +44,8 @@
   var MARCAS = [
     "data-redcafe-lotes-completos",
     "data-redcafe-oculto-react",
-    "data-redcafe-marketplace-fallback",
     "data-redcafe-service-plans",
-    "data-redcafe-acciones",
-    "data-redcafe-grafico"
+    "data-redcafe-acciones"
   ];
 
   function quitar(nodo) {
@@ -115,8 +103,7 @@
                                        "/redcafe-admin-servicios.js",
                                        "/redcafe-admin-verificaciones.js",
                                        "/redcafe-socios.js",
-                                       "/redcafe-colapsables.js"] },
-    { ruta: "/servicios/precios", src: ["/redcafe-grafico-precios.js"] }
+                                       "/redcafe-colapsables.js"] }
   ];
 
   // La versión se toma de un script ya cargado para no romper el cachebuster.

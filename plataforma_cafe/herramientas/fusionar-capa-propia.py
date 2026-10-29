@@ -98,6 +98,11 @@ def rutas_html(raiz: str):
             yield "" if rel == "." else rel
 
 
+# Rutas nuevas de React que llevan la misma capa que otra ya publicada.
+# marketplace/ficha: la ficha que el servidor sirve a los lotes de los miembros.
+CAPA_PRESTADA = {os.path.join("marketplace", "ficha"): os.path.join("marketplace", "loja-gesha-01")}
+
+
 def main():
     if len(sys.argv) != 5:
         print(__doc__)
@@ -130,6 +135,8 @@ def main():
     for ruta in sorted(rutas_out):
         o_dir = os.path.join(out, ruta)
         p_html = os.path.join(prod, ruta, "index.html")
+        if not os.path.exists(p_html) and ruta in CAPA_PRESTADA:
+            p_html = os.path.join(prod, CAPA_PRESTADA[ruta], "index.html")
         if not os.path.exists(p_html):
             problemas.append(f"ruta nueva sin equivalente en producción: /{ruta}")
             continue

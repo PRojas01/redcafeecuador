@@ -112,7 +112,6 @@
 
   /* ── 2 y 3. Portada ─────────────────────────────────────────────────── */
 
-  var cifrasPedidas = false;
   var preciosPedidos = false;
 
   function formatoPrecio(precio) {
@@ -235,105 +234,8 @@
     });
   }
 
-  var promesaCifras = null;
-  function pedirCifras() {
-    if (!promesaCifras) {
-      promesaCifras = fetch(API + "?action=cifras", { credentials: "omit" })
-        .then(function (r) { return r.json(); })
-        .then(function (res) { return (res && res.ok && res.data) || null; })
-        .catch(function () { promesaCifras = null; return null; });
-    }
-    return promesaCifras;
-  }
-
-  /* 5. Mapa de la portada con provincias reales. Las seis que pinta React
-     (Loja, Zamora Chinchipe, Pichincha, Manabí, Sucumbíos, Orellana) son las
-     de los lotes de muestra; los lotes reales están en Carchi, Imbabura y Loja. */
-  var mapaPedido = false;
-  var intentosMapa = 0;
-  function mapaReal() {
-    if (mapaPedido || document.getElementById("redcafe-mapa-provincias")) return;
-    // Intentos CONTADOS: si la API falla, el observador volvería a pedir las
-    // cifras en cada cambio del DOM (el bucle que ya tumbó producción).
-    if (intentosMapa >= 3) return;
-    var titulo = Array.prototype.slice.call(document.querySelectorAll("main h2")).filter(function (h) {
-      return texto(h) === "Ponemos el café ecuatoriano en el mapa";
-    })[0];
-    var chips = titulo && titulo.parentNode && titulo.parentNode.querySelector("div.flex-wrap");
-    if (!chips || chips.getAttribute("data-redcafe-oculto-react") === "1") return;
-    mapaPedido = true;
-    intentosMapa++;
-
-    pedirCifras().then(function (d) {
-      var lista = (d && d.por_provincia) || [];
-      if (!lista.length || document.getElementById("redcafe-mapa-provincias")) { if (!lista.length) mapaPedido = false; return; }
-      var propia = document.createElement("div");
-      propia.id = "redcafe-mapa-provincias";
-      propia.className = chips.className + " redcafe-mapa-provincias";
-      propia.setAttribute("data-redcafe-propio", "1");
-      var mostradas = lista.slice(0, 8);
-      mostradas.forEach(function (x) {
-        var chip = document.createElement("span");
-        chip.className = "rounded-full border border-cafe/15 bg-white px-4 py-2 text-sm font-semibold text-pizarra" + (x.lotes > 0 ? " redcafe-mapa-con-lotes" : "");
-        chip.appendChild(document.createTextNode(x.nombre));
-        var detalle = document.createElement("small");
-        detalle.textContent = x.lotes > 0
-          ? " · " + x.lotes + (x.lotes === 1 ? " lote" : " lotes")
-          : " · " + x.miembros + (x.miembros === 1 ? " miembro" : " miembros");
-        chip.appendChild(detalle);
-        propia.appendChild(chip);
-      });
-      var resto = (d.provincias || 0) - mostradas.filter(function (x) { return x.miembros > 0; }).length;
-      if (resto > 0) {
-        var mas = document.createElement("span");
-        mas.className = "rounded-full border border-cafe/15 px-4 py-2 text-sm text-pizarra-suave";
-        mas.textContent = "+" + resto + (resto === 1 ? " provincia más" : " provincias más");
-        propia.appendChild(mas);
-      }
-      marcarCopia(propia, chips);
-      chips.setAttribute("data-redcafe-oculto-react", "1");
-      chips.insertAdjacentElement("afterend", propia);
-    });
-  }
-
-  function cifrasDeLaRed() {
-    if (cifrasPedidas || document.getElementById("redcafe-cifras-red")) return;
-    var cabecera = document.getElementById("portada-hero");
-    if (!cabecera) return;
-    cifrasPedidas = true;
-
-    pedirCifras()
-      .then(function (d) {
-        if (!d || !(d.miembros > 0) || document.getElementById("redcafe-cifras-red")) return;
-        var datos = [
-          [d.miembros, "miembros en la Red"],
-          [d.productores, "productores"],
-          [d.compran_cafe, "compradores, tostadores y exportadores"],
-          [d.provincias, "provincias representadas"]
-        ];
-        var franja = document.createElement("section");
-        franja.id = "redcafe-cifras-red";
-        franja.className = "redcafe-cifras";
-        franja.setAttribute("data-redcafe-propio", "1");
-        franja.setAttribute("aria-label", "La Red hoy");
-        var caja = document.createElement("div");
-        caja.className = "redcafe-cifras-caja";
-        datos.forEach(function (par) {
-          var item = document.createElement("div");
-          item.className = "redcafe-cifra";
-          var n = document.createElement("strong");
-          n.textContent = String(par[0]);
-          var l = document.createElement("span");
-          l.textContent = par[1];
-          item.appendChild(n);
-          item.appendChild(l);
-          caja.appendChild(item);
-        });
-        franja.appendChild(caja);
-        cabecera.insertAdjacentElement("afterend", franja);
-      })
-      .catch(function () { cifrasPedidas = false; });
-  }
+  /* 3 y 5 (cifras de la Red y provincias reales del mapa): migradas a React
+     (components/PortadaDatos.tsx). */
 
   /* ── 4. Registro ────────────────────────────────────────────────────── */
 
@@ -343,17 +245,6 @@
 
     // Paso 1: selector de perfiles visible.
     if (document.getElementById("profile-selector")) medir("registro_paso1", true);
-
-    // Selector de planes: todas las tarjetas a $0 y una ya elegida por el perfil.
-    Array.prototype.slice.call(main.querySelectorAll(".card")).forEach(function (card) {
-      if (card.getAttribute("data-redcafe-oculto-react") === "1") return;
-      if (texto(card).indexOf("Tu actividad en la Red") !== 0) return;
-      var gratis = Array.prototype.slice.call(card.querySelectorAll("button")).filter(function (b) {
-        return /\$0 gratis/.test(texto(b));
-      });
-      if (gratis.length < 2) return;
-      card.setAttribute("data-redcafe-oculto-react", "1");
-    });
 
     var botones = Array.prototype.slice.call(main.querySelectorAll("button"));
     var hayPaso2 = false, hayPaso3 = false;
@@ -595,69 +486,13 @@
 
   /* ── 7. Siguiente paso tras crear la cuenta ─────────────────────────── */
 
-  function rolesDe(u) {
-    if (!u) return [];
-    return Array.isArray(u.roles) && u.roles.length ? u.roles : [u.rol || ""];
-  }
-  function tiene(roles, lista) {
-    for (var i = 0; i < roles.length; i++) if (lista.indexOf(roles[i]) !== -1) return true;
-    return false;
-  }
-  function tarjeta(principal, rotulo, tituloTxt, desc, href, boton) {
-    var art = document.createElement("article");
-    art.className = "redcafe-panel-next-card" + (principal ? " is-primary" : "");
-    var p = document.createElement("p"); p.textContent = rotulo;
-    var h = document.createElement("h4"); h.textContent = tituloTxt;
-    var sp = document.createElement("span"); sp.textContent = desc;
-    var a = document.createElement("a"); a.href = href; a.textContent = boton;
-    art.appendChild(p); art.appendChild(h); art.appendChild(sp); art.appendChild(a);
-    return art;
-  }
-
+  // La tarjeta «Tu siguiente paso» la pinta React (app/afiliate/page.tsx).
+  // Aquí solo se mide que el registro terminó.
   function siguientePaso() {
-    if (document.getElementById("redcafe-siguiente-paso")) return;
-    var h1 = Array.prototype.slice.call(document.querySelectorAll("main h1")).filter(function (h) {
+    var ok = Array.prototype.slice.call(document.querySelectorAll("main h1")).some(function (h) {
       return texto(h) === "Ya formas parte de la Red";
-    })[0];
-    var botones = h1 && h1.parentNode && h1.parentNode.lastElementChild;
-    if (!botones || botones === h1) return;
-    medir("registro_ok", true);
-
-    var roles = rolesDe(sesionGuardada());
-    var vende = tiene(roles, ["productor", "vendedor", "exportador", "pilador"]);
-    var compra = tiene(roles, ["comprador", "bar", "barista", "amante"]);
-
-    var caja = document.createElement("section");
-    caja.id = "redcafe-siguiente-paso";
-    caja.className = "redcafe-siguiente-paso";
-    caja.setAttribute("data-redcafe-propio", "1");
-    caja.setAttribute("aria-label", "Tu siguiente paso");
-    var rot = document.createElement("p");
-    rot.className = "redcafe-siguiente-rotulo";
-    rot.textContent = "Tu siguiente paso: que la Red te encuentre";
-    caja.appendChild(rot);
-    var grid = document.createElement("div");
-    grid.className = "redcafe-panel-next-actions";
-
-    if (vende) {
-      grid.appendChild(tarjeta(true, "Vender café", "Publica tu primer lote de café",
-        "En cereza, pergamino, oro o tostado. Los compradores de la Red lo ven en el Marketplace y te escriben.",
-        "/panel/?ver=publicar", "Publicar lote de café"));
-    }
-    if (compra) {
-      grid.appendChild(tarjeta(!vende, "Comprar café", "Publica qué café buscas",
-        "Variedad, cantidad y precio: los productores te ofrecen sus lotes.",
-        "/panel/#redcafe-requerimientos-panel", "Publicar lo que busco"));
-    }
-    if (!vende && !compra) {
-      grid.appendChild(tarjeta(true, "Ofrecer servicios", "Publica tu servicio",
-        "Catación, pilado, transporte, asesoría o insumos: que productores y compradores te contraten.",
-        "/panel/?ver=publicar_servicio", "Publicar mi servicio"));
-    }
-    grid.appendChild(tarjeta(false, "Explorar", "Mira el café disponible",
-      "Lotes reales por origen, proceso y variedad.", "/marketplace/", "Ver lotes de café"));
-    caja.appendChild(grid);
-    botones.insertAdjacentElement("afterend", caja);
+    });
+    if (ok) medir("registro_ok", true);
   }
 
   /* ── 8. Ancla de requerimientos en el panel ─────────────────────────── */
@@ -682,254 +517,11 @@
   }
 
 
-  /* ── 9. «Qué cuesta y qué no» al pie de la comunidad ─────────────────── */
-  // El bloque que explica qué entra gratis y qué se paga solo existía en la
-  // portada. Quien llega a la comunidad —el sitio donde se conversa y donde
-  // más tiempo pasa alguien que aún no se ha registrado— no lo veía nunca.
-  // Se pinta con los PRECIOS REALES de la API, para que no vuelva a quedar
-  // desfasado como el expediente EUDR («desde $30» cuando cuesta $120).
-  var GRATIS = [
-    ["Acceso básico", "Te encuentran, te escriben y cotizas sin pagar nada por estar."],
-    ["Marketplace de lotes de café", "Vendes o compras con el origen a la vista y contacto directo entre las partes."],
-    ["Academia básica", "Aprendes lo que sube el precio de tu café: producción, post-cosecha y taza."],
-    ["Panel de precios", "Negocias con una referencia actual y una fuente visible para comparar mejor."],
-    ["Que te encuentren", "Tus lotes de café, tu menú o tu servicio, delante de quien está buscando comprar."],
-    ["Comprar y vender directo", "Contacto claro para comprar, vender o contratar servicios."]
-  ];
-  var comunidadPedida = false;
-  var intentosComunidad = 0;
-
-  function esComunidad() { return ruta().indexOf("/comunidad") === 0; }
-
-  function costesEnComunidad() {
-    if (comunidadPedida || document.getElementById("redcafe-costes-comunidad")) return;
-    if (intentosComunidad >= 3) return;
-    var main = document.querySelector("main");
-    if (!main) return;
-    comunidadPedida = true;
-    intentosComunidad++;
-
-    fetch("/api/marketplace-servicios.php?action=list", { credentials: "include", cache: "no-store" })
-      .then(function (r) { return r.json(); })
-      .then(function (res) {
-        var servicios = ((res && res.ok && res.data && res.data.servicios) || [])
-          .filter(function (s) { return Number(s.precio) > 0; })
-          .sort(function (a, b) { return Number(b.precio) - Number(a.precio); });
-        if (document.getElementById("redcafe-costes-comunidad")) return;
-
-        var seccion = document.createElement("section");
-        seccion.id = "redcafe-costes-comunidad";
-        seccion.className = "redcafe-costes";
-        seccion.setAttribute("data-redcafe-propio", "1");
-        seccion.setAttribute("aria-label", "Qué cuesta y qué no");
-
-        var caja = document.createElement("div");
-        caja.className = "redcafe-costes-caja";
-
-        var rotulo = document.createElement("p");
-        rotulo.className = "redcafe-costes-rotulo";
-        rotulo.textContent = "Qué cuesta y qué no";
-        var titulo = document.createElement("h2");
-        titulo.textContent = "Estar en la Red es gratis. Los servicios, solo si los pides";
-        var intro = document.createElement("p");
-        intro.className = "redcafe-costes-intro";
-        intro.textContent = "Crear tu perfil y usar la Red no cuesta nada. Los servicios especializados se contratan solo cuando los pides.";
-        caja.appendChild(rotulo);
-        caja.appendChild(titulo);
-        caja.appendChild(intro);
-
-        var columnas = document.createElement("div");
-        columnas.className = "redcafe-costes-columnas";
-
-        var gratis = document.createElement("div");
-        gratis.className = "redcafe-costes-col is-gratis";
-        var gRot = document.createElement("p");
-        gRot.className = "redcafe-costes-col-rotulo";
-        gRot.textContent = "Incluido en tu cuenta · $0";
-        var gTit = document.createElement("h3");
-        gTit.textContent = "Lo que ganas por registrarte";
-        gratis.appendChild(gRot);
-        gratis.appendChild(gTit);
-        var lista = document.createElement("ul");
-        GRATIS.forEach(function (par) {
-          var li = document.createElement("li");
-          var b = document.createElement("b");
-          b.textContent = par[0];
-          li.appendChild(b);
-          li.appendChild(document.createTextNode(" " + par[1]));
-          lista.appendChild(li);
-        });
-        gratis.appendChild(lista);
-        var cta = document.createElement("a");
-        cta.className = "redcafe-costes-cta";
-        cta.href = "/afiliate/";
-        cta.textContent = "Crear mi perfil gratis";
-        gratis.appendChild(cta);
-
-        var pago = document.createElement("div");
-        pago.className = "redcafe-costes-col";
-        var pRot = document.createElement("p");
-        pRot.className = "redcafe-costes-col-rotulo";
-        pRot.textContent = "Servicios especializados · con costo";
-        var pTit = document.createElement("h3");
-        pTit.textContent = "Se contratan solo cuando los necesitas";
-        pago.appendChild(pRot);
-        pago.appendChild(pTit);
-        var tabla = document.createElement("ul");
-        tabla.className = "redcafe-costes-precios";
-        servicios.forEach(function (s) {
-          var li = document.createElement("li");
-          var nombre = document.createElement("span");
-          nombre.textContent = s.titulo || s.nombre || "Servicio";
-          var precio = document.createElement("span");
-          precio.className = "redcafe-costes-precio";
-          precio.textContent = "desde $" + formatoPrecio(s.precio) + (s.unidad ? " / " + s.unidad : "");
-          li.appendChild(nombre);
-          li.appendChild(precio);
-          tabla.appendChild(li);
-        });
-        pago.appendChild(tabla);
-        var nota = document.createElement("p");
-        nota.className = "redcafe-costes-nota";
-        nota.textContent = "El precio varía según alcance y ubicación. Se confirma antes de contratar y no hay cobros automáticos.";
-        pago.appendChild(nota);
-        var verTodos = document.createElement("a");
-        verTodos.className = "redcafe-costes-enlace";
-        verTodos.href = "/servicios/";
-        verTodos.textContent = "Ver todos los servicios →";
-        pago.appendChild(verTodos);
-
-        columnas.appendChild(gratis);
-        columnas.appendChild(pago);
-        caja.appendChild(columnas);
-        seccion.appendChild(caja);
-        // Al pie de la página: última sección del contenido, antes del pie del sitio.
-        main.appendChild(seccion);
-      })
-      .catch(function () { comunidadPedida = false; });
-  }
+  /* ── 9. «Qué cuesta y qué no» de la comunidad: migrado a React (components/CostesRed.tsx). */
 
 
-  /* ── 10. Textos con fecha límite fuera de la portada ─────────────────── */
-  // «Crea tu perfil gratis HASTA EL 31 de diciembre de 2026» seguía en
-  // /servicios/. Contradice «Estar en la Red es gratis» y mete una urgencia
-  // que no es real: el registro no deja de ser gratuito ese día. Se quita solo
-  // la fecha, sin tocar el resto de la frase ni el nodo de React.
-  function sinFechaLimite() {
-    Array.prototype.slice.call(document.querySelectorAll("main p, main span, main li")).forEach(function (el) {
-      if (el.children.length) return;
-      if (el.getAttribute("data-redcafe-oculto-react") === "1") return;
-      if (el.closest("[data-redcafe-propio]")) return;
-      var t = texto(el);
-      if (!/hasta el 31 de diciembre de 2026/i.test(t)) return;
-      var limpio = t.replace(/\s*hasta el 31 de diciembre de 2026/i, "").replace(/\s{2,}/g, " ").trim();
-      if (!limpio || limpio === t) return;
-      var copia = el.cloneNode(false);
-      copia.removeAttribute("id");
-      copia.setAttribute("data-redcafe-propio", "1");
-      copia.textContent = limpio;
-      marcarCopia(copia, el);
-      el.setAttribute("data-redcafe-oculto-react", "1");
-      el.insertAdjacentElement("afterend", copia);
-    });
-  }
-
-
-  /* ── 11. Precios reales en /servicios/ ───────────────────────────────── */
-  // La página anunciaba precios de una lista vieja: asesoría de negocio $25
-  // (cuesta 40), exportación $60 (90), curso de especialidad $45 (80),
-  // barismo $35 (60), trazabilidad $30 (el expediente EUDR cuesta 120),
-  // catación $40 (70) y flete «$50 por ruta» (son $7 por quintal). Un precio
-  // mal publicado se lo lleva el cliente a la conversación: se corrige con lo
-  // que hay en servicios.json, sin tocar los nodos de React.
-  var ALIAS_SERVICIOS = {
-    "asesoría de negocio": "Asesoría de negocio",
-    "asesoría de exportación": "Asesoría de exportación",
-    "curso de especialidad": "Curso de especialidad",
-    "curso de barismo": "Curso de barismo",
-    "expediente de trazabilidad": "Expediente EUDR",
-    "servicio de catación": "Informe de catación",
-    "verificación de perfil": "Verificación de perfil",
-    "flete de café": "Flete de café",
-    "pilado de sacos": "Pilado de sacos"
-  };
-  var preciosServiciosPedidos = false;
-  var intentosServicios = 0;
-
-  function esServicios() { return ruta() === "/servicios/" || ruta() === "/servicios"; }
-
-  function normalizar(t) {
-    return String(t || "").toLowerCase()
-      .replace(/\s+/g, " ")
-      .trim();
-  }
-
-  function preciosDeServicios() {
-    if (!esServicios() || preciosServiciosPedidos || intentosServicios >= 3) return;
-    var candidatos = Array.prototype.slice.call(document.querySelectorAll("main p")).filter(function (p) {
-      return /desde\s*\$\s?\d/.test(texto(p)) && p.getAttribute("data-redcafe-oculto-react") !== "1" && !p.closest("[data-redcafe-propio]");
-    });
-    if (!candidatos.length) return;
-    preciosServiciosPedidos = true;
-    intentosServicios++;
-
-    fetch("/api/marketplace-servicios.php?action=list", { credentials: "include", cache: "no-store" })
-      .then(function (r) { return r.json(); })
-      .then(function (res) {
-        var servicios = (res && res.ok && res.data && res.data.servicios) || [];
-        if (!servicios.length) { preciosServiciosPedidos = false; return; }
-        var porTitulo = {};
-        servicios.forEach(function (s) { porTitulo[normalizar(s.titulo)] = s; });
-
-        candidatos.forEach(function (p) {
-          // Las tarjetas no llevan encabezado: son un enlace con el nombre del
-          // servicio en el primer <p> y el identificador en el href
-          // (?servicio=asesoria-negocio). Se usa el nombre y, si no cuadra, el
-          // identificador del enlace.
-          var tarjeta = p.parentElement;
-          if (!tarjeta) return;
-          var nombreEl = Array.prototype.slice.call(tarjeta.querySelectorAll("p")).filter(function (x) {
-            return x !== p && texto(x) && !/desde\s*\$/.test(texto(x));
-          })[0];
-          var nombre = nombreEl ? texto(nombreEl) : "";
-          var clave = ALIAS_SERVICIOS[normalizar(nombre)];
-          var s = clave ? porTitulo[normalizar(clave)] : porTitulo[normalizar(nombre)];
-          if (!s) {
-            var enlace = tarjeta.tagName === "A" ? tarjeta : tarjeta.closest("a");
-            var idServicio = enlace && (enlace.getAttribute("href") || "").split("servicio=")[1];
-            if (idServicio) {
-              idServicio = decodeURIComponent(idServicio.split("&")[0]).replace(/-/g, " ");
-              servicios.forEach(function (cand) {
-                if (!s && normalizar(cand.titulo).indexOf(normalizar(idServicio)) === 0) s = cand;
-              });
-            }
-          }
-          if (!s || !(Number(s.precio) > 0)) return;
-          var nuevo = "desde $" + formatoPrecio(s.precio) + (s.unidad ? " / " + s.unidad : "");
-          if (texto(p).replace(/\s+/g, "") === nuevo.replace(/\s+/g, "")) return;
-          var copia = p.cloneNode(false);
-          copia.removeAttribute("id");
-          copia.setAttribute("data-redcafe-propio", "1");
-          copia.textContent = nuevo;
-          marcarCopia(copia, p);
-          p.setAttribute("data-redcafe-oculto-react", "1");
-          p.insertAdjacentElement("afterend", copia);
-        });
-      })
-      .catch(function () { preciosServiciosPedidos = false; });
-  }
-
-
-  /* ── 12. Títulos y nombres que confunden ─────────────────────────────── */
-  // 1) La comunidad se llamaba «La conversación del café ecuatoriano»; el
-  //    propietario la quiere como «Conexiones del café ecuatoriano»: lo que se
-  //    busca ahí no es charla, es con quién hacer negocio.
-  // 2) En /servicios/ hay DOS tarjetas llamadas «Expediente de trazabilidad»:
-  //    una contrata el servicio y otra explica el EUDR. Se distingue la
-  //    segunda por su enlace.
-  var TITULOS_PROPIOS = [
-    { ruta: "/comunidad", sel: "main h1", de: "La conversación del café ecuatoriano", a: "Conexiones del café ecuatoriano" }
-  ];
+  /* ── 10, 11 y 12 (fecha límite, precios reales y nombres de /servicios/):
+     migrados a React (components/ServiciosVivos.tsx y los textos de cada página). */
 
   function copiaPropia(el, textoNuevo) {
     if (!el || el.getAttribute("data-redcafe-oculto-react") === "1") return false;
@@ -943,25 +535,6 @@
     el.insertAdjacentElement("afterend", copia);
     return true;
   }
-
-  function textosQueConfunden() {
-    TITULOS_PROPIOS.forEach(function (regla) {
-      if (ruta().indexOf(regla.ruta) !== 0) return;
-      Array.prototype.slice.call(document.querySelectorAll(regla.sel)).forEach(function (el) {
-        if (texto(el) !== regla.de) return;
-        copiaPropia(el, regla.a);
-      });
-    });
-
-    if (!esServicios()) return;
-    Array.prototype.slice.call(document.querySelectorAll('main a[href="/servicios/eudr/"]')).forEach(function (a) {
-      var nombre = Array.prototype.slice.call(a.querySelectorAll("p")).filter(function (p) {
-        return texto(p) === "Expediente de trazabilidad";
-      })[0];
-      if (nombre) copiaPropia(nombre, "Trazabilidad y EUDR: cómo funciona");
-    });
-  }
-
 
   /* ── 13. «Qué cuesta y qué no» se MUEVE a la comunidad ────────────────── */
   // El propietario pidió moverlo, no duplicarlo: ese bloque estaba casi al
@@ -1040,83 +613,8 @@
       .catch(function () { beneficiosPedidos = false; });
   }
 
-  /* ── 15. Portada: acceso y registro antes de perfiles ───────────────── */
-  // Sustituye solo el bloque "FORMA PARTE" de React por una puerta compacta
-  // hacia registro, login y servicios. Todo lo anterior en la portada queda
-  // intacto: hero, cifras y franja de precios.
-  /* migración a React · fase 2 (portada) */
-  // Iconos de línea (trazos de Lucide, licencia ISC), dibujados como SVG propio.
-  var ICONOS_ACCESO = {
-    vender: ["M7 20h10", "M10 20c5.5-2.5.8-6.4 3-10", "M9.5 9.4c1.1.8 1.8 2.2 2.3 3.7-2 .4-3.5.4-4.8-.3-1.2-.6-2.3-1.9-3-4.2 2.8-.5 4.4 0 5.5.8z", "M14.1 6a7 7 0 0 0-1.1 4c1.9-.1 3.3-.6 4.3-1.4 1-1 1.6-2.3 1.7-4.6-2.7.1-4 1-4.9 2z"],
-    comprar: ["M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4Z", "M3 6h18", "M16 10a4 4 0 0 1-8 0"],
-    precio: ["M22 7 13.5 15.5 8.5 10.5 2 17", "M16 7h6v6"],
-    academia: ["M22 10v6", "M2 10l10-5 10 5-10 5z", "M6 12v5c3 3 9 3 12 0v-5"],
-    servicios: ["M16 20V4a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16", "M4 6h16a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2z"],
-    comunidad: ["M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2", "M13 7a4 4 0 1 1-8 0 4 4 0 0 1 8 0z", "M22 21v-2a4 4 0 0 0-3-3.87", "M16 3.13a4 4 0 0 1 0 7.75"],
-    publicaciones: ["M4 4h11l5 5v11a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V5a1 1 0 0 1 1-1z", "M15 4v5h5", "M8 13h8", "M8 17h5"],
-    bandeja: ["M4 13h4l2 3h4l2-3h4", "M5 5h14l2 8v5a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1v-5z"],
-    requerimientos: ["M9 5h6a1 1 0 0 1 1 1v1H8V6a1 1 0 0 1 1-1z", "M8 7H6a1 1 0 0 0-1 1v11a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V8a1 1 0 0 0-1-1h-2", "M9 12h6", "M9 16h4"],
-    guias: [
-      "M6 4h9l3 3v13a1 1 0 0 1-1 1H6a1 1 0 0 1-1-1V5a1 1 0 0 1 1-1z",
-      "M14 4v4h4",
-      "M8.5 12.5l1.4 1.4 3-3",
-      "M8.5 17h7"
-    ],
-    empleo: ["M4 7h16a1 1 0 0 1 1 1v11a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V8a1 1 0 0 1 1-1z", "M9 7V5a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2", "M3 12h18"]
-  };
-  function accesoIcono(nombre) {
-    var NS = "http://www.w3.org/2000/svg";
-    var svg = document.createElementNS(NS, "svg");
-    svg.setAttribute("viewBox", "0 0 24 24");
-    svg.setAttribute("fill", "none");
-    svg.setAttribute("stroke", "currentColor");
-    svg.setAttribute("stroke-width", "1.9");
-    svg.setAttribute("stroke-linecap", "round");
-    svg.setAttribute("stroke-linejoin", "round");
-    (ICONOS_ACCESO[nombre] || []).forEach(function (d) {
-      var path = document.createElementNS(NS, "path");
-      path.setAttribute("d", d);
-      svg.appendChild(path);
-    });
-    return svg;
-  }
-
-  /* ── 16. Panel: herramientas al alcance ──────────────────────────────
-     El panel obliga a bajar por resúmenes y estadísticas antes de llegar a
-     lo que el miembro viene a hacer. Esta barra de atajos va arriba del todo,
-     es nodo propio (nunca se toca el árbol de React) y se adapta al perfil:
-     un productor ve «Publicar lote» primero; un comprador, el marketplace. */
-  var ATAJOS_BASE = [
-    { icono: "publicaciones", titulo: "Mis publicaciones", href: "/panel/?ver=publicaciones", rol: "todos" },
-    { icono: "bandeja", titulo: "Mensajes", href: "/chat/", rol: "todos" },
-    { icono: "comprar", titulo: "Marketplace", href: "/marketplace/", rol: "todos" },
-    { icono: "precio", titulo: "Precio del café", href: "/servicios/precios/", rol: "todos" },
-    { icono: "academia", titulo: "Academia", href: "/academia/", rol: "todos" },
-    { icono: "servicios", titulo: "Servicios", href: "/servicios/", rol: "todos" },
-    { icono: "requerimientos", titulo: "Requerimientos", href: "/marketplace/?ver=requerimientos", rol: "todos" },
-    { icono: "empleo", titulo: "Empleo", href: "/marketplace/?ver=empleos", rol: "todos" }
-  ];
-  /* Las guías no le sirven a todo el mundo: la de finca es para quien maneja un
-     cafetal y la de negocio para quien vende. A un comprador o a un transportista
-     solo le ocuparían sitio en la barra. */
-  var ROLES_GUIA = ["productor", "vendedor", "exportador", "bar", "barista", "asesor", "admin"];
-  var intentosAtajos = 0;
-
-  function atajoNodo(a) {
-    var el = document.createElement("a");
-    el.href = a.href;
-    el.className = "redcafe-atajo";
-    var ic = document.createElement("span");
-    ic.className = "redcafe-atajo-icono";
-    ic.setAttribute("aria-hidden", "true");
-    ic.appendChild(accesoIcono(a.icono));
-    var tx = document.createElement("span");
-    tx.className = "redcafe-atajo-texto";
-    tx.textContent = a.titulo;
-    el.appendChild(ic);
-    el.appendChild(tx);
-    return el;
-  }
+  /* ── 15. Portada: la puerta de registro ya es de React (AccesoPortada). */
+  /* ── 16. Panel: la barra «Tus herramientas» ya es de React (AtajosPanel). */
 
   /* Un atajo debe abrir lo que promete. Con ?ver=... se despliega la sección
      del panel o se cambia a la pestaña del marketplace, y se lleva la vista
@@ -1154,25 +652,8 @@
       return;
     }
 
-    if (ruta().indexOf("/marketplace") === 0) {
-      // Solo las pestañas del marketplace, nunca un enlace cualquiera que
-      // contenga la palabra: «Publicar un servicio» llevaba a otra página.
-      var etiquetas = { requerimientos: "requerimientos", empleos: "empleos", servicios: "servicios", lotes: "cafés" };
-      var busca = etiquetas[vista];
-      if (!busca) { vistaHecha = true; return; }
-      var botones = Array.prototype.slice.call(document.querySelectorAll("main button[data-redcafe-tab], main button"));
-      for (var i = 0; i < botones.length; i++) {
-        var b = botones[i];
-        if (!b.offsetHeight || b.tagName !== "BUTTON") continue;
-        var tab = (b.getAttribute("data-redcafe-tab") || "").toLowerCase();
-        var t = texto(b).toLowerCase();
-        if (tab !== busca && t !== busca) continue;
-        b.click();
-        b.scrollIntoView({ block: "center" });
-        vistaHecha = true;
-        return;
-      }
-    }
+    // Las pestañas del marketplace (?ver=) las abre la propia página de React.
+    vistaHecha = true;
   }
 
   /* /servicios/contratar/ sin servicio elegido enseñaba «Servicio no
@@ -1253,43 +734,6 @@
     });
   }
 
-  function atajosPanel() {
-    if (ruta().indexOf("/panel") !== 0) return;
-    if (document.getElementById("redcafe-atajos")) return;
-    if (intentosAtajos >= 8) return;
-    var main = document.querySelector("main");
-    if (!main || !main.firstElementChild) { intentosAtajos++; return; }
-    intentosAtajos++;
-
-    var sesion = sesionGuardada();
-    var roles = rolesDe(sesion);
-    var lista = ATAJOS_BASE.slice();
-    var paraGuias = ROLES_GUIA.some(function (r) { return roles.indexOf(r) !== -1; });
-    if (paraGuias) {
-      lista.splice(1, 0, { icono: "guias", titulo: "Mis guías", href: "/panel/?ver=guias" });
-    }
-    if (roles.indexOf("productor") !== -1) {
-      lista.unshift({ icono: "vender", titulo: "Publicar lote", href: "/panel/?ver=publicar" });
-    } else {
-      lista.unshift({ icono: "servicios", titulo: "Publicar servicio", href: "/panel/?ver=publicar_servicio" });
-    }
-
-    var sec = document.createElement("section");
-    sec.id = "redcafe-atajos";
-    sec.setAttribute("data-redcafe-propio", "1");
-    sec.setAttribute("aria-label", "Accesos rápidos");
-    var rot = document.createElement("p");
-    rot.className = "redcafe-atajos-rotulo";
-    rot.textContent = "Tus herramientas";
-    sec.appendChild(rot);
-    var grid = document.createElement("div");
-    grid.className = "redcafe-atajos-grid";
-    lista.forEach(function (a) { grid.appendChild(atajoNodo(a)); });
-    sec.appendChild(grid);
-    main.insertBefore(sec, main.firstElementChild);
-  }
-
-
   /* migración a React · fase 1 */
   /* ── Arranque ───────────────────────────────────────────────────────── */
 
@@ -1299,17 +743,12 @@
     limpiarCopiasHuerfanas();
     clavesConMinimo8();
     verClave();
-    atajosPanel();
     ordenarPanel();
     panelSeguirVista();
     abrirVista();
     contratarSinServicio();
-    if (esPortada()) { preciosReales(); sinTiempoLimitado(); cifrasDeLaRed(); mapaReal(); costesFueraDeLaPortada(); beneficiosFueraDeLaPortada(); lenguajeLianoPortada(); }
+    if (esPortada()) { preciosReales(); sinTiempoLimitado(); costesFueraDeLaPortada(); beneficiosFueraDeLaPortada(); lenguajeLianoPortada(); }
     if (esQuienesSomos()) beneficiosEnQuienesSomos();
-    if (esComunidad()) costesEnComunidad();
-    sinFechaLimite();
-    preciosDeServicios();
-    textosQueConfunden();
     if (esRegistro()) { registroMasCorto(); siguientePaso(); quitarAvisoSesionCaducada(); }
     else document.documentElement.classList.remove("redcafe-con-boton-fijo");
   }
@@ -1324,13 +763,7 @@
 
   function alCargarRuta() {
     enviados = {};
-    cifrasPedidas = false;
     preciosPedidos = false;
-    mapaPedido = false;
-    comunidadPedida = false;
-    intentosComunidad = 0;
-    preciosServiciosPedidos = false;
-    intentosServicios = 0;
     beneficiosPedidos = false;
     intentosBeneficios = 0;
     medir("visita", true);

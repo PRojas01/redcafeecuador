@@ -46,17 +46,17 @@ const PLAN_DEFAULT: Record<Rol, string> = {
 const GUIA_PERFIL: Record<Rol, { titulo: string; texto: string; funciones: string[] }> = {
   productor: {
     titulo: "Tu panel se enfoca en vender y organizar tu café",
-    texto: "Podrás publicar lotes, agregar finca, altura, proceso, fotos y ubicación para que el mapa y el marketplace se actualicen desde la misma publicación.",
-    funciones: ["Publicar lotes", "Recibir pedidos y cotizaciones", "Pedir flete, pilado, catación o trazabilidad"],
+    texto: "Podrás publicar lotes de café desde grano sin proceso hasta producto terminado, agregar finca, altura, proceso, fotos y ubicación para que el mapa y el marketplace se actualicen desde la misma publicación.",
+    funciones: ["Publicar lotes de café", "Recibir pedidos y cotizaciones", "Pedir flete, pilado, catación o trazabilidad"],
   },
   vendedor: {
     titulo: "Tu panel se enfoca en abastecimiento y compras",
-    texto: "Podrás buscar lotes por origen, comparar información y abrir pedidos o cotizaciones con productores y proveedores de servicio.",
-    funciones: ["Buscar lotes", "Solicitar servicios", "Organizar compras y costos"],
+    texto: "Podrás buscar lotes de café por origen, comparar información y abrir pedidos o cotizaciones con productores y proveedores de servicio.",
+    funciones: ["Buscar lotes de café", "Solicitar servicios", "Organizar compras y costos"],
   },
   comprador: {
     titulo: "Tu panel se enfoca en encontrar café con contexto",
-    texto: "Podrás comprar café de origen, revisar información del lote, pedir servicios relacionados y conversar cuando exista una operación.",
+    texto: "Podrás comprar café de origen, revisar información del lote y pedir servicios relacionados cuando exista una operación.",
     funciones: ["Explorar marketplace", "Solicitar pedidos", "Calificar servicio y calidad"],
   },
   bar: {
@@ -86,11 +86,11 @@ const GUIA_PERFIL: Record<Rol, { titulo: string; texto: string; funciones: strin
   },
   pilador: {
     titulo: "Tu panel se enfoca en procesamiento",
-    texto: "Podrás publicar capacidad de pilado, recibir solicitudes y registrar lotes procesados.",
+    texto: "Podrás publicar capacidad de pilado, recibir solicitudes y registrar lotes de café procesados.",
     funciones: ["Solicitudes de pilado", "Merma y humedad", "Historial de servicio"],
   },
   exportador: {
-    titulo: "Tu panel se enfoca en lotes y documentación",
+    titulo: "Tu panel se enfoca en lotes de café y documentación",
     texto: "Podrás buscar lotes con trazabilidad, solicitar verificaciones y coordinar servicios de exportación.",
     funciones: ["Lotes auditados", "EUDR", "Servicios de exportación"],
   },
@@ -101,7 +101,7 @@ const GUIA_PERFIL: Record<Rol, { titulo: string; texto: string; funciones: strin
   },
   asesor: {
     titulo: "Tu panel se enfoca en ofrecer asesoría",
-    texto: "Podrás publicar servicios, recibir solicitudes de miembros y construir reputación con valoraciones.",
+    texto: "Podrás publicar servicios, recibir solicitudes de miembros y construir reputación profesional con valoraciones.",
     funciones: ["Publicar asesorías", "Recibir solicitudes", "Calificaciones de clientes"],
   },
   admin: {
@@ -347,6 +347,7 @@ function AfiliateForm() {
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const [registrada, setRegistrada] = useState(false);
+  const [verMas, setVerMas] = useState(false);
 
   const rol = roles[0] ?? "productor";
 
@@ -358,6 +359,7 @@ function AfiliateForm() {
     const r = new URLSearchParams(window.location.search).get("rol");
     if (r && ROLES.some((o) => o.r === r)) {
       setRoles([r as Rol]);
+      setElegido(true);
       setPaso(2);
       const id = setTimeout(() => {
         document.getElementById("afiliar-form")?.scrollIntoView({ behavior: "smooth" });
@@ -373,9 +375,19 @@ const introduccionPerfil = INTRODUCCION_PERFIL[rol];
 	const planesRol = planes.filter((p) => p.perfil === rol);
 	const planActual = planesRol.find((p) => p.id === plan);
 
+  // «Productor» viene marcado por defecto. Si la primera elección es otro
+  // perfil, lo sustituye en vez de sumarse: antes quien elegía Comprador quedaba
+  // registrado como productor principal. Quien también produzca lo vuelve a marcar.
+  const [elegido, setElegido] = useState(false);
+
   const toggleRol = (seleccionado: Rol) => {
     setError(null);
+    const primera = !elegido;
+    setElegido(true);
     setRoles((actuales) => {
+      if (primera && seleccionado !== "productor" && actuales.length === 1 && actuales[0] === "productor") {
+        return [seleccionado];
+      }
       if (actuales.includes(seleccionado)) {
         if (actuales.length === 1) {
           setError("Debes seleccionar al menos un perfil.");
@@ -397,8 +409,8 @@ const introduccionPerfil = INTRODUCCION_PERFIL[rol];
 
   const siguiente = () => {
     setError(null);
-    if (!nombre.trim() || !email.includes("@") || pass.length < 6) {
-      setError("Completa nombre, correo y contraseña (mínimo 6 caracteres).");
+    if (!nombre.trim() || !email.includes("@") || pass.length < 8) {
+      setError("Completa nombre, correo y contraseña (mínimo 8 caracteres).");
       return;
     }
     if (!aceptaTerminos) {
@@ -415,8 +427,8 @@ const introduccionPerfil = INTRODUCCION_PERFIL[rol];
   const registrar = async (e: React.FormEvent) => {
     e.preventDefault();
     setError(null);
-    if (!nombre.trim() || !email.includes("@") || pass.length < 6) {
-      setError("Completa nombre, correo y contraseña (mínimo 6 caracteres).");
+    if (!nombre.trim() || !email.includes("@") || pass.length < 8) {
+      setError("Completa nombre, correo y contraseña (mínimo 8 caracteres).");
       return;
     }
     if (!aceptaTerminos) {
@@ -466,77 +478,14 @@ const introduccionPerfil = INTRODUCCION_PERFIL[rol];
             Explorar Red Café
           </Link>
         </div>
+        <SiguientePaso roles={roles} />
       </div>
     );
   }
 
   return (
     <div>
-      {/* HERO */}
-      <section className="hero-gradient text-cream-50">
-        <div className="vapor left-[12%] top-[18%] h-24 w-16" aria-hidden="true" />
-        <div className="vapor right-[16%] top-[14%] h-20 w-14" style={{ animationDelay: "2s" }} aria-hidden="true" />
-        <div className="relative mx-auto max-w-5xl px-4 py-14 text-center md:py-20">
-          <p className="badge mb-4 bg-gold-500/15 text-gold-500">Red Café Ecuador</p>
-          <h1 className="font-titulo text-4xl font-bold leading-tight text-cream-50 md:text-6xl">
-            Forma parte de Red Café Ecuador
-          </h1>
-          <p className="mx-auto mt-4 max-w-2xl text-lg text-cream-100/85">
-            Crea tu perfil, muestra tu actividad y accede a herramientas gratuitas para
-            publicar, cotizar, conversar y organizar mejor tu trabajo en el negocio del
-            café ecuatoriano.
-          </p>
-          <h2 className="mt-6 font-titulo text-xl text-gold-500 md:text-2xl">
-            Elige tu actividad y empieza desde tu panel.
-          </h2>
-          <ul className="mt-5 flex flex-wrap justify-center gap-x-5 gap-y-2 text-sm text-cream-100/90">
-            <li className="flex items-center gap-1.5">
-              <span aria-hidden="true" className="text-gold-500">✓</span> Gratis para empezar
-            </li>
-            <li className="flex items-center gap-1.5">
-              <span aria-hidden="true" className="text-gold-500">✓</span> No necesitas experiencia con computadoras — te guiamos por WhatsApp
-            </li>
-            <li className="flex items-center gap-1.5">
-              <span aria-hidden="true" className="text-gold-500">✓</span> Toma menos de 5 minutos
-            </li>
-          </ul>
-          <div className="mt-5 flex justify-center">
-            <Link
-              href="/login"
-              className="inline-flex min-h-11 items-center justify-center border border-cream-50/35 px-5 py-2 text-sm font-semibold text-cream-50 transition hover:border-gold-500 hover:text-gold-500"
-            >
-              Acceso usuarios registrados
-            </Link>
-          </div>
-        </div>
-      </section>
-
-      {/* ── QUÉ GANAS DE VERDAD · el argumento completo, aquí y no en la portada ── */}
-      <section className="border-b border-arena bg-crema py-6 md:py-16">
-        <div className="mx-auto max-w-5xl px-4">
-          <p className="rotulo text-filtrado-600">Qué ganas de verdad</p>
-          <h2 className="mt-2 max-w-3xl font-titulo text-2xl font-bold leading-tight text-cafe md:text-3xl">
-            {introduccionPerfil.titulo}
-          </h2>
-          <p className="mt-3 max-w-3xl text-sm leading-relaxed text-pizarra-suave md:mt-4 md:text-base">
-            {introduccionPerfil.texto}
-          </p>
-
-          <ol className="mt-8 hidden gap-5 md:grid md:grid-cols-3 md:gap-6">
-            {introduccionPerfil.pasos.map((p) => (
-              <li key={p.n} className="border-l-2 border-latte pl-5">
-                <p className="dato text-filtrado-600">{p.n}</p>
-                <p className="mt-1.5 font-titulo text-lg font-bold text-cafe">{p.t}</p>
-                <p className="mt-2 text-sm leading-relaxed text-pizarra-suave">{p.d}</p>
-              </li>
-            ))}
-          </ol>
-
-          <p className="mt-4 hidden max-w-3xl border-t border-cafe/10 pt-6 leading-relaxed text-pizarra-suave md:block">
-            {introduccionPerfil.cierre}
-          </p>
-        </div>
-      </section>
+      <Portada />
 
       {/* WIZARD */}
       <div id="afiliar-form" className="mx-auto max-w-6xl px-4 py-10">
@@ -558,17 +507,6 @@ const introduccionPerfil = INTRODUCCION_PERFIL[rol];
                 {perfilesActuales.map((p) => (
                   <span key={p.r} className="badge bg-white">{p.n}{p.r === rol ? " · principal" : ""}</span>
                 ))}
-              </div>
-              <div className="mt-4 border-t border-green-700/15 pt-3">
-                <p className="font-titulo text-base font-bold text-coffee-900">{guiaPerfil.titulo}</p>
-                <p className="mt-1 text-sm leading-relaxed text-text-secondary">{guiaPerfil.texto}</p>
-                <div className="mt-3 flex flex-wrap gap-2">
-                  {guiaPerfil.funciones.map((f) => (
-                    <span key={f} className="rounded-full border border-green-700/20 bg-white px-2.5 py-1 text-xs font-semibold text-green-700">
-                      {f}
-                    </span>
-                  ))}
-                </div>
               </div>
             </div>
 
@@ -604,6 +542,7 @@ const introduccionPerfil = INTRODUCCION_PERFIL[rol];
                         <button
                           type="button"
                           onClick={() => hacerPrincipal(o.r)}
+                          aria-pressed={principal}
                           className={`min-h-10 rounded-full border px-3 py-2 text-xs font-semibold ${principal ? "border-green-700 bg-green-100 text-green-700" : "border-border-soft text-coffee-700 hover:border-green-700"}`}
                         >
                           Principal
@@ -613,6 +552,17 @@ const introduccionPerfil = INTRODUCCION_PERFIL[rol];
                   </div>
                 );
               })}
+            </div>
+            {/* Qué hace el perfil principal: debajo del selector, como conclusión de la elección. */}
+            <div id="redcafe-afil-guia" className="redcafe-afil-guia" data-perfil={perfilActual?.n}>
+              <p className="redcafe-afil-guia-rotulo">{perfilActual ? "Con el perfil de " + perfilActual.n : "Con este perfil"}</p>
+              <p className="redcafe-afil-guia-titulo">{guiaPerfil.titulo}</p>
+              <p className="redcafe-afil-guia-texto">{guiaPerfil.texto}</p>
+              <div className="redcafe-afil-guia-chips">
+                {guiaPerfil.funciones.map((f) => (
+                  <span key={f}>{f}</span>
+                ))}
+              </div>
             </div>
             {error && <p className="mt-4 rounded-xl bg-danger/10 p-3 text-center text-sm font-semibold text-danger">{error}</p>}
             <div className="mt-6 flex justify-center">
@@ -685,6 +635,9 @@ const introduccionPerfil = INTRODUCCION_PERFIL[rol];
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     placeholder="tu@correo.com"
+                    inputMode="email"
+                    autoCapitalize="off"
+                    spellCheck={false}
                     className="mt-1 w-full rounded-lg border border-border-soft bg-surface px-3 py-2"
                     required
                     autoComplete="email"
@@ -697,10 +650,10 @@ const introduccionPerfil = INTRODUCCION_PERFIL[rol];
                     type="password"
                     value={pass}
                     onChange={(e) => setPass(e.target.value)}
-                    placeholder="Mínimo 6 caracteres"
+                    placeholder="Mínimo 8 caracteres"
                     className="mt-1 w-full rounded-lg border border-border-soft bg-surface px-3 py-2"
                     required
-                    minLength={6}
+                    minLength={8}
                     autoComplete="new-password"
                   />
                 </div>
@@ -708,6 +661,8 @@ const introduccionPerfil = INTRODUCCION_PERFIL[rol];
                   <label htmlFor="af-whatsapp" className="text-xs font-semibold text-coffee-700">WhatsApp</label>
                   <input
                     id="af-whatsapp"
+                    type="tel"
+                    inputMode="tel"
                     value={telefono}
                     onChange={(e) => setTelefono(e.target.value)}
                     placeholder="Ej: 09X XXX XXXX"
@@ -722,6 +677,8 @@ const introduccionPerfil = INTRODUCCION_PERFIL[rol];
                     value={cedula}
                     onChange={(e) => setCedula(e.target.value)}
                     placeholder="Ej: documento o RUC"
+                    inputMode="numeric"
+                    autoComplete="off"
                     className="mt-1 w-full rounded-lg border border-border-soft bg-surface px-3 py-2"
                   />
                 </div>
@@ -816,48 +773,6 @@ const introduccionPerfil = INTRODUCCION_PERFIL[rol];
               </div>
             </form>
 
-            <div className="space-y-4">
-              <div className="card p-5">
-                <p className="text-sm font-semibold uppercase tracking-widest text-green-700">
-                  Tu actividad en la Red
-                </p>
-                <p className="mt-1 text-sm text-text-secondary">
-                  Tu plan por defecto para el perfil <b className="text-coffee-900">{perfilActual?.n}</b>. Puedes cambiarlo.
-                </p>
-                <div className="mt-3 flex flex-wrap gap-2">
-                  {perfilesActuales.map((p) => (
-                    <span key={p.r} className="badge">{p.n}</span>
-                  ))}
-                </div>
-                <div className="mt-3 space-y-2">
-                  {planes.map((p) => (
-                    <button
-                      key={p.id}
-                      type="button"
-                      onClick={() => setPlan(p.id)}
-                      className={`w-full rounded-xl border p-3 text-left transition ${
-                        plan === p.id
-                          ? "border-green-700 bg-green-100/40"
-                          : "border-border-soft bg-surface hover:border-green-700/50"
-                      }`}
-                    >
-                      <span className="flex items-center justify-between gap-2">
-                        <span className="font-titulo text-sm font-bold text-coffee-900">{p.nombre}</span>
-                        <span className="text-xs font-bold text-green-700">$0 gratis</span>
-                      </span>
-                      <p className="mt-0.5 text-xs text-text-secondary">{p.descripcion}</p>
-                    </button>
-                  ))}
-                </div>
-                <ul className="mt-3 space-y-1.5 text-sm text-text-secondary">
-                  {planActual?.beneficios?.slice(0, 4).map((b) => (
-                    <li key={b} className="flex gap-2">
-                      <span className="text-green-700">✓</span> {b}
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            </div>
           </div>
         )}
 
@@ -897,7 +812,7 @@ const introduccionPerfil = INTRODUCCION_PERFIL[rol];
             </dl>
 
             <div className="rounded-xl bg-cream-200/70 p-3 text-xs text-text-secondary">
-              Registro gratuito hasta el {CONFIG.registroGratisTexto}. Las herramientas básicas quedan incluidas en tu cuenta. La Red cobra solo por servicios a la carta:
+              Registro gratuito. Las herramientas básicas quedan incluidas en tu cuenta. La Red cobra solo por servicios a la carta:
               asesorías, capacitaciones y certificaciones. Sin comisiones por venta.
               Cancela cuando quieras.
             </div>
@@ -913,6 +828,174 @@ const introduccionPerfil = INTRODUCCION_PERFIL[rol];
           </form>
         )}
       </div>
+
+      {/* Lo que se lee después de decidir: plegado tras un botón. */}
+      <button
+        type="button"
+        id="redcafe-afil-vermas"
+        className="redcafe-afil-vermas"
+        aria-expanded={verMas}
+        aria-controls="redcafe-afil-ventajas"
+        onClick={() => setVerMas((v) => !v)}
+      >
+        {verMas ? "Ocultar" : "Ver qué incluye tu cuenta"}
+      </button>
+      {verMas && (
+        <>
+          <ul id="redcafe-afil-ventajas" className="redcafe-afil-ventajas">
+            {VENTAJAS.map(([t, d]) => (
+              <li key={t}>
+                <strong>{t}</strong>
+                <span>{d}</span>
+              </li>
+            ))}
+          </ul>
+        <section className="border-b border-arena bg-crema py-6 md:py-16">
+          <div className="mx-auto max-w-5xl px-4">
+            <p className="rotulo text-filtrado-600">Qué ganas de verdad</p>
+            <h2 className="mt-2 max-w-3xl font-titulo text-2xl font-bold leading-tight text-cafe md:text-3xl">
+              {introduccionPerfil.titulo}
+            </h2>
+            <p className="mt-3 max-w-3xl text-sm leading-relaxed text-pizarra-suave md:mt-4 md:text-base">
+              {introduccionPerfil.texto}
+            </p>
+  
+            <ol className="mt-8 hidden gap-5 md:grid md:grid-cols-3 md:gap-6">
+              {introduccionPerfil.pasos.map((p) => (
+                <li key={p.n} className="border-l-2 border-latte pl-5">
+                  <p className="dato text-filtrado-600">{p.n}</p>
+                  <p className="mt-1.5 font-titulo text-lg font-bold text-cafe">{p.t}</p>
+                  <p className="mt-2 text-sm leading-relaxed text-pizarra-suave">{p.d}</p>
+                </li>
+              ))}
+            </ol>
+  
+            <p className="mt-4 hidden max-w-3xl border-t border-cafe/10 pt-6 leading-relaxed text-pizarra-suave md:block">
+              {introduccionPerfil.cierre}
+            </p>
+          </div>
+        </section>
+        </>
+      )}
+
+      <DatosReales />
     </div>
+  );
+}
+
+/* ── Portada y datos de la Red ─────────────────────────────────────────
+   Antes las pintaba la capa propia (redcafe-afiliate.js) encima de una
+   portada de React que quedaba oculta. Orden pedido por el propietario:
+   título, subtítulo, cómo funciona y, enseguida, los perfiles. Las ventajas
+   van en el plegable «Ver qué incluye tu cuenta». */
+
+const VENTAJAS: [string, string][] = [
+  ["Gratis", "Crear cuenta y publicar no cuesta."],
+  ["Sin comisión por el contacto", "Hablas y negocias directo con la otra parte."],
+  ["Dos minutos", "Nombre, correo y contraseña."],
+];
+
+const COMO_FUNCIONA: [string, string, string][] = [
+  ["1", "Eliges tu perfil", "Lo que haces con el café. Puedes marcar hasta tres."],
+  ["2", "Creas tu cuenta", "Nombre, correo y contraseña. Dos minutos."],
+  ["3", "Te encuentran y te escriben", "Tu ficha entra al directorio. Cuando publiques café o servicios, también salen en el marketplace y en el mapa."],
+];
+
+function Portada() {
+  return (
+    <section id="redcafe-afiliate-portada" className="redcafe-afil-hero">
+      <div className="redcafe-afil-wrap">
+        <p className="redcafe-afil-rotulo">Registro gratuito</p>
+        <h1>Encuentra con quién hacer negocio en el café ecuatoriano.</h1>
+        <p className="redcafe-afil-bajada">
+          Produzcas, compres, tuestes, transportes o asesores: ficha pública, presencia en el mapa nacional cuando
+          publiques café, y contacto directo sin comisión.
+        </p>
+        <ol className="redcafe-afil-pasos">
+          {COMO_FUNCIONA.map(([n, t, d]) => (
+            <li key={n}>
+              <span className="redcafe-afil-num" aria-hidden="true">{n}</span>
+              <strong>{t}</strong>
+              <span className="redcafe-afil-paso-txt">{d}</span>
+            </li>
+          ))}
+        </ol>
+        <div className="redcafe-afil-acciones">
+          <button
+            type="button"
+            className="redcafe-afil-cta"
+            onClick={() => document.getElementById("profile-selector")?.scrollIntoView({ behavior: "smooth", block: "center" })}
+          >
+            Elegir mi perfil
+          </button>
+          <Link className="redcafe-afil-secundario" href="/login/">
+            Ya tengo cuenta
+          </Link>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+type LoteResumen = { provincia?: string; demo?: boolean; ejemplo?: boolean; oculto?: boolean };
+
+/** Prueba social honesta: cuánto café hay publicado y desde dónde (sin lotes de muestra). */
+function DatosReales() {
+  const [texto, setTexto] = useState("");
+  useEffect(() => {
+    let vivo = true;
+    const leer = (url: string) =>
+      fetch(url, { credentials: "include", cache: "no-store" })
+        .then((r) => r.json())
+        .catch(() => ({ ok: false }));
+    Promise.all([leer("/api/lotes.php?action=list"), leer("/api/cursos.php?action=list")]).then(([rl, rc]) => {
+      if (!vivo) return;
+      const lotes = ((rl?.ok && rl.data?.lotes) || []).filter((l: LoteResumen) => l && !l.demo && !l.ejemplo && !l.oculto) as LoteResumen[];
+      const cursos = (rc?.ok && rc.data?.cursos) || [];
+      const nProv = new Set(lotes.map((l) => l.provincia).filter(Boolean)).size;
+      const partes: string[] = [];
+      if (lotes.length) partes.push(lotes.length + (lotes.length === 1 ? " lote publicado" : " lotes publicados"));
+      if (nProv) partes.push(nProv + (nProv === 1 ? " provincia" : " provincias"));
+      if (cursos.length) partes.push(cursos.length + (cursos.length === 1 ? " curso abierto" : " cursos abiertos"));
+      setTexto(partes.length ? "Ahora mismo en la Red: " + partes.join(" · ") + "." : "");
+    });
+    return () => {
+      vivo = false;
+    };
+  }, []);
+  return (
+    <p id="redcafe-afil-datos" className="redcafe-afil-datos">
+      {texto}
+    </p>
+  );
+}
+
+/* Tras crear la cuenta: la acción que hace que la Red te encuentre, según el perfil. */
+function SiguientePaso({ roles }: { roles: Rol[] }) {
+  const tiene = (lista: Rol[]) => roles.some((r) => lista.includes(r));
+  const vende = tiene(["productor", "vendedor", "exportador", "pilador"]);
+  const compra = tiene(["comprador", "bar", "barista", "amante"]);
+  const tarjetas: { principal: boolean; rotulo: string; titulo: string; desc: string; href: string; boton: string }[] = [];
+  if (vende)
+    tarjetas.push({ principal: true, rotulo: "Vender café", titulo: "Publica tu primer lote de café", desc: "En cereza, pergamino, oro o tostado. Los compradores de la Red lo ven en el Marketplace y te escriben.", href: "/panel/?ver=publicar", boton: "Publicar lote de café" });
+  if (compra)
+    tarjetas.push({ principal: !vende, rotulo: "Comprar café", titulo: "Publica qué café buscas", desc: "Variedad, cantidad y precio: los productores te ofrecen sus lotes.", href: "/panel/#redcafe-requerimientos-panel", boton: "Publicar lo que busco" });
+  if (!vende && !compra)
+    tarjetas.push({ principal: true, rotulo: "Ofrecer servicios", titulo: "Publica tu servicio", desc: "Catación, pilado, transporte, asesoría o insumos: que productores y compradores te contraten.", href: "/panel/?ver=publicar_servicio", boton: "Publicar mi servicio" });
+  tarjetas.push({ principal: false, rotulo: "Explorar", titulo: "Mira el café disponible", desc: "Lotes reales por origen, proceso y variedad.", href: "/marketplace/", boton: "Ver lotes de café" });
+  return (
+    <section id="redcafe-siguiente-paso" className="redcafe-siguiente-paso" aria-label="Tu siguiente paso">
+      <p className="redcafe-siguiente-rotulo">Tu siguiente paso: que la Red te encuentre</p>
+      <div className="redcafe-panel-next-actions">
+        {tarjetas.map((c) => (
+          <article key={c.titulo} className={"redcafe-panel-next-card" + (c.principal ? " is-primary" : "")}>
+            <p>{c.rotulo}</p>
+            <h4>{c.titulo}</h4>
+            <span>{c.desc}</span>
+            <a href={c.href}>{c.boton}</a>
+          </article>
+        ))}
+      </div>
+    </section>
   );
 }
