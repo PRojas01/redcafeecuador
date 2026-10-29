@@ -15,9 +15,12 @@ const LECTURA = /^(list|get|all|me|publicos|stats|actividad|actual|precios?|clav
 
 export function protegerOrigen(ctx: Ctx, accion: string, host: string) {
   if (EXENTAS.has(accion)) return;
-  let cruzado = ["cross-site", "same-site"].includes(ctx.cabecera("sec-fetch-site").toLowerCase());
+  const sitio = ctx.cabecera("sec-fetch-site").toLowerCase();
+  let cruzado = ["cross-site", "same-site"].includes(sitio);
   const origen = ctx.cabecera("origin");
-  if (origen && origen !== "null") {
+  // Sec-Fetch-Site lo pone el navegador y ninguna página lo puede falsificar:
+  // si dice same-origin, basta (detrás de un proxy, Host puede no coincidir con Origin).
+  if (sitio !== "same-origin" && origen && origen !== "null") {
     try {
       const u = new URL(origen);
       if (u.host.toLowerCase() !== host.toLowerCase()) cruzado = true;

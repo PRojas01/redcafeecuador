@@ -10,6 +10,7 @@ import { protegerOrigen } from "./lib/seguridad.js";
 import { cabecerasSeguridad, servirEstatico } from "./lib/estatico.js";
 import { modulos } from "./modulos/index.js";
 import { RUTA_PREACUERDO, paginaPreacuerdo } from "./modulos/socios.js";
+import { db } from "./lib/db.js";
 
 type Vars = { ip: string };
 
@@ -19,9 +20,12 @@ export function crearApp(opciones: { ipDe?: (c: any) => string } = {}) {
   app.use("*", async (c, next) => {
     // Un solo dominio y HTTPS en producción (las reglas 301 del .htaccess).
     if (esProduccion()) {
-      const host = c.req.header("host") ?? "";
-      const proto = c.req.header("x-forwarded-proto") ?? "https";
-      if (/^www\.redcafeecuador\.com$/i.test(host) || proto !== "https") {
+      // Solo en el dominio propio: en la vista previa del hosting (otro dominio)
+      // no se redirige, para no mandar al visitante al sitio antiguo.
+      const host = hostPublico(c);
+      const proto = (c.req.header("x-forwarded-proto") ?? "https").split(",")[0].trim().toLowerCase();
+      const propio = /^(www\.)?redcafeecuador\.com$/i.test(host);
+      if (propio && (/^www\./i.test(host) || proto === "http")) {
         const u = new URL(c.req.url);
         return c.redirect(`https://redcafeecuador.com${u.pathname}${u.search}`, 301);
       }
@@ -30,6 +34,35 @@ export function crearApp(opciones: { ipDe?: (c: any) => string } = {}) {
   });
 
   // /enviar-waitlist.php en la raíz era un alias de la API real.
+  // Diagnóstico sin secretos: qué falta para que el sitio funcione.
+  app.get("/estado-servidor", async (c) => {
+    let base = "sin configurar";
+    let admin = false;
+    if (process.env.DATABASE_URL) {
+      try {
+        admin = !!(await db.administrador.findUnique({ where: { id: "principal" } }));
+        base = "conectada";
+      } catch (e: any) {
+        base = "error: " + String(e?.code ?? e?.name ?? "desconocido");
+      }
+    }
+    const datos = {
+      version: "2026-10-29d",
+      entorno: config.entorno,
+      base_de_datos: base,
+      clave_datos: /^[0-9a-f]{64}$/i.test(process.env.REDCAFE_CLAVE_DATOS ?? "") ? "ok" : process.env.REDCAFE_CLAVE_DATOS ? "formato incorrecto (64 hex)" : "falta",
+      admin_con_contraseña: admin,
+      pass_inicial: (process.env.REDCAFE_PASS_ADMIN_INICIAL ?? "").trim().length >= 12,
+      pass_restablecer: (process.env.REDCAFE_PASS_ADMIN_RESTABLECER ?? "").trim().length >= 12,
+      importacion: process.env.REDCAFE_IMPORTACION === "1",
+      proxy_confiable: process.env.REDCAFE_PROXY_CONFIABLE === "1",
+      host: c.req.header("host") ?? "",
+      host_reenviado: c.req.header("x-forwarded-host") ?? "",
+      proto_reenviado: c.req.header("x-forwarded-proto") ?? "",
+    };
+    return c.json(datos, 200, { "Cache-Control": "no-store" });
+  });
+
   app.all("/enviar-waitlist.php", (c) => c.redirect("/api/enviar-waitlist.php", 307));
 
   app.all("/api/:archivo{[A-Za-z0-9_.-]+\\.php}", async (c) => {
@@ -68,7 +101,7 @@ export function crearApp(opciones: { ipDe?: (c: any) => string } = {}) {
     let estado = 200;
     try {
       const accion = query.action ?? (typeof entrada.action === "string" ? entrada.action : "") ?? "";
-      protegerOrigen(ctx, accion, c.req.header("host") ?? url.host);
+      protegerOrigen(ctx, accion, hostPublico(c) || url.host);
       if (!modulo) {
         estado = 501;
         cuerpo = JSON.stringify({ ok: false, error: "Este servicio aún no está disponible en la nueva plataforma." });
@@ -125,6 +158,17 @@ export function crearApp(opciones: { ipDe?: (c: any) => string } = {}) {
   });
 
   return app;
+}
+
+/** Host que ve el visitante. Detrás del proxy del hosting, la cabecera Host
+ *  puede ser la interna (localhost:puerto); el proxy pone la pública en
+ *  X-Forwarded-Host. */
+function hostPublico(c: any): string {
+  if (process.env.REDCAFE_PROXY_CONFIABLE === "1") {
+    const xfh = (c.req.header("x-forwarded-host") ?? "").split(",")[0].trim();
+    if (xfh) return xfh;
+  }
+  return c.req.header("host") ?? "";
 }
 
 /** IP del cliente. Detrás de un proxy de confianza se usa la ÚLTIMA entrada de
