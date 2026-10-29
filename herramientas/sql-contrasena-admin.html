@@ -1,0 +1,42 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src 'unsafe-inline'; script-src 'unsafe-inline'; connect-src 'none'">
+<title>SQL contraseña admin</title>
+<style>
+body{font-family:system-ui,sans-serif;max-width:640px;margin:2rem auto;padding:0 16px;background:#faf6ef;color:#2b1d14}
+h1{font-size:1.4rem}label{display:block;margin-top:12px;font-weight:600}
+input{width:100%;box-sizing:border-box;padding:8px;font-size:1rem;border:1px solid #ccb;border-radius:6px}
+button{margin-top:14px;padding:10px 16px;border:0;border-radius:6px;background:#3b2417;color:#fff;cursor:pointer;font-size:1rem}
+small{color:#6b5848}#msg{margin-top:10px;font-weight:600}
+</style>
+</head>
+<body>
+<h1>Archivo SQL para fijar la contraseña del admin</h1>
+<p><small>Funciona sin internet: la contraseña no sale de tu navegador. Genera un archivo <b>.sql</b> que importas en la base de datos de la app (phpMyAdmin o la sección Base de datos de GoDaddy → Importar).</small></p>
+<label>Contraseña nueva (12 caracteres o más)<input id="p1" type="password" autocomplete="new-password"></label>
+<label>Repítela<input id="p2" type="password" autocomplete="new-password"></label>
+<button onclick="generar()">Descargar archivo SQL</button>
+<div id="msg"></div>
+<p><small>La primera vez que entres a /admin/ con esta contraseña, el servidor la guarda cifrada (bcrypt) y la copia legible desaparece de la base. Borra el archivo .sql de tu equipo después de importarlo.</small></p>
+<script>
+function esc(s){return s.replace(/\\/g,"\\\\").replace(/'/g,"''")}
+function generar(){
+  var a=p1.value,b=p2.value,m=document.getElementById("msg");
+  if(a.length<12){m.textContent="Debe tener 12 caracteres o más.";return}
+  if(a!==b){m.textContent="Las dos contraseñas no coinciden.";return}
+  var sql="-- Red Café Ecuador: fija la contraseña de administración.\n"+
+    "INSERT INTO `Administrador` (`id`,`passHash`,`provisionalHasta`,`resetTokenHash`,`resetExpira`,`actualizado`)\n"+
+    "VALUES ('principal','"+esc(a)+"',NULL,NULL,NULL,NOW(3))\n"+
+    "ON DUPLICATE KEY UPDATE `passHash`=VALUES(`passHash`),`provisionalHasta`=NULL,`resetTokenHash`=NULL,`resetExpira`=NULL,`actualizado`=NOW(3);\n"+
+    "-- Quita el bloqueo por intentos fallidos del admin.\n"+
+    "DELETE FROM `Intento` WHERE `clave` LIKE 'admin_login:%';\n";
+  var u=URL.createObjectURL(new Blob([sql],{type:"application/sql"}));
+  var e=document.createElement("a");e.href=u;e.download="redcafe-admin.sql";document.body.appendChild(e);e.click();e.remove();
+  p1.value=p2.value="";m.textContent="Listo: se descargó redcafe-admin.sql.";
+}
+</script>
+</body>
+</html>
