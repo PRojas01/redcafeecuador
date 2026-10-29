@@ -41,6 +41,7 @@ import { respaldo } from "./respaldo.js";
 import { cursos } from "./cursos.js";
 import { waitlist } from "./waitlist.js";
 import { agregarCursos } from "./agregar-cursos.js";
+import { importacion } from "./importacion.js";
 
 export const modulos: Record<string, Modulo> = {
   auth,
@@ -85,4 +86,5 @@ export const modulos: Record<string, Modulo> = {
   cursos,
   "enviar-waitlist": waitlist,
   "agregar-cursos": agregarCursos,
+  importacion,
 };

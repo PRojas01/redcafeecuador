@@ -107,12 +107,9 @@ Si algo no funciona, envíame el texto del error o una captura del registro
 
 ## Más adelante · Migrar los datos reales
 
-Cuando la app esté completa:
-1. Se genera un `redcafe-datos.sql` con todos los miembros, lotes, pedidos, cursos,
-   etc. del sitio actual (en tu PC o en la sesión, como elijas).
-2. Se vacía la base (o se usa una nueva) y se **importa ese archivo** con la opción
-   Importar del paso 2.
-3. Las personas entran con **su misma contraseña de siempre**.
+Sigue [`IMPORTAR-DATOS-SEGURO.md`](IMPORTAR-DATOS-SEGURO.md): el respaldo se procesa
+en tu navegador, se sube cifrado en `/admin/importar/` y va directo a la base.
+Las personas entran con **su misma contraseña de siempre**.
 
 ## Pendiente de confirmar en tu panel
 - La **carpeta persistente** para fotos subidas (las que no se borran al volver a

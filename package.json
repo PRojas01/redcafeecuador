@@ -11,7 +11,8 @@
     "build": "npm run build --prefix servidor",
     "db:push": "npm run db:push --prefix servidor",
     "importar": "npm run importar --prefix servidor --",
-    "start": "node arrancar.cjs"
+    "start": "node arrancar.cjs",
+    "vigilar": "node herramientas/vigilar-datos.mjs"
   },
   "main": "arrancar.cjs"
 }

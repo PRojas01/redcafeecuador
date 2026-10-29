@@ -24,3 +24,13 @@ qa/regresion-*/
 /sitio/fallo-*.png
 /sitio/portada-*.png
 /sitio/resultado.json
+
+# Datos reales: nunca en el repositorio (el vigilante herramientas/vigilar-datos.mjs lo comprueba en GitHub)
+data/
+**/data/*.json
+uploads/
+*.rcpaquete
+redcafe-anonimo*.json
+*.zip
+.redcafe_admin_pass
+respaldo-*.json.gz

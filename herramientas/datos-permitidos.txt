@@ -1,0 +1,22 @@
+# Valores públicos o de prueba que el vigilante de datos personales acepta.
+# Uno por línea. Añade aquí solo datos que sean PÚBLICOS (contacto oficial de
+# la Red o de aliados) o FICTICIOS (pruebas). Nunca datos de un miembro.
+
+# Correos
+redcafeecuador@gmail.com
+tu@correo.com
+correo@ejemplo.com
+git@github.com
+
+# Teléfonos y WhatsApp públicos
+593968641376
+593998569355
+
+# Teléfonos de prueba
+0991234567
+0990000000
+0990000001
+0990000002
+0991112233
+0994445566
+593999999999

@@ -1,5 +1,8 @@
 # Migración de redcafeecuador.com a Node.js + MySQL, paso a paso (GoDaddy cPanel)
 
+> **GoDaddy Node.js Hosting (sin Terminal):** usa [`IMPORTAR-DATOS-SEGURO.md`](IMPORTAR-DATOS-SEGURO.md).
+> Esta guía es para un cPanel con Terminal; los datos reales nunca se suben al repositorio.
+
 Objetivo: pasar del sitio PHP actual al servidor nuevo **sin perder ningún dato real**
 (miembros y sus contraseñas, lotes, pedidos, cursos, mensajes, avisos, imágenes…).
 
