@@ -47,11 +47,12 @@ export function crearApp(opciones: { ipDe?: (c: any) => string } = {}) {
       }
     }
     const datos = {
-      version: "2026-10-29f",
+      version: "2026-10-29g",
       entorno: config.entorno,
       base_de_datos: base,
       clave_datos: /^[0-9a-f]{64}$/i.test(process.env.REDCAFE_CLAVE_DATOS ?? "") ? "ok" : process.env.REDCAFE_CLAVE_DATOS ? "formato incorrecto (64 hex)" : "falta",
       admin_con_contraseña: admin,
+      clave_datos_origen: process.env.REDCAFE_CLAVE_DATOS_ORIGEN ?? "sin preparar",
       clave_datos_largo: (process.env.REDCAFE_CLAVE_DATOS ?? "").length,
       // Solo si el valor NO sirve: su forma (letra→a, número→9, símbolos tal cual), para ver si llega un marcador del panel en vez del secreto.
       clave_datos_forma: /^[0-9a-f]{64}$/i.test(process.env.REDCAFE_CLAVE_DATOS ?? "") ? "" : forma(process.env.REDCAFE_CLAVE_DATOS),

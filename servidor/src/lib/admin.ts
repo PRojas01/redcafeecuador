@@ -93,3 +93,31 @@ export async function restablecerPassAdminDesdeEntorno() {
   await escribirPassAdmin(nueva);
   console.warn("[admin] Contraseña de administración restablecida desde REDCAFE_PASS_ADMIN_RESTABLECER. Borra esa variable ahora.");
 }
+
+/**
+ * Clave de datos (cifra las cédulas). Fuente, por orden:
+ *  1. La guardada en la base (Secreto «clave_datos»), si existe: así nunca
+ *     cambia la clave con la que ya se cifraron datos.
+ *  2. REDCAFE_CLAVE_DATOS, si es válida (64 hex).
+ *  3. Si no hay ninguna (el panel no pasa bien el secreto), se genera una y se
+ *     guarda en la base. Más cómodo, menos protegido: una copia completa de la
+ *     base lleva la clave dentro.
+ */
+export async function prepararClaveDatos() {
+  const valida = (v?: string | null) => !!v && /^[0-9a-f]{64}$/i.test(v);
+  const env = process.env.REDCAFE_CLAVE_DATOS;
+  const fila = await db.secreto.findUnique({ where: { nombre: "clave_datos" } });
+  if (fila && valida(fila.valor)) {
+    if (valida(env) && env!.toLowerCase() !== fila.valor.toLowerCase()) console.warn("[clave] REDCAFE_CLAVE_DATOS no coincide con la guardada en la base; se usa la de la base.");
+    process.env.REDCAFE_CLAVE_DATOS = fila.valor;
+    process.env.REDCAFE_CLAVE_DATOS_ORIGEN = "base";
+    return;
+  }
+  if (valida(env)) { process.env.REDCAFE_CLAVE_DATOS_ORIGEN = "variable"; return; }
+  const nueva = randomBytes(32).toString("hex");
+  await db.secreto.createMany({ data: [{ nombre: "clave_datos", valor: nueva }], skipDuplicates: true });
+  const guardada = await db.secreto.findUnique({ where: { nombre: "clave_datos" } });
+  process.env.REDCAFE_CLAVE_DATOS = guardada!.valor;
+  process.env.REDCAFE_CLAVE_DATOS_ORIGEN = "base";
+  console.warn("[clave] REDCAFE_CLAVE_DATOS no es válida: se generó una clave de datos y se guardó en la base.");
+}

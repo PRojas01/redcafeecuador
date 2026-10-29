@@ -9,17 +9,17 @@ import { purgarIntentos } from "./lib/seguridad.js";
 import { programarPrecios } from "./modulos/precios.js";
 import { programarRespaldos } from "./modulos/respaldo.js";
 import { programarSalud } from "./lib/salud.js";
-import { restablecerPassAdminDesdeEntorno } from "./lib/admin.js";
+import { restablecerPassAdminDesdeEntorno, prepararClaveDatos } from "./lib/admin.js";
 
 const app = crearApp();
 
-for (const v of ["DATABASE_URL", "REDCAFE_CLAVE_DATOS"]) {
+for (const v of ["DATABASE_URL"]) {
   if (!process.env[v]) console.warn(`[config] Falta ${v}: el sitio se sirve, pero la API responderá 503 hasta configurarla (ver servidor/DESPLIEGUE.md).`);
 }
 
 // La primera vez, crea las tablas. En segundo plano: el servidor empieza a
 // escuchar enseguida aunque la base tarde o falle (la API avisará).
-void asegurarEsquema().then(() => restablecerPassAdminDesdeEntorno()).catch((e) => console.error("[esquema] No se pudieron crear las tablas:", e?.message ?? e));
+void asegurarEsquema().then(() => prepararClaveDatos()).then(() => restablecerPassAdminDesdeEntorno()).catch((e) => console.error("[esquema] No se pudieron crear las tablas:", e?.message ?? e));
 
 serve({ fetch: app.fetch, port: config.puerto, // Si la plataforma fija PORT (GoDaddy, Render…), hay que escuchar en todas las interfaces.
   hostname: process.env.PORT ? "0.0.0.0" : process.env.HOST || "127.0.0.1" }, (info) => {
