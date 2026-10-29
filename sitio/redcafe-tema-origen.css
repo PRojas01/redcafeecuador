@@ -472,3 +472,32 @@ html:not(#o1):not(#o2):not(#o3):not(#o4) body footer a.underline-offset-2 { colo
 html:not(#o1):not(#o2):not(#o3):not(#o4) body :is(.hero-gradient, .bg-cafe, .bg-coffee-900, .bg-filtrado-800, .bg-filtrado-900, [data-redcafe-route] main > div > section:first-child) :is(.badge, .badge-verde) {
   color: #f0c98c !important;
 }
+
+/* ---------- Panel: tarjetas «Acción recomendada» ------------------------- */
+/* Seguían con el verde y el melocotón del tema anterior. */
+html:not(#o1):not(#o2):not(#o3):not(#o4) .redcafe-panel-next-card {
+  background: var(--o-papel) !important;
+  border: 1px solid var(--o-linea) !important;
+  border-radius: var(--o-radio) !important;
+  box-shadow: var(--o-sombra-1) !important;
+}
+html:not(#o1):not(#o2):not(#o3):not(#o4) .redcafe-panel-next-card p { color: var(--o-cereza) !important; }
+html:not(#o1):not(#o2):not(#o3):not(#o4) .redcafe-panel-next-card h4 { color: var(--o-texto) !important; font-family: var(--o-sans) !important; }
+html:not(#o1):not(#o2):not(#o3):not(#o4) .redcafe-panel-next-card span { color: var(--o-texto-2) !important; }
+html:not(#o1):not(#o2):not(#o3):not(#o4) .redcafe-panel-next-card a {
+  background: var(--o-cereza) !important;
+  color: var(--o-papel) !important;
+  border-radius: var(--o-radio-boton) !important;
+  text-transform: none !important;
+  transition: background-color .2s var(--o-curva) !important;
+}
+html:not(#o1):not(#o2):not(#o3):not(#o4) .redcafe-panel-next-card a:hover { background: var(--o-cereza-hondo) !important; }
+html:not(#o1):not(#o2):not(#o3):not(#o4) .redcafe-panel-next-card.is-primary {
+  background: var(--o-espresso) !important;
+  border-color: var(--o-espresso) !important;
+}
+html:not(#o1):not(#o2):not(#o3):not(#o4) .redcafe-panel-next-card.is-primary p { color: var(--o-oro) !important; }
+html:not(#o1):not(#o2):not(#o3):not(#o4) .redcafe-panel-next-card.is-primary h4 { color: var(--o-papel) !important; }
+html:not(#o1):not(#o2):not(#o3):not(#o4) .redcafe-panel-next-card.is-primary span { color: rgba(255, 252, 247, .82) !important; }
+html:not(#o1):not(#o2):not(#o3):not(#o4) .redcafe-panel-next-card.is-primary a { background: var(--o-oro) !important; color: var(--o-espresso) !important; }
+html:not(#o1):not(#o2):not(#o3):not(#o4) .redcafe-panel-next-card.is-primary a:hover { background: var(--o-oro-suave) !important; }

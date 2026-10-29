@@ -90,13 +90,11 @@
     return '<details class="redcafe-resp-ayuda"><summary>Cómo guardar una copia fuera del hosting y cómo restaurar</summary>' +
       '<p><strong>Copia fuera del hosting:</strong> descarga una copia al menos una vez al mes y guárdala en tu computadora o en tu nube. ' +
       'Si el hosting falla por completo, las copias que viven en él se pierden también.</p>' +
-      '<p><strong>Restaurar:</strong> descomprime el archivo y sube el contenido de la carpeta <code>data/</code> a la carpeta <code>data/</code> del sitio, sobrescribiendo. ' +
-      'Hazlo solo si los datos actuales están dañados: sobrescribir borra lo que se haya hecho después de esa copia.</p>' +
-      '<p><strong>Tarea programada (opcional):</strong> en cPanel → Cron Jobs, una vez al día:<br>' +
-      '<code>' + esc(d.cron) + '</code><br>' +
-      'o bien, con visitas web: <code>curl -s "https://redcafeecuador.com' + esc(d.cron_url) + '"</code>. ' +
-      'No hace falta: la copia diaria ya se dispara sola cuando alguien entra.</p>' +
-      '<p>La copia no incluye la contraseña de administración ni las fotos subidas; las fotos viven en <code>uploads/</code> y conviene descargarlas aparte de vez en cuando.</p>' +
+      '<p><strong>Restaurar:</strong> estas copias sirven para consultar o recuperar registros concretos. ' +
+      'Para devolver toda la plataforma a un momento anterior, usa la copia de la base de datos MySQL desde el panel del hosting ' +
+      '(Bases de datos → Copias de seguridad). Hazlo solo si los datos actuales están dañados: se pierde lo que se haya hecho después de esa copia.</p>' +
+      '<p><strong>Copia diaria:</strong> ' + esc(d.cron) + '. No hace falta programar nada.</p>' +
+      '<p>La copia no incluye la contraseña de administración ni las fotos subidas; las fotos viven en la carpeta de subidas del hosting y conviene descargarlas aparte de vez en cuando.</p>' +
       '</details>';
   }
 

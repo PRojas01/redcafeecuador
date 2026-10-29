@@ -9,7 +9,7 @@
 9:I[9779,["8173","static/chunks/8173-e1fd70d9558f2a1a.js","5739","static/chunks/5739-ca5035da908dfee2.js","7177","static/chunks/app/layout-490edde6360f8546.js"],"RegistrarPWA"]
 a:I[3704,["8173","static/chunks/8173-e1fd70d9558f2a1a.js","5739","static/chunks/5739-ca5035da908dfee2.js","7177","static/chunks/app/layout-490edde6360f8546.js"],""]
 b:I[7033,[],"ClientPageRoot"]
-c:I[2869,["8173","static/chunks/8173-e1fd70d9558f2a1a.js","5739","static/chunks/5739-ca5035da908dfee2.js","2808","static/chunks/2808-118ed2f66c8a3100.js","84","static/chunks/84-8423b94f1e7f66f6.js","6968","static/chunks/6968-02b2be98117b9568.js","4914","static/chunks/4914-069ec3afe009c5b4.js","5307","static/chunks/app/panel/page-96859d74a49789a8.js"],"default"]
+c:I[2869,["8173","static/chunks/8173-e1fd70d9558f2a1a.js","5739","static/chunks/5739-ca5035da908dfee2.js","2808","static/chunks/2808-118ed2f66c8a3100.js","84","static/chunks/84-8423b94f1e7f66f6.js","6968","static/chunks/6968-02b2be98117b9568.js","4914","static/chunks/4914-069ec3afe009c5b4.js","5307","static/chunks/app/panel/page-13ac6f35f78b8985.js"],"default"]
 f:I[6213,[],"OutletBoundary"]
 11:I[6213,[],"MetadataBoundary"]
 13:I[6213,[],"ViewportBoundary"]

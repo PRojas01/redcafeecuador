@@ -547,7 +547,7 @@ function Resumen({ rol, sesion, plan, onIrA }: { rol: Exclude<Rol, "admin">; ses
  <p className="mb-3 text-xs font-semibold uppercase tracking-widest text-pizarra/60">
  Estadísticas en vivo (12 meses)
  </p>
- <PanelEstadisticas showDistribucion={true} chartTitle={`Tu actividad como ${rol}`} />
+ <PanelEstadisticas rol={rol} showDistribucion={true} chartTitle={`Tu actividad como ${rol}`} />
  </div>
  </div>
  );
