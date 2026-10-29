@@ -71,7 +71,7 @@ export function crearApp(opciones: { ipDe?: (c: any) => string } = {}) {
     }
     function describirPass(v?: string) {
       if (v === undefined) return "no llega";
-      if (v.length < 12) return `muy corta (${v.length} caracteres, forma ${forma(v)})`;
+      if (v.length < 12) return `muy corta (${v.length} caracteres)`;
       return v.length >= 12 ? `ok (${v.length} caracteres)` : `muy corta (${v.length} caracteres)`;
     }
   });
