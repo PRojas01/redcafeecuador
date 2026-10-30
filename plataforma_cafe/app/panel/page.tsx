@@ -1,4 +1,5 @@
 "use client";
+import { DeclaracionDerechos } from "@/components/DeclaracionDerechos";
 
 import { Suspense, useCallback, useEffect, useState, useRef } from "react";
 import { MedidasDeMiCuenta, CerrarMiCuenta } from "@/components/CuentaPropia";
@@ -655,6 +656,7 @@ function ProductorProduccion() {
 }
 
 function ProductorPublicar() {
+ const [aceptaDerechos, setAceptaDerechos] = useState(false);
  const [ok, setOk] = useState<string | null>(null);
  const [finca, setFinca] = useState("");
  const [provincia, setProvincia] = useState("");
@@ -686,13 +688,14 @@ const [certificacion, setCertificacion] = useState("Convencional");
 
   const publicar = async (e: React.FormEvent) => {
   e.preventDefault();
+ if (!aceptaDerechos) return;
   if (!finca.trim() || !provincia.trim() || !variedad.trim() || !precioSaco.trim()) {
   setOk("Completa finca, provincia, variedad y precio."); return;
   }
   setSubiendo(true);
   const urls: string[] = [];
   for (const file of imagenes) {
-  const up = await api.uploadImage(file, "marketplace");
+  const up = await api.uploadImage(file, "lote", aceptaDerechos);
   if (!up.ok || !up.data?.url) {
   setSubiendo(false);
   setOk(up.status === 401 ? "Tu sesión caducó. Vuelve a entrar para publicar el lote." : up.error || "No pudimos subir una imagen.");
@@ -703,6 +706,7 @@ const [certificacion, setCertificacion] = useState("Convencional");
   const latNum = lat.trim() === "" ? undefined : Number(lat);
   const lngNum = lng.trim() === "" ? undefined : Number(lng);
   const r = await api.lotePublish({
+ acepta_derechos: aceptaDerechos,
   finca, provincia, variedad, proceso,
   altura: parseInt(altura) || 0, precioSaco: parseFloat(precioSaco),
   stockSacos: parseInt(stockSacos) || 0, stockQuintales: Math.floor((parseInt(stockSacos) || 0) / 2),
@@ -761,11 +765,12 @@ const [certificacion, setCertificacion] = useState("Convencional");
   <p className="text-xs font-semibold text-pizarra/60">Fotos del lote (opcional)</p>
   <input
   type="file"
-  accept="image/jpeg,image/png,image/webp"
+  accept="image/*" capture="environment"
   multiple
   onChange={(e) => seleccionarImagenes(e.target.files)}
   className="mt-2 block w-full text-sm text-pizarra/70 file:mr-3 file:rounded-full file:border-0 file:bg-hoja file:px-3 file:py-1.5 file:text-sm file:font-semibold file:text-crema"
   />
+  <p className="mt-1 text-xs text-pizarra/70">Toma la foto en el momento con tu cámara.</p>
   {imagenes.length > 0 && (
   <div className="mt-2 flex flex-wrap gap-2 text-xs text-pizarra/60">
   {imagenes.map((img) => <span key={`${img.name}-${img.size}`} className="rounded-full bg-white px-2 py-1">{img.name}</span>)}
@@ -773,7 +778,8 @@ const [certificacion, setCertificacion] = useState("Convencional");
   )}
   </div>
   </div>
- <button disabled={subiendo} className="mt-4 w-full rounded-full bg-hoja px-4 py-2.5 font-semibold text-crema hover:bg-hoja/90 disabled:opacity-60">{subiendo ? "Publicando..." : "Publicar lote de café"}</button>
+ <DeclaracionDerechos aceptado={aceptaDerechos} onChange={setAceptaDerechos} />
+ <button disabled={!aceptaDerechos || subiendo} className="mt-4 w-full rounded-full bg-hoja px-4 py-2.5 font-semibold text-crema hover:bg-hoja/90 disabled:opacity-60">{subiendo ? "Publicando..." : "Publicar lote de café"}</button>
  </form>
  {ok && <p className="mt-3 rounded-xl bg-hoja/15 p-3 text-center text-sm font-semibold text-hoja">{ok}</p>}
  </div>
@@ -781,6 +787,7 @@ const [certificacion, setCertificacion] = useState("Convencional");
 }
 
 function PublicarServicioMarketplace() {
+ const [aceptaDerechos, setAceptaDerechos] = useState(false);
  const [ok, setOk] = useState<string | null>(null);
  const [titulo, setTitulo] = useState("");
  const [categoria, setCategoria] = useState("transporte");
@@ -802,6 +809,7 @@ function PublicarServicioMarketplace() {
 
  const publicar = async (e: React.FormEvent) => {
  e.preventDefault();
+ if (!aceptaDerechos) return;
  setOk(null);
  if (!titulo.trim() || !descripcion.trim()) {
  setOk("Completa el título y la descripción del servicio.");
@@ -810,7 +818,7 @@ function PublicarServicioMarketplace() {
  setSubiendo(true);
  const urls: string[] = [];
  for (const file of imagenes) {
- const up = await api.uploadImage(file, "marketplace");
+ const up = await api.uploadImage(file, "marketplace", aceptaDerechos);
  if (!up.ok || !up.data?.url) {
  setSubiendo(false);
  setOk(up.status === 401 ? "Tu sesión caducó. Vuelve a entrar para publicar el servicio." : up.error || "No pudimos subir una imagen.");
@@ -819,6 +827,7 @@ function PublicarServicioMarketplace() {
  urls.push(up.data.url);
  }
  const r = await api.marketplaceServicioPublish({
+ acepta_derechos: aceptaDerechos,
  titulo,
  categoria: categoria as "transporte" | "catacion" | "asesoria" | "pilado" | "insumos" | "capacitacion" | "exportacion" | "otro",
  descripcion,
@@ -875,7 +884,8 @@ function PublicarServicioMarketplace() {
  )}
  </div>
  </div>
- <button disabled={subiendo} className="mt-4 w-full rounded-full bg-hoja px-4 py-2.5 font-semibold text-crema hover:bg-hoja/90 disabled:opacity-60">
+ <DeclaracionDerechos aceptado={aceptaDerechos} onChange={setAceptaDerechos} />
+ <button disabled={!aceptaDerechos || subiendo} className="mt-4 w-full rounded-full bg-hoja px-4 py-2.5 font-semibold text-crema hover:bg-hoja/90 disabled:opacity-60">
  {subiendo ? "Publicando..." : "Publicar servicio"}
  </button>
  </form>
@@ -1412,6 +1422,7 @@ function CompradorProveedores() {
 /* ==================== BAR ==================== */
 
 function BarMenu() {
+ const [aceptaDerechos, setAceptaDerechos] = useState(false);
  const [menu, setMenu] = useState<MenuItem[]>([]);
  const [ok, setOk] = useState<string | null>(null);
  const [nombre, setNombre] = useState("");
@@ -1430,8 +1441,9 @@ function BarMenu() {
 
  const agregar = async (e: React.FormEvent) => {
  e.preventDefault();
+ if (!aceptaDerechos) return;
  if (!nombre.trim() || !precio.trim()) { setOk("Nombre y precio requeridos."); return; }
- const r = await api.menuAdd({ nombre, descripcion: desc, precio: parseFloat(precio), categoria: cat });
+ const r = await api.menuAdd({ acepta_derechos: aceptaDerechos, nombre, descripcion: desc, precio: parseFloat(precio), categoria: cat });
  if (r.ok) {
  setOk("Producto agregado al menú.");
  reg("bar", "menu", `${cat}: ${nombre} — $${precio}`, { monto: parseFloat(precio) });
@@ -1461,7 +1473,8 @@ function BarMenu() {
  <option>Café</option><option>Bebida</option><option>Comida</option><option>Postre</option><option>Otro</option>
  </select>
  </div>
- <button className="mt-3 w-full rounded-full bg-cereza px-4 py-2.5 font-semibold text-crema hover:bg-cereza/90">Agregar al menú</button>
+ <button disabled={!aceptaDerechos} className="mt-3 w-full rounded-full bg-cereza px-4 py-2.5 font-semibold text-crema hover:bg-cereza/90">Agregar al menú</button>
+ <DeclaracionDerechos aceptado={aceptaDerechos} onChange={setAceptaDerechos} />
  </form>
  {ok && <p className="mt-3 rounded-xl bg-hoja/15 p-3 text-center text-sm font-semibold text-hoja">{ok}</p>}
  {cats.map((c) => (
@@ -1731,6 +1744,7 @@ const TIPOS_VALORACION = [
 ] as const;
 
 function ValorarPanel() {
+ const [aceptaDerechos, setAceptaDerechos] = useState(false);
  const sesion = getStoredSession();
  const [pedidos, setPedidos] = useState<Pedido[]>([]);
  const [members, setMembers] = useState<ApiUser[]>([]);
@@ -1781,9 +1795,10 @@ function ValorarPanel() {
 
  const enviar = async (e: React.FormEvent) => {
  e.preventDefault();
+ if (!aceptaDerechos) return;
  if (!targetId || !sesion) return;
  setLoading(true);
- const r = await api.ratingCreate(targetId, score, comentario, pedidoNro, tipo);
+ const r = await api.ratingCreate(targetId, score, comentario, pedidoNro, tipo, aceptaDerechos);
  setLoading(false);
  if (r.ok) {
  setOk("Valoración enviada. Gracias por ayudar a medir calidad y confianza en la Red.");
@@ -1866,12 +1881,13 @@ function ValorarPanel() {
  <textarea value={comentario} onChange={(e) => setComentario(e.target.value)} rows={3} maxLength={500} placeholder="¿Qué destacarías?" className="mt-1 w-full rounded-lg border border-cafe/20 px-3 py-2 text-sm" />
  <p className="mt-1 text-right text-[10px] text-pizarra/50">{comentario.length}/500</p>
  </div>
- <button type="submit" disabled={loading || !targetId} className="w-full rounded-full bg-latte px-4 py-2.5 font-semibold text-pizarra hover:bg-latte/90 disabled:opacity-60">
+ <button type="submit" disabled={!aceptaDerechos || loading || !targetId} className="w-full rounded-full bg-latte px-4 py-2.5 font-semibold text-pizarra hover:bg-latte/90 disabled:opacity-60">
  {loading ? "Enviando…" : "Enviar valoración"}
  </button>
  {ok && <p className="rounded-xl bg-hoja/15 p-3 text-center text-sm font-semibold text-hoja">{ok}</p>}
  </div>
  )}
+ <DeclaracionDerechos aceptado={aceptaDerechos} onChange={setAceptaDerechos} />
  </form>
 
  <div className="rounded-2xl border border-cafe/10 bg-white p-5">

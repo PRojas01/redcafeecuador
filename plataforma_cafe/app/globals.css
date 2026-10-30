@@ -638,3 +638,7 @@
     .p-6 { padding: 1.3rem; }
   }
 }
+
+/* Declaración de derechos: también en formularios de la capa propia. */
+.redcafe-derechos { display: flex; align-items: flex-start; gap: .5rem; margin: .75rem 0; font-size: .875rem; line-height: 1.5; grid-column: 1 / -1; }
+.redcafe-derechos input[type="checkbox"] { width: 1rem; height: 1rem; flex: 0 0 1rem; margin-top: .2rem; }

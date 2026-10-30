@@ -158,6 +158,18 @@
     return "Salario por acordar";
   }
 
+
+  function declaracion(form, botones) {
+    var label = document.createElement("label");
+    label.className = "redcafe-derechos";
+    var input = document.createElement("input");
+    input.type = "checkbox"; input.name = "acepta_derechos"; input.required = true;
+    label.appendChild(input); label.appendChild(document.createTextNode(" Declaro que tengo los derechos sobre este contenido y asumo la responsabilidad ante cualquier reclamo de terceros."));
+    form.appendChild(label);
+    function cambio() { botones.forEach(function (b) { b.disabled = !input.checked; }); }
+    input.addEventListener("change", cambio); cambio();
+    return input;
+  }
   function formData(form) {
     var out = {};
     Array.prototype.forEach.call(form.elements, function (i) {
@@ -226,6 +238,7 @@
     var form = el("form", { className: "redcafe-empleo-form" });
     camposOferta(form);
     form.appendChild(el("button", { type: "submit", className: "redcafe-empleo-btn" }, "Publicar oferta"));
+    declaracion(form, [form.querySelector('button[type="submit"]')]);
     form.addEventListener("submit", function (ev) {
       ev.preventDefault();
       msg(section, "Publicando oferta...", "");
@@ -235,6 +248,7 @@
           return;
         }
         form.reset();
+        form.querySelector('button[type="submit"]').disabled = true;
         msg(section, "Oferta publicada.", "ok");
         cargar(section);
       });
@@ -302,6 +316,7 @@
       camposOferta(editor, oferta);
       var guardar = el("button", { type: "submit", className: "redcafe-empleo-btn" }, "Guardar cambios");
       editor.appendChild(guardar);
+    declaracion(editor, [guardar]);
       editor.addEventListener("submit", function (ev) {
         ev.preventDefault();
         guardar.disabled = true;

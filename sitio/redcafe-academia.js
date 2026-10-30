@@ -16,6 +16,18 @@
 
   // La ruta se comprueba en cada arranque, no una vez al cargar: Next navega
   // sin recargar y el módulo tiene que poder montarse al entrar por un enlace.
+
+  function enlazarDerechos(root) {
+    root.querySelectorAll('.redcafe-derechos input').forEach(function (input) {
+      if (input.derechosEnlazados) return;
+      input.derechosEnlazados = true;
+      var scope = input.parentElement.parentElement;
+      var botones = scope.querySelectorAll('[data-derechos-enviar]');
+      input.addEventListener('change', function () {
+        botones.forEach(function (b) { b.disabled = !input.checked; });
+      });
+    });
+  }
   function enAcademia() { return location.pathname.indexOf("/academia") === 0; }
   function enPanel() { return location.pathname.indexOf("/panel") === 0; }
 
@@ -860,7 +872,8 @@
           '<input type="text" class="redcafe-pub-input" data-bloque="url" placeholder="Pega la dirección o el código de inserción" value="' + esc(b.url || "") + '">' +
           '<em class="redcafe-pub-ayuda">Admite YouTube, Vimeo, Google Drive, OneDrive y Dropbox. También puedes pegar el &lt;iframe&gt; completo: se extrae la dirección.</em>' +
           '<input type="file" class="redcafe-ed-imagen-archivo" accept=".jpg,.jpeg,.png,.webp">' +
-          '<button type="button" class="redcafe-ed-subir-imagen">Subir imagen</button>' +
+          '<label class="redcafe-derechos"><input type="checkbox" name="acepta_derechos" required> Declaro que tengo los derechos sobre este contenido y asumo la responsabilidad ante cualquier reclamo de terceros.</label>' +
+          '<button disabled data-derechos-enviar type="button" class="redcafe-ed-subir-imagen">Subir imagen</button>' +
           '<span class="redcafe-pub-estado redcafe-ed-imagen-estado" role="status" aria-live="polite"></span>' +
         '</div>' +
         '<input type="text" class="redcafe-pub-input campo-desc" data-bloque="descripcion" placeholder="Descripción o pie (opcional)" value="' + esc(b.descripcion || b.pie || "") + '">' +
@@ -898,6 +911,7 @@
   }
 
   function subirImagenBloque(bloque) {
+    if (!bloque.querySelector('[name="acepta_derechos"]').checked) return;
     var input = bloque.querySelector(".redcafe-ed-imagen-archivo");
     var estado = bloque.querySelector(".redcafe-ed-imagen-estado");
     var url = bloque.querySelector('[data-bloque="url"]');
@@ -907,6 +921,7 @@
       return;
     }
     var fd = new FormData();
+    fd.append("acepta_derechos", "true");
     fd.append("archivo", input.files[0]);
     fd.append("context", "curso");
     estado.textContent = "Subiendo…";
@@ -991,7 +1006,8 @@
       campoTexto("Recursos (uno por línea)", "recursos", (c.recursos || []).join("\n"), "textarea") +
       campoTexto("Cierre", "cierre", c.cierre || "", "textarea") +
       '<div class="redcafe-pub-acciones">' +
-        '<button type="button" class="redcafe-pub-guardar" data-curso-guardar="1">Guardar curso</button>' +
+        '<label class="redcafe-derechos"><input type="checkbox" name="acepta_derechos" required> Declaro que tengo los derechos sobre este contenido y asumo la responsabilidad ante cualquier reclamo de terceros.</label>' +
+        '<button disabled data-derechos-enviar type="button" class="redcafe-pub-guardar" data-curso-guardar="1">Guardar curso</button>' +
         (c.id ? '<button type="button" class="redcafe-ped-btn is-borrar" data-curso-borrar="1">Eliminar</button>' : '') +
         '<span class="redcafe-pub-estado" role="status" aria-live="polite"></span>' +
       '</div>' +
@@ -1029,7 +1045,8 @@
         '<input type="url" class="redcafe-mat-enlace" placeholder="https://… (para un enlace)">' +
         '<button type="button" class="redcafe-mat-add-enlace">Añadir enlace</button>' +
         '<input type="file" class="redcafe-mat-archivo" accept=".pdf,.jpg,.jpeg,.png">' +
-        '<button type="button" class="redcafe-mat-add-archivo">Subir archivo</button>' +
+        '<label class="redcafe-derechos"><input type="checkbox" name="acepta_derechos" required> Declaro que tengo los derechos sobre este contenido y asumo la responsabilidad ante cualquier reclamo de terceros.</label>' +
+        '<button disabled data-derechos-enviar type="button" class="redcafe-mat-add-archivo">Subir archivo</button>' +
         '<span class="redcafe-pub-estado redcafe-mat-estado" role="status" aria-live="polite"></span>' +
       '</div>' +
     '</div>';
@@ -1080,6 +1097,7 @@
   }
 
   function subirArchivoMaterial(card) {
+    if (!card.querySelector('.redcafe-mat-alta [name="acepta_derechos"]').checked) return;
     var estado = card.querySelector(".redcafe-mat-estado");
     var input = card.querySelector(".redcafe-mat-archivo");
     if (!input || !input.files || !input.files[0]) {
@@ -1094,6 +1112,7 @@
       return;
     }
     var fd = new FormData();
+    fd.append("acepta_derechos", "true");
     fd.append("archivo", archivo);
     fd.append("tipo", "otro");
     fd.append("titulo", String((card.querySelector(".redcafe-mat-titulo") || {}).value || ""));
@@ -1300,6 +1319,7 @@
       seccion.querySelector("#redcafe-curso-nuevo").addEventListener("click", function () {
         var vacio = document.createElement("div");
         vacio.innerHTML = cursoEditorHtml({ modulos: [{ titulo: "", minutos: 30, lecciones: [{}] }] });
+            enlazarDerechos(vacio);
         lista.insertBefore(vacio.firstChild, lista.firstChild);
       });
 
@@ -1310,6 +1330,7 @@
         sel.closest(".redcafe-ed-bloque").setAttribute("data-tipo", sel.value);
       });
 
+      enlazarDerechos(lista);
       lista.addEventListener("click", function (ev) {
         var t = ev.target;
         if (!t || !t.closest) return;
@@ -1322,6 +1343,7 @@
             var eb = document.createElement("div");
             eb.innerHTML = bloqueEditorHtml({ tipo: "texto" });
             cb.appendChild(eb.firstChild);
+            enlazarDerechos(cb);
             return;
           }
           if (tipo === "modulo") {
@@ -1329,11 +1351,13 @@
             var envoltorio = document.createElement("div");
             envoltorio.innerHTML = moduloEditorHtml({ titulo: "", minutos: 30, lecciones: [{}] }, cont.children.length);
             cont.appendChild(envoltorio.firstChild);
+            enlazarDerechos(cont);
           } else {
             var conte = add.previousElementSibling;
             var env = document.createElement("div");
             env.innerHTML = leccionEditorHtml({}, conte.children.length);
             conte.appendChild(env.firstChild);
+            enlazarDerechos(conte);
           }
           return;
         }
@@ -1368,7 +1392,9 @@
         if (guardar) {
           var card = guardar.closest(".redcafe-ed-curso");
           var estado = card.querySelector(".redcafe-pub-estado");
+          if (!guardar.parentElement.querySelector('[name="acepta_derechos"]').checked) return;
           var datos = leerCurso(card);
+          datos.acepta_derechos = true;
           if (!String(datos.titulo || "").trim()) {
             estado.textContent = "El curso necesita un título.";
             estado.className = "redcafe-pub-estado is-error";
@@ -1383,7 +1409,7 @@
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify(datos)
           }).then(function (r) {
-            guardar.disabled = false;
+            guardar.disabled = !guardar.parentElement.querySelector('[name="acepta_derechos"]').checked;
             if (r && r.ok) {
               if (!datos.id && r.data && r.data.curso) card.setAttribute("data-id", r.data.curso.id);
               estado.textContent = "Curso guardado.";

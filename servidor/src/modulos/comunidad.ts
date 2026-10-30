@@ -1,3 +1,4 @@
+import { exigirDerechos } from "../lib/derechos.js";
 // Port de api/comunidad.php (versión corregida).
 import { fail, type Modulo } from "../lib/http.js";
 import { listar, mutar, type Doc } from "../lib/docs.js";
@@ -38,7 +39,8 @@ const acciones: Modulo["acciones"] = {
     if (!titulo || !text) fail("Título y texto requeridos.", 422);
     if (largo(text) > 4000) fail("Texto demasiado largo.", 422);
     if (largo(titulo) > 160) fail("Título demasiado largo (máx. 160).", 422);
-    const p = { id: uid(), titulo, text, autor: u.nombre, autor_id: u.id, autor_rol: u.rol, created_at: nowIso(), imagenes: imagenesValidas(ctx.in.imagenes), likes: [], comments: [] };
+    const idPost = uid();
+    const p = { ...await exigirDerechos(ctx, u, "comunidad.create", idPost), id: idPost, titulo, text, autor: u.nombre, autor_id: u.id, autor_rol: u.rol, created_at: nowIso(), imagenes: imagenesValidas(ctx.in.imagenes), likes: [], comments: [] };
     await mutar("posts", (posts) => [...posts, p]);
     return { post: p };
   },
@@ -64,8 +66,10 @@ const acciones: Modulo["acciones"] = {
     const id = textoEntrada(ctx.in.id, 40), text = textoEntrada(ctx.in.text, 2001, true);
     if (!id || !text) fail("Falta id o text.", 422);
     if (largo(text) > 2000) fail("Comentario demasiado largo (máx. 2000).", 422);
+    const idComentario = uid();
+    const derechos = await exigirDerechos(ctx, u, "comunidad.comment", idComentario);
     await mutar("posts", (posts) => posts.map((p) => (p.id !== id ? p : {
-      ...p, comments: [...(Array.isArray(p.comments) ? p.comments : []), { id: uid(), autor: u.nombre, autor_id: u.id, text, created_at: nowIso() }],
+      ...p, comments: [...(Array.isArray(p.comments) ? p.comments : []), { ...derechos, id: idComentario, autor: u.nombre, autor_id: u.id, text, created_at: nowIso() }],
     })));
     return null;
   },
@@ -106,8 +110,9 @@ const acciones: Modulo["acciones"] = {
     if (actual.tipo === "aviso") fail("Las novedades automáticas de la Red no se editan.", 422);
     if (actual.autor_id !== u.id && !ctx.ses.d.admin) fail("No autorizado: solo el autor o un administrador puede editar.", 403);
     const imagenes = "imagenes" in ctx.in ? imagenesValidas(ctx.in.imagenes) : actual.imagenes ?? [];
+    const derechos = ctx.ses.d.admin ? {} : await exigirDerechos(ctx, u, "comunidad.update", id);
     let guardado: Doc | null = null;
-    await mutar("posts", (posts) => posts.map((p) => (p.id !== id ? p : (guardado = { ...p, titulo, text, imagenes, editado_at: nowIso(), editado_por: u!.id }))));
+    await mutar("posts", (posts) => posts.map((p) => (p.id !== id ? p : (guardado = { ...p, ...derechos, titulo, text, imagenes, editado_at: nowIso(), editado_por: u!.id }))));
     if (!guardado) fail("No se pudo guardar el cambio.", 500);
     return { post: guardado };
   },

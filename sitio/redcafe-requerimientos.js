@@ -142,6 +142,18 @@
     return cifra + " " + unidad;
   }
 
+
+  function declaracion(form, botones) {
+    var label = document.createElement("label");
+    label.className = "redcafe-derechos";
+    var input = document.createElement("input");
+    input.type = "checkbox"; input.name = "acepta_derechos"; input.required = true;
+    label.appendChild(input); label.appendChild(document.createTextNode(" Declaro que tengo los derechos sobre este contenido y asumo la responsabilidad ante cualquier reclamo de terceros."));
+    form.appendChild(label);
+    function cambio() { botones.forEach(function (b) { b.disabled = !input.checked; }); }
+    input.addEventListener("change", cambio); cambio();
+    return input;
+  }
   function formData(form) {
     var out = {};
     Array.prototype.forEach.call(form.elements, function (i) {
@@ -223,12 +235,15 @@
       });
     }
 
+    var derechosFoto = declaracion(caja, [subir]);
     subir.addEventListener("click", function () {
+      if (!derechosFoto.checked) return;
       if (!archivo.files || !archivo.files[0]) { estadoFoto.textContent = "Elige una foto primero."; return; }
       if (fotos.length >= 4) { estadoFoto.textContent = "Ya tienes cuatro fotos."; return; }
       var f = archivo.files[0];
       if (f.size > 2 * 1024 * 1024) { estadoFoto.textContent = "La foto supera los 2 MB."; return; }
       var fd = new FormData();
+      fd.append("acepta_derechos", "true");
       fd.append("archivo", f);
       fd.append("context", "marketplace");
       subir.disabled = true;
@@ -236,7 +251,7 @@
       fetch("/api/uploads.php?action=image", { method: "POST", credentials: "include", body: fd })
         .then(function (r) { return r.json(); })
         .then(function (res) {
-          subir.disabled = false;
+          subir.disabled = !derechosFoto.checked;
           var url = res && res.ok && res.data && (res.data.url || res.data.imagen || res.data.ruta);
           if (!url) { estadoFoto.textContent = (res && res.error) || "No se pudo subir la foto."; return; }
           fotos.push(url);
@@ -244,7 +259,7 @@
           estadoFoto.textContent = "Foto añadida.";
           pintarLista();
         })
-        .catch(function () { subir.disabled = false; estadoFoto.textContent = "No se pudo subir la foto."; });
+        .catch(function () { subir.disabled = !derechosFoto.checked; estadoFoto.textContent = "No se pudo subir la foto."; });
     });
 
     var alta = el("div", { className: "redcafe-req-fotos-alta" });
@@ -272,12 +287,14 @@
     var fotos = bloqueFotos([]);
     form.appendChild(fotos.nodo);
     form.appendChild(el("button", { type: "submit", className: "redcafe-req-btn" }, "Publicar requerimiento"));
+    declaracion(form, [form.querySelector('button[type="submit"]')]);
     form.addEventListener("submit", function (ev) {
       ev.preventDefault();
       msg(section, "Publicando…", "");
       api("publish", Object.assign(formData(form), { imagenes: fotos.valores() })).then(function (res) {
         if (!res.ok) { msg(section, res.error || "No se pudo publicar.", "error"); return; }
         form.reset();
+        form.querySelector('button[type="submit"]').disabled = true;
         msg(section, "Requerimiento publicado. Ya aparece en el marketplace.", "ok");
         cargar(section);
       });
@@ -294,6 +311,7 @@
     var guardar = el("button", { type: "submit", className: "redcafe-req-btn" }, "Guardar cambios");
     var cancelar = el("button", { type: "button", className: "redcafe-req-btn-suave" }, "Cancelar");
     form.appendChild(guardar);
+    declaracion(form, [guardar]);
     form.appendChild(cancelar);
     cancelar.addEventListener("click", cerrarEditor);
     form.addEventListener("submit", function (ev) {

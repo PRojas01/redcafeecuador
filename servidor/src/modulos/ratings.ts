@@ -1,3 +1,4 @@
+import { exigirDerechos } from "../lib/derechos.js";
 // Port de api/ratings.php. Mejora del plan (§4 n.º 9): un lote o servicio
 // solo lo valora quien lo pidió; antes cualquier cuenta valoraba cualquiera.
 import { fail, type Modulo } from "../lib/http.js";
@@ -37,8 +38,9 @@ const acciones: Modulo["acciones"] = {
       if (!(await cupo(ctx, "rating", 20, 3600))) fail("Demasiadas valoraciones. Espera una hora.", 429);
     }
     const rater = admin ? "admin" : u!.id;
+    const idValoracion = uid();
     const r = {
-      id: uid(), rated_id: ratedId, target_type: tipo, target_id: targetId, rater_id: rater,
+      ...(admin ? {} : await exigirDerechos(ctx, u!, "ratings.create", idValoracion)), id: idValoracion, rated_id: ratedId, target_type: tipo, target_id: targetId, rater_id: rater,
       rater_nombre: admin ? "Equipo Red Café" : u!.nombre ?? "Anónimo", is_admin: admin, score, comentario, pedido_nro: pedidoNro, ts: nowIso(),
     };
     await mutar("ratings", (l) => {

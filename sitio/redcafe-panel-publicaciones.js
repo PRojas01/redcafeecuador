@@ -100,6 +100,18 @@
     { k: "descripcion", label: "Descripción", tipo: "textarea" }
   ];
 
+
+  function enlazarDerechos(root) {
+    root.querySelectorAll('.redcafe-derechos input').forEach(function (input) {
+      if (input.derechosEnlazados) return;
+      input.derechosEnlazados = true;
+      var scope = input.parentElement.parentElement;
+      var botones = scope.querySelectorAll('[data-derechos-enviar]');
+      input.addEventListener('change', function () {
+        scope.querySelectorAll('[data-derechos-enviar]').forEach(function (b) { b.disabled = !input.checked; });
+      });
+    });
+  }
   function esc(v) {
     return String(v === null || v === undefined ? "" : v)
       .replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;")
@@ -279,7 +291,7 @@
       ? imagenes.map(function (u, i) {
           return '<li data-foto="' + i + '">' +
             '<img src="' + esc(u) + '" alt="Foto ' + (i + 1) + '" loading="lazy">' +
-            '<button type="button" class="redcafe-foto-quitar" aria-label="Quitar esta foto">Quitar</button>' +
+            '<button type="button" disabled data-derechos-enviar class="redcafe-foto-quitar" aria-label="Quitar esta foto">Quitar</button>' +
           '</li>';
         }).join("")
       : '<li class="redcafe-foto-vacio">' + (esServicio
@@ -294,8 +306,8 @@
         'JPG o PNG, hasta 2 MB, máximo 6. Es lo primero que se mira.</p>' +
       '<ul class="redcafe-foto-lista">' + lista + '</ul>' +
       '<div class="redcafe-doc-alta">' +
-        '<input type="file" class="redcafe-foto-archivo" accept=".jpg,.jpeg,.png">' +
-        '<button type="button" class="redcafe-foto-subir">Añadir foto</button>' +
+        '<input type="file" class="redcafe-foto-archivo" ' + (esServicio ? 'accept=".jpg,.jpeg,.png">' : 'accept="image/*" capture="environment"><p>Toma la foto en el momento con tu cámara.</p>') +
+        '<button type="button" disabled data-derechos-enviar class="redcafe-foto-subir">Añadir foto</button>' +
         '<span class="redcafe-pub-estado redcafe-foto-estado" role="status" aria-live="polite"></span>' +
       '</div>' +
     '</div>';
@@ -309,9 +321,11 @@
     card.setAttribute("data-fotos", JSON.stringify(fotos));
     var bloque = card.querySelector(".redcafe-foto-bloque");
     if (bloque) bloque.outerHTML = fotosHtml(fotos, card.getAttribute("data-tipo"));
+    card.querySelectorAll(".redcafe-foto-bloque [data-derechos-enviar]").forEach(function (b) { b.disabled = !card.querySelector('[name="acepta_derechos"]').checked; });
   }
 
   function guardarFotos(card, fotos, mensaje) {
+    if (!card.querySelector('[name="acepta_derechos"]').checked) return;
     var estado = card.querySelector(".redcafe-foto-estado");
     // Las fotos de un servicio las guarda su propia API; las del lote, la suya.
     var api = card.getAttribute("data-tipo") === "servicio"
@@ -320,7 +334,7 @@
     json(api, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ id: card.getAttribute("data-id"), imagenes: fotos })
+      body: JSON.stringify({ acepta_derechos: true, id: card.getAttribute("data-id"), imagenes: fotos })
     }).then(function (res) {
       var e = card.querySelector(".redcafe-foto-estado") || estado;
       if (!e) return;
@@ -335,6 +349,7 @@
   }
 
   function subirFoto(card) {
+    if (!card.querySelector('[name="acepta_derechos"]').checked) return;
     var input = card.querySelector(".redcafe-foto-archivo");
     var estado = card.querySelector(".redcafe-foto-estado");
     var boton = card.querySelector(".redcafe-foto-subir");
@@ -356,6 +371,7 @@
     }
 
     var fd = new FormData();
+    fd.append("acepta_derechos", "true");
     fd.append("archivo", archivo);
     fd.append("context", "marketplace");
 
@@ -366,7 +382,7 @@
     fetch("/api/uploads.php?action=image", { method: "POST", credentials: "include", body: fd })
       .then(function (r) { return r.json(); })
       .then(function (res) {
-        boton.disabled = false;
+        boton.disabled = !boton.closest(".redcafe-pub-card").querySelector('[name="acepta_derechos"]').checked;
         var url = res && res.ok && res.data && (res.data.url || res.data.imagen || res.data.ruta);
         if (!url) {
           estado.textContent = (res && res.error) || "No se pudo subir la foto.";
@@ -379,7 +395,7 @@
         guardarFotos(card, fotos, "Foto añadida.");
       })
       .catch(function () {
-        boton.disabled = false;
+        boton.disabled = !boton.closest(".redcafe-pub-card").querySelector('[name="acepta_derechos"]').checked;
         estado.textContent = "No se pudo subir la foto.";
         estado.className = "redcafe-pub-estado redcafe-foto-estado is-error";
       });
@@ -394,7 +410,7 @@
               '<strong>' + esc(d.titulo || "Documento") + '</strong>' +
               '<em>' + esc(d.formato === "pdf" ? "PDF" : "Imagen") + '</em>' +
             '</a>' +
-            '<button type="button" class="redcafe-doc-quitar" aria-label="Quitar documento">Quitar</button>' +
+            '<button type="button" disabled data-derechos-enviar class="redcafe-doc-quitar" aria-label="Quitar documento">Quitar</button>' +
           '</li>';
         }).join("")
       : '<li class="redcafe-doc-vacio">Sin documentos adjuntos.</li>';
@@ -411,7 +427,7 @@
         '<select class="redcafe-pub-input redcafe-doc-tipo">' + opciones + '</select>' +
         '<input type="text" class="redcafe-pub-input redcafe-doc-nombre" placeholder="Nombre (opcional)">' +
         '<input type="file" class="redcafe-doc-archivo" accept=".pdf,.jpg,.jpeg,.png">' +
-        '<button type="button" class="redcafe-doc-subir">Adjuntar</button>' +
+        '<button type="button" disabled data-derechos-enviar class="redcafe-doc-subir">Adjuntar</button>' +
         '<span class="redcafe-pub-estado redcafe-doc-estado" role="status" aria-live="polite"></span>' +
       '</div>' +
     '</div>';
@@ -425,9 +441,11 @@
     card.setAttribute("data-docs", JSON.stringify(docs));
     var bloque = card.querySelector(".redcafe-doc-bloque");
     if (bloque) bloque.outerHTML = docsHtml(docs);
+    card.querySelectorAll(".redcafe-doc-bloque [data-derechos-enviar]").forEach(function (b) { b.disabled = !card.querySelector('[name="acepta_derechos"]').checked; });
   }
 
   function subirDocumento(card) {
+    if (!card.querySelector('[name="acepta_derechos"]').checked) return;
     var input = card.querySelector(".redcafe-doc-archivo");
     var estado = card.querySelector(".redcafe-doc-estado");
     var boton = card.querySelector(".redcafe-doc-subir");
@@ -444,6 +462,7 @@
     }
 
     var fd = new FormData();
+    fd.append("acepta_derechos", "true");
     fd.append("archivo", archivo);
     fd.append("tipo", card.querySelector(".redcafe-doc-tipo").value);
     fd.append("titulo", card.querySelector(".redcafe-doc-nombre").value || "");
@@ -455,7 +474,7 @@
     fetch("/api/uploads.php?action=documento", { method: "POST", credentials: "include", body: fd })
       .then(function (r) { return r.json(); })
       .then(function (res) {
-        boton.disabled = false;
+        boton.disabled = !boton.closest(".redcafe-pub-card").querySelector('[name="acepta_derechos"]').checked;
         if (!res || !res.ok || !res.data || !res.data.documento) {
           estado.textContent = (res && res.error) || "No se pudo subir el documento.";
           estado.className = "redcafe-pub-estado redcafe-doc-estado is-error";
@@ -467,18 +486,19 @@
         guardarDocs(card, docs, "Documento adjuntado.");
       })
       .catch(function () {
-        boton.disabled = false;
+        boton.disabled = !boton.closest(".redcafe-pub-card").querySelector('[name="acepta_derechos"]').checked;
         estado.textContent = "No se pudo subir el documento.";
         estado.className = "redcafe-pub-estado redcafe-doc-estado is-error";
       });
   }
 
   function guardarDocs(card, docs, mensaje) {
+    if (!card.querySelector('[name="acepta_derechos"]').checked) return;
     var estado = card.querySelector(".redcafe-doc-estado");
     json("/api/lotes.php?action=update", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ id: card.getAttribute("data-id"), documentos: docs })
+      body: JSON.stringify({ acepta_derechos: true, id: card.getAttribute("data-id"), documentos: docs })
     }).then(function (res) {
       if (!estado) return;
       if (res && res.ok) {
@@ -618,6 +638,7 @@
           (tipo === "lote" || item.visibilidad !== "registrados" ? "Pública" : "Solo miembros") +
         '</span>' +
       '</header>' +
+      '<label class="redcafe-derechos"><input type="checkbox" name="acepta_derechos" required> Declaro que tengo los derechos sobre este contenido y asumo la responsabilidad ante cualquier reclamo de terceros.</label>' +
       resumenHtml(item, tipo) +
       (tipo === "lote" ? avisoConfirmacionHtml(item) : "") +
       // Plegada por defecto: con dos lotes abiertos el panel medía 8.345 px en
@@ -632,7 +653,7 @@
         fotosHtml(item.imagenes, tipo) +
         (tipo === "lote" ? docsHtml(item.documentos) : "") +
         '<div class="redcafe-pub-acciones">' +
-          '<button type="button" class="redcafe-pub-guardar">Guardar cambios</button>' +
+          '<button type="button" disabled data-derechos-enviar class="redcafe-pub-guardar">Guardar cambios</button>' +
           '<span class="redcafe-pub-estado" role="status" aria-live="polite"></span>' +
         '</div>' +
       '</div>' +
@@ -644,7 +665,7 @@
     var id = card.getAttribute("data-id");
     var estado = card.querySelector(".redcafe-pub-estado");
     var boton = card.querySelector(".redcafe-pub-guardar");
-    var cuerpo = { id: id };
+    var cuerpo = { id: id, acepta_derechos: true };
 
     Array.prototype.slice.call(card.querySelectorAll("[data-campo]")).forEach(function (el) {
       var clave = el.getAttribute("data-campo");
@@ -676,7 +697,7 @@
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(cuerpo)
     }).then(function (res) {
-      boton.disabled = false;
+      boton.disabled = !boton.closest(".redcafe-pub-card").querySelector('[name="acepta_derechos"]').checked;
       if (res && res.ok) {
         estado.textContent = "Cambios guardados.";
         estado.className = "redcafe-pub-estado is-ok";
@@ -698,6 +719,7 @@
       lotes.map(function (l) { return tarjetaHtml(l, LOTE_CAMPOS, "lote", abiertas); }).join("") +
       servicios.map(function (s) { return tarjetaHtml(s, SERVICIO_CAMPOS, "servicio", abiertas); }).join("");
 
+    enlazarDerechos(contenedor);
     contenedor.addEventListener("click", function (ev) {
       var t = ev.target;
       if (!t || !t.closest) return;
@@ -1077,6 +1099,7 @@
     }).join("");
     return '' +
       '<div class="redcafe-pub-card redcafe-publicar" data-categoria="verde">' +
+        '<label class="redcafe-derechos"><input type="checkbox" name="acepta_derechos" required> Declaro que tengo los derechos sobre este contenido y asumo la responsabilidad ante cualquier reclamo de terceros.</label>' +
         '<p class="redcafe-pub-rotulo">Paso 1 de 2 · Datos del lote</p>' +
         '<div class="redcafe-publicar-tipo" role="radiogroup" aria-label="Qué vas a publicar">' +
           '<label><input type="radio" name="redcafe-publicar-categoria" value="verde" checked>' +
@@ -1101,7 +1124,7 @@
         '</div>' +
         '<p class="redcafe-pub-ayuda">Los campos con * son obligatorios. En el paso 2 añades fotos y más certificados.</p>' +
         '<div class="redcafe-pub-acciones">' +
-          '<button type="button" class="redcafe-pub-guardar redcafe-publicar-enviar">Publicar lote de café</button>' +
+          '<button type="button" disabled data-derechos-enviar class="redcafe-pub-guardar redcafe-publicar-enviar">Publicar lote de café</button>' +
           '<span class="redcafe-pub-estado" role="status" aria-live="polite"></span>' +
         '</div>' +
         '<p class="redcafe-publicar-rapido"><button type="button" class="redcafe-publicar-usar-rapido">Prefiero el formulario rápido anterior</button></p>' +
@@ -1164,10 +1187,11 @@
   }
 
   function enviarPublicacion(caja, formReact) {
+    if (!caja.querySelector('[name="acepta_derechos"]').checked) return;
     var categoria = caja.getAttribute("data-categoria") || "verde";
     var estado = caja.querySelector(".redcafe-pub-acciones .redcafe-pub-estado");
     var boton = caja.querySelector(".redcafe-publicar-enviar");
-    var cuerpo = { categoria: categoria };
+    var cuerpo = { categoria: categoria, acepta_derechos: true };
     Array.prototype.slice.call(caja.querySelectorAll("[data-campo]")).forEach(function (el) {
       var label = el.closest(".redcafe-pub-label");
       if (label && (label.hidden || (label.getAttribute("data-solo") === "terminado" && categoria !== "terminado"))) return;
@@ -1204,7 +1228,7 @@
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(cuerpo)
     }).then(function (res) {
-      boton.disabled = false;
+      boton.disabled = !boton.closest(".redcafe-pub-card").querySelector('[name="acepta_derechos"]').checked;
       var lote = res && res.ok && res.data && res.data.lote;
       if (!lote) {
         estado.textContent = (res && res.error) || "No se pudo publicar. Inténtalo de nuevo.";
@@ -1216,6 +1240,7 @@
         estado.className = "redcafe-pub-estado";
         boton.disabled = true;
         var fd = new FormData();
+    fd.append("acepta_derechos", "true");
         fd.append("archivo", cert);
         fd.append("tipo", (caja.querySelector(".redcafe-cert-tipo") || {}).value || "certificado-calidad");
         fd.append("titulo", "");
@@ -1227,7 +1252,7 @@
             return json("/api/lotes.php?action=update", {
               method: "POST",
               headers: { "Content-Type": "application/json" },
-              body: JSON.stringify({ id: lote.id, documentos: docs })
+              body: JSON.stringify({ acepta_derechos: true, id: lote.id, documentos: docs })
             }).then(function (res2) {
               if (!res2 || !res2.ok) throw new Error((res2 && res2.error) || "");
               lote.documentos = docs;
@@ -1288,6 +1313,7 @@
     caja.id = "redcafe-publicar-completo";
     caja.setAttribute("data-redcafe-propio", "1");
     caja.innerHTML = formularioPublicarHtml();
+    enlazarDerechos(caja);
     var tarjeta = caja.firstChild;
     marcarRequeridos(tarjeta, "verde");
     // Firma del formulario de React: si React lo repinta, la limpieza de
@@ -1378,6 +1404,7 @@
     }).join("");
     return '' +
       '<div class="redcafe-pub-card redcafe-publicar redcafe-publicar-servicio">' +
+        '<label class="redcafe-derechos"><input type="checkbox" name="acepta_derechos" required> Declaro que tengo los derechos sobre este contenido y asumo la responsabilidad ante cualquier reclamo de terceros.</label>' +
         '<p class="redcafe-pub-rotulo">Publicar un servicio</p>' +
         '<div class="redcafe-pub-grid">' +
           '<label class="redcafe-pub-label"><span>Nombre del servicio *</span>' +
@@ -1412,7 +1439,7 @@
           '<em class="redcafe-pub-ayuda redcafe-visibilidad-aviso" hidden>' + esc(AVISO_VISIBILIDAD) + '</em>' +
         '</label>' +
         '<div class="redcafe-pub-acciones">' +
-          '<button type="button" class="redcafe-pub-guardar redcafe-publicar-enviar">Publicar servicio</button>' +
+          '<button type="button" disabled data-derechos-enviar class="redcafe-pub-guardar redcafe-publicar-enviar">Publicar servicio</button>' +
           '<span class="redcafe-pub-estado" role="status" aria-live="polite"></span>' +
         '</div>' +
       '</div>';
@@ -1423,6 +1450,7 @@
     function siguiente(i) {
       if (i >= archivos.length) return Promise.resolve(urls);
       var fd = new FormData();
+    fd.append("acepta_derechos", "true");
       fd.append("archivo", archivos[i]);
       fd.append("context", "marketplace");
       return fetch("/api/uploads.php?action=image", { method: "POST", credentials: "include", body: fd })
@@ -1438,9 +1466,10 @@
   }
 
   function enviarServicioPublicacion(caja) {
+    if (!caja.querySelector('[name="acepta_derechos"]').checked) return;
     var estado = caja.querySelector(".redcafe-pub-acciones .redcafe-pub-estado");
     var boton = caja.querySelector(".redcafe-publicar-enviar");
-    var cuerpo = { visibilidad: "publico" };
+    var cuerpo = { visibilidad: "publico", acepta_derechos: true };
     Array.prototype.slice.call(caja.querySelectorAll("[data-campo]")).forEach(function (el) {
       var clave = el.getAttribute("data-campo");
       var valor = String(el.value).trim();
@@ -1493,7 +1522,7 @@
         });
       })
       .then(function (res) {
-        boton.disabled = false;
+        boton.disabled = !boton.closest(".redcafe-pub-card").querySelector('[name="acepta_derechos"]').checked;
         var servicio = res && res.ok && res.data && res.data.servicio;
         if (!servicio) {
           estado.textContent = (res && res.error) || "No se pudo publicar. Inténtalo de nuevo.";
@@ -1503,7 +1532,7 @@
         // Éxito: el formulario es nuestro, se puede reemplazar sin tocar React.
         caja.innerHTML =
           '<div class="redcafe-publicar-ok" data-redcafe-propio="1">' +
-            '<p class="redcafe-pub-rotulo">Publicar un servicio</p>' +
+        '<p class="redcafe-pub-rotulo">Publicar un servicio</p>' +
             '<h3>Tu servicio «' + esc(servicio.titulo) + '» ya está publicado' +
               (servicio.visibilidad === "registrados" ? " y lo ven los miembros" : "") + '</h3>' +
             '<p>' + (servicio.visibilidad === "registrados"
@@ -1514,7 +1543,7 @@
           '</div>';
       })
       .catch(function (e) {
-        boton.disabled = false;
+        boton.disabled = !boton.closest(".redcafe-pub-card").querySelector('[name="acepta_derechos"]').checked;
         estado.textContent = (e && e.message) || "No se pudo publicar. Inténtalo de nuevo.";
         estado.className = "redcafe-pub-estado is-error";
       });
@@ -1534,6 +1563,7 @@
     caja.id = "redcafe-publicar-servicio-completo";
     caja.setAttribute("data-redcafe-propio", "1");
     caja.innerHTML = formularioServicioPublicarHtml();
+    enlazarDerechos(caja);
     caja.setAttribute("data-redcafe-copia", "1");
     caja.setAttribute("data-redcafe-original", formReact.tagName + "|" + String(formReact.textContent || "").replace(/\s+/g, " ").trim().slice(0, 200));
     formReact.setAttribute("data-redcafe-oculto-react", "1");

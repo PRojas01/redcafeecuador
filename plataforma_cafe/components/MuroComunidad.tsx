@@ -4,6 +4,7 @@
 // al lado de la lista de React, que quedaba oculta: dos versiones a la vez y un
 // salto al cargar). Filtros, novedades con su enlace, fechas en lenguaje llano,
 // «me gusta», comentarios, editar y borrar lo propio, y reportar.
+import { DeclaracionDerechos } from "./DeclaracionDerechos";
 import { useState } from "react";
 import type { ApiUser } from "@/lib/api";
 import { CONFIG } from "@/lib/config";
@@ -98,6 +99,8 @@ function Entrada({ p, yo, recargar }: { p: EntradaMuro; yo: ApiUser | null; reca
   const esMio = !aviso && !!yo && String(p.autor_id || "") === String(yo.id || "");
   const destino = aviso ? enlaceDeNovedad(tipo, p.enlace || "") : "";
   const [verComentarios, setVerComentarios] = useState(false);
+  const [derechosEdicion, setDerechosEdicion] = useState(false);
+  const [derechosComentario, setDerechosComentario] = useState(false);
   const [editando, setEditando] = useState(false);
   const [titulo, setTitulo] = useState(p.titulo || "");
   const [texto, setTexto] = useState(p.text || "");
@@ -114,6 +117,7 @@ function Entrada({ p, yo, recargar }: { p: EntradaMuro; yo: ApiUser | null; reca
     if (r.ok) recargar();
   };
   const guardar = async () => {
+    if (!derechosEdicion) return;
     const t = titulo.trim();
     const x = texto.trim();
     if (t.length < 2 || x.length < 2) {
@@ -122,7 +126,7 @@ function Entrada({ p, yo, recargar }: { p: EntradaMuro; yo: ApiUser | null; reca
     }
     setOcupado(true);
     setEstadoEdicion("Guardando…");
-    const r = await enviar("update", { id: p.id, titulo: t, text: x });
+    const r = await enviar("update", { id: p.id, titulo: t, text: x, acepta_derechos: derechosEdicion });
     setOcupado(false);
     if (r.ok) {
       setEditando(false);
@@ -136,10 +140,11 @@ function Entrada({ p, yo, recargar }: { p: EntradaMuro; yo: ApiUser | null; reca
     if (r.ok) recargar();
   };
   const comentar = async () => {
+    if (!derechosComentario) return;
     const t = comentario.trim();
     if (t.length < 2) return;
     setOcupado(true);
-    const r = await enviar("comment", { id: p.id, text: t });
+    const r = await enviar("comment", { id: p.id, text: t, acepta_derechos: derechosComentario });
     setOcupado(false);
     if (r.ok) {
       setComentario("");
@@ -197,7 +202,8 @@ function Entrada({ p, yo, recargar }: { p: EntradaMuro; yo: ApiUser | null; reca
           <div className="redcafe-muro-editor">
             <input type="text" maxLength={140} value={titulo} onChange={(e) => setTitulo(e.target.value)} />
             <textarea rows={4} maxLength={4000} value={texto} onChange={(e) => setTexto(e.target.value)} />
-            <button type="button" className="redcafe-muro-editar-guardar" onClick={guardar} disabled={ocupado}>
+            <DeclaracionDerechos aceptado={derechosEdicion} onChange={setDerechosEdicion} />
+            <button type="button" className="redcafe-muro-editar-guardar" onClick={guardar} disabled={ocupado || !derechosEdicion}>
               Guardar
             </button>
             <span className="redcafe-muro-editar-estado" role="status" aria-live="polite">
@@ -251,7 +257,8 @@ function Entrada({ p, yo, recargar }: { p: EntradaMuro; yo: ApiUser | null; reca
           {yo ? (
             <div className="redcafe-muro-nuevocom">
               <input type="text" maxLength={1000} placeholder="Escribe un comentario…" value={comentario} onChange={(e) => setComentario(e.target.value)} />
-              <button type="button" onClick={comentar} disabled={ocupado}>
+              <DeclaracionDerechos aceptado={derechosComentario} onChange={setDerechosComentario} />
+              <button type="button" onClick={comentar} disabled={ocupado || !derechosComentario}>
                 Comentar
               </button>
             </div>

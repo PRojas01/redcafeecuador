@@ -1,4 +1,5 @@
 "use client";
+import { DeclaracionDerechos } from "@/components/DeclaracionDerechos";
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
@@ -7,6 +8,7 @@ import { PanelEstadisticas } from "@/components/PanelEstadisticas";
 import { Icono } from "@/components/Icono";
 
 export default function BarPage() {
+  const [aceptaDerechos, setAceptaDerechos] = useState(false);
   const [sesion, setSesion] = useState<ApiUser | null>(null);
   const [menu, setMenu] = useState<MenuItem[]>([]);
   const [ok, setOk] = useState<string | null>(null);
@@ -47,8 +49,9 @@ export default function BarPage() {
 
   const agregar = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (!aceptaDerechos) return;
     if (!nombre.trim() || !precio.trim()) { setOk("Nombre y precio requeridos."); return; }
-    const r = await api.menuAdd({ nombre, descripcion: desc, precio: parseFloat(precio), categoria: cat });
+    const r = await api.menuAdd({ acepta_derechos: aceptaDerechos, nombre, descripcion: desc, precio: parseFloat(precio), categoria: cat });
     if (r.ok) { setOk("Producto agregado."); setNombre(""); setDesc(""); setPrecio(""); cargar(); }
     else setOk(r.error || "Error.");
   };
@@ -98,7 +101,8 @@ export default function BarPage() {
             </select>
           </label>
         </div>
-        <button className="btn-primary mt-3 w-full">Agregar</button>
+        <button disabled={!aceptaDerechos} className="btn-primary mt-3 w-full">Agregar</button>
+      <DeclaracionDerechos aceptado={aceptaDerechos} onChange={setAceptaDerechos} />
       </form>
       {ok && <p className="mt-3 rounded-xl bg-green-100 p-3 text-center text-sm font-semibold text-green-700">{ok}</p>}
 

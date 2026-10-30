@@ -30,6 +30,9 @@ export default function TerminosPage() {
  los miembros.
  </p>
  </div>
+ <Section titulo="Derechos y responsabilidad sobre el contenido">
+ <p>Los miembros son responsables del contenido que suben y publican, y declaran que tienen los derechos para hacerlo. Red Café puede retirar el contenido ante un reclamo de terceros. La aceptación de esta declaración queda registrada con fecha y versión.</p>
+ </Section>
  <Section titulo="1. Aceptación">
  <p>
  Al crear una cuenta en Red Café Ecuador, aceptas estos Términos y

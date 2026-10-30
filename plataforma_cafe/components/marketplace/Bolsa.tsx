@@ -5,6 +5,7 @@
 // junto a las pestañas de React; ahora son pestañas de la misma página.
 // Reutilizan a propósito las clases visuales de Empleos (redcafe-empleo-*).
 import { useEffect, useRef, useState, type ReactNode } from "react";
+import { DeclaracionDerechos } from "@/components/DeclaracionDerechos";
 import { CONFIG } from "@/lib/config";
 import { s } from "@/lib/lotesVista";
 import { EsqueletoTarjetas } from "./Tarjetas";
@@ -134,6 +135,7 @@ function TarjetaConFormulario({
   avisoSinSesion: string;
   children: ReactNode;
 }) {
+  const [aceptaDerechos, setAceptaDerechos] = useState(false);
   const [abierto, setAbierto] = useState(false);
   const [hecho, setHecho] = useState(false);
   const [aviso, setAviso] = useState<Aviso>({ tipo: "", texto: "" });
@@ -162,6 +164,7 @@ function TarjetaConFormulario({
   };
 
   const enviar = async () => {
+    if (!aceptaDerechos) return;
     const mensaje = texto.trim();
     if (mensaje.length < 20) return setAviso({ tipo: "es-error", texto: envio.minimo });
     setAviso({ tipo: "", texto: "Enviando…" });
@@ -170,7 +173,7 @@ function TarjetaConFormulario({
         method: "POST",
         credentials: "include",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(envio.cuerpo(mensaje, extra)),
+        body: JSON.stringify({ ...envio.cuerpo(mensaje, extra), acepta_derechos: true }),
       });
       const res = await r.json().catch(() => ({ ok: false }));
       if (res && res.ok) {
@@ -214,11 +217,12 @@ function TarjetaConFormulario({
               />
             </label>
           ))}
+          <DeclaracionDerechos aceptado={aceptaDerechos} onChange={setAceptaDerechos} />
           <div className="redcafe-empleo-acciones">
             <button type="button" className="redcafe-empleo-cancelar" onClick={() => setAbierto(false)}>
               Cancelar
             </button>
-            <button type="button" className="redcafe-empleo-enviar" onClick={enviar}>
+            <button type="button" className="redcafe-empleo-enviar" disabled={!aceptaDerechos} onClick={enviar}>
               {envio.boton}
             </button>
           </div>
