@@ -1,6 +1,7 @@
 // Protección de origen (CSRF) y límite de intentos.
 import fs from "node:fs";
 import path from "node:path";
+import { conBloqueo } from "./docs.js";
 import { db } from "./db.js";
 import { config, esProduccion } from "./config.js";
 import { fail, type Ctx } from "./http.js";
@@ -41,10 +42,12 @@ export async function cupo(ctx: Ctx, accion: string, max = 10, ventanaSeg = 60):
   await reinicioDePrueba();
   const clave = accion + ":" + sha256("ip|" + ctx.ip).slice(0, 24);
   const desde = new Date(Date.now() - ventanaSeg * 1000);
-  const usados = await db.intento.count({ where: { clave, ts: { gt: desde } } });
-  if (usados >= max) return false;
-  await db.intento.create({ data: { clave } });
-  return true;
+  return conBloqueo("cupo:" + clave, async (tx) => {
+    const usados = await tx.intento.count({ where: { clave, ts: { gt: desde } } });
+    if (usados >= max) return false;
+    await tx.intento.create({ data: { clave } });
+    return true;
+  });
 }
 
 /**

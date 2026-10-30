@@ -4,10 +4,10 @@ import { getCookie } from "hono/cookie";
 import fs from "node:fs";
 import path from "node:path";
 import { config, esProduccion } from "./lib/config.js";
-import { Cruda, ErrorApi, leerEntrada, type Ctx, type Modulo } from "./lib/http.js";
+import { Cruda, ErrorApi, leerEntrada, limitarCuerpo, type Ctx, type Modulo } from "./lib/http.js";
 import { EstadoSesion, COOKIE_SESION } from "./lib/sesion.js";
 import { protegerOrigen } from "./lib/seguridad.js";
-import { cabecerasSeguridad, servirEstatico } from "./lib/estatico.js";
+import { cabecerasSeguridad, servirEstatico, rutaCanonica } from "./lib/estatico.js";
 import { modulos } from "./modulos/index.js";
 import { RUTA_PREACUERDO, paginaPreacuerdo } from "./modulos/socios.js";
 import { db } from "./lib/db.js";
@@ -19,6 +19,7 @@ export function crearApp(opciones: { ipDe?: (c: any) => string } = {}) {
   const app = new Hono<{ Variables: Vars }>();
 
   app.use("*", async (c, next) => {
+    c.req.raw = await limitarCuerpo(c.req.raw);
     // Un solo dominio y HTTPS en producción (las reglas 301 del .htaccess).
     if (esProduccion()) {
       // Solo en el dominio propio: en la vista previa del hosting (otro dominio)
@@ -187,15 +188,25 @@ export function crearApp(opciones: { ipDe?: (c: any) => string } = {}) {
   });
 
   // Páginas PHP sueltas que aún no se migran.
-  app.get("*", (c) => {
-    const ruta = new URL(c.req.url).pathname;
+  app.get("*", async (c) => {
+    const cruda = new URL(c.req.url).pathname;
+    let ruta: string;
+    try { ruta = rutaCanonica(cruda); } catch { return new Response("Ruta inválida.", { status: 400 }); }
+    if (ruta === RUTA_PREACUERDO || ruta === RUTA_PREACUERDO.slice(0, -1)) {
+      const ses = await EstadoSesion.cargar(getCookie(c, COOKIE_SESION));
+      return paginaPreacuerdo(ses);
+    }
     const phpIndex = path.join(config.sitio, ruta, "index.php");
     if (ruta.endsWith("/") && fs.existsSync(phpIndex) && !fs.existsSync(path.join(config.sitio, ruta, "index.html"))) {
       return new Response("Página aún no disponible en la nueva plataforma.", { status: 501 });
     }
-    return servirEstatico(ruta, esProduccion());
+    return servirEstatico(cruda, esProduccion());
   });
 
+  app.onError((e, c) => {
+    if (e instanceof ErrorApi) return c.json({ ok: false, error: e.mensaje }, e.codigo as any);
+    return c.json({ ok: false, error: "Error interno." }, 500);
+  });
   return app;
 }
 

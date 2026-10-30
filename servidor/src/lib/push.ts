@@ -3,6 +3,7 @@
 // data/.push_vapid.json). El envío no bloquea la petición del usuario: se
 // lanza en segundo plano y un fallo nunca rompe el aviso interno.
 import { createECDH, createCipheriv, createPrivateKey, createSign, hkdfSync, randomBytes } from "node:crypto";
+import { fail } from "./http.js";
 import { db } from "./db.js";
 import { listar, mutar, type Doc } from "./docs.js";
 import { cortar, enlaceInterno, str } from "./util.js";
@@ -63,12 +64,12 @@ export function cifrar(sub: Doc, payload: unknown): Buffer {
 
 async function enviarUna(sub: Doc, titulo: string, cuerpo: string, enlace: string): Promise<number> {
   const endpoint = str(sub.endpoint);
-  if (!endpoint.startsWith("https://")) return 0;
+  validarEndpointPush(endpoint);
   const v = await vapid();
   const body = cifrar(sub, { titulo: cortar(titulo, 140), cuerpo: cortar(cuerpo, 400), url: enlaceInterno(enlace) || "/" });
   try {
     const r = await fetch(endpoint, {
-      method: "POST", body: new Uint8Array(body), signal: AbortSignal.timeout(3000),
+      method: "POST", redirect: "manual", body: new Uint8Array(body), signal: AbortSignal.timeout(3000),
       headers: { "Content-Type": "application/octet-stream", "Content-Encoding": "aes128gcm", TTL: String(TTL), Urgency: "normal", Authorization: `vapid t=${jwt(endpoint, v)}, k=${v.publica}` },
     });
     return r.status;
@@ -99,4 +100,12 @@ export async function enviarAUsuario(uid: string, titulo: string, cuerpo: string
 /** Para notificar(): en segundo plano, sin esperar. */
 export function pushEnSegundoPlano(uid: string, titulo: string, cuerpo: string, enlace: string) {
   void enviarAUsuario(uid, titulo, cuerpo, enlace).catch(() => {});
+}
+
+export function validarEndpointPush(endpoint: string): void {
+  let u: URL;
+  try { u = new URL(endpoint); } catch { fail("Endpoint push inválido.", 422); }
+  const h = u.hostname;
+  if (endpoint.length > 1000 || u.protocol !== "https:" || u.port || u.username || u.password ||
+      !(h === "fcm.googleapis.com" || h.endsWith(".push.services.mozilla.com") || h.endsWith(".notify.windows.com") || h === "web.push.apple.com")) fail("Endpoint push inválido.", 422);
 }

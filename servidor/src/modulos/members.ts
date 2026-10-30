@@ -3,11 +3,12 @@ import { db, Prisma } from "../lib/db.js";
 import { fail, type Modulo } from "../lib/http.js";
 import { listar } from "../lib/docs.js";
 import {
-  aDoc, cuentaRestringida, esAdmin, miembroEsPublico, miembroPublico, miembroRoles, requiereAdmin,
+  miembroAdministracion, aDoc, cuentaRestringida, esAdmin, miembroEsPublico, miembroPublico, miembroRoles, requiereAdmin,
   requiereUsuario, restringidas, todosLosMiembros, validarRoles, invalidarUsuario,
 } from "../lib/usuarios.js";
 import { emailValido, largo, nowIso, str, textoEntrada } from "../lib/util.js";
-import { extraCon } from "./auth.js";
+import { cupo } from "../lib/seguridad.js";
+import { extraCon, verificarPass } from "./auth.js";
 
 async function bloqueosQuitarPerfiles(userId: string, actuales: string[], nuevos: string[]): Promise<string[]> {
   const quitados = actuales.filter((r) => !nuevos.includes(r));
@@ -60,7 +61,7 @@ const acciones: Modulo["acciones"] = {
     const fila = await db.usuario.findUnique({ where: { id } });
     if (!fila) fail("Miembro no encontrado.", 404);
     const todo = u.id === id || !!ctx.ses.d.admin;
-    return { member: todo ? aDoc(fila) : miembroPublico(aDoc(fila)) };
+    return { member: todo ? (u.id === id ? aDoc(fila) : miembroAdministracion(aDoc(fila))) : miembroPublico(aDoc(fila)) };
   },
 
   async update(ctx) {
@@ -77,6 +78,11 @@ const acciones: Modulo["acciones"] = {
     if (telefono && !/^[0-9+()\-\s.]{7,30}$/.test(telefono)) fail("Teléfono inválido.", 422);
     if (whatsapp && !/^[0-9+()\-\s.]{7,30}$/.test(whatsapp)) fail("WhatsApp inválido.", 422);
     if (largo(provincia) > 80) fail("Provincia demasiado larga.", 422);
+    if (email !== u.email) {
+      if (!(await cupo(ctx, "cambiar_email", 10, 3600))) fail("Demasiados intentos. Espera una hora.", 429);
+      const actual = await db.usuario.findUnique({ where: { id: u.id } });
+      if (!actual || !(await verificarPass(str(i.password_actual), actual.passHash))) fail("La contraseña actual es obligatoria y debe ser correcta para cambiar el correo.", 422);
+    }
     try {
       const fila = await db.usuario.update({
         where: { id: u.id },
@@ -131,12 +137,12 @@ const acciones: Modulo["acciones"] = {
     if (motivo) extra.motivo_rechazo = motivo.slice(0, 500);
     if (nota) extra.nota_admin = nota.slice(0, 1000);
     const act = await db.usuario.update({ where: { id }, data: { verificado: estado === "verificado", extra: extra as Prisma.InputJsonValue } });
-    return { member: aDoc(act) };
+    return { member: miembroAdministracion(aDoc(act)) };
   },
 
   async all(ctx) {
     requiereAdmin(ctx);
-    return { members: await todosLosMiembros() };
+    return { members: (await todosLosMiembros()).map(miembroAdministracion) };
   },
 };
 

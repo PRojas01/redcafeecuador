@@ -9,7 +9,7 @@ import { Prisma } from "@prisma/client";
 import { Cruda, fail, type Ctx, type Modulo } from "../lib/http.js";
 import { listar, mutar, type Doc } from "../lib/docs.js";
 import { db } from "../lib/db.js";
-import { requiereAdmin, todosLosMiembros, validarRoles } from "../lib/usuarios.js";
+import { miembroAdministracion, requiereAdmin, todosLosMiembros, validarRoles } from "../lib/usuarios.js";
 import { cifrar, huella } from "../lib/pii.js";
 import { emailValido, nowIso, str } from "../lib/util.js";
 
@@ -19,7 +19,7 @@ const SLUG = /^[a-z0-9][a-z0-9\-_]{1,80}$/;
 const esRecurso = (r: string): r is (typeof RECURSOS)[number] => (RECURSOS as readonly string[]).includes(r);
 
 async function leer(r: string): Promise<Doc[]> {
-  if (r === "members") return todosLosMiembros();
+  if (r === "members") return (await todosLosMiembros()).map(miembroAdministracion);
   if (r === "consents") {
     const f = await db.consentimiento.findMany({ orderBy: { ts: "asc" } });
     return f.map((c) => ({ ...c, ts: c.ts.toISOString() }));
@@ -47,6 +47,7 @@ async function editarMiembro(id: string, i: Doc) {
       if (e !== f.email && (await db.usuario.findUnique({ where: { email: e } }))) fail("Ese correo ya está registrado.", 409);
       data.email = e;
     } else if (k === "cedula") {
+      if (str(v).includes("*")) continue;
       const c = str(v).trim().slice(0, 20);
       data.cedulaCifrada = c ? cifrar(c) : "";
       data.cedulaHuella = c ? huella(c) : "";

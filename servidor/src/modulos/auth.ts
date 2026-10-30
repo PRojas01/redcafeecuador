@@ -180,12 +180,16 @@ const acciones: Modulo["acciones"] = {
     if (nueva.length < 8) fail("La nueva contraseña debe tener mínimo 8 caracteres.", 422);
     if (nueva.length > 200) fail("La nueva contraseña es demasiado larga.", 422);
     if (nueva !== str(ctx.in.confirm)) fail("La confirmación no coincide.", 422);
-    const r = await db.recuperacionPass.findUnique({ where: { tokenHash: sha256(token) } });
-    if (!r || r.expira.getTime() <= Date.now()) fail("El enlace de recuperación no es válido o ya caducó.", 401);
-    await db.$transaction([
-      db.usuario.update({ where: { id: r.usuarioId }, data: { passHash: await hashPass(nueva), passCambiadaEn: new Date(), extra: await extraCon(r.usuarioId, { pass_reset_at: nowIso(), updated_at: nowIso() }) } }),
-      db.recuperacionPass.deleteMany({ where: { usuarioId: r.usuarioId } }), // un solo uso; anula los demás enlaces
-    ]);
+    const passHash = await hashPass(nueva);
+    await db.$transaction(async (tx) => {
+      const r = await tx.recuperacionPass.findUnique({ where: { tokenHash: sha256(token) } });
+      if (!r || r.expira.getTime() <= Date.now()) fail("El enlace de recuperación no es válido o ya caducó.", 401);
+      const consumido = await tx.recuperacionPass.deleteMany({ where: { id: r.id, tokenHash: sha256(token), expira: { gt: new Date() } } });
+      if (consumido.count !== 1) fail("El enlace de recuperación ya fue utilizado.", 422);
+      await tx.usuario.update({ where: { id: r.usuarioId }, data: { passHash, passCambiadaEn: new Date(), extra: await extraCon(r.usuarioId, { pass_reset_at: nowIso(), updated_at: nowIso() }, tx) } });
+      await tx.recuperacionPass.deleteMany({ where: { usuarioId: r.usuarioId } });
+      await tx.sesion.deleteMany({ where: { usuarioId: r.usuarioId } });
+    });
     return { changed: true };
   },
 
@@ -196,7 +200,7 @@ const acciones: Modulo["acciones"] = {
     if (await provisionalCaducada()) fail("La contraseña provisional caducó. Pide una nueva desde «He olvidado la contraseña».", 401);
     const guardada = await passAdminGuardada();
     if (!(await verificarPassAdmin(pass, guardada))) fail("Contraseña admin incorrecta.", 401);
-    if (!esHash(guardada)) await escribirPassAdmin(pass);
+    if (!esHash(guardada)) await escribirPassAdmin(pass, ctx.ses);
     ctx.ses.regenerar();
     ctx.ses.set({ admin: true, adminDesde: new Date() });
     ctx.ses.cookieRecordar(recordar);
@@ -226,6 +230,7 @@ const acciones: Modulo["acciones"] = {
     if (!(await verificarPass(actual, fila.passHash))) fail("La contraseña actual es incorrecta.", 401);
     const ahora = new Date();
     await db.usuario.update({ where: { id: u.id }, data: { passHash: await hashPass(nueva), passCambiadaEn: ahora, extra: await extraCon(u.id, { updated_at: nowIso() }) } });
+    await ctx.ses.revocarOtras({ usuarioId: u.id });
     // Esta sesión sigue; las demás quedan cerradas.
     ctx.ses.regenerar();
     ctx.ses.set({ inicio: new Date(ahora.getTime() + 1) });
@@ -243,6 +248,7 @@ const acciones: Modulo["acciones"] = {
     const existe = await db.usuario.findUnique({ where: { id }, select: { id: true } });
     if (!existe) fail("Miembro no encontrado.", 404);
     await db.usuario.update({ where: { id }, data: { passHash: await hashPass(nueva), passCambiadaEn: new Date(), extra: await extraCon(id, { updated_at: nowIso(), pass_reset_by: "admin" }) } });
+    await db.sesion.deleteMany({ where: { usuarioId: id } });
     return { changed: true, id };
   },
 
@@ -253,7 +259,7 @@ const acciones: Modulo["acciones"] = {
     if (nueva.length > 200) fail("La nueva contraseña es demasiado larga.", 422);
     if (nueva !== str(ctx.in.confirm)) fail("La confirmación no coincide.", 422);
     if (!(await verificarPassAdmin(actual, await passAdminGuardada()))) fail("La contraseña actual es incorrecta.", 401);
-    await escribirPassAdmin(nueva);
+    await escribirPassAdmin(nueva, ctx.ses);
     return { changed: true };
   },
 
@@ -299,8 +305,8 @@ const acciones: Modulo["acciones"] = {
 };
 
 /** Mezcla campos en Usuario.extra. */
-export async function extraCon(id: string, cambios: Record<string, unknown>): Promise<Prisma.InputJsonValue> {
-  const f = await db.usuario.findUnique({ where: { id }, select: { extra: true } });
+export async function extraCon(id: string, cambios: Record<string, unknown>, cliente: Pick<typeof db, "usuario"> = db): Promise<Prisma.InputJsonValue> {
+  const f = await cliente.usuario.findUnique({ where: { id }, select: { extra: true } });
   return { ...((f?.extra as object) ?? {}), ...cambios } as Prisma.InputJsonValue;
 }
 

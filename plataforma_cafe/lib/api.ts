@@ -291,7 +291,7 @@ export const api = {
   // --- Members ---
   membersList: () => call(CONFIG.api("/api/members.php?action=list")),
   memberGet: (id: string) => call(CONFIG.api("/api/members.php?action=get&id=" + encodeURIComponent(id))),
-  memberUpdate: (data: { nombre: string; email: string; telefono?: string; whatsapp?: string; provincia?: string }) =>
+  memberUpdate: (data: { nombre: string; email: string; password_actual?: string; telefono?: string; whatsapp?: string; provincia?: string }) =>
     call(CONFIG.api("/api/members.php?action=update"), j(data)),
   memberRolesUpdate: (roles: string[], rol?: string) => call(CONFIG.api("/api/members.php?action=roles_update"), j({ roles, rol: rol ?? roles[0] })),
   memberVerify: (id: string) => call(CONFIG.api("/api/members.php?action=verify"), j({ id })),

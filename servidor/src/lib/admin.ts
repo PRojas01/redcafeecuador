@@ -10,6 +10,7 @@ import path from "node:path";
 import { randomBytes } from "node:crypto";
 import bcrypt from "bcryptjs";
 import { db } from "./db.js";
+import type { EstadoSesion } from "./sesion.js";
 import { config } from "./config.js";
 
 const COSTE = 10;
@@ -39,7 +40,7 @@ export async function passAdminGuardada(): Promise<string> {
   const fila = await db.administrador.findUnique({ where: { id: "principal" } });
   if (fila) return fila.passHash;
   // Instalación nueva: la contraseña inicial puede venir del .env (sin Terminal
-  // no se ve el registro del servidor); si no, una aleatoria que sale en el registro.
+  // no se ve el registro del servidor); si no, una aleatoria inaccesible.
   const inicial = (process.env.REDCAFE_PASS_ADMIN_INICIAL ?? "").trim();
   if (inicial.length >= 12) {
     const hash = await bcrypt.hash(inicial, COSTE);
@@ -48,7 +49,7 @@ export async function passAdminGuardada(): Promise<string> {
   }
   const nueva = randomBytes(12).toString("hex");
   await db.administrador.create({ data: { id: "principal", passHash: await bcrypt.hash(nueva, COSTE) } });
-  console.warn(`[admin] Contraseña inicial de administración: ${nueva} — cámbiala desde Ajustes.`);
+  console.warn("[admin] No hay contraseña de administración configurada. Define REDCAFE_PASS_ADMIN_INICIAL en el panel del hosting o REDCAFE_PASS_ADMIN_RESTABLECER para rescate.");
   return bcrypt.hash(nueva, COSTE);
 }
 
@@ -62,8 +63,10 @@ export async function verificarPassAdmin(entrada: string, guardada: string): Pro
   return a.length === b.length && (await import("node:crypto")).timingSafeEqual(a, b);
 }
 
-export async function escribirPassAdmin(plano: string) {
+export async function escribirPassAdmin(plano: string, ses?: EstadoSesion) {
   const hash = await bcrypt.hash(plano, COSTE);
+  if (ses) await ses.revocarOtras({ admin: true });
+  else await db.sesion.deleteMany({ where: { admin: true } });
   const archivos = candidatos();
   if (archivos.length) {
     for (const f of archivos) if (fs.existsSync(path.dirname(f))) fs.writeFileSync(f, hash, { mode: 0o600 });
