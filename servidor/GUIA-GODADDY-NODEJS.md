@@ -122,3 +122,5 @@ Las personas entran con **su misma contraseña de siempre**.
 - Para comprobarlo, abre `/estado-servidor`: las líneas `fotos` y `respaldos`
   dicen «carpeta propia» cuando ya están fuera de la app. Con sesión de
   administrador se ve además el detalle de variables.
+
+`REDCAFE_PRIVADO`: carpeta persistente privada fuera de `sitio` y `REDCAFE_UPLOADS`; guarda identidades hasta su revisión (permisos 700/600).

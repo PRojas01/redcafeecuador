@@ -23,6 +23,7 @@ export const config = {
   sitio: ruta(process.env.REDCAFE_SITIO ?? "../sitio"),
   // Archivos subidos por miembros y administración (se sirven en /uploads).
   uploads: ruta(process.env.REDCAFE_UPLOADS ?? path.join(ruta(process.env.REDCAFE_SITIO ?? "../sitio"), "uploads")),
+  privado: ruta(process.env.REDCAFE_PRIVADO ?? "../redcafe-privado"),
   dominio: process.env.REDCAFE_DOMINIO ?? "https://redcafeecuador.com",
   // Clave de cifrado de datos personales: 32 bytes en hex.
   claveDatos(): Buffer {

@@ -186,7 +186,50 @@
     return p.indexOf("/admin") === 0 || p.indexOf("/panel") === 0;
   }
 
+  function identidades(seccion) {
+    var bloque = document.createElement("div");
+    bloque.className = "redcafe-pub-wrap";
+    seccion.appendChild(bloque);
+    function cargarIdentidades() {
+      json("/api/identidad.php?action=pendientes").then(function (r) {
+        bloque.innerHTML = '<h3>Solicitudes de identidad</h3>';
+        if (!r || !r.ok) { bloque.appendChild(document.createTextNode((r && r.error) || "No se pudo cargar.")); return; }
+        var items = r.data.solicitudes || [];
+        if (!items.length) bloque.appendChild(document.createTextNode("No hay solicitudes pendientes."));
+        items.forEach(function (s) {
+          var card = document.createElement("article");
+          card.className = "redcafe-pub-card";
+          var base = "/api/identidad.php?action=ver&id=" + encodeURIComponent(s.id);
+          card.innerHTML = '<h4>' + esc(s.nombre || s.uid) + '</h4><p>' + esc(fecha(s.creado)) + '</p>' +
+            '<a target="_blank" rel="noreferrer" href="' + esc(base + "&cual=documento") + '">Ver documento</a> · ' +
+            '<a target="_blank" rel="noreferrer" href="' + esc(base + "&cual=selfie") + '">Ver selfie</a> ' +
+            '<button type="button" class="redcafe-pub-guardar" data-decision="aprobar">Aprobar</button> ' +
+            '<button type="button" class="redcafe-ped-btn" data-decision="rechazar">Rechazar</button><p role="status"></p>';
+          card.addEventListener("click", function (ev) {
+            var b = ev.target.closest("[data-decision]");
+            if (!b || b.disabled) return;
+            var decision = b.getAttribute("data-decision"), motivo = "";
+            if (decision === "rechazar") {
+              motivo = window.prompt("Motivo del rechazo (obligatorio, máximo 300 caracteres):", "");
+              if (motivo === null) return;
+              if (!motivo.trim() || motivo.trim().length > 300) { card.querySelector('[role="status"]').textContent = "Indica un motivo de hasta 300 caracteres."; return; }
+            }
+            Array.prototype.forEach.call(card.querySelectorAll("button"), function (boton) { boton.disabled = true; });
+            json("/api/identidad.php?action=decidir", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ id: s.id, decision: decision, motivo: motivo }) }).then(function (res) {
+              if (res && res.ok) { cargarIdentidades(); return; }
+              card.querySelector('[role="status"]').textContent = (res && res.error) || "No se pudo guardar.";
+              Array.prototype.forEach.call(card.querySelectorAll("button"), function (boton) { boton.disabled = false; });
+            });
+          });
+          bloque.appendChild(card);
+        });
+      });
+    }
+    cargarIdentidades();
+  }
+
   function montar(datos) {
+    if (!window.__redcafeReactListo || !window.__redcafeReactListo()) { setTimeout(function () { montar(datos); }, 200); return; }
     var main = document.querySelector("main");
     if (!main || document.getElementById("redcafe-admin-verificaciones")) return;
 
@@ -217,6 +260,7 @@
     if (recursos && recursos.parentNode === main) main.insertBefore(seccion, recursos);
     else main.appendChild(seccion);
 
+    identidades(seccion);
     var ctx = { seccion: seccion, lista: seccion.querySelector("#redcafe-ver-lista"), items: [] };
 
     seccion.addEventListener("click", function (ev) {
