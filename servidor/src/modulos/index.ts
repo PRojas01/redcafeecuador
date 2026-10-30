@@ -1,5 +1,6 @@
 // Registro de módulos: el nombre es el del archivo PHP que reemplazan.
 import type { Modulo } from "../lib/http.js";
+import { identidad } from "./identidad.js";
 import { auth } from "./auth.js";
 import { twofactor } from "./twofactor.js";
 import { members } from "./members.js";
@@ -44,6 +45,7 @@ import { agregarCursos } from "./agregar-cursos.js";
 import { importacion } from "./importacion.js";
 
 export const modulos: Record<string, Modulo> = {
+  identidad,
   auth,
   twofactor,
   members,

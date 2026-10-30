@@ -1591,11 +1591,51 @@
     try { observadorPublicar.observe(document.body, { childList: true, subtree: true }); } catch (e) {}
   }
 
+  function identidad(usuario) {
+    var main = document.querySelector("main");
+    if (!main || document.getElementById("redcafe-identidad")) return;
+    var bloque = document.createElement("section");
+    bloque.id = "redcafe-identidad";
+    bloque.className = "redcafe-pub-seccion";
+    bloque.setAttribute("data-redcafe-propio", "1");
+    main.appendChild(bloque);
+    function cargarIdentidad() {
+      json("/api/identidad.php?action=estado").then(function (res) {
+        if (!res || !res.ok) { bloque.textContent = (res && res.error) || "No se pudo consultar la identidad."; return; }
+        var solicitud = res.data.solicitud;
+        bloque.innerHTML = '<div class="redcafe-pub-wrap"><h3>Verificar mi identidad</h3><p>' +
+          esc(usuario.verificado ? "Perfil verificado" : solicitud ? solicitud.estado : "Sin solicitud") +
+          (solicitud && solicitud.motivo ? ": " + esc(solicitud.motivo) : "") + '</p>' +
+          (!usuario.verificado && (!solicitud || solicitud.estado === "rechazada") ?
+            '<form><p><label>Documento de identidad (máximo 5 MB) <input required type="file" name="documento" accept=".jpg,.jpeg,.png,.pdf"></label></p>' +
+            '<p><label>Selfie sosteniendo el documento (máximo 5 MB) <input required type="file" name="selfie" accept=".jpg,.jpeg,.png"></label></p>' +
+            '<p>Tus documentos se guardan en privado, solo los ve la administración y se borran tras la revisión.</p>' +
+            '<button class="redcafe-pub-guardar" type="submit">Enviar solicitud</button></form>' : "") +
+          '<p role="status" aria-live="polite"></p></div>';
+        var form = bloque.querySelector("form");
+        if (form) form.addEventListener("submit", function (ev) {
+          ev.preventDefault();
+          var boton = form.querySelector("button"), estado = bloque.querySelector('[role="status"]');
+          boton.disabled = true;
+          estado.textContent = "Enviando…";
+          json("/api/identidad.php?action=solicitar", { method: "POST", body: new FormData(form) }).then(function (r) {
+            if (r && r.ok) cargarIdentidad();
+            else { boton.disabled = false; estado.textContent = (r && r.error) || "No se pudo enviar."; }
+          });
+        });
+      });
+    }
+    cargarIdentidad();
+  }
+
   function iniciar() {
+    if (!window.__redcafeReactListo || !window.__redcafeReactListo()) { setTimeout(iniciar, 200); return; }
     if (location.pathname.indexOf("/panel") !== 0) return;
     json("/api/auth.php?action=me").then(function (res) {
       var usuario = res && res.ok && res.data && res.data.user;
       if (!usuario || !usuario.id) return;
+      if (!window.__redcafeReactListo()) { setTimeout(iniciar, 200); return; }
+      identidad(usuario);
       montar(usuario);
       intentosPublicar = 0;
       vecesVigilante = 0;

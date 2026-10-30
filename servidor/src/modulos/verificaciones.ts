@@ -27,6 +27,19 @@ function sellar(item: Doc, verificado: boolean, admin: Doc, nota: string): Doc {
   }
   return x;
 }
+export async function verificarMiembro(id: string, verificado: boolean, admin: Doc, nota = "", cliente: Pick<typeof db, "usuario"> = db): Promise<Doc | null> {
+  const f = await cliente.usuario.findUnique({ where: { id } });
+  if (f) {
+    const sellado = sellar(aDoc(f), verificado, admin, nota);
+    const extra = { ...((f.extra as Doc) ?? {}) };
+    for (const k of ["verificado_en", "verificado_por", "verificacion_nota", "verificacion_retirada_en", "verificacion_retirada_por"]) if (k in sellado) extra[k] = sellado[k];
+    extra.estado_validacion = verificado ? "verificado" : "pendiente";
+    extra.fecha_verificacion = verificado ? nowIso() : null;
+    return aDoc(await cliente.usuario.update({ where: { id }, data: { verificado, extra } }));
+  }
+  return null;
+}
+
 const duenio = (tipo: string, i: Doc) => tipo === "miembro" ? str(i.id) : tipo === "lote" ? str(i.productor_id ?? i.owner_id ?? i.published_by)
   : tipo === "servicio" ? str(i.proveedor_id ?? i.owner_id ?? i.published_by) : str(i.autor_id);
 function titulo(tipo: string, i: Doc): string {
@@ -65,15 +78,7 @@ const acciones: Modulo["acciones"] = {
     const verificado = bool(ctx.in.verificado ?? true);
     let tocado: Doc | null = null;
     if (tipo === "miembro") {
-      const f = await db.usuario.findUnique({ where: { id } });
-      if (f) {
-        const sellado = sellar(aDoc(f), verificado, admin, nota);
-        const extra = { ...((f.extra as Doc) ?? {}) };
-        for (const k of ["verificado_en", "verificado_por", "verificacion_nota", "verificacion_retirada_en", "verificacion_retirada_por"]) if (k in sellado) extra[k] = sellado[k];
-        extra.estado_validacion = verificado ? "verificado" : "pendiente";
-        extra.fecha_verificacion = verificado ? nowIso() : null;
-        tocado = aDoc(await db.usuario.update({ where: { id }, data: { verificado, extra } }));
-      }
+      tocado = await verificarMiembro(id, verificado, admin, nota);
     } else {
       for (const archivo of ARCHIVOS[tipo]) {
         await mutar(archivo, (l) => l.map((it) => {

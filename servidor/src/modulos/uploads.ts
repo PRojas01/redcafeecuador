@@ -48,6 +48,7 @@ const acciones: Modulo["acciones"] = {
     const u = await requiereUsuario(ctx);
     if (!(await cupo(ctx, "upload_documento", 30, 3600))) fail("Demasiados documentos subidos seguidos. Vuelve a intentarlo en una hora.", 429);
     const tipo = str(ctx.in.tipo ?? "otro").trim() || "otro";
+    if (/identidad|selfie|cedula|cédula|pasaporte|dni|identifica/i.test(tipo)) fail("Los documentos de identidad deben enviarse por la verificación privada.", 422);
     if (!DOC_TIPOS[tipo]) fail("Tipo de documento inválido.", 422);
     const titulo = str(ctx.in.titulo).trim();
     if (largo(titulo) > 120) fail("El título del documento es demasiado largo.", 422);

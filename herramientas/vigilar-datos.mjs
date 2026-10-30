@@ -20,6 +20,7 @@ const permitidos = new Set(
 );
 
 const RUTAS_PROHIBIDAS = [
+  [/(^|\/)redcafe-privado\//i, "documento de identidad privado"],
   [/(^|\/)data\/[^/]+\.json$/i, "archivo de datos (data/*.json)"],
   [/(^|\/)data\/\.[^/]+$/i, "secreto de data/"],
   [/(^|\/)uploads\/user-content\//i, "foto o documento subido por miembros"],
