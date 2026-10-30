@@ -1,0 +1,27 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 108" role="img" aria-label="Red Café Ecuador">
+  <!--
+    Icono y texto al mismo peso visual. La bandera oficial no se incluye aquí:
+    es una imagen aparte (el escudo no se redibuja en vectores a mano) y se
+    coloca al lado cuando el soporte lo permite.
+  -->
+  <g transform="translate(2,6) scale(0.98)">
+  <g fill="none" stroke="#3B1A0C" stroke-width="5" stroke-linecap="round" stroke-linejoin="round">
+      <!-- Arco superior: entra por la izquierda y apunta a la derecha -->
+      <path d="M18 32a35 35 0 0 1 54-6"/>
+      <path d="M60 21l12 5-4 12"/>
+      <!-- Arco inferior: cierra el giro en sentido contrario -->
+      <path d="M78 64a35 35 0 0 1-54 6"/>
+      <path d="M36 75l-12-5 4-12"/>
+    </g>
+
+    <mask id="hendidura-h">
+      <rect width="96" height="96" fill="#fff"/>
+      <path d="M48 34c-3.6 5.6 3.6 11.2 0 16.8s-3.6 11.2 0 16.8" fill="none" stroke="#000" stroke-width="3" stroke-linecap="round"/>
+    </mask>
+    <ellipse cx="48" cy="50" rx="12" ry="17" fill="#3B1A0C" mask="url(#hendidura-h)"/>
+  </g>
+
+  <text x="118" y="58" font-family="'DM Serif Display', Georgia, serif" font-size="40" fill="#3B1A0C">Red Café</text>
+  <rect x="120" y="70" width="152" height="3" fill="#A94E17"/>
+  <text x="120" y="94" font-family="Inter, system-ui, sans-serif" font-size="15" font-weight="600" letter-spacing="8" fill="#3B1A0C">ECUADOR</text>
+</svg>

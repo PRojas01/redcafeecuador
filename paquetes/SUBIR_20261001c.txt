@@ -1,0 +1,24 @@
+RED CAFÉ ECUADOR — SUBIR PAQUETE 20261001c (incremental sobre 20261001b)
+=========================================================================
+Archivo: redcafeecuador-produccion-20261001c-INCREMENTAL-registro-espresso.zip (74 archivos, 0,7 MB)
+Requisito: https://redcafeecuador.com/redcafe-version.json debe decir "20261001b". Si no, NO SUBIR.
+Contenido: solo archivos modificados. SIN data/ NI uploads/. No borra nada.
+
+QUÉ CAMBIA
+1. REGISTRO (prioridad 1): quien entraba por «Unirme a la Red» y elegía otro perfil
+   (p. ej. Comprador) quedaba registrado como PRODUCTOR, porque Productor venía
+   preseleccionado. Ahora queda con el perfil que elige (probado de punta a punta).
+2. Subtítulo de la portada: «Compra y vende café directo, sin intermediarios ni
+   comisiones. Tu perfil gratis en dos minutos.»
+3. Color de las zonas oscuras: espresso cálido (#21170F) en lugar del verde. Contraste mejor
+   en todo (caramelo 6,3:1, bajada del precio 8,1:1).
+
+SUBIR: cPanel → raíz del sitio → subir ZIP → Extraer → SOBRESCRIBIR → borrar el ZIP.
+
+COMPROBAR (3 min)
+1. redcafe-version.json → "20261001c"
+2. Portada: subtítulo nuevo y tonos café; recarga forzada si no cambia (Ctrl/Cmd+Shift+R).
+3. /afiliate/ → elegir «Comprador» → debe decir «Continuar con 1 perfil».
+
+Pruebas: API 28/28 · 0 regresiones de contraste · 65 rutas sin errores nuevos ·
+registro E2E 12/12 · simulación de subida idéntica a lo probado.

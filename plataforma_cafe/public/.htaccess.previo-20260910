@@ -1,0 +1,112 @@
+# ═══════════════════════════════════════════════════════════════════════════
+# Red Café Ecuador — redcafeecuador.com (raíz del dominio)
+#
+# En este directorio conviven dos cosas:
+#   · la PLATAFORMA (sitio estático + APIs PHP en api/), que es la portada;
+#   · WORDPRESS (wp-admin, wp-content, blog y páginas editoriales).
+#
+# Conviven sin estorbarse porque las rutas de la plataforma son directorios
+# reales: Apache los sirve directamente y solo lo que NO existe llega a
+# WordPress. Las rutas de ambos se comprobaron: no se solapan.
+# ═══════════════════════════════════════════════════════════════════════════
+
+# La portada es la plataforma: index.html manda sobre el index.php de WordPress.
+DirectoryIndex index.html index.php
+
+<IfModule mod_rewrite.c>
+  RewriteEngine On
+  RewriteBase /
+
+  # ── HTTPS ────────────────────────────────────────────────────────────────
+  RewriteCond %{HTTPS} !=on
+  RewriteRule ^(.*)$ https://%{HTTP_HOST}/$1 [L,R=301]
+
+
+  # ── Bloqueos propios de WordPress (venían en su .htaccess) ───────────────
+  RewriteRule ^wp-admin/includes/ - [F,L]
+  RewriteRule !^wp-includes/ - [S=3]
+  RewriteRule ^wp-includes/[^/]+\.php$ - [F,L]
+  RewriteRule ^wp-includes/js/tinymce/langs/.+\.php - [F,L]
+  RewriteRule ^wp-includes/theme-compat/ - [F,L]
+
+  # ── Autorización para la API REST de WordPress ───────────────────────────
+  RewriteRule .* - [E=HTTP_AUTHORIZATION:%{HTTP:Authorization}]
+
+  # ── Etapa anterior: la plataforma vivía en /plataforma/ ──────────────────
+  # 301 permanente para no perder lo que Google ya indexó esos días.
+  RewriteRule ^plataforma/?$ / [L,R=301]
+  RewriteRule ^plataforma/(.*)$ /$1 [L,R=301]
+
+  # ── Datos de la plataforma: nunca por web ────────────────────────────────
+  RewriteRule ^data/ - [F,L]
+  RewriteRule ^uploads/.*\.(php|phtml|phar)$ - [F,L]
+  RewriteRule \.(log|log\.)$ - [F,L]
+  RewriteRule (^|/)\.(?!well-known) - [F,L]
+
+  # ── Rutas de la plataforma sin barra final ───────────────────────────────
+  # Si existe el directorio con su index.html, servirlo antes de pasar a WordPress.
+  RewriteCond %{REQUEST_FILENAME} !-f
+  RewriteCond %{DOCUMENT_ROOT}/$1/index.html -f
+  RewriteRule ^([^/]+)/?$ /$1/index.html [L]
+
+  # ── WordPress: todo lo que no existe como archivo o directorio ───────────
+  RewriteRule ^index\.php$ - [L]
+  RewriteCond %{REQUEST_FILENAME} !-f
+  RewriteCond %{REQUEST_FILENAME} !-d
+  RewriteRule . /index.php [L]
+</IfModule>
+
+# ── Bloqueos puntuales ──────────────────────────────────────────────────────
+<Files "wp-config.php">
+  Require all denied
+</Files>
+<Files "_bootstrap.php">
+  Require all denied
+</Files>
+
+# ── PHP explícito (por si el hosting lo desactiva en subdirectorios) ────────
+<IfModule mod_php.c>
+  AddType application/x-httpd-php .php
+  AddHandler application/x-httpd-php .php
+</IfModule>
+<IfModule mod_php8.c>
+  AddType application/x-httpd-php .php
+  AddHandler application/x-httpd-php .php
+</IfModule>
+
+# ── Cabeceras de seguridad ──────────────────────────────────────────────────
+<IfModule mod_headers.c>
+  Header always set X-Content-Type-Options "nosniff"
+  Header always set Referrer-Policy "strict-origin-when-cross-origin"
+  Header always set Strict-Transport-Security "max-age=31536000; includeSubDomains"
+  <FilesMatch "\.(html|php)$">
+    Header always set X-Frame-Options "SAMEORIGIN"
+  </FilesMatch>
+  # Las fuentes y los estáticos con hash pueden cachearse mucho tiempo
+  <FilesMatch "\.(woff2|ttf|eot)$">
+    Header set Cache-Control "public, max-age=31536000, immutable"
+  </FilesMatch>
+  # El HTML SIEMPRE se revalida. Sin esta línea el servidor no manda ninguna
+  # instrucción de caché y el navegador aplica su heurística: se queda con la
+  # copia vieja y el visitante que vuelve NO VE el despliegue nuevo. Con
+  # no-cache más el ETag, la revalidación cuesta un 304 vacío.
+  <FilesMatch "\.(html|json|webmanifest)$">
+    Header set Cache-Control "no-cache, must-revalidate"
+  </FilesMatch>
+  # Imágenes y video: sin hash en el nombre, así que una semana con revalidación
+  <FilesMatch "\.(webp|jpg|jpeg|png|svg|mp4|ico)$">
+    Header set Cache-Control "public, max-age=604800, stale-while-revalidate=86400"
+  </FilesMatch>
+</IfModule>
+
+Options -Indexes
+
+# ── Sesiones y subida (plataforma) ──────────────────────────────────────────
+<IfModule mod_php.c>
+  php_value session.cookie_secure 1
+  php_value session.cookie_httponly 1
+  php_value session.cookie_samesite Lax
+  php_value session.gc_maxlifetime 604800
+  php_value upload_max_filesize 10M
+  php_value post_max_size 12M
+</IfModule>

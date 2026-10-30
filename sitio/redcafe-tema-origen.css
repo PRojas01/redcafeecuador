@@ -1,0 +1,503 @@
+/* ==========================================================================
+   Red Café Ecuador — Tema «Origen» (capa final de estilo)
+   --------------------------------------------------------------------------
+   Solo colores, tipografía y animaciones: NO cambia la estructura ni el orden
+   de ningún bloque. Se carga después de redcafe-v60-final.css.
+
+   Paleta (referencias de marcas de café de especialidad y agro):
+     espresso  #24160F   texto principal, cabecera, portada, pie
+     tostado   #3A2418   superficies oscuras secundarias
+     cereza    #9B2D1F   acento y botones principales (nunca de fondo grande)
+     caramelo  #B8762F   detalles
+     oro       #E6B873   acentos sobre fondo oscuro
+     crema     #F7F2EA   fondo general · papel #FFFCF7 tarjetas
+     hoja      #2F6B45   confianza / verificado
+   Tipografía: DM Serif Display (títulos) + DM Sans (texto), ambas alojadas
+   en el propio sitio (licencia OFL).
+   Contraste comprobado AA (≥ 4,5:1) en todas las combinaciones de texto.
+   ========================================================================== */
+
+/* Especificidad: la capa anterior usa html:not(#rc-t1):not(#rc-t2):not(#rc-t3);
+   esta usa un nivel más para quedar por encima sin depender del orden. */
+
+/* ---------- 1. Tokens ---------------------------------------------------- */
+html:not(#o1):not(#o2):not(#o3):not(#o4) {
+  --o-espresso: #24160f;
+  --o-espresso-90: rgba(36, 22, 15, .92);
+  --o-tostado: #3a2418;
+  --o-tierra: #5b3a26;
+  --o-cereza: #9b2d1f;
+  --o-cereza-hondo: #7a2216;
+  --o-caramelo: #b8762f;
+  --o-oro: #e6b873;
+  --o-oro-suave: #f3dcb4;
+  --o-crema: #f7f2ea;
+  --o-crema-2: #efe6d8;
+  --o-papel: #fffcf7;
+  --o-texto: #24160f;
+  --o-texto-2: #5a4a3f;
+  --o-linea: rgba(36, 22, 15, .10);
+  --o-linea-2: rgba(36, 22, 15, .18);
+  --o-hoja: #2f6b45;
+  --o-sombra-1: 0 1px 2px rgba(36, 22, 15, .06), 0 2px 8px rgba(36, 22, 15, .05);
+  --o-sombra-2: 0 2px 4px rgba(36, 22, 15, .06), 0 14px 32px rgba(36, 22, 15, .10);
+  --o-radio: 12px;
+  --o-radio-boton: 10px;
+  --o-curva: cubic-bezier(.2, .7, .2, 1);
+  --o-serif: "DM Serif Display", Georgia, "Times New Roman", serif;
+  --o-sans: "DM Sans", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  /* Fuentes que usa internamente la capa anterior */
+  --rc-titulo: var(--o-serif) !important;
+  --rc-sistema: var(--o-sans) !important;
+  --rc-texto: var(--o-sans) !important;
+  --font-titulo: var(--o-serif) !important;
+  --font-cuerpo: var(--o-sans) !important;
+  --font-sans: var(--o-sans) !important;
+  --font-marca: var(--o-serif) !important;
+
+  /* Variables del tema anterior: todas apuntaban al mismo rojo #8c1e0e. */
+  --color-cafe: var(--o-espresso) !important;
+  --color-cafe-oscuro: #1a100b !important;
+  --color-coffee-950: #1a100b !important;
+  --color-cereza: var(--o-cereza) !important;
+  --color-cereza-roja: var(--o-cereza) !important;
+  --color-cereza-roja-suave: #f6e4dc !important;
+  --color-latte: var(--o-cereza) !important;
+  --color-latte-claro: #f6ebdd !important;
+  --color-latte-texto: var(--o-texto-2) !important;
+  --color-miel: var(--o-caramelo) !important;
+  --color-filtrado-100: #f5e6d3 !important;
+  --color-filtrado-300: var(--o-oro) !important;
+  --color-filtrado-500: var(--o-caramelo) !important;
+  --color-filtrado-600: var(--o-tierra) !important;
+  --color-filtrado-800: var(--o-tostado) !important;
+  --color-filtrado-900: #1a100b !important;
+  --color-acento-claro: var(--o-oro) !important;
+  --color-gold-500: var(--o-oro) !important;
+  --color-crema: var(--o-crema) !important;
+  --color-crema-oscuro: var(--o-crema-2) !important;
+  --color-surface-soft: var(--o-papel) !important;
+  --color-sand-300: #e3d5c2 !important;
+  --color-tostado: var(--o-texto-2) !important;
+  --color-tostado-claro: var(--o-crema-2) !important;
+  --color-pizarra: var(--o-texto) !important;
+  --color-pizarra-suave: var(--o-texto-2) !important;
+  --color-text-primary: var(--o-texto) !important;
+  --color-text-secondary: var(--o-texto-2) !important;
+  --color-text-muted: #6b5a4e !important;
+  --color-hoja: var(--o-hoja) !important;
+}
+
+/* ---------- 2. Base tipográfica ------------------------------------------ */
+html:not(#o1):not(#o2):not(#o3):not(#o4) body {
+  font-family: var(--o-sans) !important;
+  color: var(--o-texto);
+  background-color: var(--o-crema) !important;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+}
+html:not(#o1):not(#o2):not(#o3):not(#o4) body :where(p, li, label, input, select, textarea, button, a, td, th, span, small) {
+  font-family: var(--o-sans);
+}
+html:not(#o1):not(#o2):not(#o3):not(#o4) body :where(p) { line-height: 1.65; }
+
+/* Títulos: serif cálida, tamaños con jerarquía clara */
+html:not(#o1):not(#o2):not(#o3):not(#o4) body :is(h1, h2):not(.redcafe-sin-serif) {
+  font-family: var(--o-serif) !important;
+  font-weight: 400 !important;
+  letter-spacing: -0.01em;
+  text-wrap: balance;
+}
+html:not(#o1):not(#o2):not(#o3):not(#o4) body h1 {
+  font-size: clamp(2.05rem, 1.35rem + 2.6vw, 3.4rem) !important;
+  line-height: 1.08 !important;
+}
+html:not(#o1):not(#o2):not(#o3):not(#o4) body h2 {
+  font-size: clamp(1.6rem, 1.2rem + 1.4vw, 2.35rem) !important;
+  line-height: 1.15 !important;
+}
+html:not(#o1):not(#o2):not(#o3):not(#o4) body main section h2 { color: var(--o-texto); }
+html:not(#o1):not(#o2):not(#o3):not(#o4) body :is(h3, h4, h5, h6) { font-family: var(--o-sans) !important; font-weight: 650 !important; letter-spacing: -0.005em; }
+
+/* Etiquetas pequeñas («NUEVA PLATAFORMA», «FORMA PARTE»…) en estilo píldora */
+html:not(#o1):not(#o2):not(#o3):not(#o4) body .badge,
+html:not(#o1):not(#o2):not(#o3):not(#o4) body .redcafe-home-price-kicker {
+  font-family: var(--o-sans) !important;
+  font-size: 11.5px !important;
+  font-weight: 600 !important;
+  letter-spacing: .12em !important;
+  text-transform: uppercase !important;
+  border-radius: 999px !important;
+  padding: .32rem .8rem !important;
+  color: var(--o-cereza) !important;
+  background: rgba(155, 45, 31, .07) !important;
+  border: 1px solid rgba(155, 45, 31, .22) !important;
+}
+html:not(#o1):not(#o2):not(#o3):not(#o4) body .redcafe-home-price-kicker { display: inline-block; }
+
+/* ---------- 3. Botones (misma forma en toda la web) ---------------------- */
+html:not(#o1):not(#o2):not(#o3):not(#o4) body :is(.btn-primary, .btn-accent, .btn-ghost, .btn-secondary) {
+  font-family: var(--o-sans) !important;
+  text-transform: none !important;
+  letter-spacing: .005em !important;
+  font-weight: 600 !important;
+  font-size: 14.5px !important;
+  border-radius: var(--o-radio-boton) !important;
+  background-image: none !important;
+  box-shadow: none !important;
+  transition: background-color .2s var(--o-curva), color .2s var(--o-curva),
+              border-color .2s var(--o-curva), transform .2s var(--o-curva),
+              box-shadow .2s var(--o-curva) !important;
+}
+html:not(#o1):not(#o2):not(#o3):not(#o4) body .btn-primary {
+  background-color: var(--o-cereza) !important;
+  border-color: var(--o-cereza) !important;
+  color: #fff !important;
+}
+html:not(#o1):not(#o2):not(#o3):not(#o4) body .btn-primary:hover {
+  background-color: var(--o-cereza-hondo) !important;
+  border-color: var(--o-cereza-hondo) !important;
+  transform: translateY(-1px);
+  box-shadow: 0 8px 20px rgba(155, 45, 31, .25) !important;
+}
+html:not(#o1):not(#o2):not(#o3):not(#o4) body .btn-ghost {
+  background-color: transparent !important;
+  border: 1.5px solid rgba(155, 45, 31, .45) !important;
+  color: var(--o-cereza) !important;
+}
+html:not(#o1):not(#o2):not(#o3):not(#o4) body .btn-ghost:hover {
+  background-color: rgba(155, 45, 31, .06) !important;
+  border-color: var(--o-cereza) !important;
+}
+/* Botón de la cabecera «Forma parte de la Red» */
+html:not(#o1):not(#o2):not(#o3):not(#o4) body header .btn-primary {
+  background-color: var(--o-oro) !important;
+  border-color: var(--o-oro) !important;
+  color: var(--o-espresso) !important;
+}
+html:not(#o1):not(#o2):not(#o3):not(#o4) body header .btn-primary:hover {
+  background-color: #f0c98c !important;
+  border-color: #f0c98c !important;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, .25) !important;
+}
+
+/* Botones de la portada (registro · WhatsApp · acceder): misma forma */
+html:not(#o1):not(#o2):not(#o3):not(#o4) body .btn-accent {
+  background-color: var(--o-oro) !important;
+  border-color: var(--o-oro) !important;
+  color: var(--o-espresso) !important;
+}
+html:not(#o1):not(#o2):not(#o3):not(#o4) body .btn-accent:hover {
+  background-color: #f0c98c !important;
+  border-color: #f0c98c !important;
+  transform: translateY(-1px);
+}
+html:not(#o1):not(#o2):not(#o3):not(#o4) body .btn-accent.btn-whatsapp {
+  background-color: #25d366 !important;
+  border-color: #25d366 !important;
+  color: #0b1f12 !important;
+}
+html:not(#o1):not(#o2):not(#o3):not(#o4) body .btn-accent.btn-whatsapp:hover { background-color: #2fe074 !important; border-color: #2fe074 !important; }
+html:not(#o1):not(#o2):not(#o3):not(#o4) body #portada-hero .btn-accent:not(.btn-registro):not(.btn-whatsapp) {
+  background-color: transparent !important;
+  border: 1.5px solid rgba(255, 252, 247, .55) !important;
+  color: var(--o-papel) !important;
+}
+html:not(#o1):not(#o2):not(#o3):not(#o4) body #portada-hero .btn-accent:not(.btn-registro):not(.btn-whatsapp):hover {
+  background-color: rgba(255, 252, 247, .1) !important;
+  border-color: var(--o-papel) !important;
+}
+
+/* ---------- 4. Cabecera ------------------------------------------------- */
+html:not(#o1):not(#o2):not(#o3):not(#o4) body > header,
+html:not(#o1):not(#o2):not(#o3):not(#o4) body header.sticky {
+  background: var(--o-espresso-90) !important;
+  background-image: none !important;
+  border-bottom: 1px solid rgba(230, 184, 115, .14) !important;
+  -webkit-backdrop-filter: saturate(140%) blur(10px);
+  backdrop-filter: saturate(140%) blur(10px);
+}
+html:not(#o1):not(#o2):not(#o3):not(#o4) body header nav a,
+html:not(#o1):not(#o2):not(#o3):not(#o4) body header a.transition-colors {
+  color: rgba(255, 252, 247, .82) !important;
+  transition: color .2s var(--o-curva) !important;
+}
+html:not(#o1):not(#o2):not(#o3):not(#o4) body header nav a:hover,
+html:not(#o1):not(#o2):not(#o3):not(#o4) body header a.transition-colors:hover { color: var(--o-oro) !important; }
+
+/* ---------- 5. Portada y cabeceras de página ----------------------------- */
+html:not(#o1):not(#o2):not(#o3):not(#o4) body .hero-gradient {
+  background-color: var(--o-espresso) !important;
+  background-image:
+    radial-gradient(80% 70% at 85% 10%, rgba(184, 118, 47, .22), transparent 60%),
+    radial-gradient(60% 60% at 0% 100%, rgba(155, 45, 31, .28), transparent 65%),
+    linear-gradient(160deg, #2a1a12 0%, #1d120c 100%) !important;
+}
+html:not(#o1):not(#o2):not(#o3):not(#o4) body .hero-gradient h1 { color: var(--o-papel) !important; }
+html:not(#o1):not(#o2):not(#o3):not(#o4) body .hero-gradient h1 :is(span, em, strong) { color: var(--o-oro) !important; }
+html:not(#o1):not(#o2):not(#o3):not(#o4) body .hero-gradient p { color: rgba(255, 252, 247, .84); }
+html:not(#o1):not(#o2):not(#o3):not(#o4) body .hero-gradient .badge {
+  color: var(--o-oro) !important;
+  background: rgba(230, 184, 115, .08) !important;
+  border-color: rgba(230, 184, 115, .35) !important;
+}
+html:not(#o1):not(#o2):not(#o3):not(#o4) body .hero-gradient img { border-radius: 14px; box-shadow: 0 24px 60px rgba(0, 0, 0, .35); }
+
+html:not(#o1):not(#o2):not(#o3):not(#o4) body[data-redcafe-route] main > div > section:first-child.bg-cream-50 {
+  background-color: var(--o-espresso) !important;
+  background-image:
+    radial-gradient(80% 70% at 85% 10%, rgba(184, 118, 47, .2), transparent 60%),
+    linear-gradient(160deg, #2a1a12 0%, #1d120c 100%) !important;
+}
+html:not(#o1):not(#o2):not(#o3):not(#o4) body[data-redcafe-route] main > div > section:first-child.bg-cream-50 :is(p, span):not(.badge) { color: rgba(255, 252, 247, .84) !important; }
+
+/* Fondo de granos difuminado: queda como textura, no compite con el texto */
+html:not(#o1):not(#o2):not(#o3):not(#o4) body #redcafe-video-fondo { opacity: .14 !important; filter: saturate(.7); }
+
+/* ---------- 6. Secciones claras, tarjetas y franja de precio ------------- */
+html:not(#o1):not(#o2):not(#o3):not(#o4) body #redcafe-home-price-strip,
+html:not(#o1):not(#o2):not(#o3):not(#o4) body .redcafe-home-price-strip {
+  background: var(--o-papel) !important;
+  border-top: 1px solid var(--o-linea) !important;
+  border-bottom: 1px solid var(--o-linea) !important;
+}
+
+/* Tarjetas: papel, esquinas suaves, sombra ligera y elevación al pasar */
+html:not(#o1):not(#o2):not(#o3):not(#o4) body main :is(a.rounded-xl.border, a.rounded-2xl.border, .rounded-2xl.border.bg-white, article.rounded-xl, article.rounded-2xl, .card) {
+  background-color: var(--o-papel) !important;
+  border-color: var(--o-linea) !important;
+  border-radius: var(--o-radio) !important;
+  box-shadow: var(--o-sombra-1);
+  text-transform: none !important;
+  transition: transform .25s var(--o-curva), box-shadow .25s var(--o-curva), border-color .25s var(--o-curva) !important;
+}
+html:not(#o1):not(#o2):not(#o3):not(#o4) body main :is(a.rounded-xl.border, a.rounded-2xl.border):hover {
+  transform: translateY(-3px);
+  box-shadow: var(--o-sombra-2);
+  border-color: rgba(155, 45, 31, .28) !important;
+}
+/* Textos de tarjeta en minúsculas normales (antes todo en mayúsculas) */
+html:not(#o1):not(#o2):not(#o3):not(#o4) body main a.rounded-xl.border :is(span, strong, p, div) { text-transform: none !important; letter-spacing: normal !important; }
+html:not(#o1):not(#o2):not(#o3):not(#o4) body main a.rounded-xl.border strong,
+html:not(#o1):not(#o2):not(#o3):not(#o4) body main a.rounded-xl.border > div > span:first-child { color: var(--o-texto) !important; font-weight: 650; }
+
+/* Títulos con subrayado decorativo: línea en caramelo */
+html:not(#o1):not(#o2):not(#o3):not(#o4) body .titulo-subrayado::after { background: var(--o-caramelo) !important; }
+
+/* ---------- 7. Sección de confianza y bloques oscuros -------------------- */
+html:not(#o1):not(#o2):not(#o3):not(#o4) body section.bg-cafe,
+html:not(#o1):not(#o2):not(#o3):not(#o4) body #confianza {
+  background-color: var(--o-tostado) !important;
+  background-image:
+    radial-gradient(70% 80% at 100% 0%, rgba(184, 118, 47, .18), transparent 60%),
+    linear-gradient(170deg, #3a2418, #24160f) !important;
+}
+html:not(#o1):not(#o2):not(#o3):not(#o4) body section.bg-cafe h2,
+html:not(#o1):not(#o2):not(#o3):not(#o4) body #confianza h2 { color: var(--o-papel) !important; }
+html:not(#o1):not(#o2):not(#o3):not(#o4) body #confianza .badge {
+  color: var(--o-oro) !important;
+  background: rgba(230, 184, 115, .08) !important;
+  border-color: rgba(230, 184, 115, .35) !important;
+}
+html:not(#o1):not(#o2):not(#o3):not(#o4) body #confianza :is(.border, [class*="border-crema"]) { border-color: rgba(255, 252, 247, .14) !important; }
+
+/* ---------- 8. Pie de página -------------------------------------------- */
+html:not(#o1):not(#o2):not(#o3):not(#o4) body footer.bg-cafe,
+html:not(#o1):not(#o2):not(#o3):not(#o4) body > footer {
+  background-color: #1a100b !important;
+  background-image: radial-gradient(90% 60% at 50% 0%, rgba(184, 118, 47, .12), transparent 60%) !important;
+  color: rgba(255, 252, 247, .78) !important;
+}
+html:not(#o1):not(#o2):not(#o3):not(#o4) body footer a.transition-colors { color: rgba(255, 252, 247, .72) !important; }
+html:not(#o1):not(#o2):not(#o3):not(#o4) body footer a.transition-colors:hover { color: var(--o-oro) !important; }
+html:not(#o1):not(#o2):not(#o3):not(#o4) body footer :is(h2, h3, h4, p.font-semibold) { color: var(--o-papel) !important; }
+
+/* ---------- 9. Enlaces, formularios y foco ------------------------------- */
+html:not(#o1):not(#o2):not(#o3):not(#o4) body main a.underline { text-decoration-color: rgba(155, 45, 31, .35); text-underline-offset: 3px; }
+html:not(#o1):not(#o2):not(#o3):not(#o4) body main a.underline:hover { text-decoration-color: currentColor; }
+html:not(#o1):not(#o2):not(#o3):not(#o4) body :is(input, select, textarea):not([type="checkbox"]):not([type="radio"]) {
+  border-radius: 10px !important;
+  border-color: var(--o-linea-2) !important;
+  background-color: #fff !important;
+  transition: border-color .2s, box-shadow .2s;
+}
+html:not(#o1):not(#o2):not(#o3):not(#o4) body :is(input, select, textarea):focus {
+  border-color: var(--o-caramelo) !important;
+  box-shadow: 0 0 0 3px rgba(184, 118, 47, .18) !important;
+  outline: none !important;
+}
+html:not(#o1):not(#o2):not(#o3):not(#o4) body :focus-visible {
+  outline: 2.5px solid var(--o-caramelo) !important;
+  outline-offset: 2px !important;
+}
+html:not(#o1):not(#o2):not(#o3):not(#o4) body ::selection { background: rgba(230, 184, 115, .45); color: var(--o-espresso); }
+
+/* Botón flotante de avisos */
+html:not(#o1):not(#o2):not(#o3):not(#o4) body #redcafe-notif-fab,
+html:not(#o1):not(#o2):not(#o3):not(#o4) body .fixed.bottom-5.right-5 a.rounded-full,
+html:not(#o1):not(#o2):not(#o3):not(#o4) body a.group.relative.grid.h-14.w-14 {
+  background-color: var(--o-cereza) !important;
+  color: #fff !important;
+  box-shadow: 0 10px 28px rgba(155, 45, 31, .35) !important;
+}
+
+/* ---------- 10. Animaciones (respetan «reducir movimiento») --------------- */
+@keyframes origen-subir {
+  from { opacity: 0; transform: translateY(14px); }
+  to { opacity: 1; transform: none; }
+}
+@keyframes origen-asomar {
+  from { opacity: .35; transform: translateY(10px); }
+  to { opacity: 1; transform: none; }
+}
+@keyframes origen-aparecer {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+@media (prefers-reduced-motion: no-preference) {
+  /* Entrada de la portada, escalonada */
+  html:not(#o1):not(#o2):not(#o3):not(#o4) body .hero-gradient :is(.badge, h1, h1 + p, p + div, .flex.flex-wrap) {
+    animation: origen-subir .7s var(--o-curva) both;
+  }
+  html:not(#o1):not(#o2):not(#o3):not(#o4) body .hero-gradient h1 { animation-delay: .06s; }
+  html:not(#o1):not(#o2):not(#o3):not(#o4) body .hero-gradient h1 + p { animation-delay: .14s; }
+  html:not(#o1):not(#o2):not(#o3):not(#o4) body .hero-gradient :is(p + div, .flex.flex-wrap) { animation-delay: .22s; }
+  html:not(#o1):not(#o2):not(#o3):not(#o4) body .hero-gradient img { animation: origen-aparecer 1s .2s var(--o-curva) both; }
+
+  /* Secciones y tarjetas aparecen al entrar en pantalla (navegadores que lo
+     admiten; en el resto se ven directamente, sin animación). */
+  @supports (animation-timeline: view()) {
+    html:not(#o1):not(#o2):not(#o3):not(#o4) body main :is(a.rounded-xl.border, a.rounded-2xl.border) {
+      animation: origen-asomar linear both;
+      animation-timeline: view();
+      animation-range: entry 0% entry 40%;
+    }
+  }
+  html:not(#o1):not(#o2):not(#o3):not(#o4) body :is(.btn-primary, .btn-accent, .btn-ghost):active { transform: translateY(0) scale(.98); }
+}
+@media (prefers-reduced-motion: reduce) {
+  html:not(#o1):not(#o2):not(#o3):not(#o4) body *, html:not(#o1):not(#o2):not(#o3):not(#o4) body *::before, html:not(#o1):not(#o2):not(#o3):not(#o4) body *::after {
+    animation-duration: .001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: .001ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* ---------- 11. Ajustes tras revisión visual ----------------------------- */
+/* Serif solo en títulos grandes; los títulos pequeños (tarjetas, lotes) en sans */
+html:not(#o1):not(#o2):not(#o3):not(#o4) body :is(h3, h4, h5, p, span, div, a, strong).font-titulo {
+  font-family: var(--o-sans) !important;
+  font-weight: 650 !important;
+  letter-spacing: -0.005em;
+}
+
+/* Bloques oscuros (portadas de cada página, confianza): acentos claros */
+html:not(#o1):not(#o2):not(#o3):not(#o4) body :is(.hero-gradient, .bg-cafe, .bg-coffee-900, .bg-filtrado-800, .bg-filtrado-900, [data-redcafe-route] main > div > section:first-child) :is(.badge, .badge-verde) {
+  color: var(--o-oro) !important;
+  background: rgba(230, 184, 115, .08) !important;
+  border-color: rgba(230, 184, 115, .35) !important;
+}
+html:not(#o1):not(#o2):not(#o3):not(#o4) body :is(.hero-gradient, .bg-cafe, .bg-coffee-900, .bg-filtrado-800, .bg-filtrado-900, [data-redcafe-route] main > div > section:first-child) .btn-ghost {
+  color: var(--o-papel) !important;
+  border-color: rgba(255, 252, 247, .5) !important;
+}
+html:not(#o1):not(#o2):not(#o3):not(#o4) body :is(.hero-gradient, .bg-cafe, .bg-coffee-900, .bg-filtrado-800, .bg-filtrado-900, [data-redcafe-route] main > div > section:first-child) .btn-ghost:hover {
+  background-color: rgba(255, 252, 247, .1) !important;
+  border-color: var(--o-papel) !important;
+}
+html:not(#o1):not(#o2):not(#o3):not(#o4) body :is(.hero-gradient, .bg-cafe, .bg-coffee-900, .bg-filtrado-800, .bg-filtrado-900, [data-redcafe-route] main > div > section:first-child) :is(h1, h2) {
+  color: var(--o-papel) !important;
+}
+
+/* Pie: títulos de columna en versalitas doradas, no en serif */
+html:not(#o1):not(#o2):not(#o3):not(#o4) body footer :is(h2, h3, h4) {
+  font-family: var(--o-sans) !important;
+  font-size: 12px !important;
+  font-weight: 700 !important;
+  letter-spacing: .14em !important;
+  text-transform: uppercase !important;
+  color: var(--o-oro) !important;
+}
+
+/* Botón de la franja de precio, igual que el resto */
+html:not(#o1):not(#o2):not(#o3):not(#o4) body #redcafe-home-price-strip a:not(.underline) {
+  text-transform: none !important;
+  letter-spacing: .005em !important;
+  font-weight: 600 !important;
+  border-radius: var(--o-radio-boton) !important;
+  background-color: var(--o-cereza) !important;
+  transition: background-color .2s var(--o-curva), transform .2s var(--o-curva) !important;
+}
+html:not(#o1):not(#o2):not(#o3):not(#o4) body #redcafe-home-price-strip a:not(.underline):hover {
+  background-color: var(--o-cereza-hondo) !important;
+  transform: translateY(-1px);
+}
+
+/* Etiquetas largas: menos espaciado para que no pesen */
+html:not(#o1):not(#o2):not(#o3):not(#o4) body .badge { letter-spacing: .09em !important; line-height: 1.4 !important; }
+
+/* Decoración de la sección de confianza, más discreta */
+html:not(#o1):not(#o2):not(#o3):not(#o4) body #confianza :is(img, svg[aria-hidden="true"]) { opacity: .35; }
+html:not(#o1):not(#o2):not(#o3):not(#o4) body #confianza .granos-bg::before,
+html:not(#o1):not(#o2):not(#o3):not(#o4) body .granos-bg::before { opacity: .25 !important; }
+
+/* ---------- 12. Islas rojas que quedaban ---------------------------------- */
+/* La capa anterior ponía un degradado rojo encima de todo .bg-cafe */
+html:not(#o1):not(#o2):not(#o3):not(#o4) body :is(.bg-cafe, .bg-coffee-900, .bg-filtrado-800):not(footer):not(section) {
+  background-image: none !important;
+  background-color: var(--o-espresso) !important;
+}
+/* Menú desplegable «Más» */
+html:not(#o1):not(#o2):not(#o3):not(#o4) body header :is(.absolute.top-full, .redcafe-more-menu) {
+  background: var(--o-espresso) !important;
+  border: 1px solid rgba(230, 184, 115, .16) !important;
+  border-radius: 12px !important;
+  box-shadow: 0 18px 40px rgba(0, 0, 0, .35) !important;
+}
+/* Portadas propias: registro y socios, iguales a las demás */
+html:not(#o1):not(#o2):not(#o3):not(#o4) body :is(.redcafe-afil-hero, .redcafe-socios-hero) {
+  background-color: var(--o-espresso) !important;
+  background-image:
+    radial-gradient(80% 70% at 85% 10%, rgba(184, 118, 47, .22), transparent 60%),
+    radial-gradient(60% 60% at 0% 100%, rgba(155, 45, 31, .26), transparent 65%),
+    linear-gradient(160deg, #2a1a12 0%, #1d120c 100%) !important;
+}
+html:not(#o1):not(#o2):not(#o3):not(#o4) body :is(.redcafe-afil-hero, .redcafe-socios-hero) h1 { color: var(--o-papel) !important; }
+html:not(#o1):not(#o2):not(#o3):not(#o4) body .redcafe-afil-rotulo { color: var(--o-oro) !important; letter-spacing: .12em; }
+
+/* Contraste: enlaces legales del pie y etiquetas sobre fondo oscuro */
+html:not(#o1):not(#o2):not(#o3):not(#o4) body footer a.underline-offset-2 { color: rgba(255, 252, 247, .7) !important; }
+html:not(#o1):not(#o2):not(#o3):not(#o4) body :is(.hero-gradient, .bg-cafe, .bg-coffee-900, .bg-filtrado-800, .bg-filtrado-900, [data-redcafe-route] main > div > section:first-child) :is(.badge, .badge-verde) {
+  color: #f0c98c !important;
+}
+
+/* ---------- Panel: tarjetas «Acción recomendada» ------------------------- */
+/* Seguían con el verde y el melocotón del tema anterior. */
+html:not(#o1):not(#o2):not(#o3):not(#o4) .redcafe-panel-next-card {
+  background: var(--o-papel) !important;
+  border: 1px solid var(--o-linea) !important;
+  border-radius: var(--o-radio) !important;
+  box-shadow: var(--o-sombra-1) !important;
+}
+html:not(#o1):not(#o2):not(#o3):not(#o4) .redcafe-panel-next-card p { color: var(--o-cereza) !important; }
+html:not(#o1):not(#o2):not(#o3):not(#o4) .redcafe-panel-next-card h4 { color: var(--o-texto) !important; font-family: var(--o-sans) !important; }
+html:not(#o1):not(#o2):not(#o3):not(#o4) .redcafe-panel-next-card span { color: var(--o-texto-2) !important; }
+html:not(#o1):not(#o2):not(#o3):not(#o4) .redcafe-panel-next-card a {
+  background: var(--o-cereza) !important;
+  color: var(--o-papel) !important;
+  border-radius: var(--o-radio-boton) !important;
+  text-transform: none !important;
+  transition: background-color .2s var(--o-curva) !important;
+}
+html:not(#o1):not(#o2):not(#o3):not(#o4) .redcafe-panel-next-card a:hover { background: var(--o-cereza-hondo) !important; }
+html:not(#o1):not(#o2):not(#o3):not(#o4) .redcafe-panel-next-card.is-primary {
+  background: var(--o-espresso) !important;
+  border-color: var(--o-espresso) !important;
+}
+html:not(#o1):not(#o2):not(#o3):not(#o4) .redcafe-panel-next-card.is-primary p { color: var(--o-oro) !important; }
+html:not(#o1):not(#o2):not(#o3):not(#o4) .redcafe-panel-next-card.is-primary h4 { color: var(--o-papel) !important; }
+html:not(#o1):not(#o2):not(#o3):not(#o4) .redcafe-panel-next-card.is-primary span { color: rgba(255, 252, 247, .82) !important; }
+html:not(#o1):not(#o2):not(#o3):not(#o4) .redcafe-panel-next-card.is-primary a { background: var(--o-oro) !important; color: var(--o-espresso) !important; }
+html:not(#o1):not(#o2):not(#o3):not(#o4) .redcafe-panel-next-card.is-primary a:hover { background: var(--o-oro-suave) !important; }

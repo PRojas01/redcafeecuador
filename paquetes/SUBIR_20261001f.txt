@@ -1,0 +1,32 @@
+RED CAFÉ ECUADOR — SUBIR PAQUETE 20261001f (incremental sobre 20261001e)
+=========================================================================
+Archivo: redcafe-actualizacion-20261001f.zip (138 archivos, 0,9 MB)
+SHA-256: e1bec99c9fd0d6b0413781a727a28b145590841bbf085154f9102098ddbdcbd5
+Requisito: https://redcafeecuador.com/redcafe-version.json debe decir "20261001e". Si no, NO SUBIR.
+Contenido: solo archivos modificados. SIN data/, uploads/ NI api/. No borra nada.
+
+QUÉ CAMBIA
+1. Clase demostrativa gratis de Legacy: pasa del 3 al 8 de octubre de 2026, en la Academia,
+   en la ficha del curso y en el enlace accesible. (El «3 octubre» del catálogo de Legacy
+   es el inicio de la cohorte Barista Pro de sábados y NO se cambió.)
+Nada más: el resto del sitio es idéntico a 20261001e.
+
+SUBIR: cPanel → raíz del sitio → subir ZIP → Extraer → SOBRESCRIBIR → borrar el ZIP.
+
+COMPROBAR (2 min)
+1. redcafe-version.json → "20261001f"
+2. /academia/ → botón «Clase demostrativa gratis · 8 oct 2026».
+3. /academia/cafe-de-especialidad-de-la-finca-a-la-taza/ → «… de Legacy · 8 oct 2026».
+Recarga forzada si no cambia (Ctrl/Cmd+Shift+R).
+
+VERIFICACIÓN FRENTE A PRODUCCIÓN (20261001e)
+- La copia local de e es idéntica a la publicada: 1034 archivos iguales; el HTML solo difiere
+  en el script que inyecta GoDaddy.
+- Mismos datos sintéticos en las dos:      e (publicada)   f (este paquete)
+  API y seguridad                          28/28           28/28
+  Cursos                                   28/28           28/28
+  Perfiles + control del admin             74/74           74/74
+  Registro E2E                             12/12           12/12
+  Móvil E2E                                16/16 · 0 err   16/16 · 0 err
+  65 rutas: sin respuestas ≠ 200; parpadeo 39/65 en las dos; 0 páginas peores.
+- Simulación de subida sobre e: idéntica a lo probado (0 diferencias).

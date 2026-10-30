@@ -1,0 +1,55 @@
+name: servidor
+on:
+  push:
+    paths: ["servidor/**", "qa/qa_api.py", ".github/workflows/servidor.yml"]
+  pull_request:
+    paths: ["servidor/**", "qa/qa_api.py"]
+jobs:
+  comprobar:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: servidor
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: servidor/package-lock.json
+      - run: npm ci
+      - run: npm run typecheck
+      - run: npm run build
+      - run: npm test
+
+  # Pruebas de paridad con el PHP (qa/qa_api.py): seguridad, registro, lotes,
+  # pedidos, admin y 80 escrituras simultáneas, contra una base MySQL vacía.
+  paridad:
+    runs-on: ubuntu-latest
+    services:
+      mysql:
+        image: mysql:8.0
+        env:
+          MYSQL_ROOT_PASSWORD: raiz-ci
+          MYSQL_DATABASE: redcafe_test
+          MYSQL_USER: redcafe
+          MYSQL_PASSWORD: redcafe-local
+        ports: ["3306:3306"]
+        options: >-
+          --health-cmd="mysqladmin ping -h 127.0.0.1 -praiz-ci"
+          --health-interval=5s --health-timeout=5s --health-retries=20
+    defaults:
+      run:
+        working-directory: servidor
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: servidor/package-lock.json
+      - run: npm ci
+      - name: Paridad de la API
+        run: |
+          cp -r ../sitio "$RUNNER_TEMP/sitio"
+          REDCAFE_CLAVE_DATOS=$(openssl rand -hex 32) ./paridad.sh 8095 "$RUNNER_TEMP/sitio" qa/qa_api.py

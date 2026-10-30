@@ -1,0 +1,76 @@
+RED CAFÉ ECUADOR — V17 · IDENTIDAD DOCUMENTAL Y REGISTRO TÉCNICO
+19 de agosto de 2026 · ⚠ ESTE ARCHIVO NO VA AL SERVIDOR
+
+Va a la RAÍZ de public_html, igual que el V16. WordPress no se toca.
+
+────────────────────────────────────────────────────────────
+QUÉ CAMBIA
+────────────────────────────────────────────────────────────
+IDENTIDAD VISUAL
+- El cuerpo del sitio pasa a papel documental (#FBFAF7) con tinta casi negra.
+  Se acabó el crema cálido, que era el patrón más reconocible de plantilla.
+- La cabecera y el pie conservan la franja café, ahora con el color de un
+  filtrado de especialidad real: ámbar rojizo (#3B1A0C), no el marrón grisáceo
+  anterior. La escala va del poso al líquido a contraluz (#BC5A1E).
+- SIN bordes redondeados en toda la interfaz. Solo siguen redondos los
+  elementos que son círculos por naturaleza: avatares, puntos de estado,
+  marcadores del mapa.
+- SIN degradados y SIN sombras difusas. La jerarquía la marca la línea de 1px.
+- Titulares en Inter con peso y tracking cerrado. La serif DM Serif Display se
+  reserva al nombre de la marca, en ningún otro sitio.
+
+REGISTRO TÉCNICO
+- Datos, precios y puntajes en monoespaciada con cifras tabulares, para que se
+  puedan comparar en columna.
+- Etiquetas de campo en versalitas espaciadas.
+- Escala más compacta en toda la interfaz: la portada bajó de 18.700 a 15.400
+  píxeles en móvil sin perder una sola sección.
+
+FRANJA DE CATA
+- Cada lote lleva una franja de color derivada de sus propias notas sensoriales:
+  floral, frutal, cítrico, dulce, herbal o cacao. La paleta la genera el
+  catálogo, no un diseñador. Sin notas reconocibles, no hay franja.
+- La semilla de lotes ya trae notas de cata, y el formulario de publicar lote
+  las acepta.
+
+CONTENIDO
+- Las noticias de la portada NO enlazaban a ninguna parte: eran titulares
+  muertos. Ahora se muestran las tres más recientes, cada una enlazando a su
+  artículo, más un acceso a la sección completa.
+- Recetas de preparación (V60, prensa, moka, cold brew, aeropress, espresso).
+- Control de ventas e inventario en los perfiles que lo necesitan.
+
+PERFILES: ahora son TRECE
+- Nuevo: ASESOR EXPERTO, transversal a toda la cadena (agronomía, poscosecha,
+  calidad, tueste, gestión, exportación, montaje de cafeterías).
+- Recuerda que el comprador también maneja inventario.
+
+────────────────────────────────────────────────────────────
+CÓMO SUBIRLO
+────────────────────────────────────────────────────────────
+1. Copia de seguridad de public_html/data/ (datos reales).
+2. Sube el ZIP a public_html/ y extrae, sobrescribiendo.
+3. NO borres data/: el paquete no la trae.
+4. Borra el ZIP del servidor.
+
+────────────────────────────────────────────────────────────
+VERIFICADO ANTES DE EMPAQUETAR
+────────────────────────────────────────────────────────────
+- 57 rutas construidas · 51 destinos internos · CERO enlaces rotos
+- Móvil 375 px, 14 páginas: cero desbordamiento, cero bordes redondeados
+- Solo 3 controles bajo 44 px, los tres enlaces dentro de texto corrido
+- Registro con el rol "asesor": correcto; con un rol inventado: rechazado
+- 14 planes en el catálogo
+- Contraste: tinta sobre papel 17,7:1 · papel sobre café 15:1
+
+────────────────────────────────────────────────────────────
+PENDIENTE, Y NO DEPENDE DE ESTE PAQUETE
+────────────────────────────────────────────────────────────
+1. REDIRIGIR EL DOMINIO VIEJO. solucionespro.net/redcafeecuador/ sigue
+   sirviendo el sitio entero. Crea allí un .htaccess con:
+       RewriteEngine On
+       RewriteRule ^(.*)$ https://redcafeecuador.com/$1 [L,R=301]
+2. Cambiar la contraseña de administrador.
+3. Desactivar la analítica de GoDaddy (cookies sin consentimiento).
+4. Tres combinaciones de color quedan en 3,4–4,4:1: válidas para texto grande,
+   no para texto pequeño. Si prefieres seguridad total, se oscurece el ámbar.

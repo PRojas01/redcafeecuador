@@ -1,0 +1,51 @@
+RED CAFÉ ECUADOR — PAQUETE PARA PRODUCCIÓN (GoDaddy cPanel)
+==========================================================
+Fecha de build: 14 de agosto de 2026 · Version: 1.8 · Sitio 100% estatico, sin demo · Tema Evergreen · Propuesta de valor: compraventa desde 1 libra + verificación de actores + asesoría integral
+
+QUE CONTIENE ESTE PAQUETE
+-------------------------
+1) redcafe-produccion-public_html.zip  <<< ESTE ES EL QUE SUBES AL HOSTING
+   Contiene el sitio completo listo para servir (carpeta raiz con index.html,
+   _next/, marketplace/, academia/, servicios/, etc.).
+
+2) redcafe-fuente-v2.zip
+   Codigo fuente (Next.js 15) para futuras actualizaciones del sitio.
+
+COMO DESPLEGAR (10 minutos)
+---------------------------
+1. En cPanel abre "Administrador de archivos" y entra a public_html.
+2. Opcional: borra archivos por defecto de bienvenida (index.html, default.php, etc.).
+3. Sube redcafe-produccion-public_html.zip a public_html.
+4. Click derecho sobre el .zip > "Extraer". Se descomprime la estructura en el lugar.
+5. Borra el .zip una vez extraido.
+6. Abre https://tudominio.com — el sitio ya esta en produccion.
+
+Verificacion tras subir:
+- Tu dominio carga la landing (hero cafe + boton "Unete a la Red").
+- /marketplace/[lote] y /academia/[curso] abren correctamente (rutas generadas como HTML).
+- El formulario de la waitlist guarda localmente y ofrece WhatsApp.
+
+COMO FUNCIONA LA LISTA DE ESPERA (waitlist)
+-------------------------------------------
+- El formulario de la portada envia los datos a enviar-waitlist.php (PHP del
+  hosting, compatible con GoDaddy/cPanel) que manda un correo a
+  hola@redcafeecuador.com usando la funcion mail() del servidor.
+- Ademas guarda una copia en /waitlist.log (datos de contacto) por si el correo falla.
+- En caso de que el servidor no ejecute PHP, la pagina guarda los datos en el
+  navegador del visitante y ofrece contacto por WhatsApp.
+- Para cambiar el correo destinatario edita la linea "$to" en
+  public/enviar-waitlist.php del fuente y re-genera el zip.
+
+DATO IMPORTANTE
+---------------
+- Correo de contacto y numero de WhatsApp centralizados en lib/config.ts
+  (hola@redcafeecuador.com / +593 98 000 0000 / wa.me). Cambialos ALLI en el
+  fuente y re-build antes del lanzamiento si deseas los datos reales del negocio.
+- Al subir, asegurate de incluir enviar-waitlist.php (va en la raiz de public_html).
+
+NOTA LEGAL / SERVICIOS DEL SITIO
+--------------------------------
+- Escrow, facturacion SRI y dossier EUDR: en esta version el sitio presenta el
+  flujo y coordina la operacion por WhatsApp. La Fase productiva completa
+  (pagos reales, SRI, base de datos) requiere migrar a un VPS con Node.js y
+  seguir docs/BACKLOG_TECNICO.md.

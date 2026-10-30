@@ -1,0 +1,67 @@
+RED CAFÉ ECUADOR — V18 · MARCA, TITULAR Y CORRECCIONES DE AUDITORÍA
+19 de agosto de 2026 · ⚠ ESTE ARCHIVO NO VA AL SERVIDOR
+
+Va a la RAÍZ de public_html, como el V16 y V17. WordPress no se toca.
+
+────────────────────────────────────────────────────────────
+QUÉ CAMBIA
+────────────────────────────────────────────────────────────
+MARCA
+- Logotipo nuevo: dos arcos con flecha girando alrededor de un grano de café.
+  Las flechas dicen lo que un anillo cerrado no decía: aquí las cosas circulan.
+- Bandera oficial del Ecuador CON escudo, como elemento aparte junto al nombre.
+  Se sirve en tres tamaños (0,9 KB en cabecera) para no cargar 56 KB en una
+  miniatura. La bandera nunca va dentro del logotipo, para poder retirarla en
+  sellos, bordados y documentos de un solo color.
+- Manual de marca en brand/logotipo/ (no se sube: es material interno).
+
+MENSAJE
+- Titular nuevo: «Conéctate a la red de valor del café ecuatoriano.»
+- La novedad va en la etiqueta —«Nueva plataforma»—, no en el titular, para que
+  no haya que reescribirlo dentro de un año.
+- Subtítulo agrupado en tres bloques en vez de una lista de ocho sustantivos.
+
+CORRECCIONES DE LA AUDITORÍA (las de Claude y las de opencode)
+- PWA rota tras la migración: manifest y service worker apuntaban a /plataforma/.
+  Corregidos, con caché renombrada para que el service worker viejo se reemplace.
+- robots.txt apuntaba el sitemap al dominio antiguo. Corregido.
+- 36 URLs obsoletas dentro del sitemap. Corregidas.
+- Canonical: TODAS las páginas declaraban ser copia de la portada, lo que anulaba
+  el SEO de marketplace, academia, servicios y recetas. Ahora cada una declara
+  la suya, con título y descripción propios.
+- Desbordamiento de 51 px a 768 px (iPad vertical): el menú se activaba antes de
+  caber. Pasa a activarse a 1024 px.
+- WhatsApp: fuera el número inventado; ahora el real, en un solo sitio del código.
+- Redes: solo se muestran las que existen. Instagram, TikTok, Facebook y YouTube
+  verificados uno a uno; el resto queda oculto hasta que existan.
+- Contraste: CERO textos por debajo del mínimo en la portada. El acento se
+  desdobló en dos —uno para fondo claro, otro para oscuro— porque un solo tono
+  no puede cumplir en ambos.
+- Los dos catálogos de planes iban desincronizados (13 y 14). Sincronizados.
+- H1 añadido en laboratorio y panel.
+
+────────────────────────────────────────────────────────────
+CÓMO SUBIRLO
+────────────────────────────────────────────────────────────
+1. Copia de seguridad de public_html/data/ (datos reales).
+2. Sube el ZIP a public_html/ y extrae, sobrescribiendo.
+3. NO borres data/: el paquete no la trae.
+4. Borra el ZIP del servidor.
+
+Tras subir, la PWA de quien ya la tuviera instalada se actualizará sola gracias
+al cambio de nombre de la caché.
+
+────────────────────────────────────────────────────────────
+LO QUE SIGUE PENDIENTE Y NO DEPENDE DE ESTE PAQUETE
+────────────────────────────────────────────────────────────
+1. LOTES DE DEMOSTRACIÓN CON SELLO «VERIFICADO». Los seis lotes del servidor son
+   de ejemplo y llevan verificado=true, con nombres de productores que no
+   existen. Es el punto más delicado que hay publicado. Se corrige reemplazando
+   data/lotes.json, igual que se hizo con media.json. Puedo prepararte el archivo.
+2. REDIRIGIR EL DOMINIO VIEJO. solucionespro.net/redcafeecuador/ sigue sirviendo
+   el sitio entero. Crea allí un .htaccess con:
+       RewriteEngine On
+       RewriteRule ^(.*)$ https://redcafeecuador.com/$1 [L,R=301]
+3. CAMBIAR LA CONTRASEÑA DE ADMINISTRADOR.
+4. COOKIES DE GODADDY sin consentimiento: desactivar la analítica en el panel.
+5. Completar los perfiles de redes sociales (mañana, según lo previsto).

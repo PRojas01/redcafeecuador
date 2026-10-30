@@ -1,0 +1,91 @@
+RED CAFÉ ECUADOR — V16 · LA PLATAFORMA PASA A LA RAÍZ DEL DOMINIO
+19 de agosto de 2026 · ⚠ ESTE ARCHIVO NO VA AL SERVIDOR
+
+════════════════════════════════════════════════════════════════════
+LEE ESTO ANTES DE SUBIR NADA
+════════════════════════════════════════════════════════════════════
+Esta subida cambia la portada de redcafeecuador.com. Es la operación más
+delicada de todas las que hemos hecho, así que va con copia de seguridad
+previa obligatoria y con un orden concreto.
+
+QUÉ CAMBIA
+- Hoy: redcafeecuador.com redirige a /plataforma/
+- Después: redcafeecuador.com ES la plataforma. WordPress sigue funcionando
+  en las mismas direcciones de siempre (wp-admin, blog, páginas), sin moverse
+  ni un archivo.
+
+NO hay que mover WordPress. Conviven porque las rutas de la plataforma son
+carpetas reales que Apache sirve directamente, y solo lo que no existe llega
+a WordPress. Comprobé que ninguna ruta se solapa con tus páginas.
+
+════════════════════════════════════════════════════════════════════
+ANTES DE EMPEZAR — COPIA DE SEGURIDAD
+════════════════════════════════════════════════════════════════════
+1. En cPanel, comprime y descarga estas dos cosas de public_html:
+      · el archivo .htaccess actual  ← IMPRESCINDIBLE
+      · la carpeta plataforma/data/  ← tiene los miembros y pedidos reales
+2. Guarda también una copia de la base de datos (cPanel > phpMyAdmin >
+   Exportar). No la tocamos, pero es un cambio de portada: mejor con red.
+
+════════════════════════════════════════════════════════════════════
+PASOS
+════════════════════════════════════════════════════════════════════
+1. Copia public_html/plataforma/data/ a un lugar seguro (fuera de public_html
+   o a tu equipo). Son los datos reales de la plataforma.
+
+2. Sube este ZIP a public_html/ (la raíz, NO dentro de plataforma/).
+   Extráelo ahí. Sobrescribe cuando pregunte.
+   Esto añade a la raíz: index.html, las carpetas de la plataforma, _next/,
+   api/, fonts/, y un .htaccess NUEVO.
+
+   ⚠ El .htaccess nuevo REEMPLAZA al de WordPress. Ya lleva dentro las reglas
+   de seguridad que WordPress tenía (bloqueo de wp-includes, wp-admin/includes
+   y la cabecera de autorización de su API). No pierdes nada.
+
+3. Restaura los datos: crea public_html/data/ y copia dentro lo que guardaste
+   en el paso 1. Comprueba que existen ahí members.json, pedidos.json, etc.
+
+4. Borra la carpeta public_html/plataforma/ entera. Ya no hace falta: el
+   .htaccess nuevo redirige /plataforma/loquesea a /loquesea con un 301
+   permanente, así que nadie se pierde y Google traslada la autoridad.
+
+5. Borra el ZIP del servidor.
+
+6. Permisos: carpetas 755, api/*.php 644, data/ 755
+
+════════════════════════════════════════════════════════════════════
+COMPROBAR (en este orden)
+════════════════════════════════════════════════════════════════════
+· https://redcafeecuador.com/            → la plataforma, sin redirección
+· https://redcafeecuador.com/marketplace/ → funciona
+· https://redcafeecuador.com/plataforma/  → redirige a la raíz (301)
+· https://redcafeecuador.com/wp-admin/    → WordPress, como siempre
+· https://redcafeecuador.com/blog/        → WordPress
+· https://redcafeecuador.com/data/        → debe dar 403
+Avísame y lo verifico yo entero.
+
+════════════════════════════════════════════════════════════════════
+FALTA UNA COSA QUE NO ESTÁ EN ESTE PAQUETE
+════════════════════════════════════════════════════════════════════
+El dominio viejo sigue sirviendo el sitio completo:
+solucionespro.net/redcafeecuador/ devuelve 200 en vez de redirigir.
+Son dos direcciones con el mismo contenido y Google reparte la autoridad.
+
+Crea un .htaccess en solucionespro.net/public_html/redcafeecuador/ con:
+
+    RewriteEngine On
+    RewriteRule ^(.*)$ https://redcafeecuador.com/$1 [L,R=301]
+
+Es lo que cierra la migración de verdad.
+
+════════════════════════════════════════════════════════════════════
+CORREGIDO EN ESTA VERSIÓN
+════════════════════════════════════════════════════════════════════
+Las tipografías DM Serif Display e Inter NO estaban cargando desde que
+migraste: el CSS las pedía en /redcafeecuador/fonts/, que ya no existe, y el
+sitio llevaba días con las fuentes de reserva. Ahora las empaqueta el propio
+compilador y salen con la ruta correcta, sea cual sea el directorio. Este
+problema no puede repetirse en futuras mudanzas.
+
+También se actualizó el plugin de contenido y el tema hijo para que apunten a
+la nueva ubicación de los datos y enlacen a la raíz.

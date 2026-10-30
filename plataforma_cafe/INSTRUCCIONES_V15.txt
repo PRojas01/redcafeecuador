@@ -1,0 +1,44 @@
+RED CAFÉ ECUADOR — PAQUETE V15 · 18 de agosto de 2026
+⚠ ESTE ARCHIVO NO VA AL SERVIDOR.
+
+QUÉ CAMBIA RESPECTO AL V14 (que ya tienes publicado)
+
+1. MAPA CON LAS FINCAS DE EJEMPLO, CLARAMENTE MARCADAS
+   Vuelven las seis fincas de demostración al mapa, pero ahora se distinguen a
+   simple vista de una finca real:
+   - marcador en gris apagado y borde discontinuo (las reales van en verde con
+     borde dorado y sin transparencia);
+   - al pulsarlas, el globo abre con «EJEMPLO · NO ES UNA FINCA REAL»;
+   - leyenda permanente bajo el mapa explicando los dos tipos de marcador.
+   Además el mapa ya no depende del servidor: si la API no responde, las fincas de
+   ejemplo se siguen viendo, porque llevan sus coordenadas dentro del sitio.
+   Cuando un productor publique con ubicación, su finca aparecerá en verde junto a
+   los ejemplos, sin confundirse con ellos.
+
+2. CONTENIDO DE EJEMPLO MARCADO EN TODO EL SITIO
+   Los seis vídeos y reportajes del hub llevan el prefijo [Ejemplo], el enlace-broma
+   está fuera y los nombres de personas inventadas ya no figuran como autores.
+   Esto se aplica ahora también a la semilla del código, de modo que una instalación
+   nueva no vuelva a sembrar el contenido problemático. El paquete incluye además
+   data/media.json ya corregido, por si alguna vez se instala desde cero.
+
+CÓMO SUBIRLO
+1. cPanel > Administrador de archivos > public_html/redcafeecuador/
+2. COPIA la carpeta data/ del servidor antes de nada.
+3. Borra el contenido anterior EXCEPTO data/
+4. Sube el ZIP, extrae, y borra el ZIP del servidor.
+5. Permisos: carpetas 755, api/*.php 644, data/ 755
+
+Nota: como conservas data/, tu media.json actual (ya corregido esta tarde) se
+mantiene. El del paquete solo se usaría en una instalación limpia.
+
+PENDIENTES QUE NO DEPENDEN DEL PAQUETE
+- CAMBIA LA CONTRASEÑA DE ADMINISTRADOR: sigue siendo la que quedó registrada en
+  claro el 18/08.
+- COOKIES SIN CONSENTIMIENTO: GoDaddy sigue inyectando tccl.min.js y tres cookies
+  de seguimiento antes de que nadie acepte. Se desactiva en el panel del hosting.
+
+YA RESUELTOS EN EL SERVIDOR (verificados hoy)
+- LEEME_V11.txt borrado: devuelve 404.
+- data/ protegido: devuelve 403.
+- media.json corregido: la API ya no sirve el enlace-broma.

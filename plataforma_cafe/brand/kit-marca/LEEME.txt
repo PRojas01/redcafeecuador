@@ -1,0 +1,44 @@
+KIT DE MARCA — RED CAFÉ ECUADOR
+Agosto de 2026 · redcafeecuador.com
+
+QUÉ HAY AQUÍ
+
+  01-logotipo/svg   Vectorial editable. ES EL ORIGINAL: cualquier pieza nueva
+                    debe partir de aquí, nunca de un PNG.
+  01-logotipo/png   128, 256, 512 y 1024 px de alto, fondo transparente.
+  01-logotipo/pdf   Vectorial para imprenta.
+  02-favicon        favicon.ico multitamaño + PNG de 16 a 512 px.
+  03-bandera        Bandera oficial del Ecuador, en PNG y WebP.
+  04-paleta         Colores con HEX, RGB y CMYK aproximado.
+  05-manual         Manual de uso (abrir manual.html en el navegador).
+
+LAS TRES REGLAS QUE MÁS SE INCUMPLEN
+
+  1. El acento tiene DOS versiones y no son intercambiables:
+        #A94E17  solo sobre fondos claros
+        #DFA066  solo sobre fondos oscuros
+     Usar el claro sobre el café da 2,8:1 y el texto se vuelve ilegible.
+
+  2. La bandera NUNCA va dentro del logotipo. Va al lado, y se omite por
+     debajo de 24 px de alto, donde el escudo ya no se distingue.
+
+  3. Cantos rectos. La identidad no lleva esquinas redondeadas ni sombras
+     difusas: la jerarquía se marca con líneas de 1 px.
+
+TIPOGRAFÍA
+
+  Inter y DM Serif Display, ambas con licencia SIL Open Font License. Se
+  descargan en fonts.google.com y pueden usarse y alojarse sin coste ni
+  permiso, también en piezas comerciales.
+
+SOBRE EL ESCUDO
+
+  La bandera incluida es el pabellón oficial con escudo. En Ecuador su uso
+  está reservado a instituciones del Estado, Fuerzas Armadas y agentes
+  diplomáticos; la bandera civil es el tricolor liso. Esta decisión la tomó
+  el propietario de la marca conociendo esa distinción.
+
+PARA IMPRENTA
+
+  Entrega los PDF de 01-logotipo/pdf. Los valores CMYK de la paleta son una
+  conversión aproximada: pide una prueba de color antes de una tirada grande.

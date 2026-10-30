@@ -1,0 +1,20 @@
+# Rutas que HOY devuelven más de una versión por un fallo del sitio, no de esta
+# herramienta. Se informan aparte para que no tapen una regresión nueva, y para
+# que se quiten de aquí en cuanto se corrija cada fallo.
+#
+# /
+#   El HTML publicado y el chunk de React que lo hidrata vienen de builds
+#   distintos: el HTML dice «Una nueva forma de hacer negocios…» y el chunk
+#   «Haz crecer tu negocio cafetero…». React hidrata y sustituye el texto del
+#   servidor por el suyo, que es el viejo. Medido: 4 de cada 5 cargas muestran
+#   uno y 1 de cada 5 el otro. También es la causa del React #418 de la consola
+#   y del destello al recargar. Se corrige desplegando un build limpio.
+#
+# /marketplace/zamora-sidra-02
+#   El aviso de pagos se añadía como último hijo del <main> en toda la ruta
+#   /marketplace*, compitiendo con la ficha del lote, que también se añade ahí:
+#   quedaba antes o después según quién ganara la carrera. Ya está corregido en
+#   el repositorio local (solo se monta en el listado); esta línea sale en
+#   cuanto el arreglo llegue a producción.
+/
+/marketplace/zamora-sidra-02

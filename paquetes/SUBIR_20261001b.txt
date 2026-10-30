@@ -1,0 +1,37 @@
+RED CAFÉ ECUADOR — SUBIR PAQUETE 20261001b (incremental sobre 20261001a)
+=========================================================================
+
+Archivo:  redcafeecuador-produccion-20261001b-INCREMENTAL-seguridad-stradale.zip
+          79 archivos · 0,7 MB · SHA-256 en el .sha256
+Requisito: el servidor debe estar en 20261001a. Comprobar ANTES de subir:
+          https://redcafeecuador.com/redcafe-version.json  →  "20261001a"
+          Si muestra otra versión, NO SUBIR (avisar para rehacer sobre la nueva).
+Contenido: solo archivos nuevos o modificados. SIN data/ NI uploads/.
+          No borra nada; conserva todo el 20261001a (React, cursos, precios, catálogo legado).
+
+ANTES
+1. Mover la carpeta Respaldo/ FUERA de public_html (sigue publicada con datos personales).
+2. Respaldo rápido del public_html actual.
+
+SUBIR
+1. cPanel → Administrador de archivos → raíz del sitio (public_html/redcafeecuador.com).
+2. Subir el ZIP → Extraer en esa carpeta → SOBRESCRIBIR. (Sin carpeta contenedora.)
+3. Borrar el ZIP del servidor.
+
+QUÉ CAMBIA
+- Seguridad: un miembro ya no ve cédula/teléfono/correo de otros; escrituras simultáneas sin
+  pérdida; pedidos solo de lotes reales (no demo); bloqueo de /Respaldo/, .md y api/_*.php;
+  CSP mínima, Permissions-Policy, HSTS 1 año.
+- Portada sin React #418. Bajada del precio visible. Contraste AA: 225 → 33 avisos.
+- Diseño Stradale (verde bosque, crema, caramelo, DM Sans) solo por CSS; textos sin cambios.
+
+COMPROBAR DESPUÉS (5 min)
+1. redcafe-version.json → "20261001b"
+2. /Respaldo/api/auth.php?action=me → 404   ·   /data/members.json → 403
+3. Portada en móvil: diseño nuevo; consola sin errores.
+4. Entrar con cuenta real → ☰ → "Cerrar sesión". Marketplace y Academia con fotos.
+5. Panel de precios y cursos legado (Legacy) siguen como en 20261001a.
+Si se ve el diseño anterior: recarga forzada (Ctrl/Cmd + Shift + R).
+
+VOLVER ATRÁS: restaurar el respaldo del paso 2. Los datos no se tocan en ningún caso.
+Evidencias completas: EVIDENCIAS-20261001b.md

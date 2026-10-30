@@ -1,0 +1,49 @@
+RED CAFÉ ECUADOR — SUBIR PAQUETE 20261001e (incremental sobre 20261001c)
+=========================================================================
+Archivo: redcafe-actualizacion-20261001e.zip (181 archivos, 1,2 MB)
+SHA-256: cc19ef2391207089b6fa0729a212ba252ba60231b39acc7d87bc91dca55bbb27
+Requisito: https://redcafeecuador.com/redcafe-version.json debe decir "20261001c". Si no, NO SUBIR.
+Contenido: solo archivos nuevos o modificados. SIN data/ NI uploads/. No borra nada.
+(20261001d fue un candidato interno que nunca se empaquetó: e lo incluye.)
+
+QUÉ CAMBIA
+1. MENOS PARPADEO (migración a React, fase 1): el botón flotante, el vídeo de fondo y la
+   «Fuente» del ticker ya los pinta React una sola vez. Se BORRÓ la copia de la capa y el
+   botón «Canales de la Red». Páginas sin duplicación: 0/65 → 49/65.
+2. ADMIN — 3 pestañas nuevas en /admin/:
+   · Avisos: aviso a todos, a un perfil o a miembros concretos. Llega a la campana y, si el
+     miembro las activó, como notificación push. Opcional: copia por CORREO solo a quienes
+     aceptaron recibir novedades, con enlace de baja de un clic (tope de 250 por envío).
+   · Reportes: ver los problemas que reportan los miembros, responder y cambiar el estado.
+   · Moderación: servicios de miembros, requerimientos, ofertas de empleo, «busco empleo» y
+     comunidad, con buscador y opción de eliminar (pide confirmación).
+   · Al entrar ya aparecen Respaldo, Difusión por WhatsApp, Verificaciones y Servicios sin
+     tener que recargar la página.
+3. ACADEMIA: sin error React #418 en /academia/ ni en las fichas de curso (con sesión iniciada).
+   El avance de las lecciones se conserva al recargar.
+4. CSV de inscritos a prueba de inyección de fórmulas (=, +, -, @).
+
+SUBIR: cPanel → raíz del sitio → subir ZIP → Extraer → SOBRESCRIBIR → borrar el ZIP.
+
+COMPROBAR (5 min)
+1. redcafe-version.json → "20261001e"
+2. Cualquier página: un solo botón flotante (Comunidad), sin el de redes.
+3. /admin/ → entrar → pestañas «Avisos», «Reportes», «Moderación».
+4. Avisos → «Miembros concretos» → elegir TU propia cuenta de miembro → enviar un aviso de
+   prueba con «Enviar también por correo». Comprobar que llega a la campana y al correo
+   (y, si no llega, mirar la carpeta de spam: el remitente es no-reply@redcafeecuador.com).
+5. /academia/ con sesión iniciada: entrar a un curso, marcar una lección y recargar: sigue marcada.
+Recarga forzada si algo no cambia (Ctrl/Cmd+Shift+R).
+
+PRUEBAS (local, e frente a c publicada, mismos datos sintéticos)
+                                   c (publicada)   e (este paquete)
+API y seguridad                    28/28           28/28
+Cursos (creación, coautoría, CSV)  27/28           28/28
+Perfiles + control del admin       69/70           74/74
+Registro E2E                       12/12           12/12
+Móvil E2E (publicar/editar lote,   15/16 · 2 #418  16/16 · 0 errores JS
+ mapa, marketplace, pedido,
+ servicio, curso)
+65 rutas: contraste / errores      33 / 16 rutas   33 / 16 rutas (0 rutas peores)
+Páginas sin duplicación            0/65            49/65 (0 páginas peores)
+Simulación de subida: idéntica a lo probado (0 archivos distintos).

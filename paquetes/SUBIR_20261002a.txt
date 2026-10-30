@@ -1,0 +1,56 @@
+RED CAFÉ ECUADOR — SUBIR PAQUETE 20261002a (incremental sobre 20261001f)
+=========================================================================
+Archivo: redcafe-actualizacion-20261002a.zip (153 archivos, 1,1 MB)
+SHA-256: 7e3fef88883a40d3eb3a0a256f7f48e82b7fd6dfcd8765873ff51d0ebfe1dba5
+Requisito: https://redcafeecuador.com/redcafe-version.json debe decir "20261001f". Si no, NO SUBIR.
+Contenido: solo archivos modificados. SIN data/ NI uploads/. No borra nada.
+
+QUÉ CAMBIA
+1. NOVEDADES desde el botón flotante: «Aprende café de calidad sin pagar nada» con la clase
+   demostrativa de Legacy del jueves 8 de octubre («Reservar mi lugar») y el curso libre
+   «Introducción al café de calidad: de la finca a la taza» («Empezar el curso»), más el acceso
+   a la Comunidad. Se abre sola UNA vez en portada, academia, comunidad o noticias (nunca encima
+   de un formulario); después, al tocar el botón. Desaparece sola tras el 8 de octubre.
+2. COLOR «espresso recién hecho»: cuerpo rojizo #3B2318 con la luz de la crema arriba
+   (#5A3523 → #2C1A12), crema dorada #DDA35E y avellana #8E5328. Cabecera translúcida con
+   desenfoque. Todo con contraste AA (texto claro 14:1, crema 6,6:1, avellana 5,7:1).
+3. SESIÓN: ya no se «sale» al ir del panel a otras páginas. Causa: www.redcafeecuador.com y
+   redcafeecuador.com daban cada uno su propia sesión; ahora www redirige (301) al dominio
+   principal. Además la sesión dura 30 días (PHP la borraba tras 24 min sin actividad).
+4. PANEL EN EL MÓVIL: «Publicar lote», «Publicar servicio», «Mis publicaciones», etc. tienen
+   «Cerrar» arriba y abajo (y tocar otra vez la pestaña la cierra). En las secciones abiertas
+   («Mis cursos», requerimientos, empleo…) el botón «Ocultar» queda fijo arriba al bajar.
+5. ELIMINAR lo propio: lotes, servicios, requerimientos, ofertas de empleo, «busco empleo» y
+   comentarios de la comunidad (antes no se podían borrar). Siempre con confirmación; nadie
+   puede borrar lo ajeno (la administración sí, desde Moderación).
+6. ADMIN › Avisos: plantilla «Clase gratis 8 oct + curso libre» lista para enviar.
+
+SUBIR: cPanel → raíz del sitio → subir ZIP → Extraer → SOBRESCRIBIR → borrar el ZIP.
+
+COMPROBAR (5 min)
+1. redcafe-version.json → "20261002a"
+2. https://www.redcafeecuador.com/academia/ → debe saltar a https://redcafeecuador.com/academia/
+3. Portada en una ventana privada: a los 2–3 s se abre el panel del 8 de octubre.
+4. Entra a tu panel → abre «Publicar lote» → «Cerrar» lo cierra. Ve a Marketplace/Academia:
+   sigues con la sesión iniciada.
+Recarga forzada si algo no cambia (Ctrl/Cmd+Shift+R).
+Nota: quien tenía la sesión abierta en www tendrá que entrar una vez más (ya en el dominio único).
+
+ENVIAR EL AVISO A TODOS (lo haces tú, desde el admin)
+/admin/ → Avisos → plantilla «Clase gratis 8 oct + curso libre» → revisar el texto →
+«Enviar a N miembro(s)». Llega a la campana (y push a quien lo activó). La casilla de correo
+viene marcada: solo lo recibe quien aceptó novedades. Primero puedes probarlo con
+«Miembros concretos» y tu propia cuenta.
+
+PRUEBAS (local, mismos datos sintéticos)      f (publicada)   20261002a
+API y seguridad                               28/28           28/28
+Cursos                                        28/28           28/28
+Perfiles + control del admin                  74/74           74/74
+Registro E2E                                  12/12           12/12
+Móvil E2E (lote, mapa, pedido, curso…)        16/16           16/16 · 0 errores JS
+Mejoras (novedades, sesión, cerrar, eliminar) —               16/16
+Autora edita/elimina todo lo suyo (API)       36/37           37/37
+65 rutas: 0 respuestas ≠ 200; 0 páginas peores en parpadeo; contraste sin avisos nuevos
+(solo un avatar emoji más en /comunidad/ por una publicación de prueba).
+Redirección www validada con Apache real (301, conserva ruta y parámetros).
+Simulación de subida sobre f: idéntica a lo probado (0 diferencias).

@@ -1,0 +1,41 @@
+DESPLIEGUE — redcafeecuador.com
+================================
+Fecha: 24 de agosto de 2026
+Paquete: redcafeecuador-DEPLOY-20260824.zip (4.2 MB)
+
+CONTENIDO
+=========
+- Archivos estáticos de Next.js (HTML, JS, CSS) — carpeta out/
+- API PHP — carpeta api/
+- Datos JSON — carpeta data/
+- Imágenes, fuentes, video — carpetas img/, fonts/, video/
+- .htaccess — enrutamiento Apache
+- robots.txt, sitemap.xml, manifest.json, sw.js
+
+CAMBIOS INCLUIDOS
+=================
+- Subtítulo hero: "Gratis como fundador hasta diciembre 2026."
+- Título hero: "Conecta con la cadena de valor del café ecuatoriano"
+- Línea debajo del CTA: "acc premium" (corregido de "premiun")
+- Sistema de cotizaciones (v36)
+
+INSTRUCCIONES
+=============
+1. Ir a cPanel → File Manager → directorio raíz de redcafeecuador.com
+2. ELIMINAR los archivos actuales (excepto redcafeecuador.com/ y wp-config.php)
+3. Subir redcafeecuador-DEPLOY-20260824.zip
+4. Extraer el ZIP en la raíz
+5. Verificar que .htaccess esté en la raíz
+6. Verificar permisos: api/ → 644, data/ → 644, .htaccess → 644
+
+NO TOCAR
+========
+- redcafeecuador.com/ (WordPress)
+- wp-config.php
+
+VERIFICACIÓN
+============
+1. Abrir https://redcafeecuador.com/ → debe mostrar "Conecta con la cadena de valor"
+2. Abrir https://redcafeecuador.com/api/servicios.php?action=list → JSON
+3. Abrir https://redcafeecuador.com/panel → login
+4. Abrir https://redcafeecuador.com/admin → admin login

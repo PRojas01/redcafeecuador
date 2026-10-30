@@ -1,0 +1,644 @@
+@import "tailwindcss";
+
+/* ═══════════════════════════════════════════════════════════════
+   RED CAFÉ ECUADOR — Tema "ORIGEN GRABADO" v6 (18/08/2026)
+   Paleta: espresso, tostado, latte, cereza y hoja. Contrastes AA
+   preservados en los pares comentados.
+   ═══════════════════════════════════════════════════════════════ */
+@font-face {
+  font-family: "DM Serif Display";
+  src: url("./fonts/dmserifdisplay-latin.woff2") format("woff2");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "Inter";
+  src: url("./fonts/inter-latin.woff2") format("woff2");
+  font-weight: 100 900;
+  font-style: normal;
+  font-display: swap;
+}
+
+@theme {
+  /* Vapor / Espuma — fondos cálidos elevados */
+  --color-crema: #F6F3EE;          /* papel — fondo principal */
+  --color-crema-oscuro: #EFE8E0;   /* espuma con sombra — fondos alternos */
+  --color-arena: #E6D9CC;          /* Crema Latte Art — bordes */
+
+  /* Texto — espresso */
+  --color-pizarra: #222222;        /* tinta — texto principal */
+  --color-pizarra-suave: #5E5850;  /* Grano Tostado — texto secundario */
+
+  /* Primario — espresso caliente */
+  --color-cafe: #8C1E0E;           /* filtrado denso — cabecera y pie */
+  --color-cafe-oscuro: #561008;    /* poso — hover del pie */
+  --color-tostado: #615B53;        /* Grano tostado — texto/acento oscuro */
+  --color-tostado-claro: #EFE8E0;  /* tostado con leche — fondos suaves */
+
+  /* Acento — latte sedoso */
+  --color-latte: #8C1E0E;          /* filtrado — acento sobre PAPEL (5.3:1) */
+  --color-latte-texto: #5E5850;    /* Grano tostado — TEXTO legible (AA) */
+  --color-latte-claro: #F8E8D8;    /* espuma latte — fondos de badge */
+  --color-miel: #8C1E0E;           /* Madera de Barista — hover del acento */
+
+  /* Señal */
+  --color-hoja: #3F6B4A;           /* green-600 — señales de estado correcto */
+  --color-cereza: #8C1E0E;         /* tinta — CTA primario (dirección documental) */
+
+  /* Acento rojo cereza — el fruto maduro del cafeto. Se usa SOLO como
+     acento de iconos y enlaces sobre fondos claros (portada), nunca en
+     botones: los botones primarios siguen en verde. */
+  --color-cereza-roja: #8C1E0E;    /* acento sobre papel (5.3:1) */
+  --color-cereza-roja-suave: #F8E8D8; /* rojo cereza muy diluido — fondos suaves */
+
+
+  /* ── Café filtrado a contraluz ────────────────────────────────────────
+     Un filtrado de especialidad no es marrón opaco: es ámbar rojizo y
+     translúcido. Esta escala va del poso al líquido iluminado. */
+  --color-filtrado-900: #561008;
+  --color-filtrado-800: #8C1E0E;
+  --color-filtrado-600: #8C1E0E;
+  --color-filtrado-500: #B4461E;
+  --color-filtrado-300: #F2BC8E;
+  /* Acentos para usar SOBRE el café de cabecera y pie. El ámbar oscuro
+     no contrasta ahí: sobre fondo oscuro el acento tiene que aclararse. */
+  --color-acento-claro: #F6CDA6;   /* 7.0:1 sobre el café · 5.6:1 sobre bloques translúcidos */
+  --color-hoja-clara: #C2EBC8;   /* 5.1:1 sobre el café */
+  --color-filtrado-100: #F8DCCB;
+
+  /* ── Perfil de taza (§ franja de cata) ─────────────────────────────────
+     El color de cada lote sale de sus notas sensoriales, no de una paleta
+     decidida a priori. Si un lote no tiene perfil, no lleva franja. */
+  --color-cata-dulce:   #D8A33C;   /* panela, caramelo, miel */
+  --color-cata-frutal:  #C7452F;   /* cereza, frutos rojos */
+  --color-cata-citrico: #D9862B;   /* cítricos, naranja */
+  --color-cata-floral:  #B9789E;   /* jazmín, floral */
+  --color-cata-herbal:  #6E8C5A;   /* herbal, hierba fresca */
+  --color-cata-cacao:   #6B4430;   /* cacao, nuez, chocolate */
+  --color-cata-neutro:  #9A968A;   /* sin perfil declarado */
+
+  /* Brillo especular — reflejo blanco puro sobre granos y taza */
+  --color-brillo: #FFFFFF;
+
+
+  /* ── Paleta oficial V2.2 (§11) · nombres del documento ── */
+  --color-coffee-950: #2A1207;
+  --color-coffee-900: #3B1A0C;
+  --color-coffee-800: #5A2810;
+  --color-coffee-700: #7A3411;
+  --color-coffee-600: #9C4515;
+  --color-green-800: #294733;
+  --color-green-700: #31543B;
+  --color-green-600: #426B4A;
+  --color-green-100: #EAF1EC;
+  --color-cream-50: #FCFAF6;
+  --color-cream-100: #F7F2E9;
+  --color-cream-200: #EFE7DA;
+  --color-sand-300: #E2D4C0;
+  --color-gold-500: #C39755;
+  --color-text-primary: #241F1B;
+  --color-text-secondary: #625B54;
+  --color-text-muted: #6E675F;   /* 5.34:1 sobre papel; #827A72 se quedaba en 4.04 */
+  --color-surface: #FFFFFF;
+  --color-surface-soft: #FCFAF6;
+  --color-border-soft: #E8E1D8;
+  --color-success: #36744A;
+  --color-warning: #A66B20;
+  --color-danger: #A5423B;
+
+  /* ── Escala tipográfica (§13) y espaciado (§14) ── */
+  --text-xs: 12px; --text-sm: 14px; --text-base: 16px; --text-lg: 18px; --text-xl: 20px;
+  --space-1: 4px; --space-2: 8px; --space-3: 12px; --space-4: 16px; --space-5: 24px;
+  --space-6: 32px; --space-7: 48px; --space-8: 64px; --space-9: 96px;
+
+  --font-titulo: Inter, system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-marca: "DM Serif Display", Georgia, serif;
+  --font-ficha: ui-monospace, "SF Mono", SFMono-Regular, Menlo, Consolas, monospace;
+  --font-cuerpo: Inter, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+
+  /* Sin redondeos: los cantos son rectos. */
+  --radius-2xl: 0px;
+  --radius-xl: 0px;
+  --radius-lg: 0px;
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   BASE — estilos de elemento. Las utilidades Tailwind (text-crema,
+   bg-crema/5, etc.) SIEMPRE ganan porque van en @layer utilities.
+   ═══════════════════════════════════════════════════════════════ */
+@layer base {
+  :root {
+    color-scheme: light;
+  }
+
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    background-color: var(--color-crema);
+    color: var(--color-pizarra);
+    font-family: var(--font-cuerpo);
+    font-size: 15px;
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+    position: relative;
+  }
+
+  /* Grain orgánico — textura sutil como papel de filtro de café */
+  body::after {
+    content: "";
+    position: fixed;
+    inset: 0;
+    z-index: 9999;
+    pointer-events: none;
+    opacity: 0.035;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+    background-repeat: repeat;
+    background-size: 200px 200px;
+  }
+
+  h1, h2, h3, h4, .font-titulo {
+    font-family: var(--font-titulo);
+    font-weight: 600;
+    letter-spacing: -0.028em;
+  }
+
+  h1, h2, h3, h4 {
+    color: var(--color-pizarra);
+  }
+
+  /* La serif sobrevive en un solo sitio: el nombre de la marca. */
+  .marca {
+    font-family: var(--font-marca);
+    font-weight: 400;
+    letter-spacing: -0.01em;
+  }
+
+  ::selection {
+    background: var(--color-latte);
+    color: #FBFAF7;
+  }
+
+  input, select, textarea {
+    border-radius: 0;
+    border: 1px solid var(--color-arena);
+    background: #fffefc;
+    padding: 0.55rem 0.85rem;
+    font-size: 0.925rem;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+  }
+
+  input:focus, select:focus, textarea:focus {
+    outline: none;
+    border-color: var(--color-miel);
+    box-shadow: 0 0 0 3px rgba(160, 120, 85, 0.22);
+  }
+
+  input::placeholder, textarea::placeholder {
+    color: rgba(92, 90, 80, 0.48);
+    font-style: italic;
+  }
+
+  :is(a, button, input, select, textarea):focus-visible {
+    outline: 3px solid var(--color-cereza);
+    outline-offset: 3px;
+  }
+
+  :where(a:not(p a):not(.leaflet-control-attribution a), button) {
+    align-items: center;
+    min-height: 44px;
+  }
+
+  :where(a:not(p a):not(.leaflet-control-attribution a):not(.group):not(.card):not([class*="flex"]):not([class*="block"])) {
+    display: inline-flex;
+  }
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   COMPONENTS — clases propias de la marca. Las utilidades Tailwind
+   (bg-crema/5, border-crema/15, etc.) las sobrescriben cuando se
+   aplican, que es lo correcto.
+   ═══════════════════════════════════════════════════════════════ */
+@layer components {
+  /* SOMBRAS SUAVES (espresso con baja opacidad) */
+  .shadow-sm { box-shadow: 0 2px 8px rgba(61, 35, 20, 0.07), 0 1px 2px rgba(61, 35, 20, 0.05); }
+  .shadow-md { box-shadow: 0 4px 16px rgba(61, 35, 20, 0.09), 0 2px 6px rgba(61, 35, 20, 0.06); }
+  .shadow-lg { box-shadow: 0 12px 32px rgba(61, 35, 20, 0.14), 0 4px 10px rgba(61, 35, 20, 0.08); }
+  .shadow-latte { box-shadow: 0 4px 20px rgba(217, 180, 143, 0.4); }
+
+  /* TARJETAS: borde y tono, sin levitación decorativa. Variación orgánica. */
+  .card {
+    border: 1px solid var(--color-border-soft);
+    background: var(--color-surface);
+    border-radius: 0;
+    overflow: hidden;
+    transition: box-shadow 0.24s ease, border-color 0.24s ease, background-color 0.24s ease;
+    position: relative;
+  }
+
+  /* Sutil textura de grano en cards hover — sensación de papel artesanal */
+  @media (hover: hover) {
+    .card::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      border-radius: inherit;
+      opacity: 0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 128 128' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='1.2' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+      background-size: 128px 128px;
+      pointer-events: none;
+      transition: opacity 0.24s ease;
+    }
+    .card:hover::before {
+      opacity: 0.025;
+    }
+  }
+
+  @media (hover: hover) {
+    .card:hover {
+      box-shadow: 0 10px 28px rgba(36, 23, 17, 0.07);
+      border-color: #D6CCC0;
+    }
+  }
+
+  /* Tarjetas con rounded-2xl sin clase .card: fondo claro por defecto.
+     Las utilidades Tailwind (bg-crema/5, bg-white, bg-latte/10…) ganan,
+     así el hero mantiene sus fondos oscuros. */
+  .rounded-2xl {
+    border: 1px solid rgba(61, 35, 20, 0.1);
+    background: #fffefc;
+    transition: box-shadow 0.24s ease, border-color 0.24s ease, background-color 0.24s ease;
+  }
+
+  @media (hover: hover) {
+    .rounded-2xl:hover {
+      box-shadow: 0 12px 32px rgba(61, 35, 20, 0.14), 0 4px 10px rgba(61, 35, 20, 0.08);
+      border-color: rgba(160, 120, 85, 0.45);
+    }
+  }
+
+  /* BOTONES */
+  .btn-primary {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 46px;
+    padding: 0 22px;
+    border-radius: 0;
+    background: var(--color-pizarra);
+    border: 1px solid var(--color-pizarra);
+    color: var(--color-crema);
+    font-weight: 550;
+    font-size: 0.94rem;
+    border-radius: 0;
+    transition: background 0.18s ease;
+  }
+
+  .btn-primary:hover {
+    background: #000;
+  }
+
+  /* Primary sobre fondo oscuro: mismo sistema que .btn-primary, un tono más claro
+     para que destaque sobre el hero (§16, §17). */
+  .btn-accent {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 46px;
+    padding: 0 22px;
+    border-radius: 0;
+    background: var(--color-crema);
+    border: 1px solid var(--color-crema);
+    color: var(--color-pizarra);
+    font-weight: 650;
+    font-size: 0.95rem;
+    transition: background 0.2s ease, transform 0.2s ease;
+  }
+
+  .btn-accent:hover {
+    background: #fff;
+  }
+
+  .btn-ghost {
+    display: inline-block;
+    border-radius: 999px;
+    border: 1px solid rgba(61, 35, 20, 0.32);
+    color: var(--color-cafe);
+    padding: 0.75rem 1.75rem;
+    font-weight: 600;
+    font-size: 0.925rem;
+    transition: background 0.2s ease, border-color 0.2s ease;
+  }
+
+  .btn-ghost:hover {
+    background: rgba(61, 35, 20, 0.06);
+    border-color: rgba(61, 35, 20, 0.48);
+  }
+
+  /* BADGES */
+  .badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    border-radius: 999px;
+    background: var(--color-crema-oscuro);
+    color: var(--color-latte-texto);
+    border: 1px solid rgba(217, 180, 143, 0.5);
+    padding: 0.3rem 0.9rem;
+    font-size: 0.75rem;
+    font-weight: 600;
+    letter-spacing: 0.02em;
+  }
+
+  .badge-verde {
+    background: color-mix(in srgb, var(--color-hoja) 14%, white);
+    color: var(--color-hoja);
+    border-color: color-mix(in srgb, var(--color-hoja) 42%, transparent);
+  }
+
+  .titulo-subrayado::after {
+    content: "";
+    display: block;
+    width: 52px;
+    height: 3px;
+    margin-top: 10px;
+    border-radius: 999px;
+    background: var(--color-green-700);
+  }
+
+  .legal-text {
+    max-width: 65ch;
+    font-size: 1rem;
+    line-height: 1.85;
+  }
+
+  .legal-text h1 {
+    line-height: 1.15;
+  }
+
+  .legal-text h2 {
+    margin-top: 2.5rem;
+    line-height: 1.25;
+  }
+
+  .legal-text ul,
+  .legal-text ol {
+    line-height: 1.8;
+  }
+
+  .text-center .titulo-subrayado::after,
+  .titulo-subrayado.text-center::after {
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  /* Animación fade-up */
+  .anim-fade-up {
+    animation: fadeUp 0.55s cubic-bezier(0.22, 1, 0.36, 1) both;
+  }
+
+  /* Fondo del héroe: un solo color, sin degradados. El contraste lo pone
+     la fotografía y la tipografía, no una transición de color. */
+  .hero-gradient {
+    background: var(--color-coffee-950);
+    position: relative;
+    overflow: hidden;
+  }
+
+
+
+  /* Vapor ascendiendo — remolinos suaves y luminosos */
+  .vapor {
+    position: absolute;
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.07);
+    filter: blur(6px);
+    animation: subeVapor 7s ease-in-out infinite;
+    pointer-events: none;
+  }
+
+  /* Patrón decorativo de granos — fondo sutil para secciones */
+  .granos-bg {
+    position: relative;
+  }
+  .granos-bg::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    opacity: 0.03;
+    background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cellipse cx='30' cy='30' rx='8' ry='12' fill='%233D2314' transform='rotate(-20 30 30)'/%3E%3Cline x1='22' y1='20' x2='38' y2='40' stroke='%233D2314' stroke-width='1.5'/%3E%3C/svg%3E");
+    background-size: 60px 60px;
+    pointer-events: none;
+  }
+
+  /* Granos con brillo especular — puntos blancos puros suaves,
+     como los aceites naturales que relucen sobre el grano tostado. */
+  .brillo-especular {
+    position: relative;
+    overflow: hidden;
+  }
+
+  .brillo-especular::after {
+    content: "";
+    position: absolute;
+    top: 6%;
+    left: 8%;
+    width: 42px;
+    height: 42px;
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.14);
+    filter: blur(2px);
+    pointer-events: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    scroll-behavior: auto !important;
+    transition-duration: 0.001ms !important;
+  }
+}
+
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(14px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes subeVapor {
+  0%   { transform: translateY(8px) scaleX(0.9); opacity: 0; }
+  30%  { opacity: 0.7; }
+  100% { transform: translateY(-40px) scaleX(1.15); opacity: 0; }
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   UTILITIES — overrides que DEBEN ganar a las utilidades generadas.
+   Tailwind v4 mezcla pizarra al 40-60% con transparent (color-mix),
+   lo que baja el ratio por debajo de 4.5:1. Aquí usamos tonos
+   sólidos que cumplen AA en fondos claros.
+   ═══════════════════════════════════════════════════════════════ */
+@layer utilities {
+  .text-pizarra\/40 { color: #6b5138; }  /* 5.6:1 sobre espuma #F4E6D4 */
+  .text-pizarra\/50 { color: #6b5138; }  /* 5.6:1 sobre espuma #F4E6D4 */
+  .text-pizarra\/60 { color: #5C3A21; }  /* 7.2:1 sobre espuma #F4E6D4 */
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   IMPRESIÓN — certificados y dossiers.
+   En papel solo se imprime el área .print-cert (el documento firmado),
+   ocultando navbar, botones y formularios.
+   ═══════════════════════════════════════════════════════════════ */
+@media print {
+  body {
+    background: #ffffff !important;
+    color: #000000 !important;
+  }
+
+  body * {
+    visibility: hidden;
+  }
+
+  .print-cert,
+  .print-cert * {
+    visibility: visible;
+  }
+
+  .print-cert {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+    max-width: 100%;
+  }
+
+  .print-cert .rounded-2xl {
+    border: 2px solid #3D2314 !important;
+    box-shadow: none !important;
+  }
+
+  .print-cert .rounded-2xl:hover {
+    transform: none !important;
+    box-shadow: none !important;
+  }
+
+  .no-print {
+    display: none !important;
+  }
+}
+
+/* ── §15 · contenedor global del documento V2.2 ── */
+.container {
+  width: min(100% - 48px, 1240px);
+  margin-inline: auto;
+}
+@media (max-width: 640px) {
+  .container { width: min(100% - 32px, 1240px); }
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   REGISTRO TÉCNICO
+   Cantos rectos, líneas de 1px y datos en monoespaciada. La interfaz
+   se lee como un instrumento de medida, no como un folleto.
+   ═══════════════════════════════════════════════════════════════ */
+@layer utilities {
+  /* Las utilidades de redondeo quedan neutralizadas: un cambio aquí evita
+     tocar las 600 apariciones repartidas por las páginas. */
+  .rounded-sm, .rounded, .rounded-md, .rounded-lg,
+  .rounded-xl, .rounded-2xl, .rounded-3xl { border-radius: 0 !important; }
+  /* Lo circular sí se conserva: avatares, puntos de estado, marcadores. */
+  .rounded-full { border-radius: 999px; }
+
+  /* Sombras difusas fuera: la jerarquía la marca la línea, no el desenfoque. */
+  .shadow-sm, .shadow, .shadow-md, .shadow-lg, .shadow-xl {
+    box-shadow: none !important;
+    border: 1px solid var(--color-arena);
+  }
+}
+
+@layer components {
+  /* Dato: número, código, coordenada, cualquier cosa que se mida. */
+  .dato {
+    font-family: var(--font-ficha);
+    font-variant-numeric: tabular-nums;
+    letter-spacing: -0.01em;
+  }
+
+  /* Etiqueta técnica: encabezado de campo, unidad, referencia. */
+  .rotulo {
+    font-family: var(--font-ficha);
+    font-size: 0.68rem;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--color-tostado);
+  }
+
+  /* Regla de medida: separador con marca, como una escala. */
+  .regla {
+    height: 1px;
+    background: var(--color-arena);
+    position: relative;
+  }
+  .regla::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: -3px;
+    width: 1px;
+    height: 7px;
+    background: var(--color-pizarra);
+  }
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   ESCALA COMPACTA
+   Un punto de control para toda la interfaz: los títulos bajan un
+   escalón y las secciones respiran menos. Evita reescribir las
+   más de 200 utilidades repartidas por las 31 páginas.
+   ═══════════════════════════════════════════════════════════════ */
+@layer utilities {
+  .text-7xl { font-size: 3.1rem; line-height: 1.02; }
+  .text-6xl { font-size: 2.7rem; line-height: 1.04; }
+  .text-5xl { font-size: 2.25rem; line-height: 1.08; }
+  .text-4xl { font-size: 1.85rem; line-height: 1.12; }
+  .text-3xl { font-size: 1.5rem;  line-height: 1.18; }
+  .text-2xl { font-size: 1.25rem; line-height: 1.25; }
+  .text-xl  { font-size: 1.08rem; line-height: 1.35; }
+  .text-lg  { font-size: 1rem;    line-height: 1.45; }
+
+  /* Secciones: menos aire vertical, sobre todo en móvil */
+  .py-24 { padding-top: 3.25rem; padding-bottom: 3.25rem; }
+  .py-20 { padding-top: 2.75rem; padding-bottom: 2.75rem; }
+  .py-16 { padding-top: 2.25rem; padding-bottom: 2.25rem; }
+  .py-14 { padding-top: 2rem;    padding-bottom: 2rem; }
+
+  /* Cajas: relleno contenido */
+  .p-8 { padding: 1.35rem; }
+  .p-7 { padding: 1.2rem; }
+  .p-6 { padding: 1.05rem; }
+  .p-5 { padding: 0.9rem; }
+
+  .gap-8 { gap: 1.3rem; }
+  .gap-7 { gap: 1.15rem; }
+  .gap-6 { gap: 1rem; }
+}
+
+@media (min-width: 768px) {
+  @layer utilities {
+    .py-24 { padding-top: 4.5rem; padding-bottom: 4.5rem; }
+    .py-20 { padding-top: 3.75rem; padding-bottom: 3.75rem; }
+    .py-16 { padding-top: 3rem; padding-bottom: 3rem; }
+    .p-8 { padding: 1.75rem; }
+    .p-7 { padding: 1.5rem; }
+    .p-6 { padding: 1.3rem; }
+  }
+}
+
+/* Declaración de derechos: también en formularios de la capa propia. */
+.redcafe-derechos { display: flex; align-items: flex-start; gap: .5rem; margin: .75rem 0; font-size: .875rem; line-height: 1.5; grid-column: 1 / -1; }
+.redcafe-derechos input[type="checkbox"] { width: 1rem; height: 1rem; flex: 0 0 1rem; margin-top: .2rem; }
