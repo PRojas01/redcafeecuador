@@ -14,6 +14,8 @@ def cliente():
 
 def pedir(op, ruta, datos=None, metodo=None, cab=None):
     url = BASE + ruta
+    # Los formularios del sitio envían la casilla de derechos marcada; aquí igual.
+    if isinstance(datos, dict) and "acepta_derechos" not in datos: datos = {**datos, "acepta_derechos": True}
     body = json.dumps(datos).encode() if datos is not None else None
     req = urllib.request.Request(url, data=body, method=metodo or ("POST" if body else "GET"))
     req.add_header("Content-Type", "application/json")

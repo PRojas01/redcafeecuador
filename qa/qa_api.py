@@ -145,6 +145,9 @@ caso("FUN-04", "Funcional", "El miembro ve su propia ficha completa", A["telefon
 lote = {"finca": "Finca Prueba", "provincia": "Loja", "variedad": "Typica", "proceso": "Lavado",
         "precioSaco": 250, "sacos": 10, "stockSacos": 10, "altura": 1800, "categoria": "verde"}
 st, _, r = pedir(ca, "/api/lotes.php?action=publish", lote)
+caso("VAL-02", "Validación", "No se publica un lote sin declarar los derechos", st == 422, f"HTTP {st}")
+lote["acepta_derechos"] = True
+st, _, r = pedir(ca, "/api/lotes.php?action=publish", lote)
 lote_id = ((js(r).get("data") or {}).get("lote") or {}).get("id", "")
 caso("FUN-05", "Funcional", "Productora publica lote", st == 200 and lote_id, f"HTTP {st} {js(r).get('error','')}")
 

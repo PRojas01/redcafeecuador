@@ -32,6 +32,8 @@ def cli():
 
 
 def api(op, ruta, datos=None):
+    # Los formularios del sitio envían la casilla de derechos marcada; aquí igual.
+    if isinstance(datos, dict) and "acepta_derechos" not in datos: datos = {**datos, "acepta_derechos": True}
     req = urllib.request.Request(BASE + ruta, data=json.dumps(datos).encode() if datos is not None else None,
                                  headers={"Content-Type": "application/json"})
     try:
