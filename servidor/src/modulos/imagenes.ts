@@ -1,3 +1,4 @@
+import { exigirDerechos } from "../lib/derechos.js";
 // Port de api/imagenes.php: imágenes de los huecos (slots) de la maqueta.
 // El catálogo es cerrado (mapa «slots», importado de data/slots.json) y el
 // almacén es el mapa «imagenes» {items: {clave: {...}}}.
@@ -97,6 +98,7 @@ const acciones: Modulo["acciones"] = {
         fail(`Cuota alcanzada: máximo ${MAX_POR_MIEMBRO} imágenes por miembro.`, 429);
       }
     }
+    const derechos = admin ? {} : await exigirDerechos(ctx, u!, "imagenes." + slot.ambito, recurso);
     const f = ctx.archivos.archivo;
     if (!f) fail("No se recibió ningún archivo.", 422);
     if (f.size <= 0) fail("Archivo vacío.", 422);
@@ -113,7 +115,7 @@ const acciones: Modulo["acciones"] = {
     await mutarMapa("imagenes", (m) => {
       m.items = m.items && typeof m.items === "object" && !Array.isArray(m.items) ? m.items : {};
       viejo = m.items[k]?.archivo;
-      m.items[k] = { slot: slot.id, recurso, archivo: nombre, peso: datos.length, ancho, alto, subido_por: admin ? "admin" : str(u?.id), nombre_subio: u?.nombre ?? "Admin de la Red", fecha: nowIso() };
+      m.items[k] = { ...derechos, slot: slot.id, recurso, archivo: nombre, peso: datos.length, ancho, alto, subido_por: admin ? "admin" : str(u?.id), nombre_subio: u?.nombre ?? "Admin de la Red", fecha: nowIso() };
       m.updated_at = nowIso();
       return m;
     });

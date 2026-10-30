@@ -1,3 +1,4 @@
+import { exigirDerechos } from "../lib/derechos.js";
 // Port de api/menu.php: carta de los bares.
 import { fail, type Modulo } from "../lib/http.js";
 import { listar, mutar } from "../lib/docs.js";
@@ -18,7 +19,8 @@ const acciones: Modulo["acciones"] = {
     if (largo(nombre) < 1 || largo(nombre) > 200) fail("Nombre requerido (máx 200 chars).", 422);
     if (precio <= 0 || precio > 10000) fail("Precio inválido.", 422);
     if (largo(desc) > 500) fail("Descripción demasiado larga.", 422);
-    const item = { id: uid(), owner_id: u.id, nombre, descripcion: desc, precio, categoria: textoEntrada(ctx.in.categoria ?? "Café", 60) || "Café", created_at: nowIso() };
+    const idItem = uid();
+    const item = { ...await exigirDerechos(ctx, u, "menu.add", idItem), id: idItem, owner_id: u.id, nombre, descripcion: desc, precio, categoria: textoEntrada(ctx.in.categoria ?? "Café", 60) || "Café", created_at: nowIso() };
     await mutar("menus", (l) => [...l, item]);
     return { item };
   },

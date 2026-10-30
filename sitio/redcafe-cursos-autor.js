@@ -182,6 +182,7 @@
           '<span class="redcafe-autor-metrica"><strong>' + m.pendientes + '</strong> pendientes de aprobar</span>' +
           '<span class="redcafe-autor-metrica"><strong>' + m.avanceMedio + ' %</strong> avance medio</span>' +
         '</div>' +
+        '<label class="redcafe-derechos"><input type="checkbox" name="acepta_derechos" required> Declaro que tengo los derechos sobre este contenido y asumo la responsabilidad ante cualquier reclamo de terceros.</label>' +
         selectorModo(c) +
         '<span class="redcafe-autor-estado" role="status" aria-live="polite"></span>' +
       '</header>' +
@@ -407,6 +408,12 @@
           }
         });
 
+        seccion.querySelectorAll('.redcafe-derechos input').forEach(function (input) {
+          var selector = input.closest('.redcafe-autor-curso').querySelector('[data-autor-modo]');
+          if (!selector) return;
+          selector.disabled = true;
+          input.addEventListener('change', function () { selector.disabled = !input.checked; });
+        });
         seccion.addEventListener("change", function (ev) {
           var sel = ev.target;
           if (!sel || !sel.getAttribute || sel.getAttribute("data-autor-modo") === null) return;
@@ -417,7 +424,7 @@
           json("/api/cursos.php?action=update", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ id: cursoId, acceso: sel.value })
+            body: JSON.stringify({ id: cursoId, acceso: sel.value, acepta_derechos: true })
           }).then(function (r) {
             if (r && r.ok) {
               cont.setAttribute("data-acceso", sel.value);

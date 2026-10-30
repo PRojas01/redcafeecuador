@@ -1,3 +1,4 @@
+import { exigirDerechos } from "../lib/derechos.js";
 // Port de api/cursos.php: la Academia (cursos, matrícula, avance, autoría).
 // Colecciones: «contenido-cursos» (cursos completos), «cursos» (catálogo
 // corto), y los mapas «inscripciones-cursos» {curso::uid} y
@@ -516,7 +517,7 @@ const acciones: Modulo["acciones"] = {
     const [ins, prog, ms] = await Promise.all([inscripciones(), progresoTodo(), miembrosPorId()]);
     const avisar = estudiantes(c, ins, prog, ms).estudiantes.filter((e) => ["matriculado", "aprobado"].includes(e.estado) && Date.now() - (Date.parse(e.ultima_actividad) || Date.now()) >= dias * 86400_000).map((e) => str(e.usuario_id));
     // La marca semanal se reserva bajo bloqueo antes de avisar: dos clics a la vez no duplican avisos.
-    await mutar("contenido-cursos", (cs) => {
+    await mutar("contenido-cursos", async (cs) => {
       const x = cs.find((y) => y.id === cid);
       if (!x) fail("Curso no encontrado.", 404);
       const previo = Date.parse(str(x.recordatorio_inactivos_en)) || 0;
@@ -538,11 +539,12 @@ const acciones: Modulo["acciones"] = {
     if (!puedePublicar(ctx, u)) fail("Para publicar cursos necesitas el perfil de Asesor Experto. Puedes añadirlo desde tu cuenta sin perder el que ya tienes: cada miembro puede tener hasta tres perfiles.", 403);
     if (!t(ctx.in.titulo)) fail("El curso necesita un título.", 422);
     let curso!: Doc;
-    await mutar("contenido-cursos", (cs) => {
+    await mutar("contenido-cursos", async (cs) => {
       const base = slug(str(ctx.in.titulo)) || "curso";
       let id = base, n = 2;
       while (porId(cs, id)) id = `${base}-${n++}`;
       curso = saneado(ctx.in, { id, nivel: "Básico", categoria: "general", duracion: "", modulos: [], asociados: [] });
+      Object.assign(curso, ctx.ses.d.admin ? {} : await exigirDerechos(ctx, u, "cursos.publish", id));
       Object.assign(curso, { autor: u.nombre ?? "Miembro de la Red", autor_id: u.id ?? "", created_at: nowIso() });
       return [...cs, curso];
     });
@@ -558,11 +560,12 @@ const acciones: Modulo["acciones"] = {
     const id = t(ctx.in.id ?? ctx.query.id);
     if (!id) fail("id requerido.", 422);
     let act!: Doc;
-    await mutar("contenido-cursos", (cs) => {
+    await mutar("contenido-cursos", async (cs) => {
       const k = cs.findIndex((c) => c.id === id);
       if (k < 0) fail("Curso no encontrado.", 404);
       if (!puedeEditar(ctx, cs[k], u)) fail("No autorizado: solo el autor del curso o un administrador puede editarlo.", 403);
       act = saneado(ctx.in, cs[k]);
+      if (!ctx.ses.d.admin) Object.assign(act, await exigirDerechos(ctx, u, "cursos.update", id));
       act.updated_at = nowIso(); act.updated_by = u.id ?? "";
       cs[k] = act;
       return cs;
@@ -575,7 +578,7 @@ const acciones: Modulo["acciones"] = {
     const u = await usuarioOAdmin(ctx);
     const id = t(ctx.in.id ?? ctx.query.id);
     if (!id) fail("id requerido.", 422);
-    await mutar("contenido-cursos", (cs) => {
+    await mutar("contenido-cursos", async (cs) => {
       const c = porId(cs, id);
       if (!c) fail("Curso no encontrado.", 404);
       if (!puedeEditar(ctx, c, u)) fail("No autorizado: solo el autor del curso o un administrador puede eliminarlo.", 403);
@@ -614,7 +617,7 @@ async function asociar(ctx: Ctx, alta: boolean) {
   if (!f) fail("Miembro no encontrado.", 404);
   const m = aDoc(f), mid = str(m.id), uid = str(u.id);
   let act!: Doc;
-  await mutar("contenido-cursos", (cs) => {
+  await mutar("contenido-cursos", async (cs) => {
     const c = cs.find((x) => str(x.id) === cid);
     if (!c) fail("Curso no encontrado.", 404);
     if (str(c.autor_id) !== uid) fail("Solo el autor real del curso puede gestionar personas asociadas.", 403);

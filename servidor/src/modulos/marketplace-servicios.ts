@@ -1,3 +1,4 @@
+import { exigirDerechos } from "../lib/derechos.js";
 // Port de api/marketplace-servicios.php (versión corregida).
 import { fail, type Ctx, type Modulo } from "../lib/http.js";
 import { listar, mutar, type Doc } from "../lib/docs.js";
@@ -164,8 +165,10 @@ const acciones: Modulo["acciones"] = {
     if (largo(descripcion) > 600) fail("Descripción demasiado larga.", 422);
     if (largo(provincia) > 80 || largo(cobertura) > 120 || largo(unidad) > 40) fail("Revisa provincia, cobertura o unidad.", 422);
     const wa = u.whatsapp || u.telefono || "";
+    const idServicio = uid();
     const servicio: Doc = {
-      id: uid(), titulo, categoria: categoriaValida(str(i.categoria ?? "otro").trim()), descripcion, provincia, cobertura,
+      ...await exigirDerechos(ctx, u, "marketplace-servicios.publish", idServicio),
+      id: idServicio, titulo, categoria: categoriaValida(str(i.categoria ?? "otro").trim()), descripcion, provincia, cobertura,
       precio: Math.max(0, num(i.precio)), unidad: unidad || "servicio", imagenes: imagenesValidas(i.imagenes),
       proveedor: u.nombre, proveedor_id: u.id, proveedor_rol: u.rol, proveedor_roles: miembroRoles(u),
       whatsapp: whatsappDisplay(wa), whatsapp_link: whatsappDigitos(wa), email: u.email ?? "",
@@ -194,11 +197,12 @@ const acciones: Modulo["acciones"] = {
     const i = ctx.in;
     const id = str(i.id ?? ctx.query.id).trim();
     if (!id) fail("id requerido.", 422);
+    const derechos = !ctx.ses.d.admin && "imagenes" in i ? await exigirDerechos(ctx, u, "marketplace-servicios.update", id) : {};
     let act: Doc | null = null;
     await mutar("servicios-terceros", (items) => items.map((s) => {
       if (s.id !== id) return s;
       if (ownerId(s) !== u.id && !tieneRol(ctx, u, "admin")) fail("No autorizado: solo el dueño o un administrador puede editar este servicio.", 403);
-      const x = { ...s };
+      const x: Doc = { ...s, ...derechos };
       for (const [f, max] of Object.entries({ titulo: 90, descripcion: 600, provincia: 80, cobertura: 120, unidad: 40 })) {
         if (!(f in i)) continue;
         const v = textoEntrada(i[f], max, f === "descripcion");

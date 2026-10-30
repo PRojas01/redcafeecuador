@@ -1,4 +1,5 @@
 "use client";
+import { DeclaracionDerechos } from "@/components/DeclaracionDerechos";
 
 import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
@@ -10,6 +11,7 @@ import { MuroComunidad, type EntradaMuro } from "@/components/MuroComunidad";
 import { CostesRed } from "@/components/CostesRed";
 
 export default function ComunidadPage() {
+  const [aceptaDerechos, setAceptaDerechos] = useState(false);
   const [posts, setPosts] = useState<EntradaMuro[]>([]);
   const [cargando, setCargando] = useState(true);
   const [me, setMe] = useState<ApiUser | null>(null);
@@ -40,12 +42,13 @@ export default function ComunidadPage() {
 
   const publicar = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (!aceptaDerechos) return;
     setError(null);
     if (!me) { setError("Inicia sesión para publicar."); return; }
     setSubiendo(true);
     const urls: string[] = [];
     for (const file of imagenes) {
-      const up = await api.uploadImage(file, "comunidad");
+      const up = await api.uploadImage(file, "comunidad", aceptaDerechos);
       if (!up.ok || !up.data?.url) {
         setSubiendo(false);
         setError(up.status === 401 ? "Tu sesión del servidor caducó. Vuelve a entrar para publicar." : up.error || "No pudimos subir una imagen.");
@@ -53,7 +56,7 @@ export default function ComunidadPage() {
       }
       urls.push(up.data.url);
     }
-    const r = await api.postCreate(titulo, text, urls);
+    const r = await api.postCreate(titulo, text, urls, aceptaDerechos);
     setSubiendo(false);
     if (!r.ok) {
       setError(r.status === 401 ? "Tu sesión del servidor caducó. Vuelve a entrar para publicar." : r.error || "Error");
@@ -130,7 +133,8 @@ export default function ComunidadPage() {
             )}
           </label>
           {error && <p className="rounded-xl bg-danger/10 p-3 text-sm font-semibold text-danger">{error}</p>}
-          <button disabled={subiendo} className="btn-primary disabled:opacity-60">{subiendo ? "Publicando..." : "Publicar"}</button>
+          <DeclaracionDerechos aceptado={aceptaDerechos} onChange={setAceptaDerechos} />
+          <button disabled={!aceptaDerechos || subiendo} className="btn-primary disabled:opacity-60">{subiendo ? "Publicando..." : "Publicar"}</button>
         </form>
       ) : (
         <div className="card mt-6 p-5 text-sm text-text-secondary">

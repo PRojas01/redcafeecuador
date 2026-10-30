@@ -1,3 +1,4 @@
+import { exigirDerechos } from "../lib/derechos.js";
 // Port de api/requerimientos.php («compro café») y sus ofertas.
 import { fail, type Ctx, type Modulo } from "../lib/http.js";
 import { listar, mutar, type Doc } from "../lib/docs.js";
@@ -106,6 +107,7 @@ const acciones: Modulo["acciones"] = {
     const u = await usuarioOAdmin(ctx);
     if (!puedePublicar(ctx, u)) fail("Tu perfil no publica requerimientos de café.", 403);
     const r = validar(ctx.in, u);
+    if (!ctx.ses.d.admin) Object.assign(r, await exigirDerechos(ctx, u, "requerimientos.publish", r.id));
     await mutar("requerimientos", (l) => [...l, r]);
     await registrarActividad(ctx, "requerimiento-publicado", { actor_id: u.id, actor: u.nombre, rol: u.rol, objeto_tipo: "requerimiento", objeto_id: r.id, detalle: r.titulo, ref: r.provincia });
     await publicarAvisoComunidad("requerimiento", r);
@@ -117,11 +119,12 @@ const acciones: Modulo["acciones"] = {
     const u = await usuarioOAdmin(ctx);
     const id = str(ctx.in.id ?? ctx.query.id).trim();
     if (!id) fail("ID requerido.", 422);
+    const derechos = ctx.ses.d.admin ? {} : await exigirDerechos(ctx, u, "requerimientos.update", id);
     let act: Doc | null = null;
     await mutar("requerimientos", (l) => l.map((r) => {
       if (str(r.id) !== id) return r;
       if (!autorizado(ctx, r, u)) fail("No autorizado.", 403);
-      act = validar(ctx.in, u, r);
+      act = { ...validar(ctx.in, u, r), ...derechos };
       return act;
     }));
     if (!act) fail("Requerimiento no encontrado.", 404);

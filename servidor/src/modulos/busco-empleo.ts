@@ -1,3 +1,4 @@
+import { exigirDerechos } from "../lib/derechos.js";
 // Port de api/busco-empleo.php: quien busca trabajo y quien se interesa.
 import { fail, type Ctx, type Modulo } from "../lib/http.js";
 import { listar, mutar, type Doc } from "../lib/docs.js";
@@ -90,6 +91,7 @@ const acciones: Modulo["acciones"] = {
     if (!(await cupo(ctx, "busqueda_publicar", 20, 3600))) fail("Demasiadas publicaciones seguidas. Vuelve a intentarlo en una hora.", 429);
     const u = await usuarioOAdmin(ctx);
     const b = validar(ctx.in, u);
+    if (!ctx.ses.d.admin) Object.assign(b, await exigirDerechos(ctx, u, "busco-empleo.publish", b.id));
     await mutar("busquedas-empleo", (l) => [...l, b]);
     await registrarActividad(ctx, "busqueda-empleo-publicada", { actor_id: u.id, actor: u.nombre, rol: u.rol, objeto_tipo: "busqueda-empleo", objeto_id: b.id, detalle: b.titulo, ref: b.provincia });
     return { busqueda: publica(ctx, b, u) };
@@ -99,11 +101,12 @@ const acciones: Modulo["acciones"] = {
     const u = await usuarioOAdmin(ctx);
     const id = str(ctx.in.id ?? ctx.query.id).trim();
     if (!id) fail("ID requerido.", 422);
+    const derechos = ctx.ses.d.admin ? {} : await exigirDerechos(ctx, u, "busco-empleo.update", id);
     let act: Doc | null = null;
     await mutar("busquedas-empleo", (l) => l.map((b) => {
       if (str(b.id) !== id) return b;
       if (!autorizado(ctx, b, u)) fail("No autorizado.", 403);
-      act = validar(ctx.in, u, b);
+      act = { ...validar(ctx.in, u, b), ...derechos };
       return act;
     }));
     if (!act) fail("Publicación no encontrada.", 404);

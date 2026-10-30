@@ -5375,3 +5375,5 @@ html:not(#o1):not(#o2):not(#o3):not(#o4) .redcafe-panel-next-card.is-primary h4 
 html:not(#o1):not(#o2):not(#o3):not(#o4) .redcafe-panel-next-card.is-primary span { color: rgba(255, 252, 247, .82) !important; }
 html:not(#o1):not(#o2):not(#o3):not(#o4) .redcafe-panel-next-card.is-primary a { background: var(--o-oro) !important; color: var(--o-espresso) !important; }
 html:not(#o1):not(#o2):not(#o3):not(#o4) .redcafe-panel-next-card.is-primary a:hover { background: var(--o-oro-suave) !important; }
+
+.redcafe-derechos{display:flex;align-items:flex-start;gap:.5rem;margin:1rem 0;font-size:.875rem;color:#33251d}.redcafe-derechos input{flex:none;margin-top:.2rem}

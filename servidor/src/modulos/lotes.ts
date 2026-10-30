@@ -1,3 +1,4 @@
+import { exigirDerechos } from "../lib/derechos.js";
 // Port de api/lotes.php (versión corregida).
 import { db } from "../lib/db.js";
 import { fail, type Ctx, type Modulo } from "../lib/http.js";
@@ -323,8 +324,10 @@ const acciones: Modulo["acciones"] = {
     const lat = num(latRaw), lng = num(lngRaw);
     const conUbic = esNumerico(latRaw) && esNumerico(lngRaw) && lat >= -5 && lat <= 2 && lng >= -82 && lng <= -75;
 
+    const idLote = uid();
     let lote: Doc = {
-      id: uid(),
+      ...await exigirDerechos(ctx, u, "lotes.publish", idLote),
+      id: idLote,
       categoria: cat,
       finca: textoEntrada(i.finca, 120),
       productor: u.nombre,
@@ -402,12 +405,13 @@ const acciones: Modulo["acciones"] = {
     }
     let actualizado: Doc | null = null;
     await lotesTodos();
-    await mutar("lotes", (items) => {
+    await mutar("lotes", async (items) => {
       const idx = items.findIndex((l) => l.id === id);
       if (idx < 0) return items;
       let l = items[idx];
       if (ownerId(l) !== actorId && !admin) fail("No autorizado: solo el dueño o un administrador puede editar este lote.", 403);
       const antes = JSON.stringify(l);
+      if (!admin && ["imagenes", "documentos"].some((k) => k in i)) Object.assign(l, await exigirDerechos(ctx, { id: actorId }, "lotes.update", id));
       if ("disponibilidad" in i) { const d = str(i.disponibilidad).trim().toLowerCase(); if (DISPONIBILIDADES.includes(d)) l.disponibilidad = d; }
       const topes: Record<string, number> = { finca: 120, provincia: 80, variedad: 80, proceso: 80, certificacion: 80, descripcion: 400, ventaMinima: 40 };
       for (const [f, max] of Object.entries(topes)) {

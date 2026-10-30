@@ -1,3 +1,4 @@
+import { exigirDerechos } from "../lib/derechos.js";
 // Port de api/empleos.php: bolsa de empleo y postulaciones.
 import { fail, type Ctx, type Modulo } from "../lib/http.js";
 import { listar, mutar, type Doc } from "../lib/docs.js";
@@ -96,6 +97,7 @@ const acciones: Modulo["acciones"] = {
     const u = await usuarioOAdmin(ctx);
     if (!puedeContratar(ctx, u)) fail("Este perfil puede postular, pero no publicar ofertas.", 403);
     const e = validar(ctx.in, u);
+    if (!ctx.ses.d.admin) Object.assign(e, await exigirDerechos(ctx, u, "empleos.publish", e.id));
     await mutar("empleos", (l) => [...l, e]);
     await registrarActividad(ctx, "empleo-publicado", { actor_id: u.id, actor: u.nombre, rol: u.rol, objeto_tipo: "empleo", objeto_id: e.id, detalle: e.titulo, ref: e.provincia });
     await publicarAvisoComunidad("empleo", e);
@@ -107,11 +109,12 @@ const acciones: Modulo["acciones"] = {
     const u = await usuarioOAdmin(ctx);
     const id = str(ctx.in.id ?? ctx.query.id).trim();
     if (!id) fail("ID requerido.", 422);
+    const derechos = ctx.ses.d.admin ? {} : await exigirDerechos(ctx, u, "empleos.update", id);
     let act: Doc | null = null;
     await mutar("empleos", (l) => l.map((e) => {
       if (str(e.id) !== id) return e;
       if (!autorizado(ctx, e, u)) fail("No autorizado.", 403);
-      act = validar(ctx.in, u, e);
+      act = { ...validar(ctx.in, u, e), ...derechos };
       return act;
     }));
     if (!act) fail("Oferta no encontrada.", 404);

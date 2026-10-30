@@ -310,17 +310,17 @@ export const api = {
   // --- Lotes ---
   lotesList: () => call(CONFIG.api("/api/lotes.php?action=list")),
   lotesAll: () => call<{ lotes: Lote[] }>(CONFIG.api("/api/lotes.php?action=all")),
-  lotePublish: (data: Partial<Lote>) => call(CONFIG.api("/api/lotes.php?action=publish"), j(data)),
-  loteUpdate: (id: string, data: Partial<Lote>) => call(CONFIG.api("/api/lotes.php?action=update&id=" + encodeURIComponent(id)), j(data)),
+  lotePublish: (data: Partial<Lote> & { acepta_derechos?: boolean }) => call(CONFIG.api("/api/lotes.php?action=publish"), j(data)),
+  loteUpdate: (id: string, data: Partial<Lote> & { acepta_derechos?: boolean }) => call(CONFIG.api("/api/lotes.php?action=update&id=" + encodeURIComponent(id)), j(data)),
   loteToggleOculto: (id: string) => call(CONFIG.api("/api/lotes.php?action=toggle_oculto&id=" + encodeURIComponent(id)), { method: "POST" }),
   loteDelete: (id: string) => call(CONFIG.api("/api/lotes.php?action=delete&id=" + encodeURIComponent(id)), { method: "POST" }),
 
   // --- Servicios de terceros en Marketplace ---
   marketplaceServiciosList: () =>
     call<{ servicios: MarketplaceServicio[] }>(CONFIG.api("/api/marketplace-servicios.php?action=list")),
-  marketplaceServicioPublish: (data: Partial<MarketplaceServicio>) =>
+  marketplaceServicioPublish: (data: Partial<MarketplaceServicio> & { acepta_derechos?: boolean }) =>
     call<{ servicio: MarketplaceServicio }>(CONFIG.api("/api/marketplace-servicios.php?action=publish"), j(data)),
-  marketplaceServicioUpdate: (id: string, data: Partial<MarketplaceServicio>) =>
+  marketplaceServicioUpdate: (id: string, data: Partial<MarketplaceServicio> & { acepta_derechos?: boolean }) =>
     call<{ servicio: MarketplaceServicio }>(CONFIG.api("/api/marketplace-servicios.php?action=update&id=" + encodeURIComponent(id)), j(data)),
   marketplaceServicioDelete: (id: string) =>
     call(CONFIG.api("/api/marketplace-servicios.php?action=delete&id=" + encodeURIComponent(id)), { method: "POST" }),
@@ -335,17 +335,18 @@ export const api = {
 
   // --- Comunidad ---
   postsList: () => call(CONFIG.api("/api/comunidad.php?action=list")),
-  postCreate: (titulo: string, text: string, imagenes: string[] = []) =>
-    call(CONFIG.api("/api/comunidad.php?action=create"), j({ titulo, text, imagenes })),
+  postCreate: (titulo: string, text: string, imagenes: string[] = [], acepta_derechos = false) =>
+    call(CONFIG.api("/api/comunidad.php?action=create"), j({ titulo, text, imagenes, acepta_derechos })),
   postLike: (id: string) => call(CONFIG.api("/api/comunidad.php?action=like"), j({ id })),
-  postComment: (id: string, text: string) => call(CONFIG.api("/api/comunidad.php?action=comment"), j({ id, text })),
+  postComment: (id: string, text: string, acepta_derechos = false) => call(CONFIG.api("/api/comunidad.php?action=comment"), j({ id, text, acepta_derechos })),
   postDelete: (id: string) => call(CONFIG.api("/api/comunidad.php?action=delete"), j({ id })),
 
   // --- Uploads de usuario ---
-  uploadImage: async (file: File, context: "comunidad" | "marketplace" | "lote") => {
+  uploadImage: async (file: File, context: "comunidad" | "marketplace" | "lote", aceptaDerechos = false) => {
     try {
       const form = new FormData();
       form.append("context", context);
+      form.append("acepta_derechos", String(aceptaDerechos));
       form.append("archivo", file);
       const res = await fetch(CONFIG.api("/api/uploads.php?action=image"), {
         method: "POST",
@@ -361,7 +362,7 @@ export const api = {
 
   // --- Menu (bar) ---
   menuList: (owner: string) => call(CONFIG.api("/api/menu.php?action=list&owner=" + encodeURIComponent(owner))),
-  menuAdd: (data: { nombre: string; descripcion: string; precio: number; categoria: string }) =>
+  menuAdd: (data: { nombre: string; descripcion: string; precio: number; categoria: string; acepta_derechos?: boolean }) =>
     call(CONFIG.api("/api/menu.php?action=add"), j(data)),
   menuDelete: (id: string) => call(CONFIG.api("/api/menu.php?action=delete&id=" + encodeURIComponent(id)), { method: "POST" }),
 
@@ -388,8 +389,8 @@ export const api = {
     call(CONFIG.api("/api/inventario.php?action=eliminar"), j({ id })),
 
   // --- Ratings (valoraciones) ---
-  ratingCreate: (ratedId: string, score: number, comentario: string, pedidoNro: number | null = null, tipo = "miembro") =>
-    call(CONFIG.api("/api/ratings.php?action=create"), j({ rated_id: ratedId, score, comentario, pedido_nro: pedidoNro, tipo })),
+  ratingCreate: (ratedId: string, score: number, comentario: string, pedidoNro: number | null = null, tipo = "miembro", acepta_derechos = false) =>
+    call(CONFIG.api("/api/ratings.php?action=create"), j({ rated_id: ratedId, score, comentario, pedido_nro: pedidoNro, tipo, acepta_derechos })),
   ratingPromedio: (id: string) => call(CONFIG.api("/api/ratings.php?action=promedio&id=" + encodeURIComponent(id))),
 
   // --- Servicios / Órdenes ---
