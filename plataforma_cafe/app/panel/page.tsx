@@ -2301,6 +2301,7 @@ function Certificados() {
 function MiCuenta({ sesion, onSesion }: { sesion: ApiUser; onSesion: (u: ApiUser) => void }) {
  const [nombreCuenta, setNombreCuenta] = useState(sesion.nombre ?? "");
  const [emailCuenta, setEmailCuenta] = useState(sesion.email ?? "");
+ const [passwordActualCuenta, setPasswordActualCuenta] = useState("");
  const [telefonoCuenta, setTelefonoCuenta] = useState(sesion.telefono ?? "");
  const [whatsappCuenta, setWhatsappCuenta] = useState(sesion.whatsapp ?? "");
  const [provinciaCuenta, setProvinciaCuenta] = useState(sesion.provincia ?? "");
@@ -2316,6 +2317,7 @@ function MiCuenta({ sesion, onSesion }: { sesion: ApiUser; onSesion: (u: ApiUser
  useEffect(() => {
  setNombreCuenta(sesion.nombre ?? "");
  setEmailCuenta(sesion.email ?? "");
+ setPasswordActualCuenta("");
  setTelefonoCuenta(sesion.telefono ?? "");
  setWhatsappCuenta(sesion.whatsapp ?? "");
  setProvinciaCuenta(sesion.provincia ?? "");
@@ -2331,6 +2333,7 @@ function MiCuenta({ sesion, onSesion }: { sesion: ApiUser; onSesion: (u: ApiUser
  const r = await api.memberUpdate({
   nombre: nombreCuenta,
   email: emailCuenta,
+  password_actual: passwordActualCuenta,
   telefono: telefonoCuenta,
   whatsapp: whatsappCuenta,
   provincia: provinciaCuenta,
@@ -2338,6 +2341,7 @@ function MiCuenta({ sesion, onSesion }: { sesion: ApiUser; onSesion: (u: ApiUser
  setLoading(false);
  if (r.ok && r.data) {
   const user = (r.data as { user: ApiUser }).user;
+  setPasswordActualCuenta("");
   setStoredSession(user);
   onSesion(user);
   setDatosMsg({ tipo: "ok", texto: "Datos de contacto actualizados." });
@@ -2407,6 +2411,12 @@ function MiCuenta({ sesion, onSesion }: { sesion: ApiUser; onSesion: (u: ApiUser
  <label className="block text-xs font-semibold text-pizarra/60">Correo de acceso</label>
  <input type="email" value={emailCuenta} onChange={(e) => setEmailCuenta(e.target.value)}
  required autoComplete="email" className="mt-1 w-full rounded-lg border border-cafe/20 px-3 py-2" />
+ </div>
+ <div>
+ <label className="block text-xs font-semibold text-pizarra/60">Contraseña actual (solo si cambias el correo)
+ <input type="password" value={passwordActualCuenta} onChange={(e) => setPasswordActualCuenta(e.target.value)}
+ autoComplete="current-password" className="mt-1 w-full rounded-lg border border-cafe/20 px-3 py-2" />
+ </label>
  </div>
  <div>
  <label className="block text-xs font-semibold text-pizarra/60">Teléfono de contacto</label>

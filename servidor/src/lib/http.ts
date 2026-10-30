@@ -58,6 +58,28 @@ export type Modulo = {
   guardia?: (ctx: Ctx, accion: string) => Promise<void> | void;
 };
 
+export const LIMITE_CUERPO = 12 * 1024 * 1024;
+
+/** Limita los bytes antes de usar los analizadores JSON o multipart. */
+export async function limitarCuerpo(req: Request): Promise<Request> {
+  const longitud = Number(req.headers.get("content-length"));
+  if (longitud > LIMITE_CUERPO) fail("El cuerpo de la petición supera el límite de 12 MB.", 413);
+  if (!req.body) return req;
+  const lector = req.body.getReader();
+  const partes: Uint8Array[] = [];
+  let total = 0;
+  try {
+    for (;;) {
+      const { done, value } = await lector.read();
+      if (done) break;
+      total += value.byteLength;
+      if (total > LIMITE_CUERPO) { await lector.cancel(); fail("El cuerpo de la petición supera el límite de 12 MB.", 413); }
+      partes.push(value);
+    }
+  } finally { lector.releaseLock(); }
+  return new Request(req.url, { method: req.method, headers: req.headers, body: new Blob(partes as BlobPart[]) });
+}
+
 /** Lee el cuerpo como lo hacía input() en PHP. */
 export async function leerEntrada(req: Request, query: Record<string, string>): Promise<{ in: Entrada; archivos: Record<string, File> }> {
   const archivos: Record<string, File> = {};

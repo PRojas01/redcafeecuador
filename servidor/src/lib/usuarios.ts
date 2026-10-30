@@ -200,3 +200,9 @@ export async function nombreDe(id: string): Promise<string> {
   const u = await db.usuario.findUnique({ where: { id }, select: { nombre: true } });
   return u?.nombre ?? "";
 }
+
+/** Datos del panel: documento sin credenciales y cédula parcialmente oculta. */
+export function miembroAdministracion(d: Doc): Doc {
+  const limpiar = (v: any): any => Array.isArray(v) ? v.map(limpiar) : v && typeof v === "object" ? Object.fromEntries(Object.entries(v).filter(([k]) => !/pass|secret|backup|token|cedulaCifrada|cedulaHuella|codigo.*respaldo/i.test(k)).map(([k, x]) => [k, k === "cedula" ? (str(x) ? "*".repeat(Math.max(0, str(x).length - 3)) + str(x).slice(-3) : "") : limpiar(x)])) : v;
+  return limpiar(d);
+}

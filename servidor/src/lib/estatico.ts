@@ -40,12 +40,7 @@ function resolver(ruta: string): string | null {
   // /uploads/ puede vivir fuera del sitio (REDCAFE_UPLOADS): un volumen persistente.
   const enUploads = /^\/uploads\//.test(ruta);
   const raiz = enUploads ? config.uploads : config.sitio;
-  let destino: string;
-  try {
-    destino = path.normalize(path.join(raiz, decodeURIComponent(enUploads ? ruta.slice("/uploads".length) : ruta)));
-  } catch {
-    return null;
-  }
+  const destino = path.normalize(path.join(raiz, enUploads ? ruta.slice("/uploads".length) : ruta));
   if (destino !== raiz && !destino.startsWith(raiz + path.sep)) return null;
   if (enUploads && !/\.(jpe?g|png|webp|pdf)$/i.test(destino)) return null;
   try {
@@ -71,6 +66,8 @@ function resolver(ruta: string): string | null {
 export function servirEstatico(ruta: string, https: boolean): Response {
   const h = new Headers();
   cabecerasSeguridad(h, https);
+  try { ruta = rutaCanonica(ruta); }
+  catch { return new Response("Ruta inválida.", { status: 400, headers: h }); }
   const bloqueo = prohibida(ruta);
   if (bloqueo) return new Response(bloqueo === 403 ? "Forbidden" : "Not Found", { status: bloqueo, headers: h });
   let archivo = resolver(ruta);
@@ -90,4 +87,12 @@ export function servirEstatico(ruta: string, https: boolean): Response {
     h.set("Content-Security-Policy", "default-src 'none'; img-src 'self'; style-src 'unsafe-inline'; sandbox");
   }
   return new Response(fs.readFileSync(archivo), { status: estado, headers: h });
+}
+
+/** Una sola decodificación antes de comprobar o resolver archivos. */
+export function rutaCanonica(ruta: string): string {
+  const decodificada = decodeURIComponent(ruta);
+  if (/%[0-9a-f]{2}/i.test(decodificada) || decodificada.includes("\\") || decodificada.includes("\0")) throw new Error("Ruta inválida.");
+  if (decodificada.split("/").includes("..")) throw new Error("Ruta inválida.");
+  return path.posix.normalize(decodificada);
 }

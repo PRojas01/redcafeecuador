@@ -50,6 +50,10 @@ export class EstadoSesion {
     return s;
   }
 
+  async revocarOtras(filtro: { admin: true } | { usuarioId: string }) {
+    await db.sesion.deleteMany({ where: { ...filtro, ...(this.hashLeido ? { tokenHash: { not: this.hashLeido } } : {}) } });
+  }
+
   /** Cambia algo de la sesión (se guarda al final de la petición). */
   set(cambios: Partial<DatosSesion>) {
     Object.assign(this.d, cambios);

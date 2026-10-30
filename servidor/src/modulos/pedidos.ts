@@ -104,11 +104,11 @@ const acciones: Modulo["acciones"] = {
     if (!(await cupo(ctx, "pedido_servicio", 30, 3600))) fail("Demasiadas solicitudes de servicio seguidas. Vuelve a intentarlo en una hora.", 429);
     const i = ctx.in;
     const servicioId = textoEntrada(i.servicioId ?? i.servicio_id, 120);
-    let titulo = textoEntrada(i.titulo ?? i.servicio ?? "Servicio", 120);
+    let titulo = "";
     const cantidad = Math.max(1, Math.min(1000, int(i.cantidad ?? 1)));
     if (!servicioId) fail("Servicio inválido.", 422);
 
-    // Proveedor, título y precio salen del catálogo, nunca del navegador.
+    // Título y precio salen del catálogo; solo se admite la ruta oficial del chat.
     const visible = await filtroVisible(ctx);
     const tercero = (await listar("servicios-terceros")).find((s) => str(s.id) === servicioId && !s.oculto && visible(s));
     let proveedorId: string, proveedor: string, precioUnit = 0;
@@ -116,13 +116,14 @@ const acciones: Modulo["acciones"] = {
       proveedorId = str(tercero.proveedor_id ?? tercero.owner_id);
       if (proveedorId === u.id) fail("No puedes solicitar tu propio servicio.", 422);
       proveedor = str(tercero.proveedor);
-      titulo = cortar(str(tercero.titulo) || titulo, 120);
+      titulo = cortar(str(tercero.titulo), 120);
       precioUnit = num(tercero.precio);
     } else {
       const oficial = (await listar("servicios")).find((s) => str(s.id) === servicioId);
-      if (oficial) { titulo = cortar(str(oficial.nombre) || titulo, 120); precioUnit = num(oficial.precio); }
+      if (!oficial || oficial.oculto || !visible(oficial)) fail("Servicio no encontrado.", 404);
+      titulo = cortar(str(oficial.nombre), 120); precioUnit = num(oficial.precio);
       // «redcafe» (marketplace) o «redcafe_admin» (catálogo antiguo): el chat del admin depende de ello.
-      proveedorId = str(i.proveedorId ?? i.proveedor_id) === "redcafe_admin" ? "redcafe_admin" : "redcafe";
+      proveedorId = str(oficial.proveedor_id) || (i.proveedorId === "redcafe_admin" ? "redcafe_admin" : "redcafe");
       proveedor = "Red Café Ecuador";
     }
     if ([...titulo].length < 2) fail("Servicio inválido.", 422);
@@ -180,6 +181,8 @@ const acciones: Modulo["acciones"] = {
     let act: Doc | null = null;
     await mutar("pedidos", (todos) => todos.map((p) => {
       if (int(p.nro) !== nro) return p;
+      if (!tieneRol(ctx, u, "admin") && ![p.solicitante_id, p.productor_id, p.proveedor_id].includes(u.id)) fail("No autorizado para cancelar este pedido.", 403);
+      if (p.estado === "Entregado") fail("Un pedido entregado no se puede cancelar.", 409);
       act = { ...p, estado: "Cancelado", updated_at: nowIso(), cancelled_by: u.id ?? "" };
       if (motivo) (act as Doc).motivo_cancelacion = motivo;
       return act;

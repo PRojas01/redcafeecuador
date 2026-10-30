@@ -2,7 +2,7 @@
 import { fail, type Modulo } from "../lib/http.js";
 import { listar, mutar } from "../lib/docs.js";
 import { requiereUsuario } from "../lib/usuarios.js";
-import { enviarAUsuario, vapid, vapidExiste } from "../lib/push.js";
+import { enviarAUsuario, validarEndpointPush, vapid, vapidExiste } from "../lib/push.js";
 import { cortar, nowIso, str } from "../lib/util.js";
 
 const mias = async (uid: string) => (await listar("push-suscripciones")).filter((s) => str(s.uid) === uid).length;
@@ -20,7 +20,7 @@ const acciones: Modulo["acciones"] = {
     const u = await requiereUsuario(ctx);
     const endpoint = str(ctx.in.endpoint).trim();
     const keys = ctx.in.keys && typeof ctx.in.keys === "object" ? (ctx.in.keys as Record<string, unknown>) : {};
-    if (!endpoint.startsWith("https://") || endpoint.length > 1000) fail("Endpoint push inválido.", 422);
+    validarEndpointPush(endpoint);
     if (!str(keys.p256dh) || !str(keys.auth)) fail("Claves push incompletas.", 422);
     const uid = str(u.id), agente = cortar(ctx.cabecera("user-agent"), 160);
     await mutar("push-suscripciones", (todas) => {
