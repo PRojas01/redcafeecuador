@@ -501,3 +501,57 @@ html:not(#o1):not(#o2):not(#o3):not(#o4) .redcafe-panel-next-card.is-primary h4 
 html:not(#o1):not(#o2):not(#o3):not(#o4) .redcafe-panel-next-card.is-primary span { color: rgba(255, 252, 247, .82) !important; }
 html:not(#o1):not(#o2):not(#o3):not(#o4) .redcafe-panel-next-card.is-primary a { background: var(--o-oro) !important; color: var(--o-espresso) !important; }
 html:not(#o1):not(#o2):not(#o3):not(#o4) .redcafe-panel-next-card.is-primary a:hover { background: var(--o-oro-suave) !important; }
+
+/* ---------- Móvil compacto (31-oct-2026) ---------------------------------
+   En teléfonos: menos aire entre bloques y textos algo más pequeños, para ver
+   más contenido por pantalla. Mantiene áreas táctiles de 44 px y los campos
+   a 16 px (iOS no hace zoom). Escritorio sin cambios. */
+@media (max-width: 640px) {
+  /* Cabecera más baja */
+  html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5) body > header > div:first-child { padding-top: .35rem !important; padding-bottom: .35rem !important; }
+  html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5) body > header > div:first-child > a > svg { width: 1.9rem !important; height: 1.9rem !important; }
+
+  /* Títulos */
+  html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5) body h1,
+  html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5) body :is(main, [data-redcafe-propio]) :is(.text-4xl, .text-5xl, .text-6xl):not(span) {
+    font-size: 1.62rem !important; line-height: 1.12 !important;
+  }
+  html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5) body h2,
+  html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5) body :is(main, [data-redcafe-propio]) .text-3xl:not(span):not(h1) {
+    font-size: 1.3rem !important; line-height: 1.18 !important;
+  }
+  html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5) body :is(main, [data-redcafe-propio], .redcafe-avisos-panel) :is(h3, h4, h5),
+  html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5) body :is(main, [data-redcafe-propio]) :is(.text-2xl, .text-xl):not(span):not(h1):not(h2) {
+    font-size: 1rem !important; line-height: 1.3 !important;
+  }
+
+  /* Texto: cuerpo 14 px, secundario 12,5 px */
+  html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5) body :is(main, footer, [data-redcafe-propio]) :is(p, li, td, dd, dt, blockquote, figcaption, summary):not(.badge):not(.rotulo):not(.uppercase):not([class*="rotulo"]):not([class*="etiqueta"]):not([class*="-tag"]) {
+    font-size: 14px !important; line-height: 1.5 !important;
+  }
+  html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5) body :is(main, footer, [data-redcafe-propio]) :is(small, time, .text-sm, .text-xs, [class*="-meta"], [class*="fecha"], [class*="ayuda"], [class*="-nota"], [class*="hint"]):not(.badge):not(.uppercase):not([class*="rotulo"]):not(input):not(select):not(textarea) {
+    font-size: 12.5px !important; line-height: 1.4 !important;
+  }
+  html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5) body :is(main, [data-redcafe-propio]) .text-lg:not(h1):not(h2):not(h3) { font-size: 15px !important; }
+  html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5) body :is(.badge, .redcafe-home-price-kicker) { font-size: 10.5px !important; padding: .22rem .62rem !important; }
+  html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5) body :is(.btn-primary, .btn-accent, .btn-ghost, .btn-secondary) { font-size: 14px !important; }
+  html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5) body #portada-hero .portada-botones .btn-accent { min-height: 44px !important; }
+  html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5) body #portada-hero .portada-botones { gap: .45rem !important; }
+
+  /* Bloques: menos relleno vertical */
+  html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5) body :is(main, footer) :is(section, .py-10, .py-12, .py-14, .py-16, .py-20, .py-24) { padding-top: 1.25rem !important; padding-bottom: 1.25rem !important; }
+  html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5) body :is(main, footer) :is(.pt-10, .pt-12, .pt-14, .pt-16, .pt-20) { padding-top: 1.5rem !important; }
+  html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5) body :is(main, footer) :is(.pb-8, .pb-10, .pb-12, .pb-14, .pb-16, .pb-20) { padding-bottom: 1.25rem !important; }
+  html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5) body :is(main, footer) :is(.p-6, .p-7, .p-8, .p-10) { padding: 1rem !important; }
+  html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5) body :is(main, footer) .p-5 { padding: .875rem !important; }
+  html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5) body :is(main, footer) :is(.mt-8, .mt-10, .mt-12, .mt-16) { margin-top: 1.25rem !important; }
+  html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5) body :is(main, footer) :is(.mt-5, .mt-6) { margin-top: .875rem !important; }
+  html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5) body :is(main, footer) :is(.mb-8, .mb-10, .mb-12, .mb-16) { margin-bottom: 1.25rem !important; }
+  html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5) body :is(main, footer) :is(.mb-5, .mb-6) { margin-bottom: .875rem !important; }
+  html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5) body :is(main, footer) :is(.gap-8, .gap-10, .gap-12, .gap-16) { gap: 1.25rem !important; }
+  html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5) body :is(main, footer) :is(.gap-5, .gap-6) { gap: .875rem !important; }
+  html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5) body :is(main, footer) :is(.space-y-6, .space-y-8, .space-y-10) > :not(:first-child) { margin-top: 1rem !important; }
+  html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5) body :is(main, footer) :is(.space-y-4, .space-y-5) > :not(:first-child) { margin-top: .75rem !important; }
+  html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5) body main :is(h1, h2) + p { margin-top: .5rem !important; }
+  html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5) body :is(.rce-error, .redcafe-notif-vacio) { padding-top: 1.25rem !important; padding-bottom: 1.25rem !important; }
+}
