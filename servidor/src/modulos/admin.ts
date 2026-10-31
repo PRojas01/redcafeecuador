@@ -5,13 +5,15 @@
 //  · Editar un miembro solo toca campos de perfil; nunca la contraseña, el
 //    2FA ni el permiso de administración. No se crean miembros por aquí.
 //  · Todas las escrituras son atómicas (el PHP leía y reescribía sin bloqueo).
+import { borrarMiembro } from "../lib/borrado.js";
 import { Prisma } from "@prisma/client";
 import { Cruda, fail, type Ctx, type Modulo } from "../lib/http.js";
 import { listar, mutar, type Doc } from "../lib/docs.js";
 import { db } from "../lib/db.js";
 import { miembroAdministracion, requiereAdmin, todosLosMiembros, validarRoles } from "../lib/usuarios.js";
 import { cifrar, huella } from "../lib/pii.js";
-import { emailValido, nowIso, str } from "../lib/util.js";
+import { emailValido, nowIso, str, uid } from "../lib/util.js";
+import { registrarActividad } from "../lib/avisos.js";
 
 const RECURSOS = ["members", "pedidos", "lotes", "ratings", "chats", "posts", "waitlist", "consents"] as const;
 const DATOS = ["cursos", "planes"];
@@ -152,9 +154,12 @@ const acciones: Modulo["acciones"] = {
     const r = recursoDe(ctx), id = idDe(ctx);
     if (!id) fail("id requerido.");
     if (r === "members") {
-      const n = await db.usuario.deleteMany({ where: { id } });
-      if (!n.count) fail("id no encontrado.", 404);
-      return { deleted: id };
+      if (!(await db.usuario.findUnique({ where: { id }, select: { id: true } }))) fail("id no encontrado.", 404);
+      // Mismo borrado completo que la baja voluntaria (LOPDP).
+      const eliminado = await borrarMiembro(id);
+      await mutar("bajas", (b) => [...b, { id: uid(), uid: id, fecha: nowIso(), motivo: "eliminado por administración", eliminado }]);
+      await registrarActividad(ctx, "cuenta-eliminada", { actor: "administración", objeto_tipo: "miembro", objeto_id: id, detalle: "eliminado por administración" });
+      return { deleted: id, eliminado };
     }
     if (r === "consents") fail("Los consentimientos se conservan como prueba legal.", 422);
     if (esRecurso(r) || DATOS.includes(r)) {

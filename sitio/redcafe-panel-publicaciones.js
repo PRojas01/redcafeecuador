@@ -1682,3 +1682,69 @@
   // igual, y las secciones de la ruta anterior ya las retiró redcafe-ruta.js.
   document.addEventListener("redcafe:ruta", function () { setTimeout(iniciar, 900); });
 })();
+
+/* Red Café Ecuador — «Descargar mis datos» en /panel/ (LOPDP: acceso y portabilidad).
+   Añade un botón junto a «Cerrar mi cuenta y eliminar mis datos». No toca los
+   nodos de React: inserta un bloque propio después de que React hidrate. */
+(function () {
+  "use strict";
+  var ID = "redcafe-mis-datos";
+
+  function descargar(boton) {
+    boton.disabled = true;
+    var texto = boton.textContent;
+    boton.textContent = "Preparando…";
+    fetch("/api/members.php?action=mis_datos", { credentials: "same-origin", headers: { Accept: "application/json" } })
+      .then(function (r) { return r.json(); })
+      .then(function (res) {
+        if (!res || !res.ok) throw new Error((res && res.error) || "No se pudo preparar la descarga.");
+        var blob = new Blob([JSON.stringify(res.data.datos, null, 2)], { type: "application/json" });
+        var a = document.createElement("a");
+        a.href = URL.createObjectURL(blob);
+        a.download = "mis-datos-redcafe-" + new Date().toISOString().slice(0, 10) + ".json";
+        document.body.appendChild(a);
+        a.click();
+        setTimeout(function () { URL.revokeObjectURL(a.href); a.remove(); }, 1000);
+      })
+      .catch(function (e) { alert(e.message || "No se pudo preparar la descarga."); })
+      .then(function () { boton.disabled = false; boton.textContent = texto; });
+  }
+
+  function montar() {
+    if (document.getElementById(ID)) return true;
+    var main = document.querySelector("main");
+    if (!main) return false;
+    var ancla = null, nodos = main.querySelectorAll("summary, h2, h3, button");
+    for (var i = 0; i < nodos.length; i++) {
+      if (/cerrar mi cuenta/i.test(nodos[i].textContent || "")) { ancla = nodos[i].closest("details, section, div"); break; }
+    }
+    var caja = document.createElement("div");
+    caja.id = ID;
+    caja.className = "mt-4 rounded-xl border p-4 text-sm";
+    var p = document.createElement("p");
+    p.textContent = "Puedes descargar una copia de todos tus datos en la Red (perfil, publicaciones, mensajes, valoraciones, matrículas) en formato JSON.";
+    var b = document.createElement("button");
+    b.type = "button";
+    b.className = "mt-2 rounded-lg border px-3 py-2 font-semibold";
+    b.textContent = "Descargar mis datos";
+    b.addEventListener("click", function () { descargar(b); });
+    caja.appendChild(p);
+    caja.appendChild(b);
+    if (ancla && ancla.parentNode) ancla.parentNode.insertBefore(caja, ancla);
+    else main.appendChild(caja);
+    return true;
+  }
+
+  var intentos = 0;
+  function iniciar() {
+    if (location.pathname.indexOf("/panel") !== 0) return;
+    if (!window.__redcafeReactListo || !window.__redcafeReactListo()) { if (++intentos < 50) setTimeout(iniciar, 250); return; }
+    fetch("/api/auth.php?action=me", { credentials: "same-origin" }).then(function (r) { return r.json(); }).then(function (res) {
+      if (res && res.ok && res.data && res.data.user && res.data.user.id) montar();
+    }).catch(function () {});
+  }
+
+  if (document.readyState === "complete") setTimeout(iniciar, 1500);
+  else window.addEventListener("load", function () { setTimeout(iniciar, 1500); }, { once: true });
+  document.addEventListener("redcafe:ruta", function () { intentos = 0; setTimeout(iniciar, 1200); });
+})();

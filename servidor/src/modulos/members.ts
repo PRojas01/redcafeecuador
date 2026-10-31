@@ -8,6 +8,7 @@ import {
 } from "../lib/usuarios.js";
 import { emailValido, largo, nowIso, str, textoEntrada } from "../lib/util.js";
 import { cupo } from "../lib/seguridad.js";
+import { datosDeMiembro } from "../lib/borrado.js";
 import { extraCon, verificarPass } from "./auth.js";
 
 async function bloqueosQuitarPerfiles(userId: string, actuales: string[], nuevos: string[]): Promise<string[]> {
@@ -38,6 +39,13 @@ async function bloqueosQuitarPerfiles(userId: string, actuales: string[], nuevos
 }
 
 const acciones: Modulo["acciones"] = {
+  // «Descargar mis datos» (LOPDP): copia en JSON de todo lo que guarda la Red.
+  async mis_datos(ctx) {
+    const u = await requiereUsuario(ctx);
+    if (!(await cupo(ctx, "mis_datos:" + u.id, 10, 3600))) fail("Demasiadas descargas seguidas. Vuelve a intentarlo en una hora.", 429);
+    return { datos: await datosDeMiembro(str(u.id)) };
+  },
+
   async list(ctx) {
     await requiereUsuario(ctx);
     let miembros = await todosLosMiembros();

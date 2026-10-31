@@ -1,4 +1,5 @@
 // Port de api/moderacion.php: sanciones con debido proceso y baja voluntaria.
+import { borrarMiembro, pedidosAbiertos } from "../lib/borrado.js";
 import { fail, type Ctx, type Modulo } from "../lib/http.js";
 import { listar, mapa, mutar, mutarMapa, type Doc } from "../lib/docs.js";
 import { cupo } from "../lib/seguridad.js";
@@ -257,48 +258,13 @@ const acciones: Modulo["acciones"] = {
     if (str(ctx.in.confirmacion).trim() !== "ELIMINAR") fail("Escribe ELIMINAR para confirmar.", 422);
     const fila = await db.usuario.findUnique({ where: { id: u.id } });
     if (!fila || !(await verificarPass(str(ctx.in.pass), fila.passHash))) fail("La contraseña no es correcta.", 401);
-    const abiertos = (await listar("pedidos")).filter((p) => [p.solicitante_id, p.productor_id, p.proveedor_id].includes(u.id) && !["entregado", "cancelado"].includes(str(p.estado).toLowerCase()));
+    const abiertos = await pedidosAbiertos(u.id);
     if (abiertos.length) fail(`Tienes ${abiertos.length} pedido(s) en curso. Complétalos o cancélalos antes de cerrar tu cuenta.`, 409, { pedidos: abiertos.map((p) => ({ nro: p.nro ?? "", estado: p.estado ?? "" })) });
 
     const motivo = cortar(str(ctx.in.motivo).trim(), 300);
-    const resumen: Record<string, number> = { lotes: 0, servicios: 0, publicaciones: 0, requerimientos: 0, empleos: 0, busquedas: 0 };
-    const deEl = suyo(u.id);
-    for (const [archivo, clave] of Object.entries({ lotes: "lotes", "servicios-terceros": "servicios", posts: "publicaciones", requerimientos: "requerimientos", empleos: "empleos", "busquedas-empleo": "busquedas" })) {
-      await mutar(archivo, (items) => {
-        const antes = items.length;
-        let quedan = items.filter((x) => !deEl(x));
-        resumen[clave] = antes - quedan.length;
-        if (clave === "publicaciones") {
-          quedan = quedan.map((p) => (Array.isArray(p.comments) ? { ...p, comments: p.comments.map((c: Doc) => (c.autor_id === u.id ? { ...c, autor: "Miembro que dejó la Red", autor_id: "" } : c)) } : p));
-        }
-        return quedan;
-      });
-    }
-    await mutar("pedidos", (ps) => ps.map((p) => {
-      const x = { ...p };
-      for (const [k, campo] of [["solicitante_id", "solicitante"], ["productor_id", "productor"], ["proveedor_id", "proveedor"]]) {
-        if (str(x[k]) !== u.id) continue;
-        x[campo] = "Miembro que dejó la Red";
-        for (const c of ["email", "telefono", "whatsapp", `${campo}_email`, `${campo}_telefono`, `${campo}_whatsapp`]) delete x[c];
-      }
-      return x;
-    }));
-    await mutar("notificaciones", (ns) => ns.filter((n) => str(n.uid) !== u.id));
-    // Registro mínimo e ilegible: sin nombre, contacto ni contraseña.
-    await db.$transaction([
-      db.usuario.update({
-        where: { id: u.id },
-        data: {
-          nombre: "Miembro que dejó la Red", email: `eliminado+${u.id}@invalid`, passHash: "", estado: "eliminado", activo: false, rol: "eliminado", roles: [],
-          visibilidad: "privado", telefono: "", whatsapp: "", provincia: "", cedulaCifrada: "", cedulaHuella: "", dosFactores: false, extra: { eliminado_en: nowIso() },
-        },
-      }),
-      db.sesion.deleteMany({ where: { usuarioId: u.id } }),
-      db.codigoRespaldo.deleteMany({ where: { usuarioId: u.id } }),
-    ]);
-    await mutarMapa("notas-admin", (t) => { const x = { ...t }; delete x["u:" + u.id]; return x; });
+    const resumen = await borrarMiembro(u.id);
     await mutar("bajas", (b) => [...b, { id: uid(), uid: u.id, fecha: nowIso(), motivo, eliminado: resumen }]);
-    await registrarActividad(ctx, "cuenta-eliminada", { actor_id: u.id, actor: "titular", objeto_tipo: "miembro", objeto_id: u.id, detalle: "baja voluntaria" });
+    await registrarActividad(ctx, "cuenta-eliminada", { actor_id: "", actor: "titular", objeto_tipo: "miembro", objeto_id: u.id, detalle: "baja voluntaria" });
     if (emailValido(str(u.email))) await enviarCorreo("baja", u.email, { nombre: u.nombre });
     ctx.ses.destruir();
     return { eliminado: resumen };
