@@ -1,0 +1,7 @@
+Eres auditor de seguridad. El servidor Node (Hono + Prisma + MySQL) se publicará hoy en GoDaddy. Revisa SOLO el código de esta parte y busca:
+- secretos o contraseñas escritos en el código; valores por defecto inseguros;
+- variables de entorno REDCAFE_*: cuáles se leen y qué pasa si faltan en producción;
+- REDCAFE_IMPORTACION y REDCAFE_PASS_ADMIN_RESTABLECER: si pueden quedar activas;
+- rutas de archivos REDCAFE_UPLOADS y REDCAFE_PRIVADO: si lo privado podría servirse en público o si las rutas caen dentro de la carpeta del despliegue;
+- errores que impidan arrancar; rutas admin o de archivos sin control de acceso.
+Responde en español, máximo 12 viñetas, cada una «archivo:línea — problema — corrección». Usa solo los números de línea que ves. Si no hay nada relevante, escribe «Sin hallazgos». No inventes código que no esté aquí.
