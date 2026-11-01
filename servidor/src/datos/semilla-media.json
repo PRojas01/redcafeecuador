@@ -1,0 +1,111 @@
+[
+    {
+        "id": "video-catacion-geisha",
+        "tipo": "video",
+        "titulo": "[Ejemplo] Cata profesional de Geisha de Loja",
+        "descripcion": "(nombre de ejemplo), Q-Grader, evalúa un microlote de Geisha lavado: fragancia, sabor, retrogusto, balance.",
+        "embed": "",
+        "thumbnail": "",
+        "autor": "Red Café Ecuador",
+        "fecha": "2026-08-05",
+        "categoria": "catacion",
+        "tags": [
+            "geisha",
+            "loja",
+            "q-grader",
+            "catacion"
+        ],
+        "redes": {
+            "youtube": "https://www.youtube.com/@RedCaf%C3%A9Ecuador"
+        },
+        "ejemplo": true
+    },
+    {
+        "id": "video-barismo-latte-art",
+        "tipo": "video",
+        "titulo": "[Ejemplo] Latte art: roseta básica en 3 pasos",
+        "descripcion": "(nombre de ejemplo), barista certificado, enseña la roseta básica para cafeterías afiliadas.",
+        "embed": "",
+        "thumbnail": "",
+        "autor": "Red Café Ecuador",
+        "fecha": "2026-07-22",
+        "categoria": "barismo",
+        "tags": [
+            "barismo",
+            "latte-art",
+            "capacitacion"
+        ],
+        "redes": [],
+        "ejemplo": true
+    },
+    {
+        "id": "video-origen-zamora",
+        "tipo": "video",
+        "titulo": "[Ejemplo] De la finca a la taza: recorrido por Zamora",
+        "descripcion": "Reportaje en finca de (nombre de ejemplo): cosecha selectiva, beneficio, secado en patio y embarque a Corea.",
+        "embed": "",
+        "thumbnail": "",
+        "autor": "Red Café Ecuador",
+        "fecha": "2026-07-10",
+        "categoria": "origen",
+        "tags": [
+            "zamora",
+            "sidra",
+            "origen",
+            "corea"
+        ],
+        "ejemplo": true
+    },
+    {
+        "id": "video-receta-cold-brew",
+        "tipo": "video",
+        "titulo": "[Ejemplo] Cold brew de café ecuatoriano para tu barra",
+        "descripcion": "Receta 1:8 con Geisha, 18h en nevera. Filtra y sirve con hielo.",
+        "embed": "",
+        "thumbnail": "",
+        "autor": "Red Café Ecuador",
+        "fecha": "2026-06-30",
+        "categoria": "recetas",
+        "tags": [
+            "cold-brew",
+            "recetas",
+            "barra"
+        ],
+        "ejemplo": true
+    },
+    {
+        "id": "reportaje-productores-loja",
+        "tipo": "reportaje",
+        "titulo": "[Ejemplo] 8 productores de Loja que están cambiando el café ecuatoriano",
+        "descripcion": "Perfiles, fincas y procesos de ocho caficultores lojanos que llevan su café a mercados premium de Japón, Corea y EE.UU.",
+        "imagen": "",
+        "autor": "Red Café Ecuador",
+        "fecha": "2026-08-12",
+        "categoria": "productores",
+        "tags": [
+            "loja",
+            "productores",
+            "especialidad"
+        ],
+        "ejemplo": true,
+        "cuerpo": "Loja es, desde hace años, la provincia con mayor densidad de cafés de especialidad del Ecuador. En este reportaje visitamos ocho fincas que están marcando tendencia:\n\n1. Finca El Paraíso ((nombre de ejemplo)) — Geisha lavado con perfil floral.\n2. Finca La Soledad ((nombre de ejemplo)) — Sidra natural de proceso experimental.\n3. Finca Valles del Cóndor — Typica tradicional con secado lento.\n4. ...\n\nCada uno de estos productores encontró en la Red Café Ecuador un canal directo para llegar a compradores internacionales sin intermediarios."
+    },
+    {
+        "id": "reportaje-becadas-barismo",
+        "tipo": "reportaje",
+        "titulo": "[Ejemplo] Las 12 becadas 2026 en barismo ya están listas",
+        "descripcion": "Programa anual de becas para mujeres baristas de zonas cafeteras. Conoce a las seleccionadas y sus proyectos.",
+        "imagen": "",
+        "autor": "Red Café Ecuador",
+        "fecha": "2026-07-15",
+        "categoria": "eventos",
+        "tags": [
+            "becas",
+            "barismo",
+            "mujeres",
+            "academia"
+        ],
+        "ejemplo": true,
+        "cuerpo": "Este año 2026 entregamos 12 becas completas a mujeres baristas de Manabí, Loja, Zamora y Sucumbíos. Cada becada recibe:\n\n- Curso intensivo de 3 meses.\n- Materiales de barismo profesional.\n- Vinculación a una barra afiliada.\n- Mentoría con baristas senior.\n\nLas postulaciones para 2027 abren en noviembre."
+    }
+]

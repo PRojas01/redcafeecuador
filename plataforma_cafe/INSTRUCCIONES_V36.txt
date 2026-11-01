@@ -1,0 +1,71 @@
+INSTRUCCIONES DE DESPLIEGUE — RED CAFÉ ECUADOR v36
+===================================================
+Fecha: 24 de agosto de 2026
+Tamaño: ~8.3 MB
+
+RESUMEN DE CAMBIOS v36
+======================
+- Sistema de cotizaciones gratuito entre usuarios
+- Flujo: Solicitar → Enviar → Aceptar/Rechazar → Conversión automática a pedido
+- Nueva pestaña "Cotizaciones" en todos los perfiles de usuario
+- Admin: nueva pestaña "Cotizaciones" con filtro por estado
+- API: 8 nuevas acciones (solicitar, enviar, aceptar, rechazar, cancelar, recibidas, estadísticas, all)
+- Notificación por email al recibir cotización
+
+ARCHIVOS NUEVOS
+===============
+- public/api/cotizaciones.php — API completa de cotizaciones
+- components/CotizacionesPanel.tsx — Panel unificado para usuario
+- INSTRUCCIONES_V36.txt — Este archivo
+
+ARCHIVOS MODIFICADOS
+====================
+- public/api/_bootstrap.php — Agregado 'cotizaciones' al whitelist
+- lib/api.ts — +10 endpoints de cotizaciones
+- app/panel/page.tsx — +pestaña "Cotizaciones" en todos los roles
+- app/admin/page.tsx — +pestaña "Cotizaciones" + CotizacionesAdminTab
+
+FLUJO DEL SISTEMA
+=================
+1. Comprador/vendedor/bar SOLICITA cotización a un productor/vendedor
+2. Productor/vendedor RECIBE la solicitud y ENVÍA su respuesta con precio
+3. Solicitante ACEPTA o RECHAZA la cotización
+4. Al ACEPTAR: se crea automáticamente un pedido (data/pedidos.json)
+5. El pedido aparece en "Mis órdenes" del productor y comprador
+
+DATOS
+=====
+- Archivo: data/cotizaciones.json (se crea automáticamente al primer uso)
+- El archivo NO debe editarse manualmente
+- Se recomienda respaldar periódicamente
+
+DESPLIEGUE EN cPanel
+====================
+1. Subir los archivos al directorio del proyecto en GoDaddy
+2. En File Manager de cPanel, ir a la carpeta del proyecto
+3. Subir el ZIP y extraerlo
+4. Reemplazar los archivos existentes (NO eliminar data/)
+5. Verificar que data/cotizaciones.json tenga permisos 644
+6. Verificar que public/api/cotizaciones.php tenga permisos 644
+
+VARIABLES DE ENTorno
+====================
+Ninguna nueva requerida. Las mismas de v35.
+
+NOTAS
+=====
+- Las cotizaciones son gratuitas y no requieren plan pago
+- Cualquier miembro registrado puede solicitar o recibir cotizaciones
+- El sistema mantiene un historial completo de todas las negociaciones
+- Las estadísticas están disponibles para el admin y para cada usuario
+- Los pedidos generados por cotizaciones tienen referencia cruzada (cotizacion_nro)
+
+VERIFICACIÓN POST-DESPLIEGUE
+============================
+1. Login como usuario (comprador o bar)
+2. Ir a /panel → pestaña "Cotizaciones"
+3. Verificar que muestra "Sin cotizaciones enviadas"
+4. Login como productor/vendedor
+5. Ir a /panel → verificar que aparece pestaña "Cotizaciones"
+6. Login como admin
+7. Ir a /admin → pestaña "Cotizaciones" → verificar tabla vacía

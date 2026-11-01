@@ -1,0 +1,102 @@
+<!doctype html><meta charset="utf-8"><title>Manual de marca · Red Café Ecuador</title>
+<style>
+ @page{margin:18mm}
+ body{margin:0;background:#FBFAF7;color:#14140F;font-family:Inter,system-ui,sans-serif;font-size:14.5px;line-height:1.6}
+ .env{max-width:880px;margin:0 auto;padding:36px 22px 70px}
+ h1{font-size:2rem;margin:0 0 4px;letter-spacing:-.03em}
+ h2{font-size:1.1rem;margin:38px 0 12px;padding-bottom:6px;border-bottom:2px solid #14140F}
+ h3{font-size:.95rem;margin:22px 0 8px}
+ .rot{font-family:ui-monospace,Menlo,monospace;font-size:.66rem;letter-spacing:.14em;text-transform:uppercase;color:#5C5A50}
+ .fila{display:flex;flex-wrap:wrap;gap:14px;margin:12px 0}
+ .caja{border:1px solid #E4E1D9;background:#fff;padding:20px;display:flex;flex-direction:column;align-items:center;gap:9px;min-width:150px}
+ .caja.osc{background:#3B1A0C;border-color:#2A1207}.caja.osc .rot{color:#DFA066}
+ table{border-collapse:collapse;width:100%;font-size:.87rem;margin:8px 0}
+ td,th{text-align:left;padding:7px 9px;border-bottom:1px solid #E4E1D9;vertical-align:top}
+ th{font-family:ui-monospace,Menlo,monospace;font-size:.64rem;letter-spacing:.09em;text-transform:uppercase;color:#5C5A50}
+ .sw{display:inline-block;width:34px;height:16px;border:1px solid rgba(0,0,0,.15);vertical-align:middle;margin-right:7px}
+ .mal,.bien{border-left:3px solid;padding:9px 13px;margin:8px 0;background:#fff}
+ .mal{border-color:#B3261E}.bien{border-color:#2C6E49}
+ code{font-family:ui-monospace,Menlo,monospace;font-size:.85em;background:#F3F1EA;padding:1px 5px}
+ .resp{position:relative;display:inline-block;padding:26px;border:1px dashed #A94E17;background:#fff}
+ ul{padding-left:18px}li{margin-bottom:5px}
+</style>
+<div class="env">
+<p class="rot">Manual de marca · agosto de 2026</p>
+<h1>Red Café Ecuador</h1>
+<p>Todo el café ecuatoriano, conectado.</p>
+
+<h2>1 · El logotipo</h2>
+<p>Dos arcos con punta de flecha girando alrededor de un grano de café. Los arcos dicen que aquí las cosas circulan: café que sale, negocio que vuelve. El grano se ve desde abajo, con la hendidura recorriendo su eje.</p>
+<div class="fila">
+ <div class="caja"><img src="../01-logotipo/png/icono-256px.png" height="96" alt="Icono"><span class="rot">icono</span></div>
+ <div class="caja osc"><img src="../01-logotipo/png/monocromo-256px.png" height="96" alt="Monocromo"><span class="rot">monocromo</span></div>
+ <div class="caja"><img src="../01-logotipo/png/horizontal-256px.png" height="80" alt="Horizontal"><span class="rot">horizontal</span></div>
+</div>
+
+<h3>Área de respeto</h3>
+<p>Deja alrededor del logotipo un margen libre igual a la altura del grano. Nada debe invadirlo: ni texto, ni imágenes, ni el borde del soporte.</p>
+<div class="resp"><img src="../01-logotipo/png/icono-256px.png" height="64" alt=""></div>
+
+<h3>Tamaño mínimo</h3>
+<table>
+ <tr><th>Soporte</th><th>Mínimo</th></tr>
+ <tr><td>Pantalla</td><td>16 px de alto</td></tr>
+ <tr><td>Impresión</td><td>8 mm de alto</td></tr>
+ <tr><td>Bordado o grabado</td><td>15 mm · usar la versión monocroma</td></tr>
+</table>
+
+<h2>2 · La bandera</h2>
+<p>Es un elemento <strong>independiente</strong>: acompaña al logotipo, nunca va dentro. Así el logotipo funciona en soportes de un solo color, donde tres tintas planas no caben.</p>
+<div class="fila">
+ <div class="caja"><img src="../03-bandera/bandera-ecuador.png" height="58" alt="Bandera del Ecuador"><span class="rot">bandera oficial</span></div>
+</div>
+<div class="bien"><strong>Se usa</strong> la bandera oficial con escudo, sin modificar, sin recortar y sin cambiarle las proporciones.</div>
+<div class="mal"><strong>No se usa</strong> por debajo de 24 px de alto: a ese tamaño el escudo se convierte en una mancha. En piezas pequeñas, se omite.</div>
+
+<h2>3 · Color</h2>
+<table>
+ <tr><th>Uso</th><th>Color</th><th>HEX</th></tr>
+ <tr><td>Café · cabecera, pie, logotipo</td><td><span class="sw" style="background:#3B1A0C"></span></td><td><code>#3B1A0C</code></td></tr>
+ <tr><td>Poso · fondos oscuros</td><td><span class="sw" style="background:#2A1207"></span></td><td><code>#2A1207</code></td></tr>
+ <tr><td>Acento sobre claro</td><td><span class="sw" style="background:#A94E17"></span></td><td><code>#A94E17</code></td></tr>
+ <tr><td>Acento sobre oscuro</td><td><span class="sw" style="background:#DFA066"></span></td><td><code>#DFA066</code></td></tr>
+ <tr><td>Papel · fondo</td><td><span class="sw" style="background:#FBFAF7"></span></td><td><code>#FBFAF7</code></td></tr>
+ <tr><td>Tinta · texto</td><td><span class="sw" style="background:#14140F"></span></td><td><code>#14140F</code></td></tr>
+</table>
+<div class="mal"><strong>El acento tiene dos versiones y no son intercambiables.</strong> El de fondo claro sobre el café da 2,8:1 y el texto se vuelve ilegible. Es el error más fácil de cometer con esta paleta.</div>
+<p>Valores RGB y CMYK en <code>04-paleta/paleta.txt</code>.</p>
+
+<h2>4 · Tipografía</h2>
+<table>
+ <tr><th>Uso</th><th>Fuente</th><th>Licencia</th></tr>
+ <tr><td>Titulares y texto</td><td>Inter</td><td>SIL OFL · libre</td></tr>
+ <tr><td>Nombre de la marca</td><td>DM Serif Display</td><td>SIL OFL · libre</td></tr>
+ <tr><td>Datos, precios, etiquetas</td><td>Monoespaciada del sistema</td><td>—</td></tr>
+</table>
+<p>La serif se reserva al nombre de la marca. En titulares corrientes se usa Inter con peso 600 y espaciado cerrado.</p>
+
+<h2>5 · Lo que no se hace</h2>
+<div class="mal">
+<ul>
+<li>Deformar el logotipo, rotarlo o cambiarle las proporciones.</li>
+<li>Recolorearlo fuera de la paleta, o aplicarle degradados, sombras o contornos.</li>
+<li>Meter la bandera dentro del logotipo.</li>
+<li>Redibujar o simplificar el escudo: se usa el archivo oficial tal cual.</li>
+<li>Colocarlo sobre fotografías sin contraste suficiente. Sobre imagen, usar la versión monocroma en blanco.</li>
+<li>Redondear los cantos de las cajas o botones: la identidad es de ángulo recto.</li>
+</ul>
+</div>
+
+<h2>6 · Archivos entregados</h2>
+<table>
+ <tr><th>Carpeta</th><th>Contenido</th></tr>
+ <tr><td>01-logotipo/svg</td><td>Vectorial editable. Es el original: partir siempre de aquí.</td></tr>
+ <tr><td>01-logotipo/png</td><td>128, 256, 512 y 1024 px, con fondo transparente.</td></tr>
+ <tr><td>01-logotipo/pdf</td><td>Vectorial para imprenta.</td></tr>
+ <tr><td>02-favicon</td><td>ICO multitamaño y PNG de 16 a 512 px.</td></tr>
+ <tr><td>03-bandera</td><td>Bandera oficial en PNG y WebP.</td></tr>
+ <tr><td>04-paleta</td><td>Colores con HEX, RGB y CMYK.</td></tr>
+ <tr><td>05-manual</td><td>Este documento.</td></tr>
+</table>
+<p class="rot" style="margin-top:26px">Red Café Ecuador · redcafeecuador.com</p>
+</div>

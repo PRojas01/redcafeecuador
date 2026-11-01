@@ -1,0 +1,126 @@
+RED CAFÉ ECUADOR — SUBIR PAQUETE 20261024a (incremental sobre 20261002a)
+=========================================================================
+Archivo: redcafe-actualizacion-20261024a.zip (172 archivos, 1,2 MB)
+SHA-256: eaaa3cc31c2a3195c1855da3046eb9914cbc6ad78b909edf3601cb04735a6cb2
+Requisito: https://redcafeecuador.com/redcafe-version.json debe decir "20261002a" (comprobado el
+24-oct-2026). Si dice otra cosa, NO SUBIR.
+Contenido: solo archivos modificados o nuevos. SIN data/ NI uploads/. No borra nada del servidor.
+ESTA VEZ SÍ LLEVA api/ (14 archivos PHP: 2 nuevos y 12 corregidos) y el .htaccess.
+Incluye todo lo de los paquetes 20261005a y 20261023a, que no se subieron y quedan reemplazados.
+
+QUÉ CAMBIA
+0. NUEVO EN 20261024a
+   a) PORTADA: tres botones con la misma forma y un color por función.
+      - «Registrarse»: amarillo ámbar, el más llamativo.
+      - «WhatsApp»: verde oficial #25D366, con el logotipo.
+      - «Acceder»: el cobre que antes tenía «Unirme a la Red».
+      Los tres se leen bien (contraste ≥ 4,5:1). En el teléfono van uno debajo del otro, a lo ancho.
+      Arregla además un fallo de 20261023a: allí desaparecía «Acceder a mi perfil». Ahora lo pinta
+      React y se borró la copia de la capa.
+   b) ADMIN → CUENTAS, ficha del miembro:
+      - «Estado de la cuenta»: muestra si está activa, suspendida, bloqueada o desactivada, con
+        botones Bloquear, Suspender, Advertencia, Desbloquear, Desactivar (administrativo) y Reactivar.
+        Bloquear y Suspender siguen exigiendo el debido proceso.
+      - Validación del perfil: pendiente, en revisión, verificado o rechazado.
+      - Notificar y contactar: dentro de la Red (chat, campana) y fuera (correo, WhatsApp, enlace
+        para crear una contraseña nueva).
+      - Lo que publicó: ocultar, volver a publicar o eliminar, con un motivo que le llega a la persona.
+      - Pedidos: cancelar por mediación los que están en curso.
+      - Notas internas: solo las ve la administración y se borran si la persona cierra su cuenta.
+      - Exportar ficha: para el derecho de acceso (LOPDP art. 13), sin la identidad de quien reportó.
+      - Corregido: el contador de servicios marcaba siempre 0.
+      Lo que falta y su prioridad está en ADMIN-FUNCIONES-PROPUESTAS.md.
+1. PORTADA ordenada y sin repeticiones. Orden: portada → cifras de la Red → «Forma parte»
+   (6 beneficios) → perfiles → mapa → precio de referencia → confianza.
+   - Borrados (no ocultos): accesos rápidos, «Herramientas gratis», la tarjeta «Perfiles de
+     entrada» y el segundo bloque «Forma parte» que pintaba la capa. El video va en el hero.
+   - Bloques que React pintaba y la capa ocultaba: 15 en la versión publicada, 1 ahora
+     (los chips de provincias, para la fase 3).
+2. COMUNIDAD: «Bar / Cafetería — Historias, personas y cultura del café» y «Noticias del sector»
+   pasan de la portada a la Comunidad.
+   Las novedades ya no llevan todas al mismo sitio:
+   - un miembro nuevo no lleva enlace;
+   - un servicio abre Marketplace › Servicios;
+   - un requerimiento abre Marketplace › Requerimientos;
+   - un empleo abre Marketplace › Empleos.
+3. CERRAR LA CUENTA: Panel → Mi cuenta → «Cerrar mi cuenta y eliminar mis datos», con la
+   contraseña y escribiendo ELIMINAR. Si hay pedidos en curso, primero hay que cerrarlos.
+   - Se borra el perfil, las publicaciones y los datos de contacto.
+   - Los pedidos cerrados quedan sin datos personales.
+   - Se cumple la LOPDP, art. 15 y art. 18.
+4. REPORTES: nuevas categorías «conflicto con un usuario», fraude, acoso, suplantación, uso
+   indebido de datos y spam. Para que identifiquen a la persona reportada, hay botones
+   «Reportar al vendedor» en la ficha del lote y «Reportar» en las publicaciones de la Comunidad.
+   El reportado no sabe quién lo reportó.
+5. ADMIN → nueva pestaña «Cuentas», con la ficha completa de cada miembro:
+   - datos, publicaciones, pedidos, reportes recibidos, historial y actividad;
+   - contacto interno (chat y aviso en la campana) y externo (correo y WhatsApp);
+   - advertencia, suspensión de 1 a 90 días o bloqueo definitivo, solo con una infracción del
+     catálogo y una medida proporcional, con los hechos descritos y una evidencia si es bloqueo;
+   - el miembro recibe la notificación con los hechos, la norma y un enlace firmado para apelar
+     en 10 días;
+   - levantar la medida y resolver la apelación exigen una justificación escrita;
+   - todo queda registrado.
+   Desde Admin → Reportes, «Ver ficha y actuar» abre la ficha del miembro reportado.
+   El procedimiento completo está en PROCEDIMIENTO-MODERACION-Y-DATOS.md.
+6. AL SOLICITAR UN PEDIDO hay que marcar una casilla que explica:
+   - la operación es estrictamente entre comprador y vendedor;
+   - qué datos de contacto se comparten;
+   - al usar WhatsApp se sale de Red Café.
+   Al pulsar WhatsApp sale un aviso de que se sale de la plataforma (una vez por visita).
+   Los Términos §4, §5 y §9 lo recogen (actualizados al 23-oct-2026).
+7. SEGURIDAD (revisión frente a los avisos recientes de PHP):
+   - El servidor ya usa PHP 8.3.36, que corrige PHP2Shell (CVE-2026-109618/109619).
+   - Corregido: los códigos de verificación en dos pasos ya no se escriben en un registro ni se
+     devuelven al navegador.
+   - Corregido: una cuenta suspendida, bloqueada, eliminada o inactiva ya no puede entrar, y su
+     sesión abierta se cierra.
+   - Corregido: protección contra acciones desde otros sitios (CSRF). Probado: una petición
+     de borrado desde otro origen respondía 200; ahora responde 403.
+   - Corregido: el servidor ya no anuncia su versión de PHP (X-Powered-By).
+8. CONTENIDO VENCIDO BORRADO: el aviso, los botones y la plantilla de la clase demostrativa del
+   8 de octubre (ya pasó). El mecanismo del aviso del botón flotante sigue disponible.
+9. Del paquete 20261005a (no subido):
+   - color «rubí ámbar»;
+   - letra legible en el móvil (15 px; campos de formulario a 16 px);
+   - menos texto repetido en la portada y en el marketplace.
+
+SUBIR: cPanel → raíz del sitio → subir el ZIP → Extraer → SOBRESCRIBIR → borrar el ZIP.
+
+DESPUÉS DE SUBIR (hazlo tú en cPanel)
+1. Administrador de archivos → data/ → si existe otp-debug.log, BÓRRALO: puede contener códigos
+   de verificación antiguos.
+2. Editor INI de PHP (MultiPHP INI Editor) → session.upload_progress.enabled = Off, como
+   endurecimiento recomendado. Mantén PHP 8.3 en su última versión.
+3. Los Términos §11 obligan a avisar de los cambios: Admin → Avisos → a todos, con correo:
+   «Actualizamos los Términos (23-oct-2026): cierre de cuenta, aviso al contactar y procedimiento
+   de reportes y apelaciones».
+4. En la copia local de los datos hay 2 miembros con activo = false. Desde ahora no podrán
+   entrar, que es lo previsto. Si alguno debe poder entrar, actívalo desde Admin.
+
+COMPROBAR (5 min)
+1. redcafe-version.json → "20261024a".
+2. La portada sigue el orden del punto 1 y no muestra «Noticias del sector» ni el bloque Bar.
+   Ambos aparecen al final de /comunidad/.
+3. Con una cuenta de prueba: pulsa «Solicitar» en un lote. El botón no se activa hasta marcar
+   la casilla.
+4. Admin → Cuentas → busca un miembro → se abre su ficha con «Estado de la cuenta».
+6. Portada: botones Registrarse (amarillo), WhatsApp (verde) y Acceder (cobre).
+5. /academia/ ya no muestra «Clase demostrativa · 8 oct 2026».
+Si algo no cambia, haz una recarga forzada (Ctrl/Cmd+Shift+R).
+
+PRUEBAS (local, mismos datos)        20261002a (publicada)   20261024a
+API y seguridad                      28/28                   28/28
+Cursos                               28/28                   28/28
+Perfiles + admin                     74/74                   74/74
+Registro E2E                         12/12                   12/12
+Móvil E2E                            16/16                   16/16 · 0 errores JS
+Mejoras (sesión, cerrar, avisos…)    —                       15/15 · 0 errores JS
+Dueño (lo que publica cada uno)      37/37                   37/37
+Moderación, baja y ficha (nuevo)     10/38 (no existía)      55/55
+Cuentas en el admin E2E (nuevo)      1/12 (no existía)       14/14 · 0 errores JS
+Botones de la portada (nuevo)        —                       31/31 · 0 errores JS
+65 rutas: 0 respuestas ≠ 200 · contraste 30 (publicada 33) · parpadeo 50/91 (publicada 64/103)
+· 0 páginas peores.
+Simulación de subida sobre 20261002a: idéntica a lo probado (solo falta una carpeta vacía del
+build, que no hace falta).

@@ -1,0 +1,73 @@
+RED CAFÉ ECUADOR — PAQUETE V14 · 18 de agosto de 2026
+⚠ ESTE ARCHIVO NO VA AL SERVIDOR. Es tu guía.
+
+────────────────────────────────────────────────────────────
+IMPORTANTE: SUBE SOLO ESTE. No hace falta el V12 ni el V13.
+Cada paquete contiene el sitio completo; este los incluye a todos.
+El servidor tiene hoy el V11, de esta mañana.
+────────────────────────────────────────────────────────────
+
+QUÉ CAMBIA RESPECTO A LO QUE HAY PUBLICADO
+
+Identidad visual (lo que no se veía porque no se había subido):
+- Paleta del documento V2.2: fondo crema #F7F2E9, verde #31543B en botones y acentos.
+- Tipografía DM Serif Display + Inter, ALOJADAS EN TU SERVIDOR. El sitio ya no llama
+  a Google Fonts: cero peticiones a terceros.
+
+Mensaje:
+- Hero «Todo el café ecuatoriano, conectado.», conservando «desde 1 libra».
+- Llamada unificada «Forma parte de la Red».
+- Fuera «Un solo pago mensual» (contradecía los planes gratuitos) y «Más elegido».
+- Escrow, facturación SRI y laboratorios marcados como próximos.
+
+Rediseño de las 31 páginas y estados de carga, error y vacío. Sin alertas del navegador.
+
+Perfiles: ahora ONCE. Nuevos «Proveedor de Equipos e Insumos» y «Amante del Café».
+
+Correcciones de funcionamiento:
+- PANEL ADMIN: no podía listar ni editar NINGÚN dato (miembros, pedidos, lotes,
+  lista de espera). Un error de comparación lo tenía inservible. Corregido.
+- Editor de páginas: el borrado permitía salir de su carpeta. Corregido.
+- MAPA: una finca registrada no aparecía nunca. Ahora el alta pide ubicación
+  (opcional) y el mapa muestra las fincas reales, no las de ejemplo.
+- Contenido editable: noticias, cursos, planes y servicios pasan a archivos que el
+  panel puede modificar.
+
+────────────────────────────────────────────────────────────
+CÓMO SUBIRLO
+────────────────────────────────────────────────────────────
+1. cPanel > Administrador de archivos > public_html/redcafeecuador/
+2. COPIA la carpeta data/ del servidor antes de nada. Tiene los datos reales.
+   Este paquete NO la trae y NO debe pisarla.
+3. Borra el contenido anterior EXCEPTO data/
+4. Sube el ZIP, extrae, y borra el ZIP del servidor.
+5. Permisos: carpetas 755, api/*.php 644, data/ 755
+
+────────────────────────────────────────────────────────────
+PENDIENTES EN EL SERVIDOR (siguen abiertos desde esta mañana)
+────────────────────────────────────────────────────────────
+1. BORRA public_html/redcafeecuador/LEEME_V11.txt — es público y describe las
+   debilidades del sitio.
+2. ARREGLA data/media.json — los cuatro vídeos apuntan a un enlace-broma
+   (dQw4w9WgXcQ) y los reportajes inventados no están marcados como ejemplo.
+   El arreglo del código solo afecta a instalaciones nuevas: ese archivo persiste.
+3. CAMBIA LA CONTRASEÑA DE ADMINISTRADOR: quedó registrada en claro el 18/08.
+4. COOKIES SIN CONSENTIMIENTO: GoDaddy inyecta tccl.min.js y tres cookies de
+   seguimiento antes de que nadie acepte. Desactívalo en el panel del hosting.
+
+────────────────────────────────────────────────────────────
+SUBIDA DE IMÁGENES: DESACTIVADA A PROPÓSITO
+────────────────────────────────────────────────────────────
+El módulo está construido y probado (un JPG con código PHP incrustado queda limpio
+tras procesarlo), pero NO se ha habilitado. La recomendación aprobada es usar la
+biblioteca de medios de tu WordPress, que ya hace ese trabajo y evita añadir aquí
+una vía de ataque que hoy no existe.
+Antes de habilitarlo, si alguna vez se decide: comprueba en el servidor que un .php
+colocado en uploads/ NO se ejecuta. Eso depende de AllowOverride en el hosting.
+
+────────────────────────────────────────────────────────────
+CONECTAR CON WORDPRESS (opcional, ver GUIA_WORDPRESS.md)
+────────────────────────────────────────────────────────────
+Apagado por defecto. Si creas data/.wp.json con una contraseña de aplicación,
+el sitio empieza a leer las noticias y las imágenes de tu WordPress. Si WordPress
+se cae, vuelve solo a los archivos locales.

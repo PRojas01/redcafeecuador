@@ -1,0 +1,57 @@
+RED CAFÉ ECUADOR — PAQUETE V12 · FASE 1 DEL REDISEÑO V2.2
+18 de agosto de 2026
+
+⚠ ESTE ARCHIVO NO VA AL SERVIDOR. Es tu guía, no contenido del sitio.
+  (En el V11 se subió por error un LEEME dentro del ZIP y quedó público.)
+
+────────────────────────────────────────────────────────
+QUÉ CAMBIA RESPECTO AL V11
+────────────────────────────────────────────────────────
+Mensaje (fase 1 del documento V2.2):
+- Hero nuevo: «Todo el café ecuatoriano, conectado.» con doble llamada a la acción.
+- Llamada global unificada: «Forma parte de la Red» (la ruta /afiliate/ no cambia).
+- Fuera «Un solo pago mensual · toda la red», que contradecía el modelo actual:
+  ahora dice que crear el perfil y participar es gratuito.
+- Fuera «Más elegido», que afirmaba una preferencia sin datos que la respalden.
+- La lista de espera pasa a «Forma parte de la Red» con botón «Crear mi perfil».
+  El formulario y su envío siguen funcionando igual.
+- Sección de perfiles: «¿Formas parte del café ecuatoriano?».
+
+Perfiles:
+- Nuevo: AMANTE DEL CAFÉ, con tarjeta propia, icono, plan y registro habilitado.
+- Ya son once perfiles.
+
+────────────────────────────────────────────────────────
+CÓMO SUBIRLO
+────────────────────────────────────────────────────────
+1. cPanel > Administrador de archivos > public_html/redcafeecuador/
+2. COPIA la carpeta data/ del servidor antes de nada. Contiene miembros, pedidos y
+   consentimientos reales. Este paquete no la trae y no debe pisarla.
+3. Borra el contenido anterior EXCEPTO data/
+4. Sube el ZIP, clic derecho > Extraer, y borra el ZIP del servidor.
+5. Permisos: carpetas 755, api/*.php 644, data/ 755
+
+────────────────────────────────────────────────────────
+PENDIENTES EN EL SERVIDOR (no se arreglan subiendo el paquete)
+────────────────────────────────────────────────────────
+1. BORRA public_html/redcafeecuador/LEEME_V11.txt — hoy es público y describe las
+   debilidades del sitio. Este paquete ya no lo incluye, pero el del V11 sigue arriba.
+2. ARREGLA data/media.json — los cuatro vídeos apuntan al enlace-broma dQw4w9WgXcQ y
+   los reportajes inventados no están marcados como ejemplo. El arreglo del código solo
+   afecta a instalaciones nuevas: ese archivo persiste en el servidor desde el 14/08.
+3. CAMBIA LA CONTRASEÑA DE ADMINISTRADOR: quedó registrada en claro durante las pruebas
+   del 18/08. El sistema ya guarda la nueva cifrada.
+4. COOKIES SIN CONSENTIMIENTO: GoDaddy inyecta tccl.min.js y tres cookies de seguimiento
+   antes de que nadie acepte nada. Desactívalo en el panel del hosting o añade un
+   mecanismo de consentimiento real.
+
+────────────────────────────────────────────────────────
+QUÉ NO ENTRA EN ESTA FASE
+────────────────────────────────────────────────────────
+Tokens de color, tipografía, escala y espaciado del documento V2.2; el rediseño página
+por página; y los metadatos y la migración al dominio nuevo. Van en las fases 2, 3 y 4
+del CHECKLIST_V22.md, y varias dependen de decisiones tuyas (paleta, tipografía y si se
+conserva «desde 1 libra»).
+
+Tampoco entra la fotografía documental que pide el documento: no existe ninguna en el
+proyecto. Mientras tanto siguen las láminas ilustradas.

@@ -1,0 +1,371 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Procesar respaldo · Red Café</title>
+<!-- Sin scripts ni estilos externos y sin conexión: la página no puede enviar nada a ningún sitio. -->
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'unsafe-inline'; style-src 'unsafe-inline'; img-src data: blob:; connect-src 'none'; form-action 'none'">
+<style>
+  :root { --espresso:#24160f; --cereza:#9b2d1f; --crema:#f7f2ea; --papel:#fffcf7; --texto2:#5a4a3f; --linea:rgba(36,22,15,.14); --hoja:#2f6b45; }
+  * { box-sizing: border-box; }
+  body { margin:0; background:var(--crema); color:var(--espresso); font:16px/1.5 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif; }
+  main { max-width:780px; margin:0 auto; padding:32px 16px 64px; }
+  h1 { font-size:1.7rem; margin:0 0 .3rem; }
+  h2 { font-size:1.15rem; margin:0 0 .4rem; }
+  .sub { color:var(--texto2); margin:0 0 1.5rem; }
+  .caja { background:var(--papel); border:1px solid var(--linea); border-radius:12px; padding:20px; margin-bottom:16px; }
+  .paso { font-size:.75rem; font-weight:700; letter-spacing:.08em; text-transform:uppercase; color:var(--cereza); margin:0 0 .4rem; }
+  .zona { border:2px dashed var(--linea); border-radius:12px; padding:28px 16px; text-align:center; color:var(--texto2); }
+  .zona.encima { border-color:var(--cereza); background:#fbefe9; }
+  button, label.boton { display:inline-block; background:var(--cereza); color:var(--papel); border:0; border-radius:10px; padding:.7rem 1.1rem; font:inherit; font-weight:600; cursor:pointer; }
+  button[disabled] { opacity:.45; cursor:default; }
+  input[type=file] { display:none; }
+  input[type=password] { width:100%; font:inherit; padding:.6rem .7rem; border:1px solid var(--linea); border-radius:8px; background:#fff; margin:.2rem 0 .6rem; }
+  table { width:100%; border-collapse:collapse; font-size:.9rem; }
+  th, td { text-align:left; padding:.35rem .4rem; border-bottom:1px solid var(--linea); vertical-align:top; }
+  th { font-size:.75rem; text-transform:uppercase; letter-spacing:.06em; color:var(--texto2); }
+  .ok { color:var(--hoja); font-weight:600; }
+  .fuera { color:var(--cereza); font-weight:600; }
+  .gris { color:var(--texto2); }
+  pre { background:#f1ebe1; border-radius:8px; padding:10px; overflow:auto; font-size:.8rem; max-height:260px; margin:.4rem 0 0; }
+  .dos { display:grid; gap:12px; grid-template-columns:1fr; }
+  @media (min-width:700px) { .dos { grid-template-columns:1fr 1fr; } }
+  ul { padding-left:1.2rem; margin:.4rem 0; }
+  .nota { font-size:.9rem; color:var(--texto2); }
+  .aviso { background:#fbefe9; border-left:4px solid var(--cereza); padding:.6rem .8rem; border-radius:6px; font-size:.92rem; }
+  .estado { font-weight:600; margin:.6rem 0 0; }
+</style>
+</head>
+<body>
+<main>
+  <h1>Procesar el respaldo de Red Café</h1>
+  <p class="sub">Prepara los datos del hosting antiguo sin que salgan de tu equipo sin protección. Todo ocurre en este navegador: la página no tiene conexión a internet y no puede enviar nada.</p>
+
+  <section class="caja">
+    <p class="paso">Paso 1 · Elige el respaldo</p>
+    <p>El <strong>.zip</strong> que descargaste del hosting (puede ser todo <code>public_html</code> o solo <code>data/</code> y <code>uploads/</code>), o la carpeta <code>data/</code> ya descomprimida.</p>
+    <div class="zona" id="zona">
+      <label class="boton" for="zip">Elegir el .zip</label>
+      <input type="file" id="zip" accept=".zip,application/zip">
+      <p class="nota" style="margin:.8rem 0 0">o <label for="carpeta" style="text-decoration:underline;cursor:pointer">elige la carpeta data/</label><input type="file" id="carpeta" webkitdirectory directory multiple> · también puedes arrastrar el .zip aquí</p>
+    </div>
+    <p class="estado" id="leidos"></p>
+  </section>
+
+  <section class="caja" id="inventario" hidden>
+    <p class="paso">Paso 2 · Revisa qué hay</p>
+    <p id="resumen"></p>
+    <table><thead><tr><th>Archivo</th><th>Paquete cifrado</th><th>Copia anónima</th></tr></thead><tbody id="tabla"></tbody></table>
+    <details style="margin-top:1rem"><summary>Ver un miembro antes y después de anonimizar</summary>
+      <div class="dos"><div><strong>Antes</strong><pre id="antes"></pre></div><div><strong>Después</strong><pre id="despues"></pre></div></div>
+    </details>
+  </section>
+
+  <section class="caja" id="salidas" hidden>
+    <p class="paso">Paso 3 · Genera los dos archivos</p>
+    <h2>A. Paquete cifrado para la base de datos</h2>
+    <p>Lleva <strong>los datos reales</strong> (miembros, contenido y fotos), cifrados con una contraseña que eliges tú (AES-256). Sin la contraseña nadie puede leerlo. Se sube en <code>/admin/importar/</code> de la plataforma nueva.</p>
+    <label for="clave1">Contraseña del paquete (mínimo 12 caracteres)</label>
+    <input type="password" id="clave1" autocomplete="new-password">
+    <label for="clave2">Repítela</label>
+    <input type="password" id="clave2" autocomplete="new-password">
+    <button id="cifrar" disabled>Crear redcafe-datos.rcpaquete</button>
+    <p class="estado" id="estadoCifrado"></p>
+    <p class="aviso"><strong>La contraseña no se envía por chat ni por correo.</strong> Escríbela tú en la pantalla de importación. Si la pierdes, vuelves a generar el paquete desde el .zip.</p>
+
+    <h2 style="margin-top:1.4rem">B. Copia anónima para pruebas</h2>
+    <p>Sin nombres, correos, teléfonos, cédulas, contraseñas ni mensajes privados. Es lo único que se puede compartir para revisar el sitio con contenido real.</p>
+    <button id="anonimo" disabled>Descargar redcafe-anonimo.json</button>
+    <p class="estado" id="estadoAnonimo"></p>
+  </section>
+
+  <section class="caja nota">
+    <strong>Qué va en cada archivo</strong>
+    <ul>
+      <li><strong>Nunca sale del .zip:</strong> sesiones, códigos de un solo uso, cupos y bloqueos, enlaces de recuperación de contraseña, correos de depuración, copias antiguas y cualquier archivo PHP o de configuración.</li>
+      <li><strong>Paquete cifrado:</strong> los datos de <code>data/</code> que la plataforma necesita, las claves que mantienen válidos los enlaces y avisos, la contraseña de administración (ya cifrada con bcrypt) y las fotos y PDF de <code>uploads/user-content/</code>. En la plataforma nueva las cédulas se guardan cifradas.</li>
+      <li><strong>Copia anónima:</strong> solo <code>data/</code>, con nombres → «Miembro N», correos → <code>miembroN@ejemplo.test</code>, teléfonos ficticios, cédulas y direcciones vacías, GPS redondeado a unos 10 km, una contraseña de prueba igual para todos, sin 2FA, y el texto de chats, reportes, sanciones y notas sustituido por «[texto privado]». No lleva fotos ni documentos.</li>
+    </ul>
+  </section>
+</main>
+
+<script>
+"use strict";
+/* ═══ Reglas ════════════════════════════════════════════════════════════ */
+// Hash bcrypt de la contraseña de prueba «Prueba-Red-2026» (no es la de nadie).
+const PASS_PRUEBA = "$2b$10$c/4hVbTxKMOeMhP57Sp3j.Hcj.wtE.lEMdiaAl2NO3EDlzhpel14u";
+const MAGIA = new TextEncoder().encode("RCPK1\n");
+const ITERACIONES = 600000;
+
+// Nunca salen del .zip.
+const NUNCA = /^(sessions?|sess.*|otp.*|rate.*|locks?|mail-debug|password-resets)(\.json)?$/i;
+// Secretos que el paquete cifrado sí lleva (mantienen válidos enlaces y avisos).
+const SECRETOS = new Set([".moderacion_secreto", ".baja_correo_secreto", ".respaldo_token", ".push_vapid.json"]);
+const SUBIDA_VALIDA = /^[A-Za-z0-9][A-Za-z0-9._-]{0,150}\.(jpe?g|png|webp|gif|pdf)$/i;
+
+// Copia anónima: archivos que no van y archivos cuyo texto es privado.
+const FUERA_ANONIMO = /^(push-suscripciones|bajas|waitlist|metricas)$/;
+const TEXTO_PRIVADO = /^(chats|messages|reportes|sanciones|notas-admin|difusiones|notificaciones)$/;
+const CLAVES_TEXTO_PRIVADO = /^(texto|text|mensaje|message|last_message|contenido|content|nota|nota_admin|motivo|comentario|descripcion|detalle|respuesta|respuesta_mensaje|asunto|justificacion_levantamiento|verificacion_nota|motivo_rechazo|motivo_cancelacion|cuerpo|titulo)$/i;
+const BORRAR = /^(pass|password|password_hash|hash|code_hash|codigo|code|secret|two_factor_secret|backup_codes|token|tokens|access_token|reset_token|privada_pem|keys|auth|p256dh|endpoint|clave|ip|ua|user_agent|paypal_order_id|referencia_pago|payer|cookie|sesion|session)$/i;
+const VACIAR = /^(cedula|ruc|documento_identidad|identificacion|direccion|domicilio|calle|referencia_domicilio|whatsapp_link)$/i;
+const CORREO = /(^|_)(email|correo|mail)$/i;
+const TELEFONO = /(^|_)(telefono|whatsapp|phone|celular|movil|tel)$/i;
+const PERSONA = /^(nombre|name|autor_nombre|solicitante_nombre|destinatario_nombre|postulante_nombre|nombre_subio|cliente_nombre|empleador_nombre|oferente_nombre|contacto_nombre|productor_nombre|proveedor_nombre|vendedor_nombre|comprador_nombre|usuario_nombre|miembro_nombre|actor_nombre)$/i;
+const COORD = /^(lat|lng|lon|latitud|longitud)$/i;
+const RE_CORREO = /[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}/g;
+const RE_TELEFONO = /(?:\+?593[\s-]?|\b0)9[\d\s-]{7,10}\d\b/g;
+const RE_CEDULA = /\b(?:0[1-9]|1\d|2[0-4]|30)\d{8}(?:001)?\b/g;
+
+const $ = (id) => document.getElementById(id);
+let entradas = [];      // { ruta (normalizada: data/x, uploads/user-content/x, .redcafe_admin_pass), bytes }
+let ignorados = 0;
+let anonimo = null;
+
+/* ═══ Lectura del .zip (sin librerías: DecompressionStream del navegador) ═══ */
+async function leerZip(file) {
+  const buf = new Uint8Array(await file.arrayBuffer());
+  const dv = new DataView(buf.buffer, buf.byteOffset, buf.byteLength);
+  let e = buf.length - 22;
+  while (e >= 0 && dv.getUint32(e, true) !== 0x06054b50) e--;
+  if (e < 0) throw new Error("No parece un .zip válido.");
+  const total = dv.getUint16(e + 10, true);
+  const inicio = dv.getUint32(e + 16, true);
+  if (inicio === 0xffffffff || total === 0xffff) throw new Error("El .zip es demasiado grande (formato ZIP64). Descomprímelo y elige la carpeta data/.");
+  const utf8 = new TextDecoder("utf-8");
+  const lista = [];
+  let p = inicio;
+  for (let i = 0; i < total; i++) {
+    if (dv.getUint32(p, true) !== 0x02014b50) throw new Error("El índice del .zip está dañado.");
+    const flags = dv.getUint16(p + 8, true), metodo = dv.getUint16(p + 10, true);
+    const tam = dv.getUint32(p + 20, true);
+    const nl = dv.getUint16(p + 28, true), xl = dv.getUint16(p + 30, true), cl = dv.getUint16(p + 32, true);
+    const local = dv.getUint32(p + 42, true);
+    const nombre = utf8.decode(buf.subarray(p + 46, p + 46 + nl)).replace(/\\/g, "/");
+    p += 46 + nl + xl + cl;
+    if (nombre.endsWith("/")) continue;
+    lista.push({ nombre, leer: async () => {
+      if (flags & 1) throw new Error(nombre + " está protegido con contraseña dentro del .zip.");
+      const ini = local + 30 + dv.getUint16(local + 26, true) + dv.getUint16(local + 28, true);
+      const datos = buf.subarray(ini, ini + tam);
+      if (metodo === 0) return datos.slice();
+      if (metodo !== 8) throw new Error(nombre + ": compresión no soportada.");
+      return new Uint8Array(await new Response(new Blob([datos]).stream().pipeThrough(new DecompressionStream("deflate-raw"))).arrayBuffer());
+    } });
+  }
+  return lista;
+}
+
+/* ═══ Clasificación: qué es cada archivo ══════════════════════════════════ */
+function clasificar(ruta) {
+  const partes = ruta.replace(/\\/g, "/").split("/").filter(Boolean);
+  const base = partes[partes.length - 1] || "";
+  if (base === ".redcafe_admin_pass") return ".redcafe_admin_pass";
+  const iu = partes.indexOf("user-content");
+  if (iu > 0 && partes[iu - 1] === "uploads" && partes.length === iu + 2) return SUBIDA_VALIDA.test(base) ? "uploads/user-content/" + base : null;
+  const id = partes.lastIndexOf("data");
+  const resto = id >= 0 ? partes.slice(id + 1) : (partes.length === 1 ? partes : partes.slice(-2)[0] === "paginas" ? partes.slice(-2) : null);
+  if (!resto || !resto.length) return null;
+  if (resto.length === 1) {
+    if (SECRETOS.has(base)) return "data/" + base;
+    if (base.startsWith(".")) return null;
+    if (!/\.json$/i.test(base) || NUNCA.test(base) || /\.(copia|bak)-/.test(base)) return null;
+    return "data/" + base;
+  }
+  if (resto.length === 2 && resto[0] === "paginas" && /^[a-z0-9][a-z0-9\-_]{1,80}\.(md|meta\.json)$/.test(base)) return "data/paginas/" + base;
+  return null;
+}
+
+async function cargar(fuentes) {
+  entradas = []; ignorados = 0; anonimo = null;
+  $("inventario").hidden = true; $("salidas").hidden = true;
+  $("leidos").textContent = "Leyendo…";
+  try {
+    for (const f of fuentes) {
+      const ruta = clasificar(f.nombre);
+      if (!ruta) { ignorados++; continue; }
+      if (entradas.some((x) => x.ruta === ruta)) continue;
+      entradas.push({ ruta, bytes: await f.leer() });
+    }
+  } catch (err) {
+    $("leidos").textContent = "No se pudo leer: " + err.message; return;
+  }
+  const datos = entradas.filter((x) => x.ruta.startsWith("data/")).length;
+  if (!datos) { $("leidos").textContent = "No encontré la carpeta data/ con archivos .json en lo que elegiste."; return; }
+  $("leidos").textContent = `Leído. ${entradas.length} archivos útiles, ${ignorados} descartados.`;
+  procesar();
+}
+
+/* ═══ Copia anónima ═══════════════════════════════════════════════════════ */
+function anonimizar(archivos) {
+  const filas = new Map();
+  const salida = {};
+  const nombres = new Map(), correos = new Map(), telefonos = new Map();
+  let ejemplo = null;
+  const persona = (v) => { const k = String(v).trim(); if (!k) return v; if (!nombres.has(k)) nombres.set(k, "Miembro " + (nombres.size + 1)); return nombres.get(k); };
+  const correo = (v) => { const k = String(v).trim().toLowerCase(); if (!k || /@redcafeecuador\.com$/.test(k)) return v; if (!correos.has(k)) correos.set(k, `miembro${correos.size + 1}@ejemplo.test`); return correos.get(k); };
+  const telefono = (v) => { const k = String(v).replace(/\D/g, ""); if (!k) return v; if (!telefonos.has(k)) telefonos.set(k, "09" + String(10000000 + telefonos.size + 1).slice(-8)); return telefonos.get(k); };
+  const parse = (t) => { try { return JSON.parse(t.replace(/^﻿/, "") || "[]"); } catch { return undefined; } };
+
+  const miembros = archivos.find((a) => a.ruta === "members.json");
+  if (miembros) { const l = parse(miembros.texto); if (Array.isArray(l)) for (const m of l) { if (m && m.nombre) persona(m.nombre); if (m && m.email) correo(m.email); } }
+
+  const limpiarTexto = (s) => {
+    if (typeof s !== "string" || !s) return s;
+    let t = s.replace(RE_CORREO, (m) => correo(m)).replace(RE_TELEFONO, (m) => telefono(m)).replace(RE_CEDULA, "0000000000");
+    for (const [real, falso] of nombres) if (real.length >= 4 && t.includes(real)) t = t.split(real).join(falso);
+    return t;
+  };
+  const limpiar = (valor, privado) => {
+    if (Array.isArray(valor)) return valor.map((x) => limpiar(x, privado));
+    if (valor && typeof valor === "object") {
+      const o = {};
+      for (const [k, v] of Object.entries(valor)) {
+        if (BORRAR.test(k)) continue;
+        if (VACIAR.test(k)) { o[k] = ""; continue; }
+        if (CORREO.test(k) && typeof v === "string") { o[k] = correo(v); continue; }
+        if (TELEFONO.test(k) && (typeof v === "string" || typeof v === "number")) { o[k] = telefono(v); continue; }
+        if (PERSONA.test(k) && typeof v === "string") { o[k] = nombres.has(v.trim()) || (/nombre/i.test(k) && k !== "nombre") ? persona(v) : limpiarTexto(v); continue; }
+        if (COORD.test(k) && typeof v === "number") { o[k] = Math.round(v * 10) / 10; continue; }
+        if (COORD.test(k) && typeof v === "string" && /^-?\d+(\.\d+)?$/.test(v.trim())) { o[k] = String(Math.round(parseFloat(v) * 10) / 10); continue; }
+        if (/^(gps|ubicacion|coordenadas)$/i.test(k) && typeof v === "string") { o[k] = v.replace(/-?\d+\.\d+/g, (n) => String(Math.round(parseFloat(n) * 10) / 10)); continue; }
+        if (privado && CLAVES_TEXTO_PRIVADO.test(k) && typeof v === "string" && v) { o[k] = "[texto privado]"; continue; }
+        o[k] = limpiar(v, privado);
+      }
+      return o;
+    }
+    return typeof valor === "string" ? limpiarTexto(valor) : valor;
+  };
+
+  for (const a of archivos) {
+    const base = a.ruta.replace(/\.json$/i, "");
+    if (a.ruta.startsWith(".") || FUERA_ANONIMO.test(base)) { filas.set(a.ruta, "No va"); continue; }
+    if (/\.md$/i.test(a.ruta)) { salida[a.ruta] = limpiarTexto(a.texto); filas.set(a.ruta, "Se limpian correos y teléfonos"); continue; }
+    const datos = parse(a.texto);
+    if (datos === undefined) { filas.set(a.ruta, "JSON ilegible: no va"); continue; }
+    const privado = TEXTO_PRIVADO.test(base);
+    let limpio;
+    if (a.ruta === "members.json" && Array.isArray(datos)) {
+      limpio = datos.map((m) => {
+        const r = limpiar(m, false);
+        if (r && typeof r === "object") {
+          r.pass = PASS_PRUEBA; r.two_factor_enabled = false; delete r.backup_codes;
+          if (m && m.nombre) r.nombre = persona(m.nombre);
+          if (!ejemplo) ejemplo = [m, r];
+        }
+        return r;
+      });
+    } else limpio = limpiar(datos, privado);
+    salida[a.ruta] = JSON.stringify(limpio);
+    filas.set(a.ruta, privado ? "Estructura sin textos privados" : "Anonimizado");
+  }
+
+  // Última comprobación: ningún correo ni nombre real puede quedar.
+  const restos = [];
+  const todo = Object.values(salida).join("\n");
+  for (const real of correos.keys()) if (todo.toLowerCase().includes(real)) restos.push("un correo");
+  for (const real of nombres.keys()) if (real.length >= 4 && todo.includes(real)) restos.push("un nombre");
+  for (const m of todo.match(RE_CORREO) || []) if (!/@(ejemplo\.test|redcafeecuador\.com)$/i.test(m)) restos.push(m);
+  return { salida, filas, ejemplo, restos, n: { nombres: nombres.size, correos: correos.size, telefonos: telefonos.size } };
+}
+
+/* ═══ Inventario y salidas ════════════════════════════════════════════════ */
+function procesar() {
+  const utf8 = new TextDecoder("utf-8");
+  const datos = entradas.filter((x) => x.ruta.startsWith("data/")).map((x) => ({ ruta: x.ruta.slice(5), texto: utf8.decode(x.bytes) }));
+  anonimo = anonimizar(datos);
+  const tabla = $("tabla"); tabla.innerHTML = "";
+  const fila = (a, b, c, cb, cc) => {
+    const tr = document.createElement("tr");
+    for (const [t, cls] of [[a, ""], [b, cb], [c, cc]]) { const td = document.createElement("td"); td.textContent = t; if (cls) td.className = cls; tr.append(td); }
+    tabla.append(tr);
+  };
+  for (const e of entradas.filter((x) => x.ruta.startsWith("data/")).sort((x, y) => x.ruta.localeCompare(y.ruta))) {
+    const r = e.ruta.slice(5);
+    const an = anonimo.filas.get(r) || "No va";
+    fila(e.ruta, "Va (cifrado)", an, "ok", /^No va|ilegible/.test(an) ? "fuera" : "ok");
+  }
+  if (entradas.some((x) => x.ruta === ".redcafe_admin_pass")) fila(".redcafe_admin_pass", "Va (cifrado)", "No va", "ok", "fuera");
+  const fotos = entradas.filter((x) => x.ruta.startsWith("uploads/"));
+  fila(`uploads/ (${fotos.length} fotos y PDF)`, fotos.length ? "Va (cifrado)" : "No hay", "No va", fotos.length ? "ok" : "gris", "fuera");
+  fila(`Otros ${ignorados} archivos (sesiones, PHP, copias…)`, "No va", "No va", "fuera", "fuera");
+
+  const n = anonimo.n;
+  $("resumen").textContent = `${entradas.length} archivos útiles. En la copia anónima se sustituyen ${n.nombres} nombres, ${n.correos} correos y ${n.telefonos} teléfonos.` +
+    (anonimo.restos.length ? ` ATENCIÓN: en la copia anónima quedó algún dato real (${[...new Set(anonimo.restos)].slice(0, 3).join(", ")}). No la compartas y avísame.` : " Comprobado: en la copia anónima no queda ningún correo real.");
+  $("antes").textContent = anonimo.ejemplo ? JSON.stringify(anonimo.ejemplo[0], null, 2) : "No hay members.json.";
+  $("despues").textContent = anonimo.ejemplo ? JSON.stringify(anonimo.ejemplo[1], null, 2) : "";
+  $("inventario").hidden = false; $("salidas").hidden = false;
+  $("anonimo").disabled = anonimo.restos.length > 0;
+  validarClave();
+}
+
+function descargar(blob, nombre) {
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a"); a.href = url; a.download = nombre; a.click();
+  setTimeout(() => URL.revokeObjectURL(url), 5000);
+}
+
+function base64(bytes) {
+  let s = "";
+  for (let i = 0; i < bytes.length; i += 0x8000) s += String.fromCharCode.apply(null, bytes.subarray(i, i + 0x8000));
+  return btoa(s);
+}
+
+async function crearPaquete(clave) {
+  const archivos = {};
+  for (const e of entradas) archivos[e.ruta] = base64(e.bytes);
+  const json = new TextEncoder().encode(JSON.stringify({ formato: "redcafe-paquete/1", generado: new Date().toISOString(), archivos }));
+  const comprimido = new Uint8Array(await new Response(new Blob([json]).stream().pipeThrough(new CompressionStream("gzip"))).arrayBuffer());
+  const sal = crypto.getRandomValues(new Uint8Array(16));
+  const iv = crypto.getRandomValues(new Uint8Array(12));
+  const base = await crypto.subtle.importKey("raw", new TextEncoder().encode(clave), "PBKDF2", false, ["deriveKey"]);
+  const llave = await crypto.subtle.deriveKey({ name: "PBKDF2", hash: "SHA-256", salt: sal, iterations: ITERACIONES }, base, { name: "AES-GCM", length: 256 }, false, ["encrypt"]);
+  const cifrado = new Uint8Array(await crypto.subtle.encrypt({ name: "AES-GCM", iv }, llave, comprimido));
+  return new Blob([MAGIA, sal, iv, cifrado], { type: "application/octet-stream" });
+}
+
+function validarClave() {
+  const a = $("clave1").value, b = $("clave2").value;
+  const ok = a.length >= 12 && a === b && entradas.length > 0;
+  $("cifrar").disabled = !ok;
+  $("estadoCifrado").textContent = a && a.length < 12 ? "La contraseña debe tener al menos 12 caracteres." : a && b && a !== b ? "Las dos contraseñas no coinciden." : "";
+}
+
+$("clave1").addEventListener("input", validarClave);
+$("clave2").addEventListener("input", validarClave);
+$("cifrar").addEventListener("click", async () => {
+  $("cifrar").disabled = true;
+  $("estadoCifrado").textContent = "Cifrando… (puede tardar unos segundos)";
+  let mensaje;
+  try {
+    const blob = await crearPaquete($("clave1").value);
+    descargar(blob, "redcafe-datos.rcpaquete");
+    mensaje = `Listo: redcafe-datos.rcpaquete (${(blob.size / 1048576).toFixed(1)} MB). Guarda el paquete y la contraseña por separado.`;
+  } catch (err) {
+    mensaje = "No se pudo cifrar: " + err.message;
+  }
+  validarClave();
+  $("estadoCifrado").textContent = mensaje;
+});
+$("anonimo").addEventListener("click", () => {
+  const paquete = { formato: "redcafe-anonimo/1", generado: new Date().toISOString(), contrasena_de_prueba: "Prueba-Red-2026", archivos: anonimo.salida };
+  descargar(new Blob([JSON.stringify(paquete)], { type: "application/json" }), "redcafe-anonimo.json");
+  $("estadoAnonimo").textContent = "Listo: redcafe-anonimo.json. Es el único archivo que se puede compartir.";
+});
+
+async function desdeArchivo(f) {
+  if (/\.zip$/i.test(f.name)) {
+    try { await cargar(await leerZip(f)); } catch (err) { $("leidos").textContent = "No se pudo leer el .zip: " + err.message; }
+  }
+}
+$("zip").addEventListener("change", (e) => e.target.files[0] && desdeArchivo(e.target.files[0]));
+$("carpeta").addEventListener("change", (e) => cargar([...e.target.files].map((f) => ({ nombre: f.webkitRelativePath || f.name, leer: async () => new Uint8Array(await f.arrayBuffer()) }))));
+const zona = $("zona");
+zona.addEventListener("dragover", (e) => { e.preventDefault(); zona.classList.add("encima"); });
+zona.addEventListener("dragleave", () => zona.classList.remove("encima"));
+zona.addEventListener("drop", (e) => { e.preventDefault(); zona.classList.remove("encima"); const f = e.dataTransfer.files[0]; if (f) desdeArchivo(f); });
+</script>
+</body>
+</html>

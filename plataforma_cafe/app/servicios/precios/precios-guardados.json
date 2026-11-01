@@ -1,0 +1,875 @@
+{
+  "updated_at": "2026-09-30T18:20:00+00:00",
+  "updated_human": "Actualizado 2026-09-30 18:20 UTC",
+  "precio": {
+    "valor": 289.65,
+    "valor_cents": 289.65,
+    "unidad": "USD/quintal",
+    "mes": "2026-09",
+    "variacion_pct": -15.77
+  },
+  "fuente": {
+    "nombre": "KC=F vía Yahoo Finance — respaldo operativo",
+    "url": "https://finance.yahoo.com/quote/KC=F/",
+    "periodicidad": "Diaria (último cierre disponible)",
+    "descripcion": "Respaldo operativo con la cotización internacional de café arábica en ICE Futures (NY). No sustituye una fuente oficial configurada.",
+    "tipo": "respaldo_operativo"
+  },
+  "referencias_oficiales": [
+    {
+      "nombre": "ICO Composite Indicator Price",
+      "url": "https://ico.org/es/resources/public-market-information/"
+    },
+    {
+      "nombre": "ICE Arabica Coffee \"C\"",
+      "url": "https://www.theice.com/products/Coffee-C"
+    },
+    {
+      "nombre": "Banco Central del Ecuador",
+      "url": "https://www.bce.fin.ec/"
+    },
+    {
+      "nombre": "ANECAFÉ Ecuador",
+      "url": "https://anecafe-ecuador.com/"
+    }
+  ],
+  "historico": [
+    {
+      "mes": "2026-09",
+      "centsLb": 289.65,
+      "usdQqal": 289.65
+    },
+    {
+      "mes": "2026-08",
+      "centsLb": 343.9,
+      "usdQqal": 343.9
+    },
+    {
+      "mes": "2026-07",
+      "centsLb": 332.1,
+      "usdQqal": 332.1
+    },
+    {
+      "mes": "2026-06",
+      "centsLb": 311.2,
+      "usdQqal": 311.2
+    },
+    {
+      "mes": "2026-05",
+      "centsLb": 265.6,
+      "usdQqal": 265.6
+    },
+    {
+      "mes": "2026-04",
+      "centsLb": 300.9,
+      "usdQqal": 300.9
+    },
+    {
+      "mes": "2026-01",
+      "centsLb": 332.25,
+      "usdQqal": 332.25
+    },
+    {
+      "mes": "2025-12",
+      "centsLb": 348.75,
+      "usdQqal": 348.75
+    },
+    {
+      "mes": "2025-11",
+      "centsLb": 413.0,
+      "usdQqal": 413.0
+    },
+    {
+      "mes": "2025-10",
+      "centsLb": 392.05,
+      "usdQqal": 392.05
+    },
+    {
+      "mes": "2025-09",
+      "centsLb": 374.85,
+      "usdQqal": 374.85
+    },
+    {
+      "mes": "2025-08",
+      "centsLb": 396.85,
+      "usdQqal": 396.85
+    },
+    {
+      "mes": "2025-07",
+      "centsLb": 295.8,
+      "usdQqal": 295.8
+    }
+  ],
+  "historico_diario": [
+    {
+      "fecha": "2026-09-30",
+      "mes": "2026-09",
+      "centsLb": 289.65,
+      "usdQqal": 289.65
+    },
+    {
+      "fecha": "2026-09-29",
+      "mes": "2026-09",
+      "centsLb": 289.45,
+      "usdQqal": 289.45
+    },
+    {
+      "fecha": "2026-09-28",
+      "mes": "2026-09",
+      "centsLb": 288.75,
+      "usdQqal": 288.75
+    },
+    {
+      "fecha": "2026-09-25",
+      "mes": "2026-09",
+      "centsLb": 278.6,
+      "usdQqal": 278.6
+    },
+    {
+      "fecha": "2026-09-24",
+      "mes": "2026-09",
+      "centsLb": 275.35,
+      "usdQqal": 275.35
+    },
+    {
+      "fecha": "2026-09-23",
+      "mes": "2026-09",
+      "centsLb": 275.9,
+      "usdQqal": 275.9
+    },
+    {
+      "fecha": "2026-09-22",
+      "mes": "2026-09",
+      "centsLb": 272.3,
+      "usdQqal": 272.3
+    },
+    {
+      "fecha": "2026-09-21",
+      "mes": "2026-09",
+      "centsLb": 276.4,
+      "usdQqal": 276.4
+    },
+    {
+      "fecha": "2026-09-18",
+      "mes": "2026-09",
+      "centsLb": 294.55,
+      "usdQqal": 294.55
+    },
+    {
+      "fecha": "2026-09-17",
+      "mes": "2026-09",
+      "centsLb": 290.55,
+      "usdQqal": 290.55
+    },
+    {
+      "fecha": "2026-09-16",
+      "mes": "2026-09",
+      "centsLb": 295.85,
+      "usdQqal": 295.85
+    },
+    {
+      "fecha": "2026-09-15",
+      "mes": "2026-09",
+      "centsLb": 299.65,
+      "usdQqal": 299.65
+    },
+    {
+      "fecha": "2026-09-14",
+      "mes": "2026-09",
+      "centsLb": 307.35,
+      "usdQqal": 307.35
+    },
+    {
+      "fecha": "2026-09-11",
+      "mes": "2026-09",
+      "centsLb": 313.65,
+      "usdQqal": 313.65
+    },
+    {
+      "fecha": "2026-09-10",
+      "mes": "2026-09",
+      "centsLb": 315.3,
+      "usdQqal": 315.3
+    },
+    {
+      "fecha": "2026-09-09",
+      "mes": "2026-09",
+      "centsLb": 319.2,
+      "usdQqal": 319.2
+    },
+    {
+      "fecha": "2026-09-08",
+      "mes": "2026-09",
+      "centsLb": 318.45,
+      "usdQqal": 318.45
+    },
+    {
+      "fecha": "2026-09-04",
+      "mes": "2026-09",
+      "centsLb": 324.25,
+      "usdQqal": 324.25
+    },
+    {
+      "fecha": "2026-09-03",
+      "mes": "2026-09",
+      "centsLb": 324.35,
+      "usdQqal": 324.35
+    },
+    {
+      "fecha": "2026-09-02",
+      "mes": "2026-09",
+      "centsLb": 328.4,
+      "usdQqal": 328.4
+    },
+    {
+      "fecha": "2026-09-01",
+      "mes": "2026-09",
+      "centsLb": 342.25,
+      "usdQqal": 342.25
+    },
+    {
+      "fecha": "2026-08-31",
+      "mes": "2026-08",
+      "centsLb": 343.9,
+      "usdQqal": 343.9
+    },
+    {
+      "fecha": "2026-08-28",
+      "mes": "2026-08",
+      "centsLb": 345.85,
+      "usdQqal": 345.85
+    },
+    {
+      "fecha": "2026-08-27",
+      "mes": "2026-08",
+      "centsLb": 341.9,
+      "usdQqal": 341.9
+    },
+    {
+      "fecha": "2026-08-26",
+      "mes": "2026-08",
+      "centsLb": 357.6,
+      "usdQqal": 357.6
+    },
+    {
+      "fecha": "2026-08-25",
+      "mes": "2026-08",
+      "centsLb": 371.4,
+      "usdQqal": 371.4
+    },
+    {
+      "fecha": "2026-08-24",
+      "mes": "2026-08",
+      "centsLb": 377.75,
+      "usdQqal": 377.75
+    },
+    {
+      "fecha": "2026-08-21",
+      "mes": "2026-08",
+      "centsLb": 358.75,
+      "usdQqal": 358.75
+    },
+    {
+      "fecha": "2026-08-20",
+      "mes": "2026-08",
+      "centsLb": 363.6,
+      "usdQqal": 363.6
+    },
+    {
+      "fecha": "2026-08-19",
+      "mes": "2026-08",
+      "centsLb": 359.5,
+      "usdQqal": 359.5
+    },
+    {
+      "fecha": "2026-08-18",
+      "mes": "2026-08",
+      "centsLb": 363.4,
+      "usdQqal": 363.4
+    },
+    {
+      "fecha": "2026-08-17",
+      "mes": "2026-08",
+      "centsLb": 345.1,
+      "usdQqal": 345.1
+    },
+    {
+      "fecha": "2026-08-14",
+      "mes": "2026-08",
+      "centsLb": 338.1,
+      "usdQqal": 338.1
+    },
+    {
+      "fecha": "2026-08-13",
+      "mes": "2026-08",
+      "centsLb": 333.1,
+      "usdQqal": 333.1
+    },
+    {
+      "fecha": "2026-08-12",
+      "mes": "2026-08",
+      "centsLb": 340.1,
+      "usdQqal": 340.1
+    },
+    {
+      "fecha": "2026-08-11",
+      "mes": "2026-08",
+      "centsLb": 335.75,
+      "usdQqal": 335.75
+    },
+    {
+      "fecha": "2026-08-10",
+      "mes": "2026-08",
+      "centsLb": 332.3,
+      "usdQqal": 332.3
+    },
+    {
+      "fecha": "2026-08-07",
+      "mes": "2026-08",
+      "centsLb": 335.55,
+      "usdQqal": 335.55
+    },
+    {
+      "fecha": "2026-08-06",
+      "mes": "2026-08",
+      "centsLb": 321.65,
+      "usdQqal": 321.65
+    },
+    {
+      "fecha": "2026-08-05",
+      "mes": "2026-08",
+      "centsLb": 326.9,
+      "usdQqal": 326.9
+    },
+    {
+      "fecha": "2026-08-04",
+      "mes": "2026-08",
+      "centsLb": 324.1,
+      "usdQqal": 324.1
+    },
+    {
+      "fecha": "2026-08-03",
+      "mes": "2026-08",
+      "centsLb": 319.5,
+      "usdQqal": 319.5
+    },
+    {
+      "fecha": "2026-07-31",
+      "mes": "2026-07",
+      "centsLb": 332.1,
+      "usdQqal": 332.1
+    },
+    {
+      "fecha": "2026-07-30",
+      "mes": "2026-07",
+      "centsLb": 323.05,
+      "usdQqal": 323.05
+    },
+    {
+      "fecha": "2026-07-29",
+      "mes": "2026-07",
+      "centsLb": 325.8,
+      "usdQqal": 325.8
+    },
+    {
+      "fecha": "2026-07-28",
+      "mes": "2026-07",
+      "centsLb": 339.4,
+      "usdQqal": 339.4
+    },
+    {
+      "fecha": "2026-07-27",
+      "mes": "2026-07",
+      "centsLb": 324.55,
+      "usdQqal": 324.55
+    },
+    {
+      "fecha": "2026-07-24",
+      "mes": "2026-07",
+      "centsLb": 313.8,
+      "usdQqal": 313.8
+    },
+    {
+      "fecha": "2026-07-23",
+      "mes": "2026-07",
+      "centsLb": 309.4,
+      "usdQqal": 309.4
+    },
+    {
+      "fecha": "2026-07-22",
+      "mes": "2026-07",
+      "centsLb": 316.65,
+      "usdQqal": 316.65
+    },
+    {
+      "fecha": "2026-07-21",
+      "mes": "2026-07",
+      "centsLb": 331.95,
+      "usdQqal": 331.95
+    },
+    {
+      "fecha": "2026-07-20",
+      "mes": "2026-07",
+      "centsLb": 334.4,
+      "usdQqal": 334.4
+    },
+    {
+      "fecha": "2026-07-17",
+      "mes": "2026-07",
+      "centsLb": 328.45,
+      "usdQqal": 328.45
+    },
+    {
+      "fecha": "2026-07-16",
+      "mes": "2026-07",
+      "centsLb": 321.3,
+      "usdQqal": 321.3
+    },
+    {
+      "fecha": "2026-07-15",
+      "mes": "2026-07",
+      "centsLb": 334.45,
+      "usdQqal": 334.45
+    },
+    {
+      "fecha": "2026-07-14",
+      "mes": "2026-07",
+      "centsLb": 337.2,
+      "usdQqal": 337.2
+    },
+    {
+      "fecha": "2026-07-13",
+      "mes": "2026-07",
+      "centsLb": 341.4,
+      "usdQqal": 341.4
+    },
+    {
+      "fecha": "2026-07-10",
+      "mes": "2026-07",
+      "centsLb": 343.0,
+      "usdQqal": 343.0
+    },
+    {
+      "fecha": "2026-07-09",
+      "mes": "2026-07",
+      "centsLb": 356.95,
+      "usdQqal": 356.95
+    },
+    {
+      "fecha": "2026-07-08",
+      "mes": "2026-07",
+      "centsLb": 324.25,
+      "usdQqal": 324.25
+    },
+    {
+      "fecha": "2026-07-07",
+      "mes": "2026-07",
+      "centsLb": 331.6,
+      "usdQqal": 331.6
+    },
+    {
+      "fecha": "2026-07-06",
+      "mes": "2026-07",
+      "centsLb": 363.95,
+      "usdQqal": 363.95
+    },
+    {
+      "fecha": "2026-07-02",
+      "mes": "2026-07",
+      "centsLb": 315.65,
+      "usdQqal": 315.65
+    },
+    {
+      "fecha": "2026-07-01",
+      "mes": "2026-07",
+      "centsLb": 324.3,
+      "usdQqal": 324.3
+    },
+    {
+      "fecha": "2026-06-30",
+      "mes": "2026-06",
+      "centsLb": 311.2,
+      "usdQqal": 311.2
+    },
+    {
+      "fecha": "2026-06-29",
+      "mes": "2026-06",
+      "centsLb": 291.1,
+      "usdQqal": 291.1
+    },
+    {
+      "fecha": "2026-06-26",
+      "mes": "2026-06",
+      "centsLb": 286.75,
+      "usdQqal": 286.75
+    },
+    {
+      "fecha": "2026-06-25",
+      "mes": "2026-06",
+      "centsLb": 288.8,
+      "usdQqal": 288.8
+    },
+    {
+      "fecha": "2026-06-24",
+      "mes": "2026-06",
+      "centsLb": 291.55,
+      "usdQqal": 291.55
+    },
+    {
+      "fecha": "2026-06-23",
+      "mes": "2026-06",
+      "centsLb": 287.95,
+      "usdQqal": 287.95
+    },
+    {
+      "fecha": "2026-06-22",
+      "mes": "2026-06",
+      "centsLb": 277.0,
+      "usdQqal": 277.0
+    },
+    {
+      "fecha": "2026-06-18",
+      "mes": "2026-06",
+      "centsLb": 275.1,
+      "usdQqal": 275.1
+    },
+    {
+      "fecha": "2026-06-17",
+      "mes": "2026-06",
+      "centsLb": 277.85,
+      "usdQqal": 277.85
+    },
+    {
+      "fecha": "2026-06-16",
+      "mes": "2026-06",
+      "centsLb": 277.25,
+      "usdQqal": 277.25
+    },
+    {
+      "fecha": "2026-06-15",
+      "mes": "2026-06",
+      "centsLb": 262.95,
+      "usdQqal": 262.95
+    },
+    {
+      "fecha": "2026-06-12",
+      "mes": "2026-06",
+      "centsLb": 257.2,
+      "usdQqal": 257.2
+    },
+    {
+      "fecha": "2026-06-11",
+      "mes": "2026-06",
+      "centsLb": 253.95,
+      "usdQqal": 253.95
+    },
+    {
+      "fecha": "2026-06-10",
+      "mes": "2026-06",
+      "centsLb": 248.4,
+      "usdQqal": 248.4
+    },
+    {
+      "fecha": "2026-06-09",
+      "mes": "2026-06",
+      "centsLb": 244.4,
+      "usdQqal": 244.4
+    },
+    {
+      "fecha": "2026-06-08",
+      "mes": "2026-06",
+      "centsLb": 245.9,
+      "usdQqal": 245.9
+    },
+    {
+      "fecha": "2026-06-05",
+      "mes": "2026-06",
+      "centsLb": 246.5,
+      "usdQqal": 246.5
+    },
+    {
+      "fecha": "2026-06-04",
+      "mes": "2026-06",
+      "centsLb": 247.15,
+      "usdQqal": 247.15
+    },
+    {
+      "fecha": "2026-06-03",
+      "mes": "2026-06",
+      "centsLb": 253.1,
+      "usdQqal": 253.1
+    },
+    {
+      "fecha": "2026-06-02",
+      "mes": "2026-06",
+      "centsLb": 259.2,
+      "usdQqal": 259.2
+    },
+    {
+      "fecha": "2026-06-01",
+      "mes": "2026-06",
+      "centsLb": 260.6,
+      "usdQqal": 260.6
+    },
+    {
+      "fecha": "2026-05-29",
+      "mes": "2026-05",
+      "centsLb": 265.6,
+      "usdQqal": 265.6
+    },
+    {
+      "fecha": "2026-05-28",
+      "mes": "2026-05",
+      "centsLb": 274.25,
+      "usdQqal": 274.25
+    },
+    {
+      "fecha": "2026-05-27",
+      "mes": "2026-05",
+      "centsLb": 269.85,
+      "usdQqal": 269.85
+    },
+    {
+      "fecha": "2026-05-26",
+      "mes": "2026-05",
+      "centsLb": 274.0,
+      "usdQqal": 274.0
+    },
+    {
+      "fecha": "2026-05-22",
+      "mes": "2026-05",
+      "centsLb": 272.35,
+      "usdQqal": 272.35
+    },
+    {
+      "fecha": "2026-05-21",
+      "mes": "2026-05",
+      "centsLb": 273.4,
+      "usdQqal": 273.4
+    },
+    {
+      "fecha": "2026-05-20",
+      "mes": "2026-05",
+      "centsLb": 268.3,
+      "usdQqal": 268.3
+    },
+    {
+      "fecha": "2026-05-19",
+      "mes": "2026-05",
+      "centsLb": 270.15,
+      "usdQqal": 270.15
+    },
+    {
+      "fecha": "2026-05-18",
+      "mes": "2026-05",
+      "centsLb": 276.2,
+      "usdQqal": 276.2
+    },
+    {
+      "fecha": "2026-05-15",
+      "mes": "2026-05",
+      "centsLb": 284.6,
+      "usdQqal": 284.6
+    },
+    {
+      "fecha": "2026-05-14",
+      "mes": "2026-05",
+      "centsLb": 294.45,
+      "usdQqal": 294.45
+    },
+    {
+      "fecha": "2026-05-13",
+      "mes": "2026-05",
+      "centsLb": 296.25,
+      "usdQqal": 296.25
+    },
+    {
+      "fecha": "2026-05-12",
+      "mes": "2026-05",
+      "centsLb": 294.8,
+      "usdQqal": 294.8
+    },
+    {
+      "fecha": "2026-05-11",
+      "mes": "2026-05",
+      "centsLb": 298.6,
+      "usdQqal": 298.6
+    },
+    {
+      "fecha": "2026-05-08",
+      "mes": "2026-05",
+      "centsLb": 289.7,
+      "usdQqal": 289.7
+    },
+    {
+      "fecha": "2026-05-07",
+      "mes": "2026-05",
+      "centsLb": 291.05,
+      "usdQqal": 291.05
+    },
+    {
+      "fecha": "2026-05-06",
+      "mes": "2026-05",
+      "centsLb": 299.45,
+      "usdQqal": 299.45
+    },
+    {
+      "fecha": "2026-05-05",
+      "mes": "2026-05",
+      "centsLb": 305.85,
+      "usdQqal": 305.85
+    },
+    {
+      "fecha": "2026-05-04",
+      "mes": "2026-05",
+      "centsLb": 302.2,
+      "usdQqal": 302.2
+    },
+    {
+      "fecha": "2026-05-01",
+      "mes": "2026-05",
+      "centsLb": 302.0,
+      "usdQqal": 302.0
+    },
+    {
+      "fecha": "2026-04-30",
+      "mes": "2026-04",
+      "centsLb": 300.9,
+      "usdQqal": 300.9
+    },
+    {
+      "fecha": "2026-04-29",
+      "mes": "2026-04",
+      "centsLb": 305.25,
+      "usdQqal": 305.25
+    },
+    {
+      "fecha": "2026-04-28",
+      "mes": "2026-04",
+      "centsLb": 306.4,
+      "usdQqal": 306.4
+    },
+    {
+      "fecha": "2026-04-27",
+      "mes": "2026-04",
+      "centsLb": 304.1,
+      "usdQqal": 304.1
+    },
+    {
+      "fecha": "2026-04-24",
+      "mes": "2026-04",
+      "centsLb": 309.8,
+      "usdQqal": 309.8
+    },
+    {
+      "fecha": "2026-04-23",
+      "mes": "2026-04",
+      "centsLb": 316.35,
+      "usdQqal": 316.35
+    },
+    {
+      "fecha": "2026-04-22",
+      "mes": "2026-04",
+      "centsLb": 302.4,
+      "usdQqal": 302.4
+    },
+    {
+      "fecha": "2026-04-21",
+      "mes": "2026-04",
+      "centsLb": 289.0,
+      "usdQqal": 289.0
+    },
+    {
+      "fecha": "2026-04-20",
+      "mes": "2026-04",
+      "centsLb": 292.2,
+      "usdQqal": 292.2
+    },
+    {
+      "fecha": "2026-04-17",
+      "mes": "2026-04",
+      "centsLb": 289.3,
+      "usdQqal": 289.3
+    },
+    {
+      "fecha": "2026-04-16",
+      "mes": "2026-04",
+      "centsLb": 296.45,
+      "usdQqal": 296.45
+    },
+    {
+      "fecha": "2026-04-15",
+      "mes": "2026-04",
+      "centsLb": 304.25,
+      "usdQqal": 304.25
+    },
+    {
+      "fecha": "2026-04-14",
+      "mes": "2026-04",
+      "centsLb": 302.65,
+      "usdQqal": 302.65
+    },
+    {
+      "fecha": "2026-04-13",
+      "mes": "2026-04",
+      "centsLb": 300.85,
+      "usdQqal": 300.85
+    },
+    {
+      "fecha": "2026-04-10",
+      "mes": "2026-04",
+      "centsLb": 300.1,
+      "usdQqal": 300.1
+    },
+    {
+      "fecha": "2026-04-09",
+      "mes": "2026-04",
+      "centsLb": 293.7,
+      "usdQqal": 293.7
+    },
+    {
+      "fecha": "2026-04-08",
+      "mes": "2026-04",
+      "centsLb": 294.05,
+      "usdQqal": 294.05
+    },
+    {
+      "fecha": "2026-04-07",
+      "mes": "2026-04",
+      "centsLb": 286.1,
+      "usdQqal": 286.1
+    },
+    {
+      "fecha": "2026-04-06",
+      "mes": "2026-04",
+      "centsLb": 298.05,
+      "usdQqal": 298.05
+    },
+    {
+      "fecha": "2026-04-02",
+      "mes": "2026-04",
+      "centsLb": 295.4,
+      "usdQqal": 295.4
+    },
+    {
+      "fecha": "2026-04-01",
+      "mes": "2026-04",
+      "centsLb": 297.8,
+      "usdQqal": 297.8
+    },
+    {
+      "fecha": "2026-03-31",
+      "mes": "2026-03",
+      "centsLb": 298.35,
+      "usdQqal": 298.35
+    },
+    {
+      "fecha": "2026-03-30",
+      "mes": "2026-03",
+      "centsLb": 292.55,
+      "usdQqal": 292.55
+    }
+  ],
+  "stale": false,
+  "guardado_en": "2026-10-01T01:14:23.039588+00:00"
+}

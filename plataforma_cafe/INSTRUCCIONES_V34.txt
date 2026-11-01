@@ -1,0 +1,72 @@
+RED CAFÉ ECUADOR — PAQUETE V34
+================================================================
+Mejoras incrementales sobre V33: servicios, PWA y UX.
+
+1. ELIMINACIÓN DE SECCIÓN REDUNDANTE
+   Se eliminó el bloque "En la Red" del home que mostraba 5 tarjetas
+   (PRODUCTOR, TOSTADOR, BARISTA, CAFETERÍA, PROVEEDOR) sin enlace
+   ni función útil. Era redundante con las 12 tarjetas detalladas
+   de perfiles que aparecen después.
+
+2. REDIRECT AUTOMÁTICO AL PANEL
+   Ahora, cuando un usuario ya registrado visita /login, se redirige
+   automáticamente a /panel. Se verifican tanto la sesión local
+   (localStorage) como la sesión del servidor (API).
+
+3. PESTAÑA "MIS SERVICIOS" EN EL PANEL
+   Cada perfil del panel ahora incluye una pestaña "Mis servicios"
+   que muestra:
+   · Servicios gratuitos incluidos en su cuenta ( Marketplace,
+     Academia, Precios, etc.)
+   · Servicios especializados disponibles para contratar con precio
+     y enlace directo.
+   Los servicios se filtran automáticamente según el perfil activo.
+
+4. SERVICIOS UNIFICADOS ENTRE HOME Y /SERVICIOS/
+   Se corrigió la inconsistencia donde el home y la página /servicios/
+   mostraban diferentes servicios. Ahora ambos usan la misma fuente
+   de datos (SERVICIOS_EXTRA de lib/data.ts) que incluye:
+   · Panel de Precios del Mercado
+   · Calculadora de Venta
+   · Dossier EUDR de tu Finca
+   · Facturación Electrónica
+   · Soporte y Comunidad WhatsApp
+
+5. LOGO OFICIAL EN INSTALADOR MÓVIL (PWA)
+   Se reemplazaron los iconos genéricos (taza de café) por el logo
+   oficial de Red Café Ecuador (grano con flechas):
+   · icon-192.png → logo oficial
+   · icon-512.png → logo oficial
+   · apple-touch-icon.png → logo oficial
+   · favicon.ico → logo oficial
+   Se actualizó la cache key del service worker para forzar re-cache.
+
+6. BOTÓN "INSTALAR APP" EN EL MENÚ
+   Se creó el componente InstalarPWA.tsx que:
+   · Detecta si el browser soporta instalación PWA
+   · Muestra botón "Instalar app" en menú desktop y móvil
+   · Se oculta si la app ya está instalada
+   · Muestra tooltip informativo al pasar el mouse
+
+ARCHIVOS MODIFICADOS:
+   · app/page.tsx — eliminada sección redundante, unificados servicios
+   · app/login/page.tsx — redirect automático para logueados
+   · app/panel/page.tsx — nueva pestaña "Mis servicios"
+   · components/Navbar.tsx — agregado InstalarPWA
+   · components/InstalarPWA.tsx — NUEVO componente
+   · lib/data.ts — agregado servicio facturación a SERVICIOS_EXTRA
+   · public/icon-192.png — logo oficial
+   · public/icon-512.png — logo oficial
+   · public/apple-touch-icon.png — logo oficial
+   · public/favicon.ico — logo oficial
+   · public/sw.js — cache key actualizada
+
+CÓMO SUBIRLO
+   Descomprimir en la raíz, sustituyendo archivos. NO borrar data/.
+
+── CAMBIOS RESPECTO A V33 ──
+   · Se eliminó bloque "En la Red" del home (5 tarjetas redundantes)
+   · Login redirige a panel si ya hay sesión activa
+   · Panel tiene nueva pestaña "Mis servicios" por perfil
+   · Iconos PWA ahora usan el logo oficial de la marca
+   · Menú incluye botón "Instalar app" para PWA

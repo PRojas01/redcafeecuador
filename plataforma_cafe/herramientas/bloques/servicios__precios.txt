@@ -1,0 +1,65 @@
+<<<css>>>
+<link rel="stylesheet" href="/redcafe-v60-final.css?v=__VERSION__"/>
+<<<inline>>>
+<script id="redcafe-v59-ticker-panel">
+(function(){
+  function addPanelLink(){
+    document.querySelectorAll('a').forEach(function(a){
+      if ((a.textContent || '').trim() !== 'Fuente oficial') return;
+      var parent = a.parentElement;
+      if (!parent || parent.querySelector('[data-redcafe-panel-precios]')) return;
+      var link = document.createElement('a');
+      link.href = '/servicios/precios/';
+      link.setAttribute('data-redcafe-panel-precios','1');
+      link.className = 'rounded-full border border-acento-claro bg-crema px-3 py-0.5 text-[10px] font-extrabold uppercase tracking-wider text-cafe shadow-sm transition hover:bg-acento-claro hover:text-cafe';
+      link.title = 'Abrir panel completo de precios';
+      link.textContent = 'Panel de precios';
+      parent.insertBefore(link, a);
+    });
+  }
+  addPanelLink();
+  var n = 0;
+  var timer = setInterval(function(){ addPanelLink(); if (++n > 30) clearInterval(timer); }, 500);
+  new MutationObserver(addPanelLink).observe(document.documentElement, {childList:true, subtree:true});
+})();
+</script><script id="redcafe-v59-precios-grafica">
+(function(){
+  function money(n){ return String.fromCharCode(36) + Number(n).toFixed(2); }
+  function readRows(table){
+    return Array.from(table.querySelectorAll('tbody tr')).slice(0,3).map(function(tr){
+      var c = tr.querySelectorAll('td');
+      return { mes: (c[0] && c[0].textContent || '').trim(), valor: parseFloat((c[2] && c[2].textContent || '').replace(/[^0-9.]/g,'')) };
+    }).filter(function(r){ return r.mes && !isNaN(r.valor); }).reverse();
+  }
+  function addGraph(){
+    var title = Array.from(document.querySelectorAll('h2')).find(function(el){ return (el.textContent || '').indexOf('Histórico (últimos 12 meses)') >= 0; });
+    var table = title && title.nextElementSibling && title.nextElementSibling.querySelector('table');
+    if (!title || !table) return;
+    var rows = readRows(table);
+    if (rows.length < 2) return;
+    var key = rows.map(function(r){ return r.mes + ':' + r.valor; }).join('|');
+    var existing = document.getElementById('redcafe-historico-3m');
+    if (existing && existing.getAttribute('data-key') === key) return;
+    if (existing) existing.remove();
+    var vals = rows.map(function(r){ return r.valor; });
+    var min = Math.min.apply(null, vals), max = Math.max.apply(null, vals), range = Math.max(1, max-min);
+    var coords = rows.map(function(r,i){ return Object.assign(r,{ x: 52 + i*(496/Math.max(1, rows.length-1)), y: 198 - ((r.valor-min)/range)*126 }); });
+    var points = coords.map(function(p){ return p.x + ',' + p.y; }).join(' ');
+    var circles = coords.map(function(p){ return '<g><circle cx="'+p.x+'" cy="'+p.y+'" r="8" fill="#3F6B4A" stroke="#FBFAF7" stroke-width="4"></circle><text x="'+p.x+'" y="'+(p.y-18)+'" text-anchor="middle" font-size="15" font-weight="800" fill="#3B1A0C">'+money(p.valor)+'</text><text x="'+p.x+'" y="236" text-anchor="middle" font-size="13" font-weight="700" fill="#6B5D52">'+p.mes+'</text></g>'; }).join('');
+    var tendencia = rows[rows.length-1].valor - rows[0].valor;
+    var txtTendencia = tendencia > 0 ? 'Tendencia al alza' : tendencia < 0 ? 'Tendencia a la baja' : 'Tendencia estable';
+    var box = document.createElement('div');
+    box.id = 'redcafe-historico-3m';
+    box.setAttribute('data-key', key);
+    box.className = 'mt-6 rounded-2xl border border-cafe/10 bg-crema p-5';
+    box.innerHTML = '<div class="flex flex-wrap items-end justify-between gap-3"><div><p class="text-xs font-semibold uppercase tracking-widest text-filtrado-600">Gráfica de tendencias</p><h2 class="mt-1 font-titulo text-xl font-bold text-cafe">Precio real de los últimos 3 meses</h2></div><p class="text-xs font-semibold text-pizarra/70">'+txtTendencia+' · USD / quintal</p></div><div class="mt-4 overflow-hidden rounded-xl bg-white p-3"><svg viewBox="0 0 600 260" role="img" aria-label="Gráfica de tendencias del precio real de los últimos tres meses" class="h-auto w-full"><line x1="52" y1="210" x2="560" y2="210" stroke="#E8DCC7" stroke-width="2"></line><line x1="52" y1="52" x2="52" y2="210" stroke="#E8DCC7" stroke-width="2"></line><text x="52" y="34" font-size="13" font-weight="700" fill="#3B1A0C">'+money(max)+'</text><text x="52" y="238" font-size="13" font-weight="700" fill="#3B1A0C">'+money(min)+'</text><polyline points="'+points+'" fill="none" stroke="#A94E17" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"></polyline>'+circles+'</svg></div>';
+    title.insertAdjacentElement('beforebegin', box);
+  }
+  addGraph();
+  var n = 0;
+  var timer = setInterval(function(){ addGraph(); if (++n > 30) clearInterval(timer); }, 500);
+  new MutationObserver(addGraph).observe(document.documentElement, {childList:true, subtree:true, characterData:true});
+})();
+</script>
+<<<scripts>>>
+<script src="/redcafe-referencia.js?v=__VERSION__" defer></script><script src="/redcafe-ruta.js?v=__VERSION__" defer></script><script src="/redcafe-v60-final.js?v=__VERSION__" defer></script><script src="/redcafe-v60-mejoras-obligatorias.js?v=__VERSION__" defer></script><script src="/redcafe-grafico-precios.js?v=__VERSION__" defer></script><script src="/redcafe-notificaciones.js?v=__VERSION__" defer></script><script src="/redcafe-aviso-pedidos.js?v=__VERSION__" defer></script><script src="/redcafe-reportes.js?v=__VERSION__" defer></script><script src="/redcafe-empleos.js?v=__VERSION__" defer></script><script src="/redcafe-afiliate.js?v=__VERSION__" defer></script><script src="/redcafe-comunidad.js?v=__VERSION__" defer></script><script src="/redcafe-volver-panel.js?v=__VERSION__" defer></script><script src="/redcafe-mejoras-ui.js?v=__VERSION__" defer></script>

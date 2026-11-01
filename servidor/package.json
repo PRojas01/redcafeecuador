@@ -1,0 +1,41 @@
+{
+  "name": "redcafe-servidor",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Red Café Ecuador — servidor Node + MySQL que reemplaza api/*.php manteniendo el mismo contrato",
+  "type": "module",
+  "engines": {
+    "node": ">=18.18"
+  },
+  "scripts": {
+    "dev": "tsx watch src/index.ts",
+    "start": "node --enable-source-maps dist/index.js",
+    "build": "tsc -p tsconfig.json && node -e \"require('fs').cpSync('src/datos','dist/datos',{recursive:true})\"",
+    "typecheck": "tsc -p tsconfig.json --noEmit",
+    "test": "vitest run",
+    "db:push": "npm run build && prisma db push --skip-generate && npm run db:preparar",
+    "db:migrate": "prisma migrate deploy",
+    "db:generate": "prisma generate",
+    "importar": "node dist/legacy/importar.js",
+    "postinstall": "prisma generate && npm run build",
+    "agregar-cursos": "node dist/legacy/agregar-cursos.js",
+    "produccion": "npm ci && npm run db:push && npm start",
+    "db:preparar": "node dist/scripts/preparar-base.js",
+    "sql:esquema": "node -e \"const{execSync:x}=require('child_process'),fs=require('fs');const f='prisma/esquema-mysql.sql';const s=fs.readFileSync(f,'utf8');const cab=s.slice(0,s.indexOf('-- CreateTable'));const sql=x('npx prisma migrate diff --from-empty --to-schema-datamodel prisma/schema.prisma --script').toString().replace(/COLLATE utf8mb4_unicode_ci/g,'COLLATE utf8mb4_bin');fs.writeFileSync(f,cab+sql.trim().replace(/\\n*$/,'')+'\\n\\nSET FOREIGN_KEY_CHECKS = 1;\\n')\""
+  },
+  "dependencies": {
+    "@hono/node-server": "^1.19.17",
+    "@prisma/client": "^6.19.3",
+    "@types/node": "^22.20.5",
+    "bcryptjs": "^3.0.3",
+    "hono": "^4.13.14",
+    "prisma": "^6.19.3",
+    "sharp": "^0.34.5",
+    "typescript": "5.9",
+    "zod": "^4.6.7"
+  },
+  "devDependencies": {
+    "tsx": "^4.23.15",
+    "vitest": "^3.2.7"
+  }
+}
