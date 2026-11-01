@@ -70,10 +70,14 @@ const acciones: Modulo["acciones"] = {
     }
     const hoy = today();
     const requerimientos = (await listar("requerimientos")).filter((r) => r.estado === "abierta" && !(str(r.cierra) && str(r.cierra) < hoy)).length;
+    // Servicios publicados en el catálogo (oficiales disponibles + de miembros visibles al público).
+    const servicios =
+      (await listar("servicios")).filter((s) => s.disponible === undefined || !!s.disponible).length +
+      (await listar("servicios-terceros")).filter((s) => !s.oculto && !s.demo && (s.visibilidad ?? "publico") === "publico").length;
     const porProvincia = [...prov.values()].sort((a, b) => b.lotes - a.lotes || b.miembros - a.miembros);
     return {
       miembros: miembros.length, productores, compran_cafe: compran, provincias: porProvincia.filter((x) => x.miembros > 0).length,
-      por_provincia: porProvincia.slice(0, 12), lotes_reales: lotesReales, requerimientos_abiertos: requerimientos,
+      por_provincia: porProvincia.slice(0, 12), lotes_reales: lotesReales, servicios, requerimientos_abiertos: requerimientos,
     };
   },
 
