@@ -5539,3 +5539,44 @@ html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5) body #perfiles > div > p.badge
   html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5) body main :is(h2 + p, h2 + .mt-3) { margin-top: .35rem !important; }
   html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5) body main p.badge + h2 { margin-top: .4rem !important; }
 }
+
+/* ---------- Fuentes y cafés del sitio publicado (1-nov-2026) -------------
+   Pedro prefiere el estilo de redcafeecuador.com: todo en DM Sans (títulos
+   finos con letra apretada) y secciones alternando café #3B2318 y crema. */
+html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5) {
+  --o-espresso: #3b2318;
+  --o-espresso-90: rgba(59, 35, 24, .92);
+  --o-tostado: #45291c;
+  --o-crema: #f6f1e8;
+  --o-crema-2: #efe6d8;
+  --o-papel: #fbfaf7;
+  --o-oro: #dda35e;
+  --o-texto: #3b2318;
+  --o-texto-2: #5c4434;
+  --o-serif: "DM Sans", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  --rc-titulo: var(--o-sans) !important;
+  --font-titulo: var(--o-sans) !important;
+  --font-marca: var(--o-sans) !important;
+}
+html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5) body { background: var(--o-crema) !important; color: #45291c; }
+html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5) body :is(h1, h2, .font-titulo, .marca) { font-family: var(--o-sans) !important; }
+html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5) body h1 { font-weight: 400 !important; letter-spacing: -.035em !important; }
+html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5) body h2 { font-weight: 500 !important; letter-spacing: -.025em !important; }
+html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5) body #forma-parte > div > p.mt-8 { font-family: var(--o-sans) !important; font-weight: 500 !important; letter-spacing: -.025em; }
+
+/* Cabecera, héroe y secciones oscuras en café */
+html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5) body > header { background: rgba(59, 35, 24, .96) !important; }
+html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5) body #portada-hero { background: radial-gradient(ellipse at 50% -10%, rgba(221, 163, 94, .22), transparent 60%), #2c1a12 !important; }
+html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5) body :is(#confianza, footer) { background-color: #3b2318 !important; }
+
+/* Cifras sobre café, números dorados */
+html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5) body .redcafe-cifras { background: #3b2318 !important; border-color: rgba(221, 163, 94, .25) !important; }
+html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5) body .redcafe-cifras .redcafe-cifra strong { color: #dda35e !important; font-family: var(--o-sans) !important; font-weight: 500 !important; }
+html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5) body .redcafe-cifras .redcafe-cifra span { color: rgba(251, 246, 239, .85) !important; }
+
+/* Botón principal dorado con texto café, como el sitio publicado */
+html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5) body :is(.btn-accent:not(.btn-whatsapp), #portada-hero .portada-botones .btn-registro) { background: #dda35e !important; border-color: #dda35e !important; color: #3b2318 !important; background-image: none !important; }
+
+/* Contraste: etiquetas de recetas (3,8:1) */
+html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5) body .text-coffee-800 { color: #7a2216 !important; }
+html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5) body #portada-hero .portada-botones .btn-accent:not(.btn-registro):not(.btn-whatsapp) { background: transparent !important; border-color: rgba(251, 246, 239, .55) !important; color: #fbf6ef !important; }
