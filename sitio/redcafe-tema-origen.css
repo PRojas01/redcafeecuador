@@ -585,11 +585,11 @@ html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5) body .redcafe-cifras-caja { gr
 @media (min-width: 900px) { html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5) body .redcafe-cifras-caja { grid-template-columns: repeat(6, minmax(0, 1fr)) !important; } }
 html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5) body .redcafe-cifra { padding: .6rem .4rem !important; gap: .1rem !important; }
 html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5) body .redcafe-cifra strong { font-size: clamp(1.15rem, 1rem + .8vw, 1.5rem) !important; line-height: 1.1 !important; }
-html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5) body .redcafe-cifra span { font-size: 11.5px !important; line-height: 1.3 !important; }
+html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5) body .redcafe-cifra span { font-size: 12px !important; line-height: 1.3 !important; }
 
 /* 2. Pie: enlaces más juntos */
 html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5) body footer ul > li { margin-top: 0 !important; }
-html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5) body footer ul > li > a { display: inline-flex !important; align-items: center; min-height: 32px !important; padding-top: 0 !important; padding-bottom: 0 !important; line-height: 1.25 !important; }
+html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5) body footer ul > li > a { display: inline-flex !important; align-items: center; min-height: 28px !important; padding-top: 0 !important; padding-bottom: 0 !important; line-height: 1.25 !important; }
 html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5) body footer p.mb-4 { margin-bottom: .4rem !important; }
 @media (max-width: 767px) {
   html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5) body footer .grid.gap-10 { grid-template-columns: 1fr 1fr !important; gap: 1.1rem 1rem !important; }
@@ -602,7 +602,7 @@ html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5) body > header > div.lg\:hidden
   background: var(--o-oro) !important; color: var(--o-espresso) !important; font-weight: 600 !important;
 }
 html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5) body footer ul > li { margin-bottom: 0 !important; }
-html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5) body footer ul > li > a { min-height: 28px !important; overflow-wrap: anywhere; }
+html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5) body footer ul > li > a { overflow-wrap: anywhere; }
 html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5) body :is(h1, h2) { hyphens: manual !important; -webkit-hyphens: manual !important; }
 html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5) body .redcafe-cifra { align-content: start !important; }
 /* Mejoras similares: menú del móvil más junto, aviso de «gratis» como nota y no como etiqueta gritona */

@@ -71,8 +71,11 @@ const acciones: Modulo["acciones"] = {
     const hoy = today();
     const requerimientos = (await listar("requerimientos")).filter((r) => r.estado === "abierta" && !(str(r.cierra) && str(r.cierra) < hoy)).length;
     // Servicios publicados en el catálogo (oficiales disponibles + de miembros visibles al público).
+    // Como el catálogo público, sin contar ejemplos: la intermediación siempre existe aunque no esté guardada.
+    const oficiales = await listar("servicios");
     const servicios =
-      (await listar("servicios")).filter((s) => s.disponible === undefined || !!s.disponible).length +
+      oficiales.filter((s) => (s.disponible === undefined || !!s.disponible) && !s.oculto).length +
+      (oficiales.some((s) => s.id === "intermediacion-compraventa") ? 0 : 1) +
       (await listar("servicios-terceros")).filter((s) => !s.oculto && !s.demo && (s.visibilidad ?? "publico") === "publico").length;
     const porProvincia = [...prov.values()].sort((a, b) => b.lotes - a.lotes || b.miembros - a.miembros);
     return {
