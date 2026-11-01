@@ -75,6 +75,9 @@ function sembrar() {
     "notas-admin": { [`u:${YO}`]: "nota", [`u:${OTRO}`]: "otra" },
     "guias-registros": { [YO]: { riego: [] } },
     sanciones: [{ id: "sa1", uid: YO }],
+    ordenes: [{ nro: 7, usuario_id: YO, usuario_nombre: "Ana", usuario_email: "yo@ejemplo.test", referencia_pago: "TRX-1", precio: 10 }, { nro: 8, usuario_id: OTRO, usuario_nombre: "Luis" }],
+    "recordatorios-config": { campanas: {}, usuarios: { [YO]: { c1: {} }, [OTRO]: { c1: {} } } },
+    waitlist: [{ id: "w1", email: "YO@ejemplo.test" }, { id: "w2", email: "otro@ejemplo.test" }],
   };
   fs.rmSync(temporal, { recursive: true, force: true });
   fs.mkdirSync(subidas(), { recursive: true });
@@ -131,6 +134,30 @@ describe("baja LOPDP: borrarMiembro", () => {
     expect(m.usuarios[OTRO].nombre).toBe("Luis");
   });
 
+  it("anonimiza órdenes y borra recordatorios y lista de espera", async () => {
+    await borrarMiembro(YO);
+    expect(m.cols.ordenes[0]).toMatchObject({ nro: 7, usuario_nombre: ANONIMO, usuario_email: "", referencia_pago: "", precio: 10 });
+    expect(m.cols.ordenes[1].usuario_nombre).toBe("Luis");
+    expect(Object.keys(m.cols["recordatorios-config"].usuarios)).toEqual([OTRO]);
+    expect(m.cols.waitlist.map((w: any) => w.id)).toEqual(["w2"]);
+  });
+
+  it("si se corta a medias, al repetirlo no deja archivos huérfanos", async () => {
+    const { mutar } = await import("../src/lib/docs.js");
+    // Falla justo después de borrar las solicitudes de identidad.
+    const real = (mutar as any).getMockImplementation();
+    (mutar as any).mockImplementation(async (col: string, fn: any) => {
+      if (col === "contenido-subido") throw new Error("corte");
+      return real(col, fn);
+    });
+    await expect(borrarMiembro(YO)).rejects.toThrow("corte");
+    expect(m.cols["verificacion-identidad"].map((v: any) => v.id)).toEqual(["v2"]);
+    (mutar as any).mockImplementation(real);
+    await borrarMiembro(YO);
+    expect(fs.readdirSync(carpetaIdentidad())).toEqual(["doc-b.pdf"]);
+    expect(fs.readdirSync(subidas()).sort()).toEqual([`curso-x${YO}-0123456789ab.jpg`, `lote-${OTRO}-f2.jpg`]);
+  });
+
   it("es repetible sin errores", async () => {
     await borrarMiembro(YO);
     await expect(borrarMiembro(YO)).resolves.toBeTypeOf("object");
@@ -157,6 +184,9 @@ describe("Descargar mis datos", () => {
     expect(d.sanciones.length).toBe(1);
     expect(d.matriculas).toEqual([{ usuario: YO }]);
     expect(d.guias_registros).toEqual({ riego: [] });
+    expect(d.ordenes.map((o: any) => o.nro)).toEqual([7]);
+    expect(d.recordatorios).toEqual({ c1: {} });
+    expect(d.waitlist.map((w: any) => w.id)).toEqual(["w1"]);
     expect(d["push-suscripciones"]).toBeUndefined();
   });
 });

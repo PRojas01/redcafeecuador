@@ -6,7 +6,7 @@
 // archivos de identidad, matrículas y avance de cursos, chats y mensajes,
 // valoraciones dadas y recibidas, avisos (notificaciones y push) y todo lo que
 // publicó. Se conserva solo lo que otras personas necesitan, sin datos suyos:
-// los pedidos con terceros (anonimizados), los comentarios en publicaciones
+// los pedidos con terceros y las órdenes de servicio (anonimizados), los comentarios en publicaciones
 // ajenas (anonimizados), el registro de consentimientos (prueba legal) y las
 // sanciones de moderación (debido proceso). La fila del usuario queda como
 // lápida sin datos personales para que su id no se reutilice.
@@ -91,6 +91,38 @@ export async function borrarMiembro(id: string): Promise<ResumenBorrado> {
   if (!id) throw new Error("id requerido");
   const resumen: ResumenBorrado = {};
   const borrados: Record<string, Doc[]> = {};
+  const previos: Record<string, Doc[]> = {};
+  for (const [col, es] of Object.entries(PROPIAS)) previos[col] = (await listar(col)).filter((x) => es(x, id));
+  const filaInicial = await db.usuario.findUnique({ where: { id } });
+
+  // Archivos primero: si el borrado se corta a medias, al repetirlo los
+  // documentos que los nombran siguen ahí. Fotos y documentos públicos, y los
+  // de identidad (privados).
+  let archivos = 0;
+  const dirSubidas = path.join(config.uploads, "user-content");
+  const nombres = new Set(urlsSubidas(Object.values(previos).flat()));
+  const slug = id.replace(/[^A-Za-z0-9_-]/g, "");
+  if (slug && fs.existsSync(dirSubidas)) {
+    // Nombres de uploads.ts: <contexto>-<id>-<12 hex>.jpg|pdf
+    const suyo = new RegExp(`^(comunidad|marketplace|lote|curso|doc)-${slug}-[0-9a-f]{12}\\.(jpg|pdf)$`);
+    for (const n of fs.readdirSync(dirSubidas)) if (suyo.test(n)) nombres.add(n);
+  }
+  for (const n of nombres) if (borrarArchivo(dirSubidas, n)) archivos++;
+  const idents = (previos["verificacion-identidad"] ?? []).flatMap((s) => Object.values(s.archivos ?? {}).map(str));
+  if (idents.length) {
+    const dir = carpetaIdentidad();
+    for (const n of idents) if (borrarArchivo(dir, n)) archivos++;
+  }
+  if (archivos) resumen.archivos = archivos;
+
+  // Lista de espera: se apuntó con su correo, no con su id.
+  const email = str(filaInicial?.email).toLowerCase();
+  if (email && !email.endsWith("@invalid")) {
+    let n = 0;
+    await mutar("waitlist", (l) => { const q = l.filter((x) => str(x.email).toLowerCase() !== email); n = l.length - q.length; return n ? q : l; });
+    if (n) resumen.waitlist = n;
+  }
+
 
   for (const [col, es] of Object.entries(PROPIAS)) {
     await mutar(col, (items) => {
@@ -126,6 +158,10 @@ export async function borrarMiembro(id: string): Promise<ResumenBorrado> {
     return x;
   }));
 
+  // Órdenes de servicios de la plataforma: se conservan (registro contable) sin sus datos.
+  await mutar("ordenes", (os) => os.map((o) => (str(o.usuario_id) === id
+    ? { ...o, usuario_nombre: ANONIMO, usuario_email: "", referencia_pago: "" } : o)));
+
   // Mapas: matrículas, avance de cursos y notas de administración.
   const cursosBorrados = new Set([...(borrados.cursos ?? []), ...(borrados["contenido-cursos"] ?? [])].map((c) => str(c.id)));
   await mutarMapa("inscripciones-cursos", (m) => {
@@ -137,26 +173,9 @@ export async function borrarMiembro(id: string): Promise<ResumenBorrado> {
   });
   await mutarMapa("progreso-cursos", (m) => { if (id in m) { delete m[id]; resumen.progreso = 1; } return m; });
   await mutarMapa("notas-admin", (m) => { delete m["u:" + id]; return m; });
+  await mutarMapa("recordatorios-config", (m) => { if (m.usuarios && typeof m.usuarios === "object" && id in m.usuarios) delete m.usuarios[id]; return m; });
   const guias = await db.documento.deleteMany({ where: { coleccion: "guias-registros", id } });
   if (guias.count) resumen["guias-registros"] = guias.count;
-
-  // Archivos: fotos y documentos públicos, y los de identidad (privados).
-  let archivos = 0;
-  const dirSubidas = path.join(config.uploads, "user-content");
-  const nombres = new Set(urlsSubidas(Object.values(borrados).flat()));
-  const slug = id.replace(/[^A-Za-z0-9_-]/g, "");
-  if (slug && fs.existsSync(dirSubidas)) {
-    // Nombres de uploads.ts: <contexto>-<id>-<12 hex>.jpg|pdf
-    const suyo = new RegExp(`^(comunidad|marketplace|lote|curso|doc)-${slug}-[0-9a-f]{12}\\.(jpg|pdf)$`);
-    for (const n of fs.readdirSync(dirSubidas)) if (suyo.test(n)) nombres.add(n);
-  }
-  for (const n of nombres) if (borrarArchivo(dirSubidas, n)) archivos++;
-  const idents = (borrados["verificacion-identidad"] ?? []).flatMap((s) => Object.values(s.archivos ?? {}).map(str));
-  if (idents.length) {
-    const dir = carpetaIdentidad();
-    for (const n of idents) if (borrarArchivo(dir, n)) archivos++;
-  }
-  if (archivos) resumen.archivos = archivos;
 
   // Cuenta: lápida sin datos personales; fuera sesiones y códigos.
   const fila = await db.usuario.findUnique({ where: { id } });
@@ -197,6 +216,9 @@ export async function datosDeMiembro(id: string): Promise<Doc> {
   const salas = new Set((out.chats as Doc[]).map((c) => str(c.id)));
   out.messages = salas.size ? (await listar("messages")).filter((m) => salas.has(str(m.room))) : [];
   out.pedidos = (await listar("pedidos")).filter((p) => esDePedido(p, id));
+  out.ordenes = (await listar("ordenes")).filter((o) => str(o.usuario_id) === id);
+  out.recordatorios = (await mapa("recordatorios-config")).usuarios?.[id] ?? null;
+  out.waitlist = (await listar("waitlist")).filter((w) => str(w.email).toLowerCase() === str(fila.email).toLowerCase());
   out.sanciones = (await listar("sanciones")).filter((s) => str(s.uid) === id);
   const insc = await mapa("inscripciones-cursos");
   out.matriculas = Object.entries(insc).filter(([k, v]) => k.split("::")[1] === id || str((v as Doc)?.usuario) === id).map(([, v]) => v);
