@@ -617,3 +617,49 @@ html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5) body #perfiles > div > p.badge
   text-transform: none !important; letter-spacing: 0 !important; font-size: 13px !important; font-weight: 500 !important;
   border-radius: 8px !important; padding: .4rem .7rem !important; line-height: 1.4 !important;
 }
+
+/* ---------- Portada en 5 pantallas de móvil (1-nov-2026) ----------------- */
+@media (max-width: 640px) {
+  html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5) body #portada-hero > div.grid { gap: .9rem !important; padding-top: 1rem !important; padding-bottom: 1.1rem !important; }
+  html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5) body #portada-hero p.badge { display: none !important; }
+  html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5) body #portada-hero h1 + p { margin-top: .5rem !important; }
+  html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5) body #portada-hero .portada-botones { margin-top: .9rem !important; grid-template-columns: 1fr 1fr !important; }
+  html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5) body #portada-hero .portada-botones > .btn-registro { grid-column: 1 / -1; }
+  html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5) body #portada-hero .aspect-video { aspect-ratio: 21 / 9 !important; }
+  html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5) body #portada-hero .aspect-video img { object-fit: cover; height: 100%; }
+
+  /* Beneficios en dos columnas, sin la descripción larga */
+  html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5) body #forma-parte .grid { grid-template-columns: 1fr 1fr !important; gap: .5rem !important; margin-top: .75rem !important; }
+  html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5) body #forma-parte a.rounded-xl { padding: .6rem !important; gap: .45rem !important; }
+  html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5) body #forma-parte a.rounded-xl .text-sm { display: none !important; }
+  html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5) body #forma-parte a.rounded-xl .font-semibold { font-size: 13.5px !important; line-height: 1.25 !important; }
+  html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5) body #forma-parte > div > p.mt-5 { margin-top: .6rem !important; }
+
+  /* Confianza: tres tarjetas en una lista breve */
+  html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5) body #confianza > div > div.grid { gap: .5rem !important; margin-top: .8rem !important; }
+  html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5) body #confianza > div > div.grid > div { padding: .7rem .85rem !important; }
+  html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5) body #confianza > div > div.grid > div > svg { display: none !important; }
+  html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5) body #confianza > div > div.grid > div > p { margin-top: 0 !important; }
+  html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5) body #confianza > div > div.mt-10 { margin-top: .8rem !important; }
+
+  /* Mapa: sin ilustración en el teléfono */
+  html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5) body #mapa-portada > div > div:last-child:not(:first-child) { display: none !important; }
+  html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5) body #mapa-portada .btn-primary { margin-top: .8rem !important; }
+  html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5) body #redcafe-mapa-provincias { margin-top: .6rem !important; gap: .35rem !important; }
+  html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5) body #redcafe-mapa-provincias > * { padding: .2rem .6rem !important; font-size: 12.5px !important; }
+
+  /* Pie: sin la presentación larga, iconos y columnas más juntos */
+  html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5) body footer .grid.gap-10 > :first-child > p.mt-4 { display: none !important; }
+  html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5) body footer .grid.gap-10 > :first-child > div.mt-5 { margin-top: .6rem !important; gap: .35rem !important; }
+  html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5) body footer .grid.gap-10 > :first-child > div.mt-5 > a { min-height: 38px !important; height: 38px; }
+  html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5) body footer .grid.gap-10 > :first-child > div.mt-5 > a.grid { width: 38px !important; }
+  html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5) body footer .grid.gap-10 { gap: .8rem 1rem !important; }
+  html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5) body footer ul > li > a { min-height: 26px !important; font-size: 13px !important; }
+  html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5) body footer :is(.mt-12, .mt-10, .mt-8) { margin-top: .8rem !important; }
+  html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5) body footer :is(.pt-5, .pt-8) { padding-top: .6rem !important; }
+
+  /* Secciones: aún menos aire */
+  html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5) body main :is(section, .py-10, .py-12, .py-14, .py-16, .py-20, .py-24) { padding-top: 1rem !important; padding-bottom: 1rem !important; }
+  html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5) body main :is(h2 + p, h2 + .mt-3) { margin-top: .35rem !important; }
+  html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5) body main p.badge + h2 { margin-top: .4rem !important; }
+}
