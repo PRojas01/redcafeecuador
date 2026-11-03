@@ -1062,3 +1062,24 @@ html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5):not(#o6):not(#o7):not(#o8):not
 .rc-collage-titulo { align-items: end !important; padding: 1rem 1rem 1.2rem !important; font-size: clamp(19px, 1.9vw, 24px) !important; letter-spacing: .02em !important; text-transform: none !important; text-shadow: 0 2px 6px rgba(0, 0, 0, .5) !important; }
 html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5):not(#o6):not(#o7):not(#o8):not(#o9) body main #rc-collage { background: #ffffff !important; }
 @media (max-width: 767px) { .rc-collage-titulo { font-size: 18px !important; } }
+
+/* Menos verde (3-nov-2026): inicio blanco; el verde solo en el botón principal */
+html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5):not(#o6):not(#o7):not(#o8):not(#o9):not(#o10) body #portada-hero { background: #ffffff !important; border-bottom: 1px solid rgba(59, 26, 12, .1) !important; }
+html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5):not(#o6):not(#o7):not(#o8):not(#o9):not(#o10) body #portada-hero h1 span { color: #7a3411 !important; }
+html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5):not(#o6):not(#o7):not(#o8):not(#o9):not(#o10) body #portada-hero p { color: #5f584e !important; }
+html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5):not(#o6):not(#o7):not(#o8):not(#o9):not(#o10) body #portada-hero p.badge { color: #7a3411 !important; background: rgba(122, 52, 17, .06) !important; border-color: rgba(122, 52, 17, .25) !important; }
+html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5):not(#o6):not(#o7):not(#o8):not(#o9):not(#o10) body #portada-hero .portada-botones .btn-accent:not(.btn-registro):not(.btn-whatsapp) { background: #ffffff !important; border: 1.5px solid rgba(47, 42, 36, .35) !important; color: #2f2a24 !important; }
+html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5):not(#o6):not(#o7):not(#o8):not(#o9):not(#o10) body #portada-hero .aspect-video { box-shadow: 0 12px 30px rgba(0, 0, 0, .12) !important; background: #f3f1ea !important; }
+.rc-diapo figcaption { color: #2f2a24 !important; }
+.rc-collage-velo { background: linear-gradient(180deg, rgba(0, 0, 0, 0) 40%, rgba(0, 0, 0, .62) 100%) !important; }
+html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5):not(#o6):not(#o7):not(#o8):not(#o9):not(#o10) body main #rc-collage { background: #ffffff !important; }
+
+/* Rojo + blanco, con poco verde (3-nov-2026): el rojo vuelve en acentos */
+html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5):not(#o6):not(#o7):not(#o8):not(#o9):not(#o10):not(#o11) body #portada-hero { background: linear-gradient(180deg, #ffffff 0%, #fbf4f2 100%) !important; border-top: 4px solid #8c1e0e !important; }
+html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5):not(#o6):not(#o7):not(#o8):not(#o9):not(#o10):not(#o11) body #portada-hero h1 span { color: #8c1e0e !important; }
+html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5):not(#o6):not(#o7):not(#o8):not(#o9):not(#o10):not(#o11) body #portada-hero p.badge { color: #8c1e0e !important; background: rgba(140, 30, 14, .06) !important; border-color: rgba(140, 30, 14, .3) !important; }
+html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5):not(#o6):not(#o7):not(#o8):not(#o9):not(#o10):not(#o11) body #portada-hero .portada-botones .btn-accent:not(.btn-registro):not(.btn-whatsapp) { border: 1.5px solid #8c1e0e !important; color: #8c1e0e !important; }
+html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5):not(#o6):not(#o7):not(#o8):not(#o9):not(#o10):not(#o11) body #portada-hero .portada-botones .btn-accent:not(.btn-registro):not(.btn-whatsapp):hover { background: #8c1e0e !important; color: #ffffff !important; }
+html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5):not(#o6):not(#o7):not(#o8):not(#o9):not(#o10):not(#o11) body #portada-hero .aspect-video { box-shadow: 0 12px 30px rgba(140, 30, 14, .16) !important; }
+.rc-diapo figcaption { color: #8c1e0e !important; }
+.rc-collage-velo { background: linear-gradient(180deg, rgba(140, 30, 14, 0) 35%, rgba(110, 23, 11, .82) 100%) !important; }
