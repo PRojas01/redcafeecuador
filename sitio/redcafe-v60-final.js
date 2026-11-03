@@ -13,7 +13,7 @@ window.__redcafeReactListo = window.__redcafeReactListo || function () {
 (function () {
   "use strict";
 
-  var VERSION = "20261103d";
+  var VERSION = "20261103e";
   var WAPP = "593968641376";
   var path = normalizePath(location.pathname);
   var homeAuthChecking = false;
@@ -918,7 +918,7 @@ window.__redcafeReactListo = window.__redcafeReactListo || function () {
 
 /* Fotos de la portada (3-nov-2026): pase de fotos con fundido y acercamiento
    lento, como el carrusel «fade» de la plantilla Stradale de la carpeta local,
-   y una franja «Del grano a la taza». Solo fotos propias de /img/proceso/.
+   y el collage de la portada de esa plantilla. Solo fotos propias de /img/proceso/.
    Espera a que React hidrate y no toca nada si ya existe. */
 (function () {
   "use strict";
@@ -955,19 +955,31 @@ window.__redcafeReactListo = window.__redcafeReactListo || function () {
     c.addEventListener("mouseleave", andar);
     andar();
   }
-  function franja() {
-    var antes = document.getElementById("perfiles");
-    if (!antes || document.getElementById("rc-grano-taza")) return;
-    var h = '<section id="rc-grano-taza" class="rc-grano-taza" data-redcafe-propio aria-labelledby="rc-grano-taza-t"><div class="mx-auto max-w-6xl px-4">' +
-      '<p class="badge">Del grano a la taza</p><h2 id="rc-grano-taza-t">Así viaja el café ecuatoriano</h2>' +
-      '<p class="rc-grano-taza-sub">Desliza para ver cada paso.</p><div class="rc-grano-taza-fila">';
-    FOTOS.forEach(function (f, i) { h += '<figure class="rc-paso">' + img(f[0], f[1], true) + "<figcaption><span>" + (i + 1) + "</span>" + f[1] + "</figcaption></figure>"; });
-    h += "</div></div></section>";
+  /* Collage de la portada de la plantilla Stradale (carpeta local): cuatro
+     fotos a todo lo ancho, con velo de color, título y número grande; al
+     pasar el ratón el velo se va y la foto se acerca. Cada foto lleva a su
+     sección. */
+  function collage() {
+    var antes = document.getElementById("forma-parte");
+    if (!antes || document.getElementById("rc-collage")) return;
+    var T = [
+      ["cereza", "Vende tu café", "/marketplace/", "Cerezas de café maduras"],
+      ["secado", "Aprende el proceso", "/academia/", "Café secándose al sol"],
+      ["tostado", "Contrata servicios", "/servicios/", "Café tostado sobre la mesa"],
+      ["taza", "Recetas en casa", "/recetas/", "Taza de café recién servida"]
+    ];
+    var h = '<section id="rc-collage" class="rc-collage" data-redcafe-propio aria-label="Explora la Red"><div class="rc-collage-fila">';
+    T.forEach(function (t, i) {
+      h += '<a class="rc-collage-foto" href="' + t[2] + '"><span class="rc-collage-velo" aria-hidden="true"></span>' +
+        '<span class="rc-collage-num" aria-hidden="true">0' + (i + 1) + '</span><span class="rc-collage-titulo">' + t[1] + '</span>' +
+        img(t[0], t[3], true) + "</a>";
+    });
+    h += "</div></section>";
     antes.insertAdjacentHTML("beforebegin", h);
   }
   var k = 0;
   (function esperar() {
     if (!(window.__redcafeReactListo && window.__redcafeReactListo())) { if (++k < 60) setTimeout(esperar, 250); return; }
-    carrusel(); franja();
+    carrusel(); collage();
   })();
 })();
