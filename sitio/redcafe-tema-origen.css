@@ -965,3 +965,48 @@ html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5):not(#o6):not(#o7):not(#o8) bod
 html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5):not(#o6):not(#o7):not(#o8) body :is(.hero-gradient, .redcafe-afil-hero, .redcafe-socios-hero, [data-redcafe-route] main > div > section:first-child) h1 :is(span, em, strong) { color: #f0c36a !important; }
 html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5):not(#o6):not(#o7):not(#o8) body :is(.hero-gradient, [data-redcafe-route] main > div > section:first-child) .btn-primary { background: #fbfaf7 !important; border-color: #fbfaf7 !important; color: #8c1e0e !important; }
 html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5):not(#o6):not(#o7):not(#o8) body :is(.hero-gradient, .redcafe-afil-hero, .redcafe-socios-hero, [data-redcafe-route] main > div > section:first-child) :is(.badge, .badge-verde, .rotulo, p.uppercase) { color: #f0c36a !important; background: rgba(240, 195, 106, .1) !important; border-color: rgba(240, 195, 106, .45) !important; }
+
+/* ---------- Fotos y perfiles más grandes (3-nov-2026) --------------------- */
+/* Pase de fotos de la portada: fundido + acercamiento lento */
+.rc-carrusel { position: absolute; inset: 0; z-index: 1; background: #2a170c; }
+.rc-diapo { position: absolute; inset: 0; margin: 0; opacity: 0; transition: opacity 1.2s ease; }
+.rc-diapo.activa { opacity: 1; }
+.rc-diapo img { width: 100%; height: 100%; object-fit: cover; transform: scale(1); }
+.rc-diapo.activa img { animation: rc-acercar 6.5s ease-out both; }
+@keyframes rc-acercar { from { transform: scale(1); } to { transform: scale(1.08); } }
+.rc-diapo figcaption { position: absolute; left: .75rem; bottom: 2.4rem; padding: .3rem .75rem; border-radius: 999px; background: rgba(42, 23, 12, .78); color: #fbfaf7; font-size: 13px; font-weight: 600; }
+.rc-puntos { position: absolute; left: 0; right: 0; bottom: .6rem; display: flex; justify-content: center; gap: .1rem; z-index: 2; }
+.rc-puntos button { width: 28px; height: 28px; padding: 0; border: 0; background: transparent; cursor: pointer; position: relative; }
+.rc-puntos button::before { content: ""; position: absolute; left: 50%; top: 50%; width: 9px; height: 9px; margin: -4.5px 0 0 -4.5px; border-radius: 50%; background: rgba(251, 250, 247, .55); transition: transform .2s, background-color .2s; }
+.rc-puntos button[aria-current="true"]::before { background: #f0c36a; transform: scale(1.35); }
+.rc-puntos button:focus-visible { outline: 2px solid #f0c36a; outline-offset: -4px; border-radius: 50%; }
+
+/* Franja «Del grano a la taza» */
+html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5):not(#o6):not(#o7):not(#o8) body #rc-grano-taza { background: #f3f1ea !important; border-top: 1px solid rgba(59, 26, 12, .1); padding: 2rem 0 !important; }
+html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5):not(#o6):not(#o7):not(#o8) body #rc-grano-taza .badge { color: #8c1e0e !important; background: rgba(140, 30, 14, .06) !important; border: 1px solid rgba(140, 30, 14, .28) !important; }
+html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5):not(#o6):not(#o7):not(#o8) body #rc-grano-taza h2 { margin-top: .6rem; color: #3b1a0c !important; }
+.rc-grano-taza-sub { margin-top: .35rem; color: #5f584e; font-size: 14px; }
+.rc-grano-taza-fila { display: grid; grid-auto-flow: column; grid-auto-columns: minmax(220px, 1fr); gap: .8rem; margin-top: 1rem; overflow-x: auto; scroll-snap-type: x mandatory; padding-bottom: .5rem; }
+.rc-paso { margin: 0; scroll-snap-align: start; border-radius: 14px; overflow: hidden; background: #fff; border: 1px solid rgba(59, 26, 12, .12); box-shadow: 0 8px 22px rgba(59, 26, 12, .06); }
+.rc-paso img { display: block; width: 100%; aspect-ratio: 4 / 3; object-fit: cover; transition: transform .5s ease; }
+.rc-paso:hover img { transform: scale(1.06); }
+.rc-paso figcaption { display: flex; align-items: center; gap: .5rem; padding: .6rem .8rem; font-size: 15px; font-weight: 600; color: #3b1a0c; }
+.rc-paso figcaption span { display: inline-grid; place-items: center; width: 26px; height: 26px; border-radius: 50%; background: #8c1e0e; color: #fbfaf7; font-size: 13px; }
+@media (max-width: 640px) { .rc-grano-taza-fila { grid-auto-columns: 72%; } }
+@media (prefers-reduced-motion: reduce) { .rc-diapo, .rc-diapo.activa img, .rc-paso img { transition: none !important; animation: none !important; } }
+
+/* Perfiles: botón para abrirlos y tarjetas con letra y botón más grandes */
+html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5):not(#o6):not(#o7):not(#o8) body #perfiles details > summary { min-height: 56px !important; padding: .8rem 1.2rem !important; font-size: 17px !important; border-radius: 14px !important; background: #8c1e0e !important; color: #fbfaf7 !important; border-color: #8c1e0e !important; }
+html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5):not(#o6):not(#o7):not(#o8) body #perfiles details > summary:hover { background: #6e170b !important; }
+html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5):not(#o6):not(#o7):not(#o8) body #perfiles details[open] > summary { background: #6e170b !important; }
+html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5):not(#o6):not(#o7):not(#o8) body #perfiles a.group svg { width: 2.4rem !important; height: 2.4rem !important; color: #8c1e0e !important; }
+html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5):not(#o6):not(#o7):not(#o8) body #perfiles a.group p.font-titulo { font-size: 1.35rem !important; line-height: 1.2 !important; color: #3b1a0c !important; }
+html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5):not(#o6):not(#o7):not(#o8) body #perfiles a.group p.font-titulo + p { font-size: 16.5px !important; line-height: 1.4 !important; color: #8c1e0e !important; }
+html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5):not(#o6):not(#o7):not(#o8) body #perfiles a.group p.text-sm { font-size: 15px !important; line-height: 1.5 !important; color: #4a4740 !important; }
+html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5):not(#o6):not(#o7):not(#o8) body #perfiles a.group .inline-block.font-bold { display: flex !important; justify-content: center; width: 100%; min-height: 48px !important; margin-top: 1rem !important; font-size: 16px !important; border-radius: 12px !important; background: #8c1e0e !important; }
+html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5):not(#o6):not(#o7):not(#o8) body #perfiles a.group:hover .inline-block.font-bold { background: #6e170b !important; }
+@media (max-width: 640px) {
+  html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5):not(#o6):not(#o7):not(#o8) body #perfiles a.group { padding: 1.1rem !important; }
+  html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5):not(#o6):not(#o7):not(#o8) body #perfiles a.group p.font-titulo { font-size: 1.25rem !important; }
+}
+body[data-redcafe-route="/"] main > div > #rc-grano-taza { order: 3; }

@@ -13,7 +13,7 @@ window.__redcafeReactListo = window.__redcafeReactListo || function () {
 (function () {
   "use strict";
 
-  var VERSION = "20261103c";
+  var VERSION = "20261103d";
   var WAPP = "593968641376";
   var path = normalizePath(location.pathname);
   var homeAuthChecking = false;
@@ -914,4 +914,60 @@ window.__redcafeReactListo = window.__redcafeReactListo || function () {
   //    pidió conservar; 4) enlazaba a /carreras-empleos y /requerimientos,
   //    que dan 404. El código se conserva para rehacerlo con la capa segura
   //    (ocultar + copia marcada) si el propietario confirma el mosaico.
+})();
+
+/* Fotos de la portada (3-nov-2026): pase de fotos con fundido y acercamiento
+   lento, como el carrusel «fade» de la plantilla Stradale de la carpeta local,
+   y una franja «Del grano a la taza». Solo fotos propias de /img/proceso/.
+   Espera a que React hidrate y no toca nada si ya existe. */
+(function () {
+  "use strict";
+  var p = location.pathname.replace(/\/index\.html$/, "/");
+  if (p !== "/" && p !== "") return;
+  var FOTOS = [
+    ["cereza", "Cereza madura"], ["secado", "Secado al sol"], ["pergamino", "Café pergamino"],
+    ["verde", "Café verde"], ["tostado", "Tostado"], ["molido", "Molido"], ["taza", "En la taza"]
+  ];
+  var quieto = window.matchMedia && matchMedia("(prefers-reduced-motion: reduce)").matches;
+  function img(n, alt, lazy) {
+    return '<img src="/img/proceso/' + n + '.webp" alt="' + alt + '" width="800" height="500" decoding="async"' + (lazy ? ' loading="lazy"' : "") + ">";
+  }
+  function carrusel() {
+    var caja = document.querySelector("#portada-hero .aspect-video");
+    if (!caja || caja.querySelector(".rc-carrusel")) return;
+    var h = '<div class="rc-carrusel" aria-roledescription="carrusel" aria-label="Del grano a la taza">';
+    FOTOS.forEach(function (f, i) {
+      h += '<figure class="rc-diapo' + (i === 0 ? " activa" : "") + '" aria-hidden="' + (i === 0 ? "false" : "true") + '">' + img(f[0], f[1], i > 0) + "<figcaption>" + f[1] + "</figcaption></figure>";
+    });
+    h += '<div class="rc-puntos">';
+    FOTOS.forEach(function (f, i) { h += '<button type="button" aria-label="Ver foto: ' + f[1] + '"' + (i === 0 ? ' aria-current="true"' : "") + "></button>"; });
+    h += "</div></div>";
+    caja.insertAdjacentHTML("beforeend", h);
+    var c = caja.querySelector(".rc-carrusel"), d = c.querySelectorAll(".rc-diapo"), b = c.querySelectorAll(".rc-puntos button"), n = 0, t = null;
+    function ir(i) {
+      d[n].classList.remove("activa"); d[n].setAttribute("aria-hidden", "true"); b[n].removeAttribute("aria-current");
+      n = (i + d.length) % d.length;
+      d[n].classList.add("activa"); d[n].setAttribute("aria-hidden", "false"); b[n].setAttribute("aria-current", "true");
+    }
+    function andar() { if (!quieto) { clearInterval(t); t = setInterval(function () { ir(n + 1); }, 5000); } }
+    Array.prototype.forEach.call(b, function (x, i) { x.addEventListener("click", function () { ir(i); andar(); }); });
+    c.addEventListener("mouseenter", function () { clearInterval(t); });
+    c.addEventListener("mouseleave", andar);
+    andar();
+  }
+  function franja() {
+    var antes = document.getElementById("perfiles");
+    if (!antes || document.getElementById("rc-grano-taza")) return;
+    var h = '<section id="rc-grano-taza" class="rc-grano-taza" data-redcafe-propio aria-labelledby="rc-grano-taza-t"><div class="mx-auto max-w-6xl px-4">' +
+      '<p class="badge">Del grano a la taza</p><h2 id="rc-grano-taza-t">Así viaja el café ecuatoriano</h2>' +
+      '<p class="rc-grano-taza-sub">Desliza para ver cada paso.</p><div class="rc-grano-taza-fila">';
+    FOTOS.forEach(function (f, i) { h += '<figure class="rc-paso">' + img(f[0], f[1], true) + "<figcaption><span>" + (i + 1) + "</span>" + f[1] + "</figcaption></figure>"; });
+    h += "</div></div></section>";
+    antes.insertAdjacentHTML("beforebegin", h);
+  }
+  var k = 0;
+  (function esperar() {
+    if (!(window.__redcafeReactListo && window.__redcafeReactListo())) { if (++k < 60) setTimeout(esperar, 250); return; }
+    carrusel(); franja();
+  })();
 })();
