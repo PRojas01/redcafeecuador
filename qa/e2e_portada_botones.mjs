@@ -16,7 +16,7 @@ const ESPERADO = [
   // Tema «Origen» (oct-2026): registro en oro, acceder como contorno claro sobre la portada espresso.
   { texto: "Crear cuenta gratis", href: /^\/afiliate\/?$/, fondo: "rgb(47, 107, 69)" },
   { texto: "WhatsApp", href: /^https:\/\/wa\.me\/593/, fondo: "rgb(37, 211, 102)" },
-  { texto: "Entrar", href: /^\/login\/?$/, fondo: "rgb(255, 255, 255)" },
+  { texto: "Entrar", href: /^\/login\/?$/, fondo: "rgb(140, 30, 14)" },
 ];
 
 const b = await chromium.launch();

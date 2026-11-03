@@ -13,7 +13,7 @@ window.__redcafeReactListo = window.__redcafeReactListo || function () {
 (function () {
   "use strict";
 
-  var VERSION = "20261103h";
+  var VERSION = "20261103i";
   var WAPP = "593968641376";
   var path = normalizePath(location.pathname);
   var homeAuthChecking = false;
@@ -918,7 +918,8 @@ window.__redcafeReactListo = window.__redcafeReactListo || function () {
 
 /* Fotos de la portada (3-nov-2026): pase de fotos con fundido y acercamiento
    lento, como el carrusel «fade» de la plantilla Stradale de la carpeta local,
-   y el collage de la portada de esa plantilla. Solo fotos propias de /img/proceso/.
+   y el collage de la portada de esa plantilla. Fotos propias de /img/proceso/; dibujos del collage en /img/collage/
+   (herramientas/generar-imagenes-collage.py).
    Espera a que React hidrate y no toca nada si ya existe. */
 (function () {
   "use strict";
@@ -963,16 +964,16 @@ window.__redcafeReactListo = window.__redcafeReactListo || function () {
     var antes = document.getElementById("forma-parte");
     if (!antes || document.getElementById("rc-collage")) return;
     var T = [
-      ["cereza", "Vende tu café", "/marketplace/", "Cerezas de café maduras"],
-      ["secado", "Aprende el proceso", "/academia/", "Café secándose al sol"],
-      ["tostado", "Contrata servicios", "/servicios/", "Café tostado sobre la mesa"],
-      ["taza", "Recetas en casa", "/recetas/", "Taza de café recién servida"]
+      ["vender", "Vende tu café", "/marketplace/", "Saco de café con etiqueta de precio"],
+      ["aprender", "Aprende el proceso", "/academia/", "Libro abierto con una planta de café"],
+      ["servicios", "Contrata servicios", "/servicios/", "Camión que transporta sacos de café"],
+      ["recetas", "Recetas en casa", "/recetas/", "Gotero de café sobre una taza"]
     ];
     var h = '<section id="rc-collage" class="rc-collage" data-redcafe-propio aria-label="Explora la Red"><div class="rc-collage-fila">';
     T.forEach(function (t, i) {
       h += '<a class="rc-collage-foto" href="' + t[2] + '"><span class="rc-collage-velo" aria-hidden="true"></span>' +
         '<span class="rc-collage-num" aria-hidden="true">0' + (i + 1) + '</span><span class="rc-collage-titulo">' + t[1] + '</span>' +
-        img(t[0], t[3], true) + "</a>";
+        '<img src="/img/collage/' + t[0] + '.webp" alt="' + t[3] + '" width="800" height="800" loading="lazy" decoding="async"></a>';
     });
     h += "</div></section>";
     antes.insertAdjacentHTML("beforebegin", h);

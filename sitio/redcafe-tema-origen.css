@@ -1083,3 +1083,16 @@ html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5):not(#o6):not(#o7):not(#o8):not
 html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5):not(#o6):not(#o7):not(#o8):not(#o9):not(#o10):not(#o11) body #portada-hero .aspect-video { box-shadow: 0 12px 30px rgba(140, 30, 14, .16) !important; }
 .rc-diapo figcaption { color: #8c1e0e !important; }
 .rc-collage-velo { background: linear-gradient(180deg, rgba(140, 30, 14, 0) 35%, rgba(110, 23, 11, .82) 100%) !important; }
+
+/* Collage con dibujos propios y «Entrar» en rojo (3-nov-2026) */
+html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5):not(#o6):not(#o7):not(#o8):not(#o9):not(#o10):not(#o11):not(#o12) body #portada-hero .portada-botones .btn-accent:not(.btn-registro):not(.btn-whatsapp) { background: #8c1e0e !important; border-color: #8c1e0e !important; color: #ffffff !important; }
+html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5):not(#o6):not(#o7):not(#o8):not(#o9):not(#o10):not(#o11):not(#o12) body #portada-hero .portada-botones .btn-accent:not(.btn-registro):not(.btn-whatsapp):hover { background: #6e170b !important; border-color: #6e170b !important; }
+html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5):not(#o6):not(#o7):not(#o8):not(#o9):not(#o10):not(#o11):not(#o12) body main #rc-collage { background: #ffffff !important; border-bottom: 1px solid rgba(140, 30, 14, .1) !important; }
+.rc-collage-fila { gap: 1px; background: rgba(140, 30, 14, .1); }
+.rc-collage-foto { background: #ffffff; }
+.rc-collage-velo { display: none !important; }
+.rc-collage-titulo { color: #8c1e0e !important; text-shadow: none !important; padding-bottom: 1.4rem !important; font-weight: 700 !important; }
+.rc-collage-foto:is(:hover, :focus-visible) .rc-collage-titulo { transform: none !important; text-decoration: underline; text-underline-offset: 4px; }
+.rc-collage-foto:is(:hover, :focus-visible) img { transform: scale(1.06) !important; }
+.rc-collage-foto { aspect-ratio: auto !important; display: flex !important; flex-direction: column; } .rc-collage-foto img { position: static !important; display: block; width: 100%; height: auto !important; aspect-ratio: 1 / .78; object-fit: cover; object-position: center 30%; } .rc-collage-titulo { position: static !important; display: block !important; padding: 0 .75rem 1.1rem !important; margin-top: -.4rem; }
+.rc-collage-foto img { order: 0; } .rc-collage-titulo { order: 1; } .rc-collage-velo, .rc-collage-num { order: 2; }
