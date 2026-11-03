@@ -12,7 +12,7 @@
      oro       #E6B873   acentos sobre fondo oscuro
      crema     #F7F2EA   fondo general · papel #FFFCF7 tarjetas
      hoja      #2F6B45   confianza / verificado
-   Tipografía: DM Serif Display (títulos) + DM Sans (texto), ambas alojadas
+   Tipografía (3-nov-2026): Inter variable 100–900 (OFL), alojada
    en el propio sitio (licencia OFL).
    Contraste comprobado AA (≥ 4,5:1) en todas las combinaciones de texto.
    ========================================================================== */
@@ -704,3 +704,130 @@ html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5) body :is(.btn-accent:not(.btn-
 /* Contraste: etiquetas de recetas (3,8:1) */
 html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5) body .text-coffee-800 { color: #7a2216 !important; }
 html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5) body #portada-hero .portada-botones .btn-accent:not(.btn-registro):not(.btn-whatsapp) { background: transparent !important; border-color: rgba(251, 246, 239, .55) !important; color: #fbf6ef !important; }
+
+/* ---------- Botones, secciones y tipografía estilo Apple (3-nov-2026) -----
+   Pedro: todos los accesos con aspecto de botón, secciones bien separadas,
+   notas y textos secundarios más pequeños, y una fuente estilizada de libre
+   uso. Inter (OFL, alojada en /fonts) es la más cercana a SF Pro de Apple. */
+@font-face { font-family: "Inter"; src: url("/fonts/inter-latin.woff2") format("woff2");
+  font-weight: 100 900; font-style: normal; font-display: swap; }
+
+html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5):not(#o6) {
+  --o-sans: "Inter", -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", Roboto, system-ui, sans-serif;
+  --o-serif: var(--o-sans);
+  --font-dm-sans: var(--o-sans);
+  --o-texto-nota: #5c4434; /* 8,2:1 sobre crema */
+}
+html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5):not(#o6) body {
+  font-family: var(--o-sans) !important;
+  letter-spacing: -.011em;
+  -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+}
+html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5):not(#o6) body :is(h1, h2, h3, h4, .font-titulo, .marca) { font-family: var(--o-sans) !important; }
+html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5):not(#o6) body h1 { font-weight: 650 !important; letter-spacing: -.03em !important; line-height: 1.1 !important; }
+html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5):not(#o6) body h2 { font-weight: 650 !important; letter-spacing: -.022em !important; line-height: 1.15 !important; }
+html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5):not(#o6) body :is(h3, h4) { font-weight: 600 !important; letter-spacing: -.015em !important; }
+html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5):not(#o6) body :is(button, .btn-primary, .btn-accent, .btn-secondary) { font-family: var(--o-sans) !important; font-weight: 600 !important; letter-spacing: -.01em; }
+
+/* Texto principal 15 px; notas y textos secundarios 13 px; letra menuda 12 px */
+html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5):not(#o6) body main :is(h1, h2) + p:not(.text-sm):not(.text-xs) { font-size: 15px !important; line-height: 1.5 !important; }
+html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5):not(#o6) body main :is(p, li, span, div, dd, td).text-sm:not(a *) { font-size: 13.5px !important; line-height: 1.5 !important; }
+html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5):not(#o6) body main :is(.text-pizarra-suave, .text-text-muted, .badge, .nota, .aviso, .ayuda, figcaption, small):not(a *) { font-size: 12.5px !important; line-height: 1.5 !important; }
+html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5):not(#o6) body main a :is(.text-pizarra-suave, .text-sm.leading-relaxed) { font-size: 13px !important; line-height: 1.45 !important; color: var(--o-texto-nota) !important; }
+html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5):not(#o6) body main :is(.text-xs, small small, .text-\[11px\], .text-\[12px\]) { font-size: 12px !important; letter-spacing: 0; }
+html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5):not(#o6) body main :is(.text-pizarra-suave, .text-text-muted) { color: var(--o-texto-nota) !important; }
+
+/* Enlaces dentro del texto: botón tipo píldora, del color del texto */
+html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5):not(#o6) body main :is(p, li, dd, td, label, span, small) > a:not([class*="btn"]):not(.card):not([class*="rounded"]):not(:has(img, svg)) {
+  display: inline-flex; align-items: center; gap: .25rem;
+  min-height: 30px; padding: .15rem .7rem; margin: .12rem .1rem;
+  border: 1px solid color-mix(in srgb, currentColor 38%, transparent);
+  border-radius: 999px; background: color-mix(in srgb, currentColor 7%, transparent);
+  font-weight: 600 !important; text-decoration: none !important; line-height: 1.25;
+  transition: background-color .18s var(--o-curva), border-color .18s var(--o-curva), transform .18s var(--o-curva);
+}
+html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5):not(#o6) body main :is(p, li, dd, td, label, span, small) > a:not([class*="btn"]):not(.card):not([class*="rounded"]):not(:has(img, svg)):hover {
+  background: color-mix(in srgb, currentColor 15%, transparent); border-color: currentColor;
+}
+/* «Forma parte de la Red →» dentro de las tarjetas: aspecto de botón */
+html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5):not(#o6) body main a[class*="group"] .inline-block.font-bold {
+  display: inline-flex !important; align-items: center; min-height: 32px; padding: .2rem .8rem;
+  border-radius: 999px; background: var(--o-cereza); color: #fff !important; font-size: 13px !important; font-weight: 600 !important;
+  transition: background-color .18s var(--o-curva);
+}
+html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5):not(#o6) body main a[class*="group"]:hover .inline-block.font-bold { background: var(--o-cereza-hondo); }
+/* Tarjetas enlazadas: se elevan al pasar el ratón, como botones grandes */
+html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5):not(#o6) body main a:is(.card, [class*="rounded-xl"][class*="border"], [class*="rounded-2xl"][class*="border"]) {
+  transition: transform .18s var(--o-curva), box-shadow .18s var(--o-curva), border-color .18s var(--o-curva);
+}
+html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5):not(#o6) body main a:is(.card, [class*="rounded-xl"][class*="border"], [class*="rounded-2xl"][class*="border"]):hover {
+  transform: translateY(-2px); box-shadow: var(--o-sombra-2); border-color: rgba(155, 45, 31, .35) !important;
+}
+
+/* Menú de la cabecera: cada acceso con forma de botón */
+html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5):not(#o6) body > header nav :is(a:not([class*="btn"]), button[aria-haspopup], button[aria-expanded]) {
+  border: 1px solid rgba(251, 246, 239, .16) !important; border-radius: 999px !important;
+  background: rgba(251, 246, 239, .05); padding-left: .7rem !important; padding-right: .7rem !important;
+  transition: background-color .18s var(--o-curva), border-color .18s var(--o-curva);
+}
+html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5):not(#o6) body > header nav :is(a:not([class*="btn"]), button[aria-haspopup], button[aria-expanded]):is(:hover, [aria-current="page"]) {
+  background: rgba(251, 246, 239, .14); border-color: rgba(221, 163, 94, .6) !important;
+}
+html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5):not(#o6) body > header nav .btn-primary { white-space: nowrap !important; }
+
+html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5):not(#o6) body > header nav.lg\:flex { gap: .35rem !important; }
+html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5):not(#o6) body > header nav details > summary {
+  display: inline-flex; align-items: center; min-height: 40px; padding: 0 .7rem; cursor: pointer;
+  border: 1px solid rgba(251, 246, 239, .16); border-radius: 999px; background: rgba(251, 246, 239, .05);
+}
+html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5):not(#o6) body > header nav details > div a { border-radius: 10px !important; }
+@media (max-width: 1279px) {
+  html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5):not(#o6) body > header nav :is(a:not([class*="btn"]), details > summary) { padding-left: .55rem !important; padding-right: .55rem !important; font-size: 12.5px; }
+  html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5):not(#o6) body > header nav.lg\:flex { gap: .25rem !important; }
+}
+/* Menú del teléfono: accesos como botones en dos columnas */
+html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5):not(#o6) body > header > div.lg\:hidden div.flex-col:has(> a.rounded-xl) {
+  display: grid !important; grid-template-columns: 1fr 1fr; gap: .4rem !important;
+}
+html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5):not(#o6) body > header > div.lg\:hidden div.flex-col > a.rounded-xl {
+  display: flex; align-items: center; min-height: 44px; padding: .5rem .75rem !important;
+  border: 1px solid rgba(251, 246, 239, .18); border-radius: 12px !important; background: rgba(251, 246, 239, .06);
+  font-size: 13.5px; line-height: 1.2;
+}
+
+html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5):not(#o6) body > header > div.lg\:hidden div.flex-col:has(> a.rounded-xl) > :not(a.rounded-xl) { grid-column: 1 / -1; }
+
+/* Pie: enlaces como botones pequeños */
+html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5):not(#o6) body footer ul > li { margin-bottom: .35rem; }
+html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5):not(#o6) body footer ul > li > a:not([class*="bg-"]),
+html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5):not(#o6) body footer a[class*="underline-offset"] {
+  display: inline-flex !important; align-items: center; min-height: 32px !important;
+  width: fit-content; max-width: 100%; padding: .3rem .8rem; line-height: 1.25;
+  border: 1px solid rgba(251, 246, 239, .2); border-radius: 12px;
+  background: rgba(251, 246, 239, .05); font-size: 13px !important; text-decoration: none !important;
+  transition: background-color .18s var(--o-curva), border-color .18s var(--o-curva);
+}
+html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5):not(#o6) body footer ul > li > a:not([class*="bg-"]):hover,
+html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5):not(#o6) body footer a[class*="underline-offset"]:hover {
+  background: rgba(251, 246, 239, .14); border-color: rgba(221, 163, 94, .7);
+}
+html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5):not(#o6) body footer :is(p, span).text-sm,
+html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5):not(#o6) body footer :is(.text-xs, small) { font-size: 12px !important; }
+
+/* Secciones claras: alternan crema y papel, con una línea que las separa */
+html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5):not(#o6) body main section:not([class*="bg-"]):not([class*="gradient"]):not(#portada-hero) {
+  border-top: 1px solid rgba(59, 35, 24, .12);
+}
+html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5):not(#o6) body main section:nth-of-type(even):not([class*="bg-"]):not([class*="gradient"]):not(#portada-hero) {
+  background-color: #fffdfa !important;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, .8), inset 0 -1px 0 rgba(59, 35, 24, .08);
+}
+html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5):not(#o6) body main :is(section, .py-10, .py-12, .py-14, .py-16, .py-20, .py-24) { padding-top: 1.6rem !important; padding-bottom: 1.6rem !important; }
+@media (min-width: 768px) {
+  html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5):not(#o6) body main :is(section, .py-10, .py-12, .py-14, .py-16, .py-20, .py-24) { padding-top: 2.75rem !important; padding-bottom: 2.75rem !important; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5):not(#o6) body main a:hover { transform: none !important; }
+}
