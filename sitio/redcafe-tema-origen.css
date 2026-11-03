@@ -1031,3 +1031,34 @@ html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5):not(#o6):not(#o7):not(#o8) bod
   .rc-collage-titulo { font-size: 14px; letter-spacing: .08em; }
 }
 @media (prefers-reduced-motion: reduce) { .rc-collage-foto * { transition: none !important; } }
+
+/* ---------- Inicio claro con verde (3-nov-2026) ---------------------------
+   Pedro: el inicio con tanto rojo no se ve agradable; más blanco y un verde
+   que combine. Verde hoja #2F6B45 (blanco sobre verde 6,3:1). Sin números
+   en el collage y textos de las fotos más grandes. */
+html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5):not(#o6):not(#o7):not(#o8):not(#o9) body #portada-hero {
+  background: radial-gradient(ellipse at 85% 0%, rgba(47, 107, 69, .12), transparent 55%), linear-gradient(180deg, #ffffff 0%, #f4f8f3 100%) !important;
+  color: #2f2a24 !important; border-bottom: 1px solid rgba(47, 107, 69, .15);
+}
+html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5):not(#o6):not(#o7):not(#o8):not(#o9) body #portada-hero h1 { color: #2f2a24 !important; }
+html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5):not(#o6):not(#o7):not(#o8):not(#o9) body #portada-hero h1 span { color: #2f6b45 !important; }
+html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5):not(#o6):not(#o7):not(#o8):not(#o9) body #portada-hero p { color: #4a5a4f !important; }
+html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5):not(#o6):not(#o7):not(#o8):not(#o9) body #portada-hero p.badge { color: #2f6b45 !important; background: rgba(47, 107, 69, .08) !important; border-color: rgba(47, 107, 69, .3) !important; }
+html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5):not(#o6):not(#o7):not(#o8):not(#o9) body #portada-hero .portada-botones .btn-registro { background: #2f6b45 !important; border-color: #2f6b45 !important; color: #ffffff !important; }
+html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5):not(#o6):not(#o7):not(#o8):not(#o9) body #portada-hero .portada-botones .btn-registro:hover { background: #24563a !important; border-color: #24563a !important; }
+html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5):not(#o6):not(#o7):not(#o8):not(#o9) body #portada-hero .portada-botones .btn-accent:not(.btn-registro):not(.btn-whatsapp) { background: #ffffff !important; border: 1.5px solid #2f6b45 !important; color: #2f6b45 !important; }
+html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5):not(#o6):not(#o7):not(#o8):not(#o9) body #portada-hero .aspect-video { border: 0 !important; border-radius: 16px !important; box-shadow: 0 14px 34px rgba(31, 77, 51, .18) !important; background: #f4f8f3 !important; }
+html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5):not(#o6):not(#o7):not(#o8):not(#o9) body #portada-hero .aspect-video img { border-radius: 0 !important; box-shadow: none !important; }
+
+/* Pase de fotos: texto más grande, puntos verdes */
+.rc-diapo figcaption { bottom: 2.6rem !important; font-size: 17px !important; padding: .45rem 1rem !important; background: rgba(255, 255, 255, .94) !important; color: #1f4d33 !important; font-weight: 700 !important; box-shadow: 0 4px 14px rgba(0, 0, 0, .15); }
+.rc-puntos button::before { background: rgba(255, 255, 255, .75) !important; box-shadow: 0 0 0 1px rgba(0, 0, 0, .15); }
+.rc-puntos button[aria-current="true"]::before { background: #2f6b45 !important; box-shadow: 0 0 0 2px #fff; }
+
+/* Collage: sin números, velo verde suave y títulos más grandes */
+.rc-collage-num { display: none !important; }
+.rc-collage-velo { background: linear-gradient(180deg, rgba(31, 77, 51, .15) 0%, rgba(31, 77, 51, .78) 100%) !important; opacity: 1 !important; }
+.rc-collage-foto:is(:hover, :focus-visible) .rc-collage-velo { opacity: .45 !important; }
+.rc-collage-titulo { align-items: end !important; padding: 1rem 1rem 1.2rem !important; font-size: clamp(19px, 1.9vw, 24px) !important; letter-spacing: .02em !important; text-transform: none !important; text-shadow: 0 2px 6px rgba(0, 0, 0, .5) !important; }
+html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5):not(#o6):not(#o7):not(#o8):not(#o9) body main #rc-collage { background: #ffffff !important; }
+@media (max-width: 767px) { .rc-collage-titulo { font-size: 18px !important; } }

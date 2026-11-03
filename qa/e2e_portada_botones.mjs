@@ -14,9 +14,9 @@ const lum = (rgb) => {
 const contraste = (a, b) => { const [x, y] = [lum(a), lum(b)].sort((p, q) => q - p); return (x + 0.05) / (y + 0.05); };
 const ESPERADO = [
   // Tema «Origen» (oct-2026): registro en oro, acceder como contorno claro sobre la portada espresso.
-  { texto: "Crear cuenta gratis", href: /^\/afiliate\/?$/, fondo: "rgb(223, 160, 102)" },
+  { texto: "Crear cuenta gratis", href: /^\/afiliate\/?$/, fondo: "rgb(47, 107, 69)" },
   { texto: "WhatsApp", href: /^https:\/\/wa\.me\/593/, fondo: "rgb(37, 211, 102)" },
-  { texto: "Entrar", href: /^\/login\/?$/, fondo: "rgba(0, 0, 0, 0)" },
+  { texto: "Entrar", href: /^\/login\/?$/, fondo: "rgb(255, 255, 255)" },
 ];
 
 const b = await chromium.launch();
