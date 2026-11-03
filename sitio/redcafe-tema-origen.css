@@ -928,3 +928,40 @@ html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5):not(#o6):not(#o7) body #confia
 /* Pie: enlaces en crema, títulos de columna dorados */
 html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5):not(#o6):not(#o7) body footer :is(h2, h3, h4, p.uppercase) { color: #dfa066 !important; }
 html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5):not(#o6):not(#o7) body footer ul > li > a:not([class*="bg-"]):hover { border-color: rgba(223, 160, 102, .8); }
+
+/* ---------- Fondos en rojo cereza (3-nov-2026) ----------------------------
+   Pedro: los fondos oscuros en el rojo del CSS del sitio (#8C1E0E), no café.
+   Contraste: crema sobre rojo 8,7:1; oro claro #F0C36A sobre rojo 5,5:1. */
+html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5):not(#o6):not(#o7):not(#o8) {
+  --o-espresso: #8c1e0e;
+  --o-cereza: #8c1e0e;
+  --o-cereza-hondo: #6e170b;
+  --o-tierra: #8c1e0e;
+}
+html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5):not(#o6):not(#o7):not(#o8) body > header { background: rgba(140, 30, 14, .97) !important; border-bottom-color: rgba(240, 195, 106, .3) !important; }
+html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5):not(#o6):not(#o7):not(#o8) body #portada-hero { background: radial-gradient(ellipse at 50% -10%, rgba(240, 195, 106, .18), transparent 60%), linear-gradient(180deg, #8c1e0e, #6e170b) !important; }
+html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5):not(#o6):not(#o7):not(#o8) body :is(#confianza, footer, .redcafe-cifras) { background-color: #8c1e0e !important; }
+html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5):not(#o6):not(#o7):not(#o8) body #confianza { background-image: none !important; }
+html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5):not(#o6):not(#o7):not(#o8) body main section.bg-cafe, html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5):not(#o6):not(#o7):not(#o8) body main .bg-cafe { background-color: #8c1e0e !important; }
+html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5):not(#o6):not(#o7):not(#o8) body :is(#portada-hero h1 span, .redcafe-cifras .redcafe-cifra strong, footer :is(h2, h3, h4, p.uppercase), #confianza > div > div.grid > div :is(h3, h4, .font-semibold)) { color: #f0c36a !important; }
+html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5):not(#o6):not(#o7):not(#o8) body main :is(#confianza, #portada-hero) :is(p.badge, .rotulo) { color: #f0c36a !important; border-color: rgba(240, 195, 106, .45) !important; }
+html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5):not(#o6):not(#o7):not(#o8) body #confianza > div > div.grid > div { background: rgba(255, 255, 255, .07) !important; border-color: rgba(240, 195, 106, .3) !important; }
+
+/* Acentos en fondo claro: rojo */
+html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5):not(#o6):not(#o7):not(#o8) body main :is(#forma-parte, #perfiles, #mapa-portada) :is(p.badge, .rotulo) { color: #8c1e0e !important; background: rgba(140, 30, 14, .06) !important; border-color: rgba(140, 30, 14, .28) !important; }
+html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5):not(#o6):not(#o7):not(#o8) body #forma-parte > div > p.mt-8 { color: #8c1e0e !important; }
+html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5):not(#o6):not(#o7):not(#o8) body #forma-parte a.rounded-xl svg, html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5):not(#o6):not(#o7):not(#o8) body #forma-parte a.rounded-xl::after { color: #8c1e0e !important; }
+html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5):not(#o6):not(#o7):not(#o8) body main :is(#forma-parte, #perfiles, #mapa-portada) .btn-primary { background: #8c1e0e !important; border-color: #8c1e0e !important; color: #fbfaf7 !important; }
+html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5):not(#o6):not(#o7):not(#o8) body main :is(#forma-parte, #perfiles, #mapa-portada) .btn-primary:hover { background: #6e170b !important; border-color: #6e170b !important; }
+html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5):not(#o6):not(#o7):not(#o8) body main :is(#forma-parte, #perfiles, #mapa-portada) .btn-ghost { border-color: #8c1e0e !important; color: #8c1e0e !important; }
+html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5):not(#o6):not(#o7):not(#o8) body main a[class*="group"] .inline-block.font-bold { background: #8c1e0e; }
+html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5):not(#o6):not(#o7):not(#o8) body main a[class*="group"]:hover .inline-block.font-bold { background: #6e170b; }
+html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5):not(#o6):not(#o7):not(#o8) body main a:is(.card, [class*="rounded-xl"][class*="border"], [class*="rounded-2xl"][class*="border"]):hover { border-color: rgba(140, 30, 14, .5) !important; }
+/* Portadas de cada página también en rojo */
+html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5):not(#o6):not(#o7):not(#o8) body :is(.hero-gradient, .redcafe-afil-hero, .redcafe-socios-hero, [data-redcafe-route] main > div > section:first-child) {
+  background-color: #8c1e0e !important;
+  background-image: radial-gradient(80% 70% at 85% 10%, rgba(240, 195, 106, .16), transparent 60%), linear-gradient(160deg, #8c1e0e 0%, #6e170b 100%) !important;
+}
+html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5):not(#o6):not(#o7):not(#o8) body :is(.hero-gradient, .redcafe-afil-hero, .redcafe-socios-hero, [data-redcafe-route] main > div > section:first-child) h1 :is(span, em, strong) { color: #f0c36a !important; }
+html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5):not(#o6):not(#o7):not(#o8) body :is(.hero-gradient, [data-redcafe-route] main > div > section:first-child) .btn-primary { background: #fbfaf7 !important; border-color: #fbfaf7 !important; color: #8c1e0e !important; }
+html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5):not(#o6):not(#o7):not(#o8) body :is(.hero-gradient, .redcafe-afil-hero, .redcafe-socios-hero, [data-redcafe-route] main > div > section:first-child) :is(.badge, .badge-verde, .rotulo, p.uppercase) { color: #f0c36a !important; background: rgba(240, 195, 106, .1) !important; border-color: rgba(240, 195, 106, .45) !important; }
