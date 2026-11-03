@@ -13,7 +13,7 @@ window.__redcafeReactListo = window.__redcafeReactListo || function () {
 (function () {
   "use strict";
 
-  var VERSION = "20261103a";
+  var VERSION = "20261103b";
   var WAPP = "593968641376";
   var path = normalizePath(location.pathname);
   var homeAuthChecking = false;
@@ -467,7 +467,7 @@ window.__redcafeReactListo = window.__redcafeReactListo || function () {
         '</div>' +
         '<div class="redcafe-panel-split">' +
           '<article><p class="rotulo text-filtrado-600">Precio de mercado del café</p><h3>El ticker muestra la cotización internacional base.</h3><p>En el panel completo ves histórico, fuentes oficiales y referencias para estimar precio en Ecuador.</p><a href="/servicios/precios/">Ver panel completo →</a></article>' +
-          '<article><p class="rotulo text-filtrado-600">Cómo garantizamos la confianza</p><h3>Una Red basada en personas reales</h3><p>La confianza comienza sabiendo con quién estás conectando: perfil claro, información de finca o empresa y contacto directo entre miembros.</p><a href="/servicios/">Conoce cómo funciona →</a></article>' +
+          '<article><p class="rotulo text-filtrado-600">Cómo garantizamos la confianza</p><h3>Una Red basada en personas reales</h3><p>La confianza comienza sabiendo con quién estás conectando: perfil claro, información de finca o empresa y contacto directo entre miembros.</p><a href="/servicios/">Ver cómo funciona →</a></article>' +
         '</div>';
       main.insertAdjacentElement("beforeend", wrap);
     }).catch(function () {}).finally(function () {

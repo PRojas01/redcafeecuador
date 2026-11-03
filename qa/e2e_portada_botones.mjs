@@ -1,4 +1,4 @@
-// Botones de la portada (24-oct-2026): Registrarse / WhatsApp / Acceder.
+// Botones de la portada (24-oct-2026): Crear cuenta gratis / WhatsApp / Entrar (antes Registrarse / Acceder).
 // Misma forma, un color por función, contraste AA, en móvil y escritorio.
 //   node qa/e2e_portada_botones.mjs <url_local> <salida_dir>
 import { chromium } from "playwright";
@@ -14,9 +14,9 @@ const lum = (rgb) => {
 const contraste = (a, b) => { const [x, y] = [lum(a), lum(b)].sort((p, q) => q - p); return (x + 0.05) / (y + 0.05); };
 const ESPERADO = [
   // Tema «Origen» (oct-2026): registro en oro, acceder como contorno claro sobre la portada espresso.
-  { texto: "Registrarse", href: /^\/afiliate\/?$/, fondo: "rgb(230, 184, 115)" },
+  { texto: "Crear cuenta gratis", href: /^\/afiliate\/?$/, fondo: "rgb(223, 160, 102)" },
   { texto: "WhatsApp", href: /^https:\/\/wa\.me\/593/, fondo: "rgb(37, 211, 102)" },
-  { texto: "Acceder", href: /^\/login\/?$/, fondo: "rgba(0, 0, 0, 0)" },
+  { texto: "Entrar", href: /^\/login\/?$/, fondo: "rgba(0, 0, 0, 0)" },
 ];
 
 const b = await chromium.launch();
