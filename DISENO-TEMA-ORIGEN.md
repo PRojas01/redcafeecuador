@@ -26,15 +26,19 @@ confianza) con texto sans para datos, precios y formularios.
 | Hoja (verificado, confianza) | `#2F6B45` |
 
 ## Tipografía
-- Títulos (h1, h2): **DM Serif Display**.
-- Texto, botones, tarjetas, formularios: **DM Sans** (antes caía en la fuente del sistema).
-- Ambas alojadas en el sitio (`/fonts`, licencia OFL), sin servicios externos.
+- Todo en **Inter** (variable 100–900, OFL, `/fonts/inter-latin.woff2`), la libre más
+  cercana a SF Pro de Apple; respaldo `-apple-system`, `system-ui`.
+- Jerarquía: texto principal 15 px; secundarios (`.text-sm`) 13,5 px; notas, avisos y
+  etiquetas 12,5 px; letra menuda (`.text-xs`) 12 px. Títulos peso 650 con letra apretada.
 
 ## Componentes
 - Botones: misma forma en toda la web (esquinas 10 px, sin mayúsculas, peso 600);
   principal en cereza, secundario en contorno; sobre fondo oscuro, oro y contorno claro.
 - Tarjetas: papel, esquinas 12 px, sombra suave y elevación al pasar el cursor.
 - Etiquetas pequeñas: píldora con texto en versalitas.
+- Accesos (3-nov-2026): todo enlace se ve como botón. En el texto, píldora del color del
+  texto; menú de cabecera y pie, píldoras con borde claro; menú del teléfono en dos columnas.
+- Secciones claras: alternan crema y papel con una línea arriba para separarlas.
 
 ## Animaciones
 Entrada escalonada de la portada, aparición suave de tarjetas al hacer scroll y
