@@ -1096,3 +1096,10 @@ html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5):not(#o6):not(#o7):not(#o8):not
 .rc-collage-foto:is(:hover, :focus-visible) img { transform: scale(1.06) !important; }
 .rc-collage-foto { aspect-ratio: auto !important; display: flex !important; flex-direction: column; } .rc-collage-foto img { position: static !important; display: block; width: 100%; height: auto !important; aspect-ratio: 1 / .78; object-fit: cover; object-position: center 30%; } .rc-collage-titulo { position: static !important; display: block !important; padding: 0 .75rem 1.1rem !important; margin-top: -.4rem; }
 .rc-collage-foto img { order: 0; } .rc-collage-titulo { order: 1; } .rc-collage-velo, .rc-collage-num { order: 2; }
+
+/* Collage otra vez con fotos (5-nov-2026): título sobre la foto, velo rojo abajo */
+.rc-collage-foto { display: block !important; aspect-ratio: 1 / 1 !important; }
+.rc-collage-foto img { position: absolute !important; inset: 0; height: 100% !important; aspect-ratio: auto; object-position: center; }
+.rc-collage-velo { display: block !important; background: linear-gradient(180deg, rgba(140, 30, 14, 0) 35%, rgba(110, 23, 11, .85) 100%) !important; }
+.rc-collage-titulo { position: absolute !important; inset: 0; display: grid !important; align-items: end !important; margin: 0 !important; padding: 1rem 1rem 1.2rem !important; color: #ffffff !important; text-shadow: 0 2px 6px rgba(0, 0, 0, .5) !important; }
+.rc-collage-foto:is(:hover, :focus-visible) img { transform: scale(1.08) !important; }

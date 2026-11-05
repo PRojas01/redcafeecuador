@@ -13,7 +13,7 @@ window.__redcafeReactListo = window.__redcafeReactListo || function () {
 (function () {
   "use strict";
 
-  var VERSION = "20261103i";
+  var VERSION = "20261105a";
   var WAPP = "593968641376";
   var path = normalizePath(location.pathname);
   var homeAuthChecking = false;
@@ -964,16 +964,16 @@ window.__redcafeReactListo = window.__redcafeReactListo || function () {
     var antes = document.getElementById("forma-parte");
     if (!antes || document.getElementById("rc-collage")) return;
     var T = [
-      ["vender", "Vende tu café", "/marketplace/", "Saco de café con etiqueta de precio"],
-      ["aprender", "Aprende el proceso", "/academia/", "Libro abierto con una planta de café"],
-      ["servicios", "Contrata servicios", "/servicios/", "Camión que transporta sacos de café"],
-      ["recetas", "Recetas en casa", "/recetas/", "Gotero de café sobre una taza"]
+      ["proceso/cereza", "Vende tu café", "/marketplace/", "Cerezas de café maduras"],
+      ["proceso/secado", "Aprende el proceso", "/academia/", "Café secándose al sol"],
+      ["proceso/tostado", "Contrata servicios", "/servicios/", "Café tostado sobre la mesa"],
+      ["proceso/taza", "Recetas en casa", "/recetas/", "Taza de café recién servida"]
     ];
     var h = '<section id="rc-collage" class="rc-collage" data-redcafe-propio aria-label="Explora la Red"><div class="rc-collage-fila">';
     T.forEach(function (t, i) {
       h += '<a class="rc-collage-foto" href="' + t[2] + '"><span class="rc-collage-velo" aria-hidden="true"></span>' +
         '<span class="rc-collage-num" aria-hidden="true">0' + (i + 1) + '</span><span class="rc-collage-titulo">' + t[1] + '</span>' +
-        '<img src="/img/collage/' + t[0] + '.webp" alt="' + t[3] + '" width="800" height="800" loading="lazy" decoding="async"></a>';
+        '<img src="/img/' + t[0] + '.webp" alt="' + t[3] + '" width="800" height="500" loading="lazy" decoding="async"></a>';
     });
     h += "</div></section>";
     antes.insertAdjacentHTML("beforebegin", h);
