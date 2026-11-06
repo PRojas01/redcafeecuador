@@ -1505,8 +1505,19 @@
     });
   }
 
-  if (document.readyState !== "loading") setTimeout(iniciar, 120);
-  else document.addEventListener("DOMContentLoaded", function () { setTimeout(iniciar, 120); }, { once: true });
+  /* No tocar el DOM antes de que React hidrate: si se añade algo a <main>
+     antes, React lanza el error #418, tira todo el HTML y lo vuelve a pintar
+     (el parpadeo de toda la página que se veía en /academia/). */
+  function trasReact() {
+    var k = 0;
+    (function esperar() {
+      var listo = window.__redcafeReactListo && window.__redcafeReactListo();
+      if (!listo && ++k < 80) { setTimeout(esperar, 100); return; }
+      iniciar();
+    })();
+  }
+  if (document.readyState !== "loading") trasReact();
+  else document.addEventListener("DOMContentLoaded", trasReact, { once: true });
   // El visor del curso se quedaba pegado al navegar a otra página: ahora lo
   // retira redcafe-ruta.js y aquí se vuelve a montar donde corresponde.
   document.addEventListener("redcafe:ruta", function () { setTimeout(iniciar, 300); });
