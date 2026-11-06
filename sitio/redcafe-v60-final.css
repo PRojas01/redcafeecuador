@@ -6017,3 +6017,27 @@ html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5):not(#o6):not(#o7):not(#o8):not
 html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5):not(#o6):not(#o7):not(#o8):not(#o9):not(#o10) body footer ul > li > a { padding-top: .4rem !important; padding-bottom: .4rem !important; }
 html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5):not(#o6):not(#o7):not(#o8):not(#o9):not(#o10) body main p { max-inline-size: 66ch; }
 html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5):not(#o6):not(#o7):not(#o8):not(#o9):not(#o10) body main :is(p.text-center, .text-center > p) { margin-inline: auto; }
+/* Móvil más compacto (2026-11-06) */
+html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5):not(#o6):not(#o7):not(#o8):not(#o9):not(#o10) body .rc-collage-foto { background-color: #6e170b; }
+@media (max-width: 480px) {
+  html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5):not(#o6):not(#o7):not(#o8):not(#o9):not(#o10) body .rc-collage-t { font-size: 16px !important; }
+  html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5):not(#o6):not(#o7):not(#o8):not(#o9):not(#o10) body .rc-collage-sub { font-size: 12.5px !important; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+  html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5):not(#o6):not(#o7):not(#o8):not(#o9):not(#o10) body main a.card > div[class*="aspect-[16/9]"] { aspect-ratio: 2 / 1 !important; }
+  html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5):not(#o6):not(#o7):not(#o8):not(#o9):not(#o10) body #redcafe-academia-avance .redcafe-curso-card-portada { aspect-ratio: 2 / 1; height: auto !important; object-fit: cover; }
+  html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5):not(#o6):not(#o7):not(#o8):not(#o9):not(#o10) body main a.card :is(.p-5, .p-6) { padding: 1rem !important; }
+}
+/* Dibujos (láminas SVG) cambiados por fotos reales (2026-11-06): la foto ocupa la caja del dibujo */
+html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5):not(#o6):not(#o7):not(#o8):not(#o9):not(#o10) body svg[role="img"][aria-label^="Rama de cafeto"] { background: #3b1a0c url("/img/proceso/cereza.webp") center / cover no-repeat; }
+html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5):not(#o6):not(#o7):not(#o8):not(#o9):not(#o10) body svg[role="img"][aria-label^="Rama de cafeto"] > * { display: none !important; }
+html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5):not(#o6):not(#o7):not(#o8):not(#o9):not(#o10) body svg[role="img"][aria-label^="Camas africanas"] { background: #3b1a0c url("/img/proceso/secado.webp") center / cover no-repeat; }
+html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5):not(#o6):not(#o7):not(#o8):not(#o9):not(#o10) body svg[role="img"][aria-label^="Camas africanas"] > * { display: none !important; }
+html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5):not(#o6):not(#o7):not(#o8):not(#o9):not(#o10) body svg[role="img"][aria-label^="Cordilleras"] { background: #3b1a0c url("/img/portada/aprender.webp") center / cover no-repeat; }
+html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5):not(#o6):not(#o7):not(#o8):not(#o9):not(#o10) body svg[role="img"][aria-label^="Cordilleras"] > * { display: none !important; }
+html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5):not(#o6):not(#o7):not(#o8):not(#o9):not(#o10) body svg[role="img"][aria-label^="Saco de exportaci"] { background: #3b1a0c url("/img/portada/servicios.webp") center / cover no-repeat; }
+html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5):not(#o6):not(#o7):not(#o8):not(#o9):not(#o10) body svg[role="img"][aria-label^="Saco de exportaci"] > * { display: none !important; }
+html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5):not(#o6):not(#o7):not(#o8):not(#o9):not(#o10) body svg[role="img"][aria-label^="Taza cenital"] { background: #3b1a0c url("/img/proceso/taza.webp") center / cover no-repeat; }
+html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5):not(#o6):not(#o7):not(#o8):not(#o9):not(#o10) body svg[role="img"][aria-label^="Taza cenital"] > * { display: none !important; }
+html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5):not(#o6):not(#o7):not(#o8):not(#o9):not(#o10) body .granos-bg > svg[role="img"] { background-image: linear-gradient(rgba(110, 23, 11, .82), rgba(59, 26, 12, .86)), url("/img/proceso/secado.webp") !important; opacity: 1 !important; }
+@media (max-width: 420px) { html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5):not(#o6):not(#o7):not(#o8):not(#o9):not(#o10) body main :is(button, a) { max-width: 100%; } html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5):not(#o6):not(#o7):not(#o8):not(#o9):not(#o10) body main :is(button, a)[class*="px-6"] { white-space: normal; padding-inline: 1rem !important; } }
+@media (max-width: 1023px) { .rc-collage-fila { grid-template-columns: 1fr 1fr !important; } .rc-collage-foto { aspect-ratio: 4 / 3; } }
+@media (max-width: 480px) { .rc-collage-foto { aspect-ratio: auto; min-height: 210px; } html body .rc-collage-sub { -webkit-line-clamp: 3 !important; } }

@@ -709,48 +709,48 @@
     seccion.id = "redcafe-academia-avance";
     seccion.className = "redcafe-academia-avance";
     seccion.setAttribute("data-redcafe-propio", "1");
-    seccion.innerHTML = skeletonAcademia();
+    /* Sin pestañeo: la lista de React sigue visible mientras llega la
+       respuesta. La lista propia se arma oculta, se esperan sus fotos y
+       solo entonces se cambia una por otra en el mismo cuadro. */
+    seccion.style.display = "none";
     main.appendChild(seccion);
-
-    /* La lista de React se oculta AHORA, no cuando llegue la respuesta: si se
-       espera a la respuesta, durante toda la petición se ven a la vez el
-       esqueleto propio (arriba) y la lista vieja de React (debajo) — el
-       «pestañeo» reportado. Se busca por <section> y no por hijo directo de
-       <main>: React envuelve toda la página en un único <div>, así que mirar
-       solo main.children ocultaba ESE div entero, título y subtítulo del
-       encabezado incluidos, no solo la lista.
-       Si la petición falla, se restaura (ver más abajo): mejor la lista vieja
-       que una página sin encabezado ni cursos. */
     var ocultados = [];
-    Array.prototype.forEach.call(main.querySelectorAll("section"), function (sec) {
-      if (sec === seccion) return;
-      if (sec.getAttribute("data-redcafe-propio") === "1") return;
-      if (!sec.querySelector('a[href^="/academia/"]')) return;   // solo la lista
-      sec.setAttribute("data-redcafe-oculto-react", "1");
-      sec.style.display = "none";
-      ocultados.push(sec);
-    });
+    function ocultarListaReact() {
+      Array.prototype.forEach.call(main.querySelectorAll("section"), function (sec) {
+        if (sec === seccion) return;
+        if (sec.getAttribute("data-redcafe-propio") === "1") return;
+        if (!sec.querySelector('a[href^="/academia/"]')) return;   // solo la lista
+        sec.setAttribute("data-redcafe-oculto-react", "1");
+        sec.style.display = "none";
+        ocultados.push(sec);
+      });
+    }
+    function mostrarCuandoCarguen() {
+      var imgs = Array.prototype.slice.call(seccion.querySelectorAll("img"));
+      var listas = imgs.map(function (img) {
+        return new Promise(function (ok) {
+          if (img.complete) return ok();
+          img.addEventListener("load", ok, { once: true });
+          img.addEventListener("error", ok, { once: true });
+        });
+      });
+      var tope = new Promise(function (ok) { setTimeout(ok, 2500); });
+      Promise.race([Promise.all(listas), tope]).then(function () {
+        requestAnimationFrame(function () {
+          ocultarListaReact();
+          // Ocupa el mismo lugar que la lista de React, sin saltos.
+          if (ocultados[0] && ocultados[0].parentNode) ocultados[0].parentNode.insertBefore(seccion, ocultados[0].nextSibling);
+          seccion.style.display = "";
+        });
+      });
+    }
 
     json("/api/cursos.php?action=list").then(function (res) {
-      if (!res || !res.ok || !res.data) {
-        seccion.remove();
-        ocultados.forEach(function (sec) {
-          sec.removeAttribute("data-redcafe-oculto-react");
-          sec.style.display = "";
-        });
-        return;
-      }
+      if (!res || !res.ok || !res.data) { seccion.remove(); return; }
       var cursos = res.data.cursos || [];
       marcarCursosDelSitio(cursos);
       var conContenido = cursos.filter(function (c) { return c.listo; });
-      if (!conContenido.length) {
-        seccion.remove();
-        ocultados.forEach(function (sec) {
-          sec.removeAttribute("data-redcafe-oculto-react");
-          sec.style.display = "";
-        });
-        return;
-      }
+      if (!conContenido.length) { seccion.remove(); return; }
 
       /* Los mas recientes primero. Si el curso trae fecha se usa; si no, el
          orden del archivo, donde cada curso nuevo se anade al final. */
@@ -775,7 +775,8 @@
               return '' +
                 '<a class="redcafe-curso-card" href="/academia/' + esc(c.id) + '/">' +
                 '<img class="redcafe-curso-card-portada" src="' + esc(portadaDe(c)) + '" alt="" ' +
-                  'loading="lazy" decoding="async" onerror="this.remove()">' +
+                  'decoding="async" data-respaldo="' + esc(PORTADAS[String(c.categoria || "general")] || PORTADAS.general) + '" ' +
+                  'onerror="if(this.dataset.respaldo&&this.src.indexOf(this.dataset.respaldo)<0){this.src=this.dataset.respaldo}else{this.remove()}">' +
                 '<span class="redcafe-curso-portada-sello">' + esc(selloPortada(c)) + '</span>' +
                 '<p class="redcafe-curso-card-rot">' + esc(c.nivel) + (c.duracion ? ' · ' + esc(c.duracion) : '') +
                   '<span class="redcafe-curso-etiqueta">Contenido disponible</span>' +
@@ -795,7 +796,7 @@
             }).join("") +
           '</div>' +
         '</div>';
-      // La lista de React ya quedó oculta antes de esta petición (ver arriba).
+      mostrarCuandoCarguen();
     });
   }
 
