@@ -1,158 +1,196 @@
 "use client";
 
-import type { ReactNode } from "react";
+/*
+ Índice de la Academia. Antes React pintaba una lista y la capa propia
+ (redcafe-academia.js · montarListado) la ocultaba y ponía la suya con los
+ datos de /api/cursos.php: ese cambio era el parpadeo. Ahora hay una sola lista,
+ aquí: sale en el HTML con el catálogo del sitio y, cuando llega la API, se
+ completan los mismos tarjetones (cursos nuevos, avance, autor y verificado).
+*/
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { CURSOS } from "@/lib/data";
-import { useContenido } from "@/lib/useContenido";
-import { leerBitacora, leerSesion, type Sesion } from "@/lib/sesion";
 import { CONFIG } from "@/lib/config";
-import { CamasSecado, CerezaMadura, FincaTerrazas, SacoExportacion } from "@/components/Lamina";
-import { EstadoVacio } from "@/components/EstadoVacio";
 
-const sellos: Record<string, string> = {
+type CursoLista = {
+  id: string;
+  titulo: string;
+  nivel?: string;
+  duracion?: string;
+  categoria?: string;
+  descripcion?: string;
+  autor?: string;
+  autor_id?: string;
+  modulos?: number;
+  lecciones?: number;
+  completadas?: number;
+  avance?: number;
+  listo?: boolean;
+  creado?: string;
+  actualizado?: string;
+  verificado?: boolean;
+  verificado_en?: string | null;
+  verificado_por?: string;
+};
+
+/* Portadas por categoría (las fotos de /uploads/user-content/ por curso no
+   existen en el servidor y daban 404 y un segundo cambio de imagen). */
+const PORTADAS: Record<string, string> = {
+  produccion: "/img/academia/produccion.webp",
+  postcosecha: "/img/academia/postcosecha.webp",
+  calidad: "/img/academia/certificacion.webp",
+  comercial: "/img/academia/comercial.webp",
+  administrativo: "/img/academia/capacitacion.webp",
+  barismo: "/img/academia/barismo-taza.webp",
+  legal: "/img/academia/certificacion.webp",
+  general: "/img/academia/basico.webp",
+};
+
+const SELLOS: Record<string, string> = {
   "cafe-de-especialidad-de-la-finca-a-la-taza": "Empieza gratis · de la finca a la taza",
   "legacy-barista-en-casa": "Prepara mejores tazas en casa",
   "legacy-barismo-profesional": "Practica técnicas de barra profesional",
   "legacy-barista-avanzado": "Da el siguiente paso tras Barista Pro",
 };
 
-const categoriaNombres: Record<string, string> = {
-	produccion: "Producción",
-	postcosecha: "Post-cosecha",
-	comercial: "Comercial",
-	administrativo: "Administrativo",
-	calidad: "Calidad",
+const GANCHOS: Record<string, string> = {
+  "buenas-practicas": "Saca más quintales de la misma hectárea.",
+  postcosecha: "Sube el puntaje de tu taza y con él el precio que te pagan.",
+  "ventas-comercial": "Deja de aceptar el primer precio que te ofrecen.",
+  formalizacion: "Factura en regla y véndele a quien exige comprobante.",
+  tueste: "Consigue un perfil de tueste que puedas repetir siempre igual.",
+  trazabilidad: "Llega con los papeles hechos cuando tu comprador europeo te los pida.",
+  "cafe-especial": "Haz que tu café deje de venderse como uno más.",
+  "manejo-plagas": "No pierdas la cosecha por una plaga que se veía venir.",
+  exportacion: "Vende fuera del Ecuador sin depender de un intermediario.",
+  "cafe-de-especialidad-de-la-finca-a-la-taza": "Descubre qué hace valioso a un café, del grano a la taza.",
+  "legacy-barista-en-casa": "Aprende a preparar café de calidad sin salir de casa.",
+  "legacy-barismo-profesional": "Entrena espresso, calibración, leche y servicio para trabajar en barra.",
+  "legacy-barista-avanzado": "Profundiza tu técnica si ya egresaste de Barista Pro.",
 };
 
-/** Fotografías reales del proceso, por categoría de curso. Las categorías sin
- *  fotografía propia caen en la lámina vectorial de siempre. */
-const fotoPorCategoria: Record<string, string> = {
-	produccion: "produccion",
-	postcosecha: "postcosecha",
-	comercial: "comercial",
-	certificacion: "certificacion",
-	capacitacion: "capacitacion",
-	basico: "basico",
+/* Los 3 cursos de Legacy son de pago; los de Red Café, gratis. */
+const PRECIOS: Record<string, string> = {
+  "legacy-barista-en-casa": "Promoción 143 USD · pareja/grupo 120 USD c/u",
+  "legacy-barismo-profesional": "Promoción 359 USD · pareja/grupo 320 USD c/u",
+  "legacy-barista-avanzado": "Promoción 550 USD",
 };
 
-const laminaPorCategoria: Record<string, ReactNode> = {
-	produccion: <FincaTerrazas className="h-full w-full" />,
-	postcosecha: <CamasSecado className="h-full w-full" />,
-	comercial: <SacoExportacion className="h-full w-full" />,
-	administrativo: <CerezaMadura className="h-full w-full" />,
+const portadaDe = (c: CursoLista) => PORTADAS[c.categoria || "general"] || PORTADAS.general;
+const selloDe = (c: CursoLista) => SELLOS[c.id] || (PRECIOS[c.id] ? "Formación con Legacy" : "Aprende gratis · a tu ritmo");
+const pct = (v: unknown) => {
+  const n = Number(v);
+  return Number.isFinite(n) ? Math.max(0, Math.min(100, Math.round(n))) : 0;
 };
 
-function PortadaCurso({ categoria, titulo }: { categoria: string; titulo: string }) {
-	const foto = fotoPorCategoria[categoria];
-	if (categoria === "calidad") return <img src="/uploads/user-content/redcafe-curso-calidad.jpg" alt={`Portada de ${titulo}`} className="h-full w-full object-cover" loading="lazy" decoding="async" />;
-	if (foto) {
-		return (
-			<img
-				src={`${CONFIG.basePath}/img/academia/${foto}.webp`}
-				alt={`Fotografía del proceso relacionada con ${titulo}`}
-				className="h-full w-full object-cover"
-				width={640}
-				height={360}
-				loading="lazy"
-				decoding="async"
-			/>
-		);
-	}
-	return <>{laminaPorCategoria[categoria]}</>;
+/* Catálogo del sitio para el primer HTML (los de Legacy llegan de la API:
+   su ficha local es solo un marcador). Más recientes primero, como la API. */
+const INICIAL: CursoLista[] = CURSOS.filter((c) => !c.id.startsWith("legacy-"))
+  .map((c) => ({
+    id: c.id, titulo: c.titulo, nivel: c.nivel, duracion: c.duracion, categoria: c.categoria,
+    descripcion: c.descripcion, modulos: c.modulos.length, listo: true,
+  }))
+  .reverse();
+
+function ordenar(cursos: CursoLista[]): CursoLista[] {
+  return cursos
+    .filter((c) => c.listo)
+    .map((c, i) => ({ c, i }))
+    .sort((a, b) => {
+      const fa = Date.parse(a.c.creado || a.c.actualizado || "") || 0;
+      const fb = Date.parse(b.c.creado || b.c.actualizado || "") || 0;
+      return fa !== fb ? fb - fa : b.i - a.i;
+    })
+    .map((x) => x.c);
+}
+
+function SelloVerificado({ c }: { c: CursoLista }) {
+  if (!c.verificado) return null;
+  const quien = c.verificado_por || "la administración";
+  let cuando = "";
+  if (c.verificado_en) {
+    const f = new Date(Date.parse(c.verificado_en));
+    if (!Number.isNaN(f.getTime())) cuando = " el " + f.toLocaleDateString("es-EC", { day: "numeric", month: "long", year: "numeric" });
+  }
+  return <span className="redcafe-sello-verificado" title={`Revisado por ${quien}${cuando}`}>✓ Verificado</span>;
 }
 
 export default function AcademiaPage() {
-	// Sesión y avance viven en el navegador: se leen después de hidratar para que
-	// el primer render coincida con el HTML estático (antes: React #418).
-	const [sesion, setSesion] = useState<Sesion | null>(null);
-	const [montado, setMontado] = useState(false);
-	useEffect(() => { setSesion(leerSesion()); setMontado(true); }, []);
-	const { items: cursos } = useContenido("cursos", CURSOS);
+  const [cursos, setCursos] = useState<CursoLista[]>(INICIAL);
+  const [autenticado, setAutenticado] = useState(false);
 
-	return (
-		<div>
-			<section className="hero-gradient py-16 text-crema">
-				<div className="mx-auto max-w-6xl px-4">
-					<p className="badge bg-latte/15 text-acento-claro">ACADEMIA RED CAFÉ</p>
-					<h1 className="mt-3 font-titulo text-4xl font-bold leading-tight text-crema md:text-5xl">
-						El conocimiento también forma parte de la Red
-					</h1>
-					<p className="mt-4 max-w-2xl text-crema/80">
-						Aprende sobre producción, postcosecha, comercialización,
-						administración, calidad, tueste y otros temas relacionados con el
-						café.
-					</p>
-				</div>
-			</section>
+  useEffect(() => {
+    let vivo = true;
+    fetch(CONFIG.api("/api/cursos.php?action=list"), { credentials: "include", cache: "no-store" })
+      .then((r) => r.json())
+      .then((res) => {
+        if (!vivo || !res?.ok || !res.data) return;
+        const lista = ordenar((res.data.cursos as CursoLista[]) || []);
+        if (lista.length) setCursos(lista);
+        setAutenticado(!!res.data.autenticado);
+      })
+      .catch(() => {});
+    return () => { vivo = false; };
+  }, []);
 
-			<section className="py-14">
-				<div className="mx-auto max-w-6xl px-4">
-					<p className="max-w-2xl text-pizarra-suave">
-						Consulta los contenidos disponibles para tu perfil y continúa
-						aprendiendo dentro de la Red.
-					</p>
+  return (
+    <div>
+      <section className="hero-gradient py-16 text-crema">
+        <div className="mx-auto max-w-6xl px-4">
+          <p className="badge bg-latte/15 text-acento-claro">ACADEMIA RED CAFÉ</p>
+          <h1 className="mt-3 font-titulo text-4xl font-bold leading-tight text-crema md:text-5xl">
+            El conocimiento también forma parte de la Red
+          </h1>
+          <p className="mt-4 max-w-2xl text-crema/80">
+            Aprende sobre producción, postcosecha, comercialización,
+            administración, calidad, tueste y otros temas relacionados con el
+            café.
+          </p>
+        </div>
+      </section>
 
-					<div className="mt-8">
-						{cursos.length === 0 ? (
-							<EstadoVacio
-								icono="academia"
-								titulo="Aún no hay cursos disponibles"
-								descripcion="La Academia se encuentra en preparación. Vuelve más tarde."
-							/>
-						) : (
-						<div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-						{cursos.map((c) => {
-							const progreso = montado ? leerBitacora<number>(`curso_prog_${c.id}`, 0) : 0;
-							return (
-								<Link
-									key={c.id}
-									href={`/academia/${c.id}`}
-									className="card group flex flex-col overflow-hidden"
-								>
-									<div className="relative aspect-[16/9] overflow-hidden bg-cream-100">
-										<PortadaCurso categoria={c.categoria} titulo={c.titulo} />
-										<span className="absolute left-3 top-3 max-w-[calc(100%-1.5rem)] rounded-md bg-[#3B1A0C] px-3 py-2 text-xs font-bold leading-snug text-[#FFF7E8] shadow-lg">{sellos[c.id] ?? "Aprende gratis · a tu ritmo"}</span>
-									</div>
-									<div className="flex flex-1 flex-col p-6">
-										<span className="inline-block w-fit rounded-full bg-latte/15 px-3 py-1 text-xs font-bold uppercase tracking-wide text-cafe">
-											{categoriaNombres[c.categoria]} · {c.nivel}
-										</span>
-										<h3 className="mt-3 font-titulo text-lg font-bold leading-snug text-cafe transition group-hover:text-cereza">
-											{c.titulo}
-										</h3>
-										<p className="mt-2 flex-1 text-sm leading-relaxed text-pizarra-suave">
-											{c.descripcion}
-										</p>
-										<p className="mt-4 text-xs font-semibold text-latte-texto">
-											{c.duracion} · {c.modulos.length} módulos
-										</p>
-										{sesion ? (
-											<div className="mt-4">
-												<div className="flex items-center justify-between text-xs font-semibold text-pizarra-suave">
-													<span>Tu progreso</span>
-													<span>{progreso}%</span>
-												</div>
-												<div className="mt-1.5 h-2 overflow-hidden rounded-full bg-cafe/10">
-													<div
-														className="h-full bg-latte transition-all"
-														style={{ width: `${progreso}%` }}
-													/>
-												</div>
-											</div>
-										) : null}
-										<span className="mt-5 inline-flex items-center justify-center rounded-full bg-cereza px-5 py-2.5 text-sm font-semibold text-crema transition group-hover:bg-hoja">
-											{progreso > 0 ? "Continuar curso" : "Comenzar curso"}
-										</span>
-									</div>
-								</Link>
-							);
-						})}
-					</div>
-					)}
-					</div>
-				</div>
-			</section>
-		</div>
-	);
+      <section id="redcafe-academia-avance" className="redcafe-academia-avance">
+        <div className="redcafe-pub-wrap">
+          <p className="redcafe-pub-rotulo">Cursos disponibles</p>
+          <h2 className="redcafe-pub-titulo">Formación abierta a todos los perfiles</h2>
+          <p className="redcafe-pub-intro">
+            {autenticado
+              ? "Marca cada lección al terminarla: tu avance queda guardado en tu perfil."
+              : "Crea tu perfil gratis para matricularte y guardar tu avance mientras avanzas por los cursos."}
+          </p>
+          <div className="redcafe-cursos-grid">
+            {cursos.map((c) => {
+              const avance = pct(c.avance);
+              return (
+                <Link key={c.id} className="redcafe-curso-card" href={`/academia/${c.id}/`}>
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img className="redcafe-curso-card-portada" src={portadaDe(c)} alt="" width={640} height={360} decoding="async" />
+                  <span className="redcafe-curso-portada-sello">{selloDe(c)}</span>
+                  <p className="redcafe-curso-card-rot">
+                    {c.nivel}{c.duracion ? ` · ${c.duracion}` : ""}
+                    <span className="redcafe-curso-etiqueta">{(c.completadas ?? 0) > 0 ? `${avance} % completado` : "Contenido disponible"}</span>
+                    <span className={"redcafe-curso-costo " + (PRECIOS[c.id] ? "es-pago" : "es-gratis")}>{PRECIOS[c.id] || "Gratis"}</span>
+                  </p>
+                  <h3>{c.titulo}</h3>
+                  {GANCHOS[c.id] ? <p className="redcafe-curso-card-gancho">{GANCHOS[c.id]}</p> : null}
+                  <p className="redcafe-curso-card-desc">{c.descripcion || ""}</p>
+                  <p className="redcafe-curso-card-meta">
+                    {Number(c.modulos) || 0} módulos{c.lecciones != null ? ` · ${Number(c.lecciones) || 0} lecciones` : ""}
+                    {c.autor_id ? ` · por ${c.autor}` : ""}
+                    <SelloVerificado c={c} />
+                  </p>
+                  {(c.completadas ?? 0) > 0 ? (
+                    <>
+                      <div className="redcafe-avance-barra mini"><span style={{ width: `${avance}%` }} /></div>
+                      <p className="redcafe-curso-card-avance">{avance} % completado</p>
+                    </>
+                  ) : null}
+                </Link>
+              );
+            })}
+          </div>
+        </div>
+      </section>
+    </div>
+  );
 }

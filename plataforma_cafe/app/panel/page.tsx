@@ -2523,9 +2523,9 @@ function MiCuenta({ sesion, onSesion }: { sesion: ApiUser; onSesion: (u: ApiUser
  required className="mt-1 w-full rounded-lg border border-cafe/20 px-3 py-2" />
  </div>
  <div>
- <label className="block text-xs font-semibold text-pizarra/60">Nueva contraseña (mínimo 6 caracteres)</label>
+ <label className="block text-xs font-semibold text-pizarra/60">Nueva contraseña (mínimo 8 caracteres)</label>
  <input type="password" value={newPass} onChange={(e) => setNewPass(e.target.value)}
- required minLength={6} className="mt-1 w-full rounded-lg border border-cafe/20 px-3 py-2" />
+ required minLength={8} className="mt-1 w-full rounded-lg border border-cafe/20 px-3 py-2" />
  </div>
  <div>
  <label className="block text-xs font-semibold text-pizarra/60">Confirmar nueva contraseña</label>

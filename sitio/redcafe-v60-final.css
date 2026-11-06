@@ -6042,3 +6042,17 @@ html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5):not(#o6):not(#o7):not(#o8):not
 @media (max-width: 1023px) { .rc-collage-fila { grid-template-columns: 1fr 1fr !important; } .rc-collage-foto { aspect-ratio: 4 / 3; } }
 @media (max-width: 480px) { .rc-collage-foto { aspect-ratio: auto; min-height: 210px; } html body .rc-collage-sub { -webkit-line-clamp: 3 !important; } }
 html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5):not(#o6):not(#o7):not(#o8):not(#o9):not(#o10) body .redcafe-pub-eliminar { min-height: 44px; padding: .55rem 1rem; border: 1px solid #8c1e0e; border-radius: 12px; background: #ffffff; color: #8c1e0e; font-weight: 600; cursor: pointer; } html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5):not(#o6):not(#o7):not(#o8):not(#o9):not(#o10) body .redcafe-pub-eliminar:hover { background: #fbf4f2; }
+
+/* El botón de la comunidad tapaba «Crear mi cuenta» en el registro móvil: con
+   la barra fija abajo, sube por encima de ella. */
+@media (max-width: 767.98px) {
+  html.redcafe-con-boton-fijo:not(#o1):not(#o2) .redcafe-hub { bottom: calc(5.5rem + env(safe-area-inset-bottom)); }
+}
+
+/* Una tarjeta que contiene la barra fija del registro no se mueve al pasar el
+   ratón: con transform, la barra dejaba de ser fija, el botón saltaba 50 px y
+   el clic se perdía (el paso 3 no se podía enviar). */
+@media (max-width: 767.98px) {
+  html:not(#o1):not(#o2) .card:has([data-redcafe-fijo="1"]),
+  html:not(#o1):not(#o2) .card:has([data-redcafe-fijo="1"]):hover { transform: none; }
+}

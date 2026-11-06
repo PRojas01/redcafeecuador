@@ -77,7 +77,8 @@ function RecuperarContenido() {
                 value={newPass}
                 onChange={(e) => setNewPass(e.target.value)}
                 className="mt-1 w-full rounded-lg border border-border-soft bg-surface px-3 py-2"
-                minLength={6}
+                minLength={8}
+                placeholder="Mínimo 8 caracteres"
                 required
                 autoComplete="new-password"
               />
@@ -89,7 +90,8 @@ function RecuperarContenido() {
                 value={confirm}
                 onChange={(e) => setConfirm(e.target.value)}
                 className="mt-1 w-full rounded-lg border border-border-soft bg-surface px-3 py-2"
-                minLength={6}
+                minLength={8}
+                placeholder="Mínimo 8 caracteres"
                 required
                 autoComplete="new-password"
               />

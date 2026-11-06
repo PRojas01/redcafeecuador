@@ -260,6 +260,12 @@ export default function AfiliatePage() {
     setSesion(getStoredSession());
     setRouterReady(true);
   }, []);
+  // En el móvil el botón para avanzar va fijo abajo (CSS en redcafe-v60-final.css:
+  // [data-redcafe-fijo] y html.redcafe-con-boton-fijo deja sitio al pie).
+  useEffect(() => {
+    document.documentElement.classList.add("redcafe-con-boton-fijo");
+    return () => document.documentElement.classList.remove("redcafe-con-boton-fijo");
+  }, []);
   useEffect(() => {
     if (!routerReady || !sesion) return;
     const rol = new URLSearchParams(window.location.search).get("rol");
@@ -565,7 +571,7 @@ const introduccionPerfil = INTRODUCCION_PERFIL[rol];
               </div>
             </div>
             {error && <p className="mt-4 rounded-xl bg-danger/10 p-3 text-center text-sm font-semibold text-danger">{error}</p>}
-            <div className="mt-6 flex justify-center">
+            <div className="mt-6 flex justify-center" data-redcafe-fijo="1">
               <button
                 type="button"
                 onClick={() => {
@@ -763,7 +769,7 @@ const introduccionPerfil = INTRODUCCION_PERFIL[rol];
 
               {error && <p className="mt-3 rounded-xl bg-danger/10 p-3 text-center text-sm font-semibold text-danger">{error}</p>}
 
-              <div className="mt-5 flex flex-wrap gap-3">
+              <div className="mt-5 flex flex-wrap gap-3" data-redcafe-fijo="1">
                 <button type="button" onClick={() => setPaso(1)} className="btn-ghost">
                   ← Cambiar perfil
                 </button>
@@ -819,7 +825,7 @@ const introduccionPerfil = INTRODUCCION_PERFIL[rol];
 
             {error && <p className="mt-3 rounded-xl bg-danger/10 p-3 text-center text-sm font-semibold text-danger">{error}</p>}
 
-            <div className="mt-5 flex flex-wrap gap-3">
+            <div className="mt-5 flex flex-wrap gap-3" data-redcafe-fijo="1">
               <button type="button" onClick={() => setPaso(2)} className="btn-ghost">← Atrás</button>
               <button type="submit" disabled={loading} className="btn-primary flex-1 sm:flex-none">
                 {loading ? "Creando cuenta…" : "Crear mi cuenta"}

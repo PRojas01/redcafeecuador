@@ -36,17 +36,6 @@
 
   // Sello de verificación de la Academia. Dice quién revisó el curso y cuándo:
   // un curso «verificado» sin autor ni fecha no lo puede comprobar nadie.
-  function selloVerificado(c) {
-    if (!c || !c.verificado) return "";
-    var quien = c.verificado_por || "la administración";
-    var cuando = "";
-    if (c.verificado_en) {
-      var f = new Date(Date.parse(c.verificado_en));
-      if (!isNaN(f)) cuando = " el " + f.toLocaleDateString("es-EC", { day: "numeric", month: "long", year: "numeric" });
-    }
-    return '<span class="redcafe-sello-verificado" title="' +
-      esc("Revisado por " + quien + cuando) + '">✓ Verificado</span>';
-  }
 
   // Los números que llegan de la API se pintan como números. Van dentro de
   // atributos style y de texto: si algún día uno llegara con otra cosa dentro,
@@ -56,11 +45,6 @@
     return isFinite(n) ? String(n) : "0";
   }
 
-  function porcentaje(v) {
-    var n = Number(v);
-    if (!isFinite(n)) return "0";
-    return String(Math.max(0, Math.min(100, Math.round(n))));
-  }
 
   function esc(v) {
     return String(v === null || v === undefined ? "" : v)
@@ -74,28 +58,7 @@
       .catch(function () { return { ok: false }; });
   }
 
-  function skeletonTarjetas(cuantas) {
-    var html = "";
-    for (var i = 0; i < cuantas; i++) {
-      html += '<article class="redcafe-skeleton-card" aria-hidden="true">' +
-        '<span class="redcafe-skeleton-bloque redcafe-skeleton-media"></span>' +
-        '<span class="redcafe-skeleton-bloque redcafe-skeleton-linea corta"></span>' +
-        '<span class="redcafe-skeleton-bloque redcafe-skeleton-linea"></span>' +
-        '<span class="redcafe-skeleton-bloque redcafe-skeleton-linea media"></span>' +
-        '<span class="redcafe-skeleton-bloque redcafe-skeleton-linea corta"></span>' +
-      '</article>';
-    }
-    return html;
-  }
 
-  function skeletonAcademia() {
-    return '<div class="redcafe-pub-wrap redcafe-skeleton" role="status" aria-label="Cargando cursos">' +
-      '<p class="redcafe-pub-rotulo">Cursos disponibles</p>' +
-      '<h2 class="redcafe-pub-titulo">Formación abierta a todos los perfiles</h2>' +
-      '<span class="redcafe-skeleton-bloque redcafe-skeleton-linea intro"></span>' +
-      '<div class="redcafe-cursos-grid redcafe-skeleton-grid">' + skeletonTarjetas(6) + '</div>' +
-    '</div>';
-  }
 
   function skeletonCurso() {
     return '<div class="redcafe-curso-wrap redcafe-skeleton" role="status" aria-label="Abriendo el curso">' +
@@ -590,25 +553,6 @@
   // La página de la Academia lista los 9 cursos, pero solo algunos tienen las
   // lecciones desarrolladas. Se marca cuáles se pueden cursar ya y cuáles
   // están en preparación, para no hacer entrar a nadie a un curso vacío.
-  function marcarCursosDelSitio(cursos) {
-    var estado = {};
-    cursos.forEach(function (c) { estado[c.id] = c; });
-    Array.prototype.slice.call(document.querySelectorAll('a[href^="/academia/"]')).forEach(function (a) {
-      var m = (a.getAttribute("href") || "").match(/\/academia\/([^\/]+)\/?$/);
-      if (!m) return;
-      var c = estado[decodeURIComponent(m[1])];
-      if (!c) return;
-      var card = a.closest("article, li, div") || a;
-      if (card.querySelector(".redcafe-curso-etiqueta")) return;
-      var destino = card.querySelector("h2, h3, h4") || a;
-      var tag = document.createElement("span");
-      tag.className = "redcafe-curso-etiqueta" + (c.listo ? "" : " es-preparacion");
-      tag.textContent = c.listo
-        ? (c.completadas > 0 ? c.avance + " % completado" : "Contenido disponible")
-        : "En preparación";
-      destino.appendChild(tag);
-    });
-  }
 
   /* Las portadas por categoría que ya vienen en el paquete. La lista de React
      solo usaba tres de ellas y las repetía; aquí se cubren todas las categorías
@@ -627,55 +571,14 @@
   /* Portadas hechas para un curso concreto. Los cursos de Legacy llevan su
      propia imagen de marca; sin esto caian en la portada generica de barismo
      y las tres se veian iguales. */
-  var PORTADAS_POR_CURSO = {
-    "legacy-barista-en-casa":       "/uploads/user-content/legacy-barista-en-casa.jpg",
-    "legacy-barismo-profesional":   "/uploads/user-content/legacy-barismo-profesional.jpg",
-    "legacy-barista-avanzado":      "/uploads/user-content/legacy-barista-avanzado.jpg",
-    "cafe-de-especialidad-de-la-finca-a-la-taza":
-                                    "/uploads/user-content/curso-cafe-especialidad-finca-taza.jpg",
-    /* Los 9 cursos propios compartian solo 3 imagenes por categoria (algunos
-       de tema totalmente distinto se veian con la misma foto). Portada
-       propia por curso, generada el 24/09/2026. */
-    "buenas-practicas":  "/uploads/user-content/curso-portada-buenas-practicas.jpg",
-    "cafe-especial":     "/uploads/user-content/curso-portada-cafe-especial.jpg",
-    "manejo-plagas":     "/uploads/user-content/curso-portada-manejo-plagas.jpg",
-    "postcosecha":       "/uploads/user-content/curso-portada-postcosecha.jpg",
-    "ventas-comercial":  "/uploads/user-content/curso-portada-ventas-comercial.jpg",
-    "tueste":            "/uploads/user-content/curso-portada-tueste.jpg",
-    "exportacion":       "/uploads/user-content/curso-portada-exportacion.jpg",
-    "formalizacion":     "/uploads/user-content/curso-portada-formalizacion.jpg",
-    "trazabilidad":      "/uploads/user-content/curso-portada-trazabilidad.jpg"
-  };
+
 
   /* El gancho de cada curso: la frase corta que React mostraba en el indice y
      que la fusion se llevo. Las descripciones de `data/cursos.json` explican el
      temario; estas dicen para que sirve. Rescatadas del paquete 20260924c. */
-  var SELLOS_PORTADA = {
-    "cafe-de-especialidad-de-la-finca-a-la-taza": "Empieza gratis · de la finca a la taza",
-    "legacy-barista-en-casa": "Prepara mejores tazas en casa",
-    "legacy-barismo-profesional": "Practica técnicas de barra profesional",
-    "legacy-barista-avanzado": "Da el siguiente paso tras Barista Pro"
-  };
-  function selloPortada(c) {
-    return SELLOS_PORTADA[String(c.id || "")] ||
-      (PRECIOS[String(c.id || "")] ? "Formación con Legacy" : "Aprende gratis · a tu ritmo");
-  }
 
-  var GANCHOS = {
-    "buenas-practicas": "Saca m\u00e1s quintales de la misma hect\u00e1rea.",
-    "postcosecha": "Sube el puntaje de tu taza y con \u00e9l el precio que te pagan.",
-    "ventas-comercial": "Deja de aceptar el primer precio que te ofrecen.",
-    "formalizacion": "Factura en regla y v\u00e9ndele a quien exige comprobante.",
-    "tueste": "Consigue un perfil de tueste que puedas repetir siempre igual.",
-    "trazabilidad": "Llega con los papeles hechos cuando tu comprador europeo te los pida.",
-    "cafe-especial": "Haz que tu caf\u00e9 deje de venderse como uno m\u00e1s.",
-    "manejo-plagas": "No pierdas la cosecha por una plaga que se ve\u00eda venir.",
-    "exportacion": "Vende fuera del Ecuador sin depender de un intermediario.",
-    "cafe-de-especialidad-de-la-finca-a-la-taza": "Descubre qué hace valioso a un café, del grano a la taza.",
-    "legacy-barista-en-casa": "Aprende a preparar café de calidad sin salir de casa.",
-    "legacy-barismo-profesional": "Entrena espresso, calibración, leche y servicio para trabajar en barra.",
-    "legacy-barista-avanzado": "Profundiza tu técnica si ya egresaste de Barista Pro."
-  };
+
+
 
 
   /* Etiqueta de costo. Los 3 cursos de Legacy son de pago (su valor esta en su
@@ -695,110 +598,9 @@
   }
 
   function portadaDe(c) {
-    var propia = PORTADAS_POR_CURSO[String(c.id || "")];
-    if (propia) return propia;
     return PORTADAS[String(c.categoria || "general")] || PORTADAS.general;
   }
 
-  function montarListado() {
-    if (location.pathname.replace(/\/$/, "") !== "/academia") return;
-    var main = document.querySelector("main");
-    if (!main || document.getElementById("redcafe-academia-avance")) return;
-
-    var seccion = document.createElement("section");
-    seccion.id = "redcafe-academia-avance";
-    seccion.className = "redcafe-academia-avance";
-    seccion.setAttribute("data-redcafe-propio", "1");
-    /* Sin pestañeo: la lista de React sigue visible mientras llega la
-       respuesta. La lista propia se arma oculta, se esperan sus fotos y
-       solo entonces se cambia una por otra en el mismo cuadro. */
-    seccion.style.display = "none";
-    main.appendChild(seccion);
-    var ocultados = [];
-    function ocultarListaReact() {
-      Array.prototype.forEach.call(main.querySelectorAll("section"), function (sec) {
-        if (sec === seccion) return;
-        if (sec.getAttribute("data-redcafe-propio") === "1") return;
-        if (!sec.querySelector('a[href^="/academia/"]')) return;   // solo la lista
-        sec.setAttribute("data-redcafe-oculto-react", "1");
-        sec.style.display = "none";
-        ocultados.push(sec);
-      });
-    }
-    function mostrarCuandoCarguen() {
-      var imgs = Array.prototype.slice.call(seccion.querySelectorAll("img"));
-      var listas = imgs.map(function (img) {
-        return new Promise(function (ok) {
-          if (img.complete) return ok();
-          img.addEventListener("load", ok, { once: true });
-          img.addEventListener("error", ok, { once: true });
-        });
-      });
-      var tope = new Promise(function (ok) { setTimeout(ok, 2500); });
-      Promise.race([Promise.all(listas), tope]).then(function () {
-        requestAnimationFrame(function () {
-          ocultarListaReact();
-          // Ocupa el mismo lugar que la lista de React, sin saltos.
-          if (ocultados[0] && ocultados[0].parentNode) ocultados[0].parentNode.insertBefore(seccion, ocultados[0].nextSibling);
-          seccion.style.display = "";
-        });
-      });
-    }
-
-    json("/api/cursos.php?action=list").then(function (res) {
-      if (!res || !res.ok || !res.data) { seccion.remove(); return; }
-      var cursos = res.data.cursos || [];
-      marcarCursosDelSitio(cursos);
-      var conContenido = cursos.filter(function (c) { return c.listo; });
-      if (!conContenido.length) { seccion.remove(); return; }
-
-      /* Los mas recientes primero. Si el curso trae fecha se usa; si no, el
-         orden del archivo, donde cada curso nuevo se anade al final. */
-      conContenido = conContenido.slice().sort(function (a, b) {
-        var fa = Date.parse(a.creado || a.actualizado || "") || 0;
-        var fb = Date.parse(b.creado || b.actualizado || "") || 0;
-        if (fa !== fb) return fb - fa;
-        return cursos.indexOf(b) - cursos.indexOf(a);
-      });
-
-      seccion.innerHTML =
-        '<div class="redcafe-pub-wrap">' +
-          '<p class="redcafe-pub-rotulo">Cursos disponibles</p>' +
-          '<h2 class="redcafe-pub-titulo">Formación abierta a todos los perfiles</h2>' +
-          '<p class="redcafe-pub-intro">' +
-            (res.data.autenticado
-              ? "Marca cada lección al terminarla: tu avance queda guardado en tu perfil."
-              : "Crea tu perfil gratis para matricularte y guardar tu avance mientras avanzas por los cursos.") +
-          '</p>' +
-          '<div class="redcafe-cursos-grid">' +
-            conContenido.map(function (c) {
-              return '' +
-                '<a class="redcafe-curso-card" href="/academia/' + esc(c.id) + '/">' +
-                '<img class="redcafe-curso-card-portada" src="' + esc(portadaDe(c)) + '" alt="" ' +
-                  'decoding="async" data-respaldo="' + esc(PORTADAS[String(c.categoria || "general")] || PORTADAS.general) + '" ' +
-                  'onerror="if(this.dataset.respaldo&&this.src.indexOf(this.dataset.respaldo)<0){this.src=this.dataset.respaldo}else{this.remove()}">' +
-                '<span class="redcafe-curso-portada-sello">' + esc(selloPortada(c)) + '</span>' +
-                '<p class="redcafe-curso-card-rot">' + esc(c.nivel) + (c.duracion ? ' · ' + esc(c.duracion) : '') +
-                  '<span class="redcafe-curso-etiqueta">Contenido disponible</span>' +
-                  '<span class="redcafe-curso-costo ' + claseCosto(c) + '">' + esc(precioDe(c)) + '</span></p>' +
-                '<h3>' + esc(c.titulo) + '</h3>' +
-          (GANCHOS[String(c.id || "")]
-            ? '<p class="redcafe-curso-card-gancho">' + esc(GANCHOS[String(c.id)]) + '</p>'
-            : '') +
-                '<p class="redcafe-curso-card-desc">' + esc(c.descripcion || "") + '</p>' +
-                '<p class="redcafe-curso-card-meta">' + num(c.modulos) + ' módulos · ' + num(c.lecciones) + ' lecciones' +
-                  (c.autor_id ? ' · por ' + esc(c.autor) : '') + selloVerificado(c) + '</p>' +
-                (c.completadas > 0
-                  ? '<div class="redcafe-avance-barra mini"><span style="width:' + porcentaje(c.avance) + '%"></span></div>' +
-                    '<p class="redcafe-curso-card-avance">' + porcentaje(c.avance) + ' % completado</p>'
-                  : '') +
-              '</a>';
-            }).join("") +
-          '</div>' +
-        '</div>';
-      mostrarCuandoCarguen();
-    });
-  }
 
   /* ── Editor de cursos en el panel ────────────────────────────────── */
 
@@ -1494,7 +1296,7 @@
   /* ── Arranque ────────────────────────────────────────────────────── */
 
   function iniciar() {
-    if (enAcademia()) { montarVisor(); montarListado(); return; }
+    if (enAcademia()) { montarVisor(); return; }
     if (!enPanel()) return;
     json("/api/auth.php?action=me").then(function (res) {
       var u = res && res.ok && res.data && res.data.user;

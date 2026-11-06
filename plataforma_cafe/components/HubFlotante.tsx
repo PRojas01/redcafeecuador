@@ -117,7 +117,7 @@ export function HubFlotante() {
     : "Ir a la comunidad de la Red";
 
   return (
-    <div className="fixed bottom-5 right-5 z-40 flex flex-col items-end gap-3 print:hidden">
+    <div className="redcafe-hub fixed bottom-5 right-5 z-40 flex flex-col items-end gap-3 print:hidden">
       {mensaje && ANUNCIO && (
         <div
           id="redcafe-mensaje-temporal"
