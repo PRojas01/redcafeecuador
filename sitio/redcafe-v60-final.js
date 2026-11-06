@@ -186,155 +186,9 @@ window.__redcafeReactListo = window.__redcafeReactListo || function () {
     });
   }
 
-  function hideLimitedTimeRegistrationCopy() {
-    if (path !== "/") return;
-    qsa("main > div.redcafe-final-hidden").forEach(function (el) {
-      if (text(el).indexOf("Nueva plataforma") !== -1) el.classList.remove("redcafe-final-hidden");
-    });
-    qsa("p,span").forEach(function (el) {
-      var t = text(el);
-      if (t.toLowerCase() === "por tiempo limitado") {
-        el.classList.add("redcafe-final-hidden");
-        var next = el.nextElementSibling;
-        if (next && /gratuit[oa]\s+hasta|31 de diciembre de 2026/i.test(text(next))) {
-          next.classList.add("redcafe-final-hidden");
-        }
-      }
-      if (/El registro es gratuito hasta el\s+31 de diciembre de 2026/i.test(t)) {
-        el.classList.add("redcafe-final-hidden");
-      }
-    });
-  }
 
-  /* Cambiar el texto de un nodo SIN escribir en él si es de React.
-     Escribir textContent o innerHTML en un nodo que pinta React destruye los
-     nodos de texto que React cree tener; en su siguiente repintado intenta
-     retirarlos y lanza «NotFoundError: removeChild» → «Application error».
-     Esta función se ejecuta en cada vuelta del observador, así que el riesgo se
-     multiplica. Para nodos de React se oculta el original con el atributo que
-     solo mueve CSS y se pinta al lado una copia propia con el texto nuevo. */
-  function reemplazarTextoSeguro(el, nuevoHtml, esHtml) {
-    if ((esHtml ? el.innerHTML : el.textContent) === nuevoHtml) return el;
-    if (el.closest("[data-redcafe-propio]")) {
-      if (esHtml) el.innerHTML = nuevoHtml; else el.textContent = nuevoHtml;
-      return el;
-    }
-    if (el.getAttribute("data-redcafe-oculto-react") === "1") {
-      var ya = el.nextElementSibling;
-      return ya && ya.getAttribute("data-redcafe-copia") === "1" ? ya : undefined;
-    }
-    var copia = el.cloneNode(false);
-    copia.removeAttribute("id");
-    copia.setAttribute("data-redcafe-propio", "1");
-    marcarCopia(copia, el);
-    if (esHtml) copia.innerHTML = nuevoHtml; else copia.textContent = nuevoHtml;
-    el.setAttribute("data-redcafe-oculto-react", "1");
-    el.insertAdjacentElement("afterend", copia);
-    return copia;
-  }
+  /* (Las copias de texto sobre nodos de React se retiraron: los textos ya están en React.) */
 
-  /* Copias propias y repintados de React. Para no escribir en un nodo de
-     React se oculta el original y se pinta al lado una copia. Pero cuando
-     React repinta (la barra de precio cada 10 minutos, una hidratación
-     fallida, un cambio de pestaña del panel) crea un nodo nuevo sin la marca:
-     la copia vieja quedaba huérfana y visible y la siguiente pasada añadía
-     otra. «Fuente» llegó a salir cuatro veces en el panel. Cada copia guarda
-     la firma de su original; si ya no va detrás de él, se busca en el mismo
-     contenedor el nodo nuevo con esa firma, se oculta y la copia pasa detrás.
-     Si no aparece, la copia sobra y se retira (es nuestra, no de React).
-     Esta misma función está en redcafe-v60-final.js,
-     redcafe-v60-mejoras-obligatorias.js y redcafe-conversion.js. */
-  function firmaNodo(el) {
-    return el.tagName + "|" + String(el.textContent || "").replace(/\s+/g, " ").trim().slice(0, 200);
-  }
-  function marcarCopia(copia, original) {
-    copia.setAttribute("data-redcafe-copia", "1");
-    copia.setAttribute("data-redcafe-original", firmaNodo(original));
-  }
-  function limpiarCopiasHuerfanas() {
-    Array.prototype.forEach.call(document.querySelectorAll('[data-redcafe-copia="1"]'), function (copia) {
-      var padre = copia.parentNode;
-      if (!padre) return;
-      var previo = copia.previousElementSibling;
-      if (previo && previo.getAttribute("data-redcafe-oculto-react") === "1") return;
-      var firma = copia.getAttribute("data-redcafe-original") || "";
-      var nuevo = null;
-      if (firma) {
-        Array.prototype.some.call(padre.children, function (h) {
-          if (h === copia || h.hasAttribute("data-redcafe-propio")) return false;
-          if (h.getAttribute("data-redcafe-oculto-react") === "1") return false;
-          if (firmaNodo(h) !== firma) return false;
-          nuevo = h;
-          return true;
-        });
-      }
-      if (nuevo) {
-        nuevo.setAttribute("data-redcafe-oculto-react", "1");
-        nuevo.insertAdjacentElement("afterend", copia);
-      } else {
-        padre.removeChild(copia);
-      }
-    });
-  }
-
-  function enhanceHomeProfilePanel() {
-    if (path !== "/") return;
-    var label = qsa("p,span").find(function (el) {
-      return text(el) === "Al crear tu perfil puedes" || text(el) === "Todos los perfiles acceden a";
-    });
-    if (!label) return;
-    var panel = label.closest(".relative.overflow-hidden") || label.closest("div");
-    while (panel && panel.parentElement && text(panel).indexOf("Productores") === -1) {
-      panel = panel.parentElement;
-    }
-    if (!panel || panel.getAttribute("data-redcafe-home-profile-panel") === "1") return;
-
-    panel.setAttribute("data-redcafe-home-profile-panel", "1");
-    panel.classList.add("redcafe-home-profile-panel", "redcafe-home-profile-native");
-
-    var list = qsa("div", panel).find(function (el) {
-      var t = text(el);
-      return t.indexOf("Productores") !== -1 &&
-        t.indexOf("Tostadores") !== -1 &&
-        t.indexOf("Compradores") !== -1 &&
-        t.indexOf("Al crear tu perfil") === -1 &&
-        t.indexOf("Todos los perfiles") === -1;
-    });
-    if (list) {
-      list.classList.add("redcafe-home-profile-list-native");
-      if (!panel.querySelector(".redcafe-home-profile-kicker")) {
-        var kicker = document.createElement("p");
-        kicker.className = "redcafe-home-profile-kicker";
-        kicker.textContent = "Perfiles de entrada";
-        list.insertAdjacentElement("beforebegin", kicker);
-      }
-    }
-
-    var replacements = {
-      "Publica tus lotes y abre nuevas conversaciones sin dejar tus canales actuales.": "Publica lotes de café, recibe pedidos y atiende compradores desde tu panel.",
-      "Encuentra lotes de café por origen, compara datos y contacta productores.": "Encuentra lotes de café por origen, compara datos y contacta productores.",
-      "Compra café con datos de finca, proceso, variedad y contacto directo.": "Compra café con datos de finca, proceso, variedad y contacto directo.",
-      "Todos los perfiles acceden a": "Con tu perfil puedes",
-      "· Academia y capacitación": "Guardar avance en Academia",
-      "· Precio de mercado con su fuente": "Revisar precios con fuente",
-      "· Red de contactos del sector": "Contactar actores del sector",
-      "Publicar, comprar o vender café": "Publicar o encontrar oportunidades"
-    };
-    // Nunca textContent sobre un nodo de React (acaba en «removeChild»): se
-    // oculta el original y se pinta una copia propia (reemplazarTextoSeguro).
-    qsa("p,span,li", panel).forEach(function (el) {
-      if (el.getAttribute("data-redcafe-oculto-react") === "1") return;
-      var t = text(el);
-      if (replacements[t] && replacements[t] !== t) {
-        reemplazarTextoSeguro(el, replacements[t], false);
-      } else if (/^·\s*/.test(t) && !el.children.length) {
-        reemplazarTextoSeguro(el, t.replace(/^·\s*/, ""), false);
-      }
-    });
-
-    var included = label.closest("div");
-    if (included) included.classList.add("redcafe-home-profile-included-native");
-  }
 
   // Franja del precio de la portada: migrada a React (components/PortadaDatos.tsx).
 
@@ -458,29 +312,15 @@ window.__redcafeReactListo = window.__redcafeReactListo || function () {
     });
   }
 
-  function enhancePaymentsText() {
-    if (path !== "/servicios/contratar/") return;
-    qsa("p,li,span,div").forEach(function (el) {
-      if (el.children.length || el.getAttribute("data-redcafe-oculto-react") === "1") return;
-      var t = text(el);
-      if (/cuenta|transferencia bancaria|referencia/i.test(t) && t.length < 280) {
-        reemplazarTextoSeguro(el, "Solicita los datos de pago actualizados por WhatsApp antes de realizar cualquier pago.", false);
-      }
-    });
-  }
 
   function run() {
     path = normalizePath(location.pathname);
-    limpiarCopiasHuerfanas();
     setRouteFlag();
     redirectLoggedHome();
     enhanceNav();
-    hideLimitedTimeRegistrationCopy();
-    enhanceHomeProfilePanel();
     enhanceLoginRegisterChoice();
     enhancePanelOrders();
     enhancePanelResources();
-    enhancePaymentsText();
   }
 
   function startEnhancements() {

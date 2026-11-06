@@ -45,6 +45,24 @@ function ContratarInner() {
     setSession(getStoredSession());
   }, []);
 
+  // Precio vigente del catálogo del servidor (antes lo copiaba la capa propia
+  // encima del de React). Si no llega, el del sitio.
+  const [precioVivo, setPrecioVivo] = useState<number | null>(null);
+  useEffect(() => {
+    if (!servicioId) return;
+    let vivo = true;
+    fetch(CONFIG.api("/api/servicios.php?action=list"), { credentials: "include", cache: "no-store" })
+      .then((r) => r.json())
+      .then((j) => {
+        const lista = (j?.ok && (j.data?.servicios ?? j.servicios)) || [];
+        const s = Array.isArray(lista) ? lista.find((x: { id?: string }) => String(x?.id ?? "") === servicioId) : null;
+        const p = Number(s?.precio);
+        if (vivo && Number.isFinite(p) && p > 0) setPrecioVivo(Math.round(p * 100) / 100);
+      })
+      .catch(() => {});
+    return () => { vivo = false; };
+  }, [servicioId]);
+
   const crearOrden = useCallback(async (servicioId: string, referenciaPago: string) => {
     const res = await fetch(CONFIG.api("/api/servicios.php?action=solicitar"), {
       method: "POST",
@@ -67,8 +85,9 @@ function ContratarInner() {
     );
   }
 
+  const precio = precioVivo ?? servicio.precio;
   const mensajeWhatsApp = encodeURIComponent(
-    `Hola Red Café Ecuador. Quiero solicitar: ${servicio.nombre} ($${servicio.precio} ${servicio.unidad}). Mi nombre es ${session?.nombre ?? "[tu nombre]"}.`
+    `Hola Red Café Ecuador. Quiero solicitar: ${servicio.nombre} ($${precio} ${servicio.unidad}). Mi nombre es ${session?.nombre ?? "[tu nombre]"}.`
   );
   const whatsappUrl = `https://wa.me/${CONFIG.whatsapp}?text=${mensajeWhatsApp}`;
 
@@ -149,7 +168,7 @@ function ContratarInner() {
           {/* Precio */}
           <div className="mt-8 border-t border-cafe/15 pt-6">
             <p className="font-mono text-5xl font-bold tracking-tight tabular-nums text-cereza md:text-6xl">
-              <span className="rotulo mr-1 align-middle text-text-secondary">desde</span>${servicio.precio}
+              <span className="rotulo mr-1 align-middle text-text-secondary">desde</span>${precio}
               <span className="ml-3 align-middle text-sm font-semibold uppercase tracking-wider text-pizarra/60">{servicio.unidad}</span>
             </p>
           </div>
@@ -197,7 +216,7 @@ function ContratarInner() {
                         <strong>1.</strong> Solicita por WhatsApp los datos de pago actualizados para <strong>{servicio.nombre}</strong>.
                       </li>
                       <li><strong>2.</strong> Cuando el asesor confirme el método de pago, realiza el pago por el canal indicado.</li>
-                      <li><strong>3.</strong> Guarda el comprobante e ingresa la referencia abajo para registrar tu solicitud.</li>
+                      <li><strong>3.</strong> Guarda el comprobante e ingresa la referencia abajo para registrar tu solicitud por ${precio}.</li>
                     </ol>
                   </div>
 

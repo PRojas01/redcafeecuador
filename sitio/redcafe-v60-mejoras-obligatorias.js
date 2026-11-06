@@ -4,11 +4,6 @@
     return (el && el.textContent || "").replace(/\s+/g, " ").trim();
   }
 
-  function htmlEscape(value) {
-    return String(value).replace(/[&<>"']/g, function (char) {
-      return { "&": "&amp;", "<": "&lt;", ">": "&gt;", "\"": "&quot;", "'": "&#39;" }[char];
-    });
-  }
 
   function addSecondaryMenu() {
     // Cuando React hidrató, su propio Navbar.tsx YA trae el desplegable
@@ -34,107 +29,10 @@
     });
   }
 
-  function removeHomeRedundantSections() {
-    if (location.pathname !== "/" && location.pathname !== "/index.html") return;
-    Array.prototype.slice.call(document.querySelectorAll("main section")).forEach(function (section) {
-      var content = text(section);
-      if (
-        content.indexOf("Únete como miembro de la Red") !== -1 ||
-        content.indexOf("Herramientas gratis para manejar mejor tu negocio cafetero") !== -1
-      ) {
-        // No se borra: retirar un nodo que pintó React es justo lo que rompe su
-        // reconciliación y acaba en «Application error». Se oculta con el
-        // atributo que ya tiene su regla en la hoja de estilos.
-        section.setAttribute("data-redcafe-oculto", "1");
-      }
-    });
-  }
 
 
-  /* Copias propias y repintados de React. Para no escribir en un nodo de
-     React se oculta el original y se pinta al lado una copia. Pero cuando
-     React repinta (la barra de precio cada 10 minutos, una hidratación
-     fallida, un cambio de pestaña del panel) crea un nodo nuevo sin la marca:
-     la copia vieja quedaba huérfana y visible y la siguiente pasada añadía
-     otra. «Fuente» llegó a salir cuatro veces en el panel. Cada copia guarda
-     la firma de su original; si ya no va detrás de él, se busca en el mismo
-     contenedor el nodo nuevo con esa firma, se oculta y la copia pasa detrás.
-     Si no aparece, la copia sobra y se retira (es nuestra, no de React).
-     Esta misma función está en redcafe-v60-final.js,
-     redcafe-v60-mejoras-obligatorias.js y redcafe-conversion.js. */
-  function firmaNodo(el) {
-    return el.tagName + "|" + String(el.textContent || "").replace(/\s+/g, " ").trim().slice(0, 200);
-  }
-  function marcarCopia(copia, original) {
-    copia.setAttribute("data-redcafe-copia", "1");
-    copia.setAttribute("data-redcafe-original", firmaNodo(original));
-  }
-  function limpiarCopiasHuerfanas() {
-    Array.prototype.forEach.call(document.querySelectorAll('[data-redcafe-copia="1"]'), function (copia) {
-      var padre = copia.parentNode;
-      if (!padre) return;
-      var previo = copia.previousElementSibling;
-      if (previo && previo.getAttribute("data-redcafe-oculto-react") === "1") return;
-      var firma = copia.getAttribute("data-redcafe-original") || "";
-      var nuevo = null;
-      if (firma) {
-        Array.prototype.some.call(padre.children, function (h) {
-          if (h === copia || h.hasAttribute("data-redcafe-propio")) return false;
-          if (h.getAttribute("data-redcafe-oculto-react") === "1") return false;
-          if (firmaNodo(h) !== firma) return false;
-          nuevo = h;
-          return true;
-        });
-      }
-      if (nuevo) {
-        nuevo.setAttribute("data-redcafe-oculto-react", "1");
-        nuevo.insertAdjacentElement("afterend", copia);
-      } else {
-        padre.removeChild(copia);
-      }
-    });
-  }
 
-  function nodoPropioSeguro(nodo) {
-    if (nodo.closest('[data-redcafe-propio="1"]')) return nodo;
-    var siguiente = nodo.nextElementSibling;
-    if (nodo.getAttribute("data-redcafe-oculto-react") === "1" && siguiente && siguiente.getAttribute("data-redcafe-propio") === "1") return siguiente;
-    var copia = nodo.cloneNode(true);
-    copia.removeAttribute("id");
-    copia.querySelectorAll("[id]").forEach(function (hijo) { hijo.removeAttribute("id"); });
-    copia.removeAttribute("data-redcafe-oculto-react");
-    copia.setAttribute("data-redcafe-propio", "1");
-    marcarCopia(copia, nodo);
-    nodo.setAttribute("data-redcafe-oculto-react", "1");
-    nodo.insertAdjacentElement("afterend", copia);
-    return copia;
-  }
 
-  function patchPaymentInstructions() {
-    if (location.pathname.indexOf("/servicios/contratar") !== 0) return;
-
-    document.querySelectorAll('a[href="/afiliate"], a[href="/afiliate/"]').forEach(function (link) {
-      if (text(link).indexOf("Iniciar sesión") !== -1) link.setAttribute("href", "/login/");
-    });
-
-    Array.prototype.slice.call(document.querySelectorAll("section, div")).forEach(function (box) {
-      if (text(box).indexOf("Instrucciones de pago") === -1) return;
-      actualizarListaPago(precioServicioTexto() || "el valor indicado");
-    });
-
-    Array.prototype.slice.call(document.querySelectorAll("a")).forEach(function (link) {
-      if (text(link).indexOf("Enviar comprobante por WhatsApp") !== -1) {
-        if (link.getAttribute("data-redcafe-oculto-react") === "1") return;
-        link = nodoPropioSeguro(link);
-        link.childNodes.forEach(function (node) {
-          if (node.nodeType === 3 && node.nodeValue.trim()) node.nodeValue = "Solicitar datos de pago por WhatsApp";
-        });
-        if (text(link).indexOf("Enviar comprobante") !== -1) {
-          link.textContent = "Solicitar datos de pago por WhatsApp";
-        }
-      }
-    });
-  }
 
 
   function marketplaceApi(path) {
@@ -146,78 +44,10 @@
 
 
 
-  function loadServiciosCatalogo() {
-    if (window.__redcafeServiciosCatalogoPromise) return window.__redcafeServiciosCatalogoPromise;
-    window.__redcafeServiciosCatalogoPromise = fetch("/api/servicios.php?action=list&_=" + Date.now(), { credentials: "include", cache: "no-store" })
-      .then(function (res) { return res.json(); })
-      .then(function (json) {
-        if (!json || !json.ok) return [];
-        if (json.data && Array.isArray(json.data.servicios)) return json.data.servicios;
-        if (Array.isArray(json.servicios)) return json.servicios;
-        return [];
-      })
-      .catch(function () { return []; });
-    return window.__redcafeServiciosCatalogoPromise;
-  }
 
-  function servicioContratarId() {
-    try { return new URLSearchParams(location.search || "").get("servicio") || ""; }
-    catch (e) { return ""; }
-  }
 
-  function precioServicioTexto() {
-    var main = document.querySelector("main");
-    if (!main) return "";
-    var candidatos = Array.prototype.slice.call(main.querySelectorAll("p,span,strong,div,h2,h3")).filter(function (el) {
-      var t = text(el);
-      return /\$\s*\d/.test(t) && /(?:DESDE|POR|USD|\$)/i.test(t) && t.indexOf("%") === -1 && t.length < 120;
-    });
-    for (var i = 0; i < candidatos.length; i++) {
-      var m = text(candidatos[i]).match(/\$\s*\d+(?:[.,]\d{1,2})?/);
-      if (m) return m[0].replace(/\s+/g, "");
-    }
-    return "";
-  }
 
-  function actualizarListaPago(precio) {
-    if (location.pathname.indexOf("/servicios/contratar") !== 0) return;
-    Array.prototype.slice.call(document.querySelectorAll("section, div")).forEach(function (box) {
-      if (text(box).indexOf("Instrucciones de pago") === -1) return;
-      var list = box.querySelector("ol");
-      if (!list) return;
-      var serviceTitle = text(document.querySelector("h1")) || "este servicio";
-      var servicePrice = precio || precioServicioTexto() || "el valor indicado";
-      list = nodoPropioSeguro(list);
-      if (list.getAttribute("data-redcafe-pago-precio") === servicePrice) return;
-      list.setAttribute("data-redcafe-pago-whatsapp", "1");
-      list.setAttribute("data-redcafe-pago-precio", servicePrice);
-      list.innerHTML = '<li><strong>1.</strong> Solicita por WhatsApp los datos de pago actualizados para <strong>' + htmlEscape(serviceTitle) + '</strong>.</li><li><strong>2.</strong> Cuando el asesor confirme el método de pago, realiza el pago por el canal indicado.</li><li><strong>3.</strong> Guarda el comprobante e ingresa la referencia abajo para registrar tu solicitud por ' + htmlEscape(servicePrice) + '.</li>';
-    });
-  }
 
-  function patchContratarServicePrice() {
-    if (location.pathname.indexOf("/servicios/contratar") !== 0) return;
-    var id = servicioContratarId();
-    if (!id) return;
-    loadServiciosCatalogo().then(function (servicios) {
-      var servicio = servicios.find(function (s) { return String(s.id || "") === id; });
-      if (!servicio) return;
-      var precio = Number(servicio.precio);
-      if (!isFinite(precio) || precio <= 0) return;
-      var precioTxt = "$" + (Math.round(precio * 100) / 100).toString().replace(/\.00$/, "");
-      var main = document.querySelector("main");
-      if (!main) return;
-      Array.prototype.slice.call(main.querySelectorAll("p,span,strong,div,h2,h3")).forEach(function (el) {
-        if (el.closest('[data-redcafe-propio="1"]')) return;
-        if (el.children.length > 2) return;
-        var t = text(el);
-        if (!/\$\s*\d/.test(t) || t.indexOf("%") !== -1 || t.length > 120) return;
-        var copia = nodoPropioSeguro(el);
-        copia.textContent = t.replace(/\$\s*\d+(?:[.,]\d{1,2})?/g, precioTxt);
-      });
-      actualizarListaPago(precioTxt);
-    });
-  }
 
   function patchChatEnterToSend() {
     if (location.pathname.indexOf("/chat") !== 0 || window.__redcafeChatEnterToSend) return;
@@ -327,50 +157,6 @@
 
 
 
-  function collapseHomeProfiles() {
-    if (location.pathname !== "/" && location.pathname !== "/index.html") return;
-    if (document.querySelector('[data-redcafe-profile-collapse="1"]')) return;
-    var lead = Array.prototype.slice.call(document.querySelectorAll("main p")).find(function (p) {
-      return text(p).indexOf("Crea tu perfil según tu actividad") !== -1 && text(p).indexOf("publicar, cotizar") !== -1;
-    });
-    if (!lead) return;
-    var section = lead.closest("section");
-    if (!section || section.querySelector("details")) return;
-    var candidates = Array.prototype.slice.call(section.children).filter(function (el) {
-      if (el.contains(lead) || lead.contains(el)) return false;
-      var body = text(el);
-      return body.indexOf("Productor") !== -1 && body.indexOf("Comprador") !== -1 && body.indexOf("Barista") !== -1;
-    });
-    var profileBlock = candidates[candidates.length - 1] || Array.prototype.slice.call(section.querySelectorAll("div")).find(function (el) {
-      var body = text(el);
-      return body.indexOf("Productor") !== -1 && body.indexOf("Tostador") !== -1 && body.indexOf("Amante del Café") !== -1;
-    });
-    if (!profileBlock) return;
-
-    /* Plegar sin mover nada
-       ----------------------------------------------------------------
-       Antes se creaba un <details> y se metía dentro el bloque de perfiles
-       con appendChild. Ese bloque lo pinta React: reparentarlo es justo lo
-       que rompe su reconciliación y acaba en «Application error». Aquí no se
-       mueve: se le pone un atributo de estado y el CSS decide si se ve. Un
-       atributo que React no conoce no le estorba, y el botón es nuestro. */
-    profileBlock.setAttribute("data-redcafe-perfiles", "cerrado");
-
-    var boton = document.createElement("button");
-    boton.type = "button";
-    boton.className = "redcafe-profile-collapse";
-    boton.setAttribute("data-redcafe-profile-collapse", "1");
-    boton.setAttribute("data-redcafe-propio", "1");
-    boton.setAttribute("aria-expanded", "false");
-    boton.textContent = "Ver perfiles de la Red";
-    boton.addEventListener("click", function () {
-      var abierto = profileBlock.getAttribute("data-redcafe-perfiles") === "abierto";
-      profileBlock.setAttribute("data-redcafe-perfiles", abierto ? "cerrado" : "abierto");
-      boton.setAttribute("aria-expanded", abierto ? "false" : "true");
-      boton.textContent = abierto ? "Ver perfiles de la Red" : "Ocultar perfiles de la Red";
-    });
-    profileBlock.insertAdjacentElement("beforebegin", boton);
-  }
 
   // --- Mapa nacional: corrige el mapa Leaflet inicializado con ancho 0 ---
   // Al hidratar, el contenedor aun no tiene ancho y Leaflet calcula zoom 0
@@ -443,16 +229,11 @@
   }
 
   function applyAll() {
-    limpiarCopiasHuerfanas();
     addSecondaryMenu();
-    removeHomeRedundantSections();
-    patchPaymentInstructions();
-    patchContratarServicePrice();
     patchChatEnterToSend();
     fixNationalMap();
     observarTamanoMapa();
     notaFotosReales();
-    collapseHomeProfiles();
   }
 
   // El mapa lo monta React de forma diferida: se reintenta hasta encuadrarlo.
