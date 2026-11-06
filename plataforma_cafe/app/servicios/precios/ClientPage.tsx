@@ -21,6 +21,10 @@ export interface HistoricoRow {
  // Solo en la serie diaria: el día exacto (YYYY-MM-DD). En la mensual no
  // viene, porque allí "mes" ya es todo lo que se sabe.
  fecha?: string;
+ // Solo en la serie diaria y si la fuente los trae: para el gráfico de velas.
+ apertura?: number;
+ maximo?: number;
+ minimo?: number;
 }
 
 export interface PrecioResponse {
@@ -134,36 +138,111 @@ function resumenMensual(rows: HistoricoRow[]): HistoricoRow[] {
 /*
  * Pizarra de cierres diarios («Precio histórico del café»).
  *
- * Antes la pintaba la capa propia (redcafe-v60-final.js · enhancePricePage)
- * cuando ya estaba la página: insertaba la pizarra arriba y escondía todo el
- * bloque de React, así que la página cambiaba entera al cargar. Ahora sale en
- * el primer HTML con los cierres guardados y solo cambian los números cuando
- * llegan los de la API. Mismas clases: los estilos de redcafe-v60-final.css
- * siguen valiendo.
+ * Sale en el primer HTML con los cierres guardados y solo cambian los números
+ * cuando llegan los de la API. Pensada para leer la variación de cada día:
+ *   - eje de precios con rejilla y eje de fechas que se adapta al rango;
+ *   - línea o velas (apertura, máximo, mínimo y cierre de cada jornada);
+ *   - línea de referencia con el precio al inicio del rango;
+ *   - lectura de cada día: cierre, cambio contra el día anterior y rango del día;
+ *   - media de 20 sesiones opcional para ver la tendencia.
  */
 const RANGOS_PIZARRA = [
- { dias: 7, label: "7D" },
+ { dias: 7, label: "1S" },
  { dias: 30, label: "1M" },
  { dias: 90, label: "3M" },
  { dias: 180, label: "6M" },
  { dias: 365, label: "1A" },
  { dias: 0, label: "Todo" },
 ];
-type Cierre = { fecha: string; precio: number };
+const DIAS_SEMANA = ["dom", "lun", "mar", "mié", "jue", "vie", "sáb"];
+const SUBE = "#2f6b45";
+const BAJA = "#8c1e0e";
+const TEXTO_EJE = "#5c5a50";
+
+type Cierre = { fecha: string; precio: number; apertura?: number; maximo?: number; minimo?: number };
 
 function cierresDiarios(rows: HistoricoRow[] | undefined): Cierre[] {
  return (rows ?? [])
-  .map((r) => ({ fecha: String(r.fecha || r.mes || ""), precio: Number(r.usdQqal || r.centsLb) }))
+  .map((r) => {
+   const c: Cierre = { fecha: String(r.fecha || r.mes || ""), precio: Number(r.usdQqal || r.centsLb) };
+   if (r.apertura && r.maximo && r.minimo) {
+    c.apertura = Number(r.apertura);
+    c.maximo = Number(r.maximo);
+    c.minimo = Number(r.minimo);
+   }
+   return c;
+  })
   .filter((r) => r.fecha && Number.isFinite(r.precio) && r.precio > 0)
   .sort((a, b) => a.fecha.localeCompare(b.fecha));
 }
 
+function fechaLarga(iso: string): string {
+ const d = parseFecha(iso);
+ if (!d) return iso;
+ return `${DIAS_SEMANA[d.getUTCDay()]} ${String(d.getUTCDate()).padStart(2, "0")} ${MESES[d.getUTCMonth()]} ${d.getUTCFullYear()}`;
+}
+
+function cambio(actual: number, antes: number | undefined): { abs: number; pct: number } | null {
+ if (!antes || antes <= 0) return null;
+ return { abs: actual - antes, pct: ((actual - antes) / antes) * 100 };
+}
+
+function fmtCambio(c: { abs: number; pct: number } | null): string {
+ if (!c) return "—";
+ const signo = c.abs > 0 ? "▲ +" : c.abs < 0 ? "▼ −" : "· ";
+ return `${signo}${Math.abs(c.abs).toFixed(2)} (${Math.abs(c.pct).toFixed(2)}%)`;
+}
+
+/* Escala de precios con pasos redondos (1, 2, 2.5, 5, 10…). */
+function escalaPrecios(min: number, max: number) {
+ let rango = max - min;
+ if (rango <= 0) rango = Math.abs(max) * 0.02 || 1;
+ const lo0 = min - rango * 0.08, hi0 = max + rango * 0.08;
+ let paso = Math.pow(10, Math.floor(Math.log10((hi0 - lo0) / 4)));
+ for (const k of [1, 2, 2.5, 5, 10]) {
+  if ((hi0 - lo0) / (paso * k) <= 5) { paso *= k; break; }
+ }
+ const lo = Math.floor(lo0 / paso) * paso, hi = Math.ceil(hi0 / paso) * paso;
+ const marcas: number[] = [];
+ for (let v = lo; v <= hi + paso / 1000; v += paso) marcas.push(Math.round(v * 100) / 100);
+ return { lo, hi, marcas, decimales: paso < 1 ? 2 : 0 };
+}
+
+/*
+ * Marcas del eje de fechas según el rango: día a día en una semana, cada
+ * pocos días hasta tres meses y el primer día de cotización de cada mes en
+ * rangos largos. Nunca repite la misma etiqueta.
+ */
+function marcasFechas(filas: Cierre[], anchoUtil: number): number[] {
+ const n = filas.length;
+ const caben = Math.max(2, Math.floor(anchoUtil / 70));
+ if (n <= caben) return filas.map((_, i) => i);
+ const dias = (Date.parse(filas[n - 1].fecha) - Date.parse(filas[0].fecha)) / 86400000;
+ if (dias > 100) {
+  const inicios = filas.map((r, i) => (i > 0 && r.fecha.slice(0, 7) !== filas[i - 1].fecha.slice(0, 7) ? i : -1)).filter((i) => i >= 0);
+  const salto = Math.max(1, Math.ceil(inicios.length / caben));
+  return inicios.filter((_, k) => k % salto === 0);
+ }
+ const salto = Math.ceil(n / caben);
+ const out: number[] = [];
+ for (let i = n - 1; i >= 0; i -= salto) out.unshift(i);
+ return out;
+}
+
+function etiquetaFecha(r: Cierre, largo: boolean): string {
+ const d = parseFecha(r.fecha);
+ if (!d) return r.fecha;
+ return largo ? `${MESES[d.getUTCMonth()]} ${String(d.getUTCFullYear()).slice(2)}` : `${d.getUTCDate()} ${MESES[d.getUTCMonth()]}`;
+}
+
 function PizarraDiaria({ cierres, stale }: { cierres: Cierre[]; stale?: boolean }) {
- const [dias, setDias] = useState(30);
+ const [dias, setDias] = useState(90);
+ const [velas, setVelas] = useState(false);
+ const [media, setMedia] = useState(false);
  const [elegido, setElegido] = useState<number | null>(null);
  const [fijado, setFijado] = useState(false);
  const caja = useRef<HTMLDivElement>(null);
- const [proporcion, setProporcion] = useState(1366 / 280);
+ const [proporcion, setProporcion] = useState(1366 / 320);
 
  useEffect(() => {
   const el = caja.current;
@@ -176,32 +255,74 @@ function PizarraDiaria({ cierres, stale }: { cierres: Cierre[]; stale?: boolean 
  }, []);
 
  const ultimo = cierres[cierres.length - 1];
- const filas = useMemo(() => {
-  if (!dias || !ultimo) return cierres;
+ const penultimo = cierres[cierres.length - 2];
+ const hayVelas = cierres.some((r) => r.apertura !== undefined);
+
+ // Media móvil de 20 sesiones sobre toda la serie (así el inicio del rango
+ // también tiene media).
+ const medias = useMemo(() => {
+  const out: (number | null)[] = [];
+  let suma = 0;
+  cierres.forEach((r, i) => {
+   suma += r.precio;
+   if (i >= 20) suma -= cierres[i - 20].precio;
+   out.push(i >= 19 ? suma / 20 : null);
+  });
+  return out;
+ }, [cierres]);
+
+ const desdeIndice = useMemo(() => {
+  if (!dias || !ultimo) return 0;
   const corte = new Date(`${ultimo.fecha}T00:00:00Z`);
   corte.setUTCDate(corte.getUTCDate() - dias + 1);
   const desde = corte.toISOString().slice(0, 10);
-  return cierres.filter((r) => r.fecha >= desde);
+  const i = cierres.findIndex((r) => r.fecha >= desde);
+  return i < 0 ? 0 : i;
  }, [cierres, dias, ultimo]);
+ const filas = cierres.slice(desdeIndice);
+ const mediasRango = medias.slice(desdeIndice);
+ const usarVelas = velas && hayVelas;
 
- const h = 260, pad = 28;
+ const h = 320;
  const w = Math.max(320, Math.round(h * proporcion));
- const vals = filas.map((r) => r.precio);
- let min = Math.min(...vals), max = Math.max(...vals);
- if (min === max) { min -= 1; max += 1; }
- const pts = filas.map((r, i) => ({
-  x: pad + (i * (w - pad * 2)) / Math.max(1, filas.length - 1),
-  y: h - pad - ((r.precio - min) * (h - pad * 2)) / (max - min),
- }));
+ const M = { top: 14, right: 62, bottom: 30, left: 10 };
+ const anchoUtil = w - M.left - M.right;
+ const altoUtil = h - M.top - M.bottom;
+
  const hayGrafico = filas.length >= 2;
- const linea = pts.map((p) => `${p.x} ${p.y}`).join(" L ");
- const marcas = Array.from(new Set([0, Math.floor((filas.length - 1) / 2), filas.length - 1]));
- const sel = elegido === null ? null : Math.max(0, Math.min(filas.length - 1, elegido));
+ const valores = filas.flatMap((r) => (usarVelas && r.maximo && r.minimo ? [r.maximo, r.minimo] : [r.precio]));
+ if (media) mediasRango.forEach((m) => m !== null && valores.push(m));
+ const esc = escalaPrecios(Math.min(...valores), Math.max(...valores));
+ const paso = anchoUtil / Math.max(1, filas.length - 1);
+ // Con velas se deja medio paso a cada lado para que la primera y la última no queden cortadas.
+ const margenVela = usarVelas ? Math.min(paso / 2, 12) : 0;
+ const xDe = (i: number) => M.left + margenVela + (i * (anchoUtil - margenVela * 2)) / Math.max(1, filas.length - 1);
+ const yDe = (v: number) => M.top + altoUtil - ((v - esc.lo) / (esc.hi - esc.lo)) * altoUtil;
+
+ const inicio = filas[0];
+ const fin = filas[filas.length - 1];
+ const varRango = inicio && fin ? cambio(fin.precio, inicio.precio) : null;
+ const colorRango = varRango && varRango.abs < 0 ? BAJA : SUBE;
+ const maxRango = filas.reduce((a, r) => (r.precio > a.precio ? r : a), filas[0] ?? { fecha: "", precio: 0 });
+ const minRango = filas.reduce((a, r) => (r.precio < a.precio ? r : a), filas[0] ?? { fecha: "", precio: 0 });
+ const varDia = ultimo ? cambio(ultimo.precio, penultimo?.precio) : null;
+
+ const linea = filas.map((r, i) => `${i ? "L" : "M"}${xDe(i).toFixed(1)} ${yDe(r.precio).toFixed(1)}`).join(" ");
+ const lineaMedia = mediasRango
+  .map((m, i) => (m === null ? null : `${xDe(i).toFixed(1)} ${yDe(m).toFixed(1)}`))
+  .filter(Boolean)
+  .map((p, i) => `${i ? "L" : "M"}${p}`)
+  .join(" ");
+ const marcasX = hayGrafico ? marcasFechas(filas, anchoUtil) : [];
+ const etiquetasLargas = hayGrafico && (Date.parse(fin.fecha) - Date.parse(inicio.fecha)) / 86400000 > 100;
+ const sel = elegido === null || !hayGrafico ? null : Math.max(0, Math.min(filas.length - 1, elegido));
+ const selFila = sel === null ? null : filas[sel];
+ const selAntes = sel === null ? undefined : cierres[desdeIndice + sel - 1]?.precio;
 
  const indiceDe = (ev: React.PointerEvent<SVGSVGElement> | React.MouseEvent<SVGSVGElement>) => {
   const r = ev.currentTarget.getBoundingClientRect();
   const px = ((ev.clientX - r.left) / r.width) * w;
-  return Math.round(((px - pad) / (w - pad * 2)) * (filas.length - 1));
+  return Math.round(((px - M.left - margenVela) / (anchoUtil - margenVela * 2)) * (filas.length - 1));
  };
 
  // Tabla por mes con lo que se ve en el gráfico.
@@ -212,6 +333,7 @@ function PizarraDiaria({ cierres, stale }: { cierres: Cierre[]; stale?: boolean 
  });
  const meses = Array.from(porMes.keys()).sort().reverse().slice(0, 12);
  const variosPorMes = meses.some((k) => porMes.get(k)!.length > 1);
+ const rangoLabel = RANGOS_PIZARRA.find((r) => r.dias === dias)?.label ?? "";
 
  return (
   <section id="redcafe-price-daily" className="redcafe-price-board">
@@ -220,55 +342,140 @@ function PizarraDiaria({ cierres, stale }: { cierres: Cierre[]; stale?: boolean 
      <p className="rotulo text-filtrado-600">ICE Coffee C · cierres diarios</p>
      <h1 className="font-titulo text-2xl font-bold text-cafe">Precio histórico del café</h1>
      <p className="redcafe-price-date" role="status">
-      {ultimo ? `Último cierre disponible: ${ultimo.fecha} · USD/quintal${stale ? " · dato guardado" : ""}` : "Sin cierres diarios disponibles"}
+      {ultimo ? `Último cierre: ${fechaLarga(ultimo.fecha)} · USD/quintal${stale ? " · dato guardado" : ""}` : "Sin cierres diarios disponibles"}
      </p>
     </div>
-    <div className="redcafe-price-value">{ultimo ? fmtUsd(ultimo.precio) : "Sin datos"}</div>
+    <div className="rcp-cabecera-valor">
+     <div className="redcafe-price-value">{ultimo ? fmtUsd(ultimo.precio) : "Sin datos"}</div>
+     {varDia && (
+      <p className="rcp-var" style={{ color: varDia.abs < 0 ? BAJA : SUBE }}>
+       {fmtCambio(varDia)} <span>vs. cierre anterior</span>
+      </p>
+     )}
+    </div>
    </div>
-   <div className="redcafe-range-tabs">
-    {RANGOS_PIZARRA.map((r) => (
-     <button key={r.label} type="button" aria-pressed={dias === r.dias} onClick={() => { setDias(r.dias); setElegido(null); setFijado(false); }}>
-      {r.label}
-     </button>
-    ))}
+
+   <div className="rcp-controles">
+    <div className="redcafe-range-tabs" role="group" aria-label="Rango de fechas">
+     {RANGOS_PIZARRA.map((r) => (
+      <button key={r.label} type="button" aria-pressed={dias === r.dias} onClick={() => { setDias(r.dias); setElegido(null); setFijado(false); }}>
+       {r.label}
+      </button>
+     ))}
+    </div>
+    <div className="redcafe-range-tabs" role="group" aria-label="Tipo de gráfico">
+     <button type="button" aria-pressed={!usarVelas} onClick={() => setVelas(false)}>Línea</button>
+     {hayVelas && <button type="button" aria-pressed={usarVelas} onClick={() => setVelas(true)}>Velas</button>}
+     <button type="button" aria-pressed={media} onClick={() => setMedia(!media)}>Media 20 días</button>
+    </div>
    </div>
-   <div className="redcafe-price-chart" ref={caja}>
+
+   {hayGrafico && (
+    <dl className="rcp-resumen">
+     <div><dt>Inicio {rangoLabel}</dt><dd>{fmtUsd(inicio.precio)}</dd><dd className="rcp-sub">{fechaLarga(inicio.fecha)}</dd></div>
+     <div><dt>Cierre más alto</dt><dd>{fmtUsd(maxRango.precio)}</dd><dd className="rcp-sub">{fechaLarga(maxRango.fecha)}</dd></div>
+     <div><dt>Cierre más bajo</dt><dd>{fmtUsd(minRango.precio)}</dd><dd className="rcp-sub">{fechaLarga(minRango.fecha)}</dd></div>
+     <div><dt>Variación {rangoLabel}</dt><dd style={{ color: colorRango }}>{fmtCambio(varRango)}</dd><dd className="rcp-sub">{filas.length} sesiones</dd></div>
+    </dl>
+   )}
+
+   <div className="redcafe-price-chart rcp-grafico" ref={caja}>
     {hayGrafico ? (
      <>
       <svg
        viewBox={`0 0 ${w} ${h}`}
        role="img"
        tabIndex={0}
-       aria-label={`Gráfico de cierres diarios del café entre ${filas[0].fecha} y ${ultimo.fecha}. Haz clic o usa las flechas para consultar fecha y precio.`}
+       aria-label={`Gráfico de cierres diarios del café entre ${inicio.fecha} y ${fin.fecha}: de ${fmtUsd(inicio.precio)} a ${fmtUsd(fin.precio)}. Pasa el dedo o usa las flechas para ver cada día.`}
        onPointerMove={(ev) => { if (!fijado) setElegido(indiceDe(ev)); }}
-       onClick={(ev) => { setFijado(true); setElegido(indiceDe(ev)); }}
+       onPointerLeave={() => { if (!fijado) setElegido(null); }}
+       onClick={(ev) => { setFijado(!fijado); setElegido(indiceDe(ev)); }}
        onKeyDown={(ev) => {
+        if (ev.key === "Escape") { setFijado(false); setElegido(null); return; }
         if (ev.key !== "ArrowLeft" && ev.key !== "ArrowRight") return;
         ev.preventDefault();
         setFijado(true);
         setElegido((sel ?? filas.length - 1) + (ev.key === "ArrowLeft" ? -1 : 1));
        }}
       >
-       <path d={`M ${pts[0].x} ${h - pad} L ${linea} L ${pts[pts.length - 1].x} ${h - pad} Z`} fill="rgba(166,106,44,.16)" />
-       <path d={`M ${linea}`} fill="none" stroke="#a66a2c" strokeWidth="3" strokeLinejoin="round" strokeLinecap="round" />
-       <line x1={pad} y1={h - pad} x2={w - pad} y2={h - pad} stroke="rgba(140,30,14,.18)" />
-       {marcas.map((i) => (
-        <text key={i} x={pts[i].x} y={h - 5} textAnchor={i === 0 ? "start" : i === filas.length - 1 ? "end" : "middle"} fill="#5c5a50" fontSize="11">
-         {filas[i].fecha.slice(5)}
-        </text>
+       <defs>
+        <linearGradient id="rcpArea" x1="0" x2="0" y1="0" y2="1">
+         <stop offset="0%" stopColor={colorRango} stopOpacity="0.18" />
+         <stop offset="100%" stopColor={colorRango} stopOpacity="0" />
+        </linearGradient>
+       </defs>
+       {/* Rejilla y eje de precios a la derecha */}
+       {esc.marcas.map((v) => (
+        <g key={v}>
+         <line x1={M.left} x2={M.left + anchoUtil} y1={yDe(v)} y2={yDe(v)} stroke="rgba(59,26,12,.09)" />
+         <text x={M.left + anchoUtil + 8} y={yDe(v) + 4} fontSize="11" fill={TEXTO_EJE}>${v.toFixed(esc.decimales)}</text>
+        </g>
        ))}
-       <text x={pad} y={pad - 7} fill="#25221f" fontSize="13">${max.toFixed(2)}</text>
-       <text x={pad} y={h - pad - 5} fill="#25221f" fontSize="13">${min.toFixed(2)}</text>
-       {sel !== null && (
+       {/* Eje de fechas */}
+       <line x1={M.left} x2={M.left + anchoUtil} y1={M.top + altoUtil} y2={M.top + altoUtil} stroke="rgba(59,26,12,.25)" />
+       {marcasX.map((i) => (
+        <g key={filas[i].fecha}>
+         <line x1={xDe(i)} x2={xDe(i)} y1={M.top + altoUtil} y2={M.top + altoUtil + 4} stroke="rgba(59,26,12,.35)" />
+         <text x={xDe(i)} y={h - 8} fontSize="11" fill={TEXTO_EJE} textAnchor={xDe(i) < M.left + 24 ? "start" : xDe(i) > M.left + anchoUtil - 24 ? "end" : "middle"}>
+          {etiquetaFecha(filas[i], etiquetasLargas)}
+         </text>
+        </g>
+       ))}
+       {/* Precio al inicio del rango, como referencia */}
+       <line x1={M.left} x2={M.left + anchoUtil} y1={yDe(inicio.precio)} y2={yDe(inicio.precio)} stroke={TEXTO_EJE} strokeDasharray="2 4" strokeOpacity=".7" />
+
+       {usarVelas ? (
+        filas.map((r, i) => {
+         const o = r.apertura ?? r.precio, c = r.precio;
+         const color = c >= o ? SUBE : BAJA;
+         const cuerpo = Math.max(1, Math.min(14, paso * 0.62));
+         const yA = yDe(Math.max(o, c)), yB = yDe(Math.min(o, c));
+         return (
+          <g key={r.fecha}>
+           <line x1={xDe(i)} x2={xDe(i)} y1={yDe(r.maximo ?? Math.max(o, c))} y2={yDe(r.minimo ?? Math.min(o, c))} stroke={color} strokeWidth="1" />
+           <rect x={xDe(i) - cuerpo / 2} y={yA} width={cuerpo} height={Math.max(1, yB - yA)} fill={c >= o ? "#ffffff" : color} stroke={color} strokeWidth="1" />
+          </g>
+         );
+        })
+       ) : (
         <>
-         <line x1={pts[sel].x} x2={pts[sel].x} y1={pad} y2={h - pad} stroke="#5b2d17" strokeDasharray="4 4" strokeWidth="1.5" />
-         <circle cx={pts[sel].x} cy={pts[sel].y} r="5" fill="#a66a2c" stroke="white" strokeWidth="2" />
+         <path d={`${linea} L${xDe(filas.length - 1).toFixed(1)} ${M.top + altoUtil} L${xDe(0).toFixed(1)} ${M.top + altoUtil} Z`} fill="url(#rcpArea)" />
+         <path d={linea} fill="none" stroke={colorRango} strokeWidth="2.2" strokeLinejoin="round" strokeLinecap="round" />
+         {filas.length <= 31 && filas.map((r, i) => <circle key={r.fecha} cx={xDe(i)} cy={yDe(r.precio)} r="2.6" fill={colorRango} />)}
+        </>
+       )}
+       {media && lineaMedia && <path d={lineaMedia} fill="none" stroke="#a66a2c" strokeWidth="1.6" strokeDasharray="6 4" />}
+
+       {/* Último cierre marcado en el eje de precios */}
+       <rect x={M.left + anchoUtil + 2} y={yDe(fin.precio) - 10} width={M.right - 4} height="20" rx="4" fill={colorRango} />
+       <text x={M.left + anchoUtil + 7} y={yDe(fin.precio) + 4} fontSize="11" fontWeight="700" fill="#ffffff">{fin.precio.toFixed(2)}</text>
+
+       {sel !== null && selFila && (
+        <>
+         <line x1={xDe(sel)} x2={xDe(sel)} y1={M.top} y2={M.top + altoUtil} stroke="#3b1a0c" strokeDasharray="4 4" strokeWidth="1" />
+         <line x1={M.left} x2={M.left + anchoUtil} y1={yDe(selFila.precio)} y2={yDe(selFila.precio)} stroke="#3b1a0c" strokeDasharray="4 4" strokeWidth="1" strokeOpacity=".5" />
+         <circle cx={xDe(sel)} cy={yDe(selFila.precio)} r="5" fill={colorRango} stroke="#ffffff" strokeWidth="2" />
         </>
        )}
       </svg>
-      {sel !== null && (
-       <div className="redcafe-price-tooltip" role="status" aria-live="polite" style={{ left: `${Math.max(12, Math.min(88, (pts[sel].x / w) * 100))}%` }}>
-        {filas[sel].fecha} · {fmtUsd(filas[sel].precio)} USD/quintal
+      {sel !== null && selFila && (
+       <div
+        className="rcp-tip"
+        role="status"
+        aria-live="polite"
+        style={{ left: `${Math.max(14, Math.min(86, (xDe(sel) / w) * 100))}%` }}
+       >
+        <strong>{fechaLarga(selFila.fecha)}</strong>
+        <span className="rcp-tip-precio">{fmtUsd(selFila.precio)} <small>USD/quintal</small></span>
+        <span style={{ color: (cambio(selFila.precio, selAntes)?.abs ?? 0) < 0 ? "#ffb4a6" : "#a8e0b8" }}>
+         {fmtCambio(cambio(selFila.precio, selAntes))} en el día
+        </span>
+        {selFila.apertura !== undefined && (
+         <span className="rcp-tip-ohlc">
+          Apertura {selFila.apertura.toFixed(2)} · Máx. {selFila.maximo?.toFixed(2)} · Mín. {selFila.minimo?.toFixed(2)}
+         </span>
+        )}
+        {fijado && <span className="rcp-tip-ohlc">Toca otra vez o pulsa Esc para soltar</span>}
        </div>
       )}
      </>
@@ -276,6 +483,10 @@ function PizarraDiaria({ cierres, stale }: { cierres: Cierre[]; stale?: boolean 
      <p className="redcafe-launch-note">Histórico pendiente de actualización.</p>
     )}
    </div>
+   <p className="rcp-nota">
+    Cada punto es el cierre de una jornada del futuro Coffee C (ICE, Nueva York). Sin cotización en fines de semana ni festivos.
+    La línea punteada marca el precio al inicio del rango.
+   </p>
    <table className="redcafe-price-table">
     <thead>
      {variosPorMes ? (
