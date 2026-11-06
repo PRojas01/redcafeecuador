@@ -25,8 +25,6 @@
   // Qué pertenece a cada ruta. Si el prefijo no encaja con la ruta actual,
   // el nodo sobra y se retira.
   var PROPIOS = [
-    { sel: "#redcafe-curso",                ruta: "/academia" },
-    { sel: "#redcafe-academia-avance",      ruta: "/academia" },
     { sel: "#redcafe-academia-editor",      ruta: "/academia" },
     { sel: "#redcafe-academia-solicitudes", ruta: "/academia" },
     { sel: "#redcafe-mis-cursos",           ruta: "/panel" },

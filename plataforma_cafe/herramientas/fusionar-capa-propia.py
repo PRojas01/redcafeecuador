@@ -100,7 +100,12 @@ def rutas_html(raiz: str):
 
 # Rutas nuevas de React que llevan la misma capa que otra ya publicada.
 # marketplace/ficha: la ficha que el servidor sirve a los lotes de los miembros.
-CAPA_PRESTADA = {os.path.join("marketplace", "ficha"): os.path.join("marketplace", "loja-gesha-01")}
+CAPA_PRESTADA = {
+    os.path.join("marketplace", "ficha"): os.path.join("marketplace", "loja-gesha-01"),
+    # Visor de cursos (ficha genérica y el curso libre): misma capa que una ficha de curso.
+    os.path.join("academia", "curso"): os.path.join("academia", "buenas-practicas"),
+    os.path.join("academia", "cafe-de-especialidad-de-la-finca-a-la-taza"): os.path.join("academia", "buenas-practicas"),
+}
 
 
 def main():

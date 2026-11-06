@@ -59,7 +59,16 @@ function resolver(ruta: string): string | null {
     const ficha = path.join(raiz, "marketplace/ficha/index.html");
     return fs.existsSync(ficha) ? ficha : path.join(raiz, "marketplace/index.html");
   }
-  if (/^\/academia\/[^/]+\/?$/.test(ruta)) return path.join(raiz, "academia/index.html");
+  if (/^\/academia\/[^/]+\/?$/.test(ruta)) {
+    // El visor genérico lee el id de la dirección; si el build aún no lo trae, la Academia.
+    const visor = path.join(raiz, "academia/curso/index.html");
+    return fs.existsSync(visor) ? visor : path.join(raiz, "academia/index.html");
+  }
+  // Navegación interna de Next a uno de esos cursos: el payload del visor genérico.
+  if (/^\/academia\/[^/]+\/index\.txt$/.test(ruta)) {
+    const txt = path.join(raiz, "academia/curso/index.txt");
+    if (fs.existsSync(txt)) return txt;
+  }
   return null;
 }
 

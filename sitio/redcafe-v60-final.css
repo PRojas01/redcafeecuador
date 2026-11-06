@@ -4002,25 +4002,7 @@ html:not(#rc-t1):not(#rc-t2) body > div:not(#redcafe-video-fondo):not([class*="f
 }
 
 
-/* ═══════════════════════════════════════════════════════════════════════════
-   Una sola versión de cada pantalla
-   ---------------------------------------------------------------------------
-   El problema: en /academia/ y en la ficha de un curso convivían DOS versiones
-   —la de React y la nuestra—. React pinta enseguida; nuestros scripts van con
-   `defer` y tardan. El usuario veía la de React y, medio segundo después, cómo
-   cambiaba por la nuestra. Ocultarla desde JavaScript no llegaba a tiempo.
-
-   La marca `data-rc-vista` la pone un script de dos líneas en la cabecera, que
-   corre ANTES del primer pintado. Con eso, la versión de React ya nace oculta y
-   no llega a verse nunca.
-
-   Red de seguridad: ese mismo script retira la marca a los 5 segundos si
-   nuestra capa no ha aparecido. Si nuestro JavaScript fallara, la página vuelve
-   a mostrarse tal como la sirve React en vez de quedarse en blanco.
-   ═══════════════════════════════════════════════════════════════════════════ */
-html[data-rc-vista="curso"] body > main > *:not([data-redcafe-propio]) {
-  display: none !important;
-}
+/* (Una sola versión de cada pantalla: la Academia y la ficha del curso ya son de React; se retiró la guarda data-rc-vista.) */
 
 
 /* ===== Fusión: menú móvil propio en las rutas donde React ya no arranca ===== */

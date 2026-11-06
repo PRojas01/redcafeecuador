@@ -60,36 +60,10 @@
 
 
 
-  function skeletonCurso() {
-    return '<div class="redcafe-curso-wrap redcafe-skeleton" role="status" aria-label="Abriendo el curso">' +
-      '<span class="redcafe-skeleton-bloque redcafe-skeleton-linea corta"></span>' +
-      '<span class="redcafe-skeleton-bloque redcafe-skeleton-portada"></span>' +
-      '<span class="redcafe-skeleton-bloque redcafe-skeleton-linea titulo"></span>' +
-      '<span class="redcafe-skeleton-bloque redcafe-skeleton-linea intro"></span>' +
-      '<span class="redcafe-skeleton-bloque redcafe-skeleton-linea media"></span>' +
-      '<div class="redcafe-skeleton-lista">' +
-        '<span class="redcafe-skeleton-bloque redcafe-skeleton-linea"></span>' +
-        '<span class="redcafe-skeleton-bloque redcafe-skeleton-linea"></span>' +
-        '<span class="redcafe-skeleton-bloque redcafe-skeleton-linea media"></span>' +
-      '</div>' +
-    '</div>';
-  }
 
   /* ── Visor del curso ─────────────────────────────────────────────── */
 
-  function cursoDeLaRuta() {
-    var m = location.pathname.match(/^\/academia\/([^\/]+)\/?$/);
-    return m ? decodeURIComponent(m[1]) : "";
-  }
 
-  function barraAvance(hechas, total) {
-    var pct = total > 0 ? Math.round((hechas / total) * 100) : 0;
-    return '<div class="redcafe-avance" role="progressbar" aria-valuenow="' + pct +
-      '" aria-valuemin="0" aria-valuemax="100" aria-label="Avance del curso">' +
-      '<div class="redcafe-avance-barra"><span style="width:' + pct + '%"></span></div>' +
-      '<p class="redcafe-avance-texto"><strong>' + pct + ' %</strong> · ' +
-      hechas + ' de ' + total + ' lecciones</p></div>';
-  }
 
   // ── Bloques de contenido ─────────────────────────────────────────
   // El texto plano de una lección puede venir acompañado de imágenes,
@@ -98,455 +72,29 @@
   // Un bloque puede traer una lista de pasos, una línea por paso. Antes todo
   // se metía en un solo <p> y los saltos simples los colapsaba el navegador:
   // los pasos salían encadenados en un párrafo ilegible.
-  function parrafos(texto) {
-    return String(texto || "").split(/\n\n+/).map(function (trozo) {
-      var lineas = trozo.split(/\n/).map(function (l) { return l.trim(); })
-        .filter(function (l) { return l !== ""; });
-      var esLista = lineas.length > 1 && lineas.every(function (l) {
-        return /^[•\-*]\s+/.test(l);
-      });
-      if (esLista) {
-        return "<ul class=\"redcafe-bloque-lista\">" + lineas.map(function (l) {
-          return "<li>" + esc(l.replace(/^[•\-*]\s+/, "")) + "</li>";
-        }).join("") + "</ul>";
-      }
-      return "<p>" + esc(lineas.join(" ")) + "</p>";
-    }).join("");
-  }
 
-  function bloqueHtml(b) {
-    var titulo = b.titulo ? '<h5 class="redcafe-bloque-titulo">' + esc(b.titulo) + '</h5>' : "";
 
-    if (b.tipo === "texto") {
-      return '<div class="redcafe-bloque">' + titulo + parrafos(b.texto) + '</div>';
-    }
-    if (b.tipo === "imagen") {
-      return '<figure class="redcafe-bloque redcafe-bloque-imagen">' + titulo +
-        '<img src="' + esc(b.url) + '" alt="' + esc(b.alt || "") + '" loading="lazy" decoding="async">' +
-        (b.pie ? '<figcaption>' + esc(b.pie) + '</figcaption>' : '') + '</figure>';
-    }
-    if (b.tipo === "enlace") {
-      return '<div class="redcafe-bloque redcafe-bloque-enlace">' +
-        '<a href="' + esc(b.url) + '" target="_blank" rel="noreferrer noopener">' +
-          '<strong>' + esc(b.titulo || "Documento") + '</strong>' +
-          (b.descripcion ? '<span>' + esc(b.descripcion) + '</span>' : '') +
-        '</a></div>';
-    }
-    if (b.tipo === "tabla") {
-      var columnas = Array.isArray(b.columnas) ? b.columnas : [];
-      var filas = Array.isArray(b.filas) ? b.filas : [];
-      if (!columnas.length || !filas.length) return "";
-      return '<div class="redcafe-bloque redcafe-bloque-tabla">' + titulo +
-        '<div class="redcafe-tabla-wrap"><table><thead><tr>' +
-          columnas.map(function (c) { return '<th scope="col">' + esc(c) + '</th>'; }).join("") +
-        '</tr></thead><tbody>' +
-          filas.map(function (fila) {
-            fila = Array.isArray(fila) ? fila : [];
-            return '<tr>' + columnas.map(function (c, i) {
-              return '<td data-label="' + esc(c) + '">' + esc(fila[i] || "") + '</td>';
-            }).join("") + '</tr>';
-          }).join("") +
-        '</tbody></table></div>' +
-        (b.pie ? '<p class="redcafe-bloque-pie">' + esc(b.pie) + '</p>' : '') +
-      '</div>';
-    }
-    if (b.tipo === "video" || b.tipo === "documento") {
-      return '<div class="redcafe-bloque redcafe-bloque-embed">' + titulo +
-        '<div class="redcafe-embed' + (b.tipo === "documento" ? " es-documento" : "") + '">' +
-          '<iframe src="' + esc(b.url) + '" loading="lazy" allowfullscreen ' +
-          'referrerpolicy="strict-origin-when-cross-origin" ' +
-          'sandbox="allow-scripts allow-same-origin allow-presentation allow-popups" ' +
-          'title="' + esc(b.titulo || (b.tipo === "video" ? "Vídeo del curso" : "Documento del curso")) + '"></iframe>' +
-        '</div>' +
-        (b.descripcion ? '<p class="redcafe-bloque-pie">' + esc(b.descripcion) + '</p>' : '') +
-      '</div>';
-    }
-    if (b.tipo === "codigo") {
-      return '<div class="redcafe-bloque redcafe-bloque-codigo">' + titulo +
-        '<pre><code>' + esc(b.codigo) + '</code></pre></div>';
-    }
-    return "";
-  }
 
-  function bloquesHtml(lec) {
-    var bs = Array.isArray(lec.bloques) ? lec.bloques : [];
-    if (!bs.length) return "";
-    return '<div class="redcafe-bloques">' + bs.map(bloqueHtml).join("") + '</div>';
-  }
 
-  function leccionHtml(cursoId, mi, li, leccion, completada, puedeCompletar, publico) {
-    var id = "lec-" + mi + "-" + li;
-    return '<article class="redcafe-leccion' + (completada ? " is-hecha" : "") + '" data-modulo="' + mi + '" data-leccion="' + li + '">' +
-      '<h4 id="' + id + '">' + esc(leccion.titulo) + '</h4>' +
-      (leccion.contenido ? '<div class="redcafe-leccion-texto">' + parrafos(leccion.contenido) + '</div>' : '') +
-      bloquesHtml(leccion) +
-      (puedeCompletar
-        ? '<label class="redcafe-leccion-check">' +
-            '<input type="checkbox" data-completar="1"' + (completada ? " checked" : "") + '>' +
-            '<span>Marcar como completada</span>' +
-          '</label>'
-        : '<p class="redcafe-leccion-bloqueada">' + (publico ? 'Matricúlate gratis para guardar tu avance.' : 'Matricúlate para abrir el contenido y guardar tu avance.') + '</p>') +
-    '</article>';
-  }
-
-  function moduloHtml(cursoId, mi, mod, completadas, puedeCompletar, publico) {
-    var lecciones = (mod.lecciones || []).map(function (l, li) {
-      return leccionHtml(cursoId, mi, li, l, completadas.indexOf(cursoId + "::" + mi + "::" + li) !== -1, puedeCompletar, publico);
-    }).join("");
-    return '<section class="redcafe-modulo">' +
-      '<header><p class="redcafe-modulo-num">Módulo ' + (mi + 1) + (mod.minutos ? ' · ' + mod.minutos + ' min' : '') + '</p>' +
-      '<h3>' + esc(mod.titulo) + '</h3>' +
-      (mod.resumen ? '<p class="redcafe-modulo-resumen">' + esc(mod.resumen) + '</p>' : '') +
-      '</header>' +
-      lecciones +
-      (mod.ejercicio ? '<div class="redcafe-ejercicio"><p class="redcafe-ejercicio-rot">Ejercicio</p><p>' + esc(mod.ejercicio) + '</p></div>' : '') +
-    '</section>';
-  }
 
   // Cuando el curso exige aprobación y aún no la tienes, se ve el temario
   // pero no el contenido. Aquí se explica y se ofrece solicitarlo.
   // Dos puertas distintas y hay que explicarlas distinto: matricularse
   // depende del alumno; la aprobación, del autor del curso.
-  function avisoAcceso(data) {
-    var estado = data.mi_solicitud || "ninguno";
-    var moderado = (data.acceso || "abierto") === "aprobacion";
-    var titulo, cuerpo, accion = "";
-    // La leyenda del consentimiento acompaña solo al botón de «Empezar
-    // gratis» (curso abierto): ahí es donde se acepta que el autor vea los
-    // datos de contacto. La interfaz lo advierte antes, como pide la regla.
-    var consentimiento = "";
-
-    if (estado === "anonimo") {
-      titulo = data.curso && data.curso.publico ? "Explora gratis y guarda tu avance" : (moderado ? "Crea tu perfil para pedir acceso" : "Crea tu perfil para estudiar este curso");
-      cuerpo = data.curso && data.curso.publico
-        ? "Puedes leer este curso sin cuenta. Crea tu perfil gratis para matricularte y guardar tu avance."
-        : (moderado ? "Este curso lo modera quien lo creó. Con una cuenta gratuita puedes pedir la matrícula y recibir la respuesta." : "La matrícula es gratis y sirve para guardar tu avance lección a lección.");
-      accion = '<a class="redcafe-curso-solicitar" href="/afiliate/">Crear perfil gratis</a>';
-    } else if (estado === "pendiente") {
-      titulo = "Matrícula enviada";
-      cuerpo = "Quien creó el curso tiene que aprobarla. Cuando lo haga, verás el contenido aquí mismo.";
-    } else if (estado === "rechazado") {
-      titulo = "Matrícula no aprobada";
-      cuerpo = "Puedes volver a pedirla explicando para qué necesitas el curso.";
-      accion = '<button type="button" class="redcafe-curso-solicitar">Pedir de nuevo</button>';
-    } else if (moderado) {
-      titulo = "Curso con acceso moderado";
-      cuerpo = "Pide la matrícula y recibirás el contenido cuando su autor la apruebe.";
-      accion = '<button type="button" class="redcafe-curso-matricular">Pedir matrícula</button>';
-      consentimiento = '<p class="redcafe-curso-consentimiento">Al pedir la matrícula, quien creó el curso (y las personas asociadas al curso, si las tiene) verá tu nombre, tu avance y tus datos de contacto. <a href="/politica-de-uso-de-datos/" target="_blank" rel="noreferrer">Ver política de uso de datos</a>.</p>';
-    } else {
-      titulo = "Empezar gratis el curso";
-      cuerpo = "Es gratis y toma un clic. Al matricularte se guarda tu avance lección a lección y puedes retomarlo cuando quieras.";
-      accion = '<button type="button" class="redcafe-curso-matricular">Empezar gratis</button>';
-      consentimiento = '<p class="redcafe-curso-consentimiento">Al matricularte, quien creó el curso (y las personas asociadas al curso, si las tiene) verá tu nombre, tu avance y tus datos de contacto. <a href="/politica-de-uso-de-datos/" target="_blank" rel="noreferrer">Ver política de uso de datos</a>.</p>';
-    }
-
-    return '<div class="redcafe-curso-bloqueado">' +
-      '<h2>' + esc(titulo) + '</h2>' +
-      '<p>' + esc(cuerpo) + '</p>' +
-      '<p class="redcafe-bloque-pie">Abajo tienes el temario completo para decidir antes.</p>' +
-      accion +
-      consentimiento +
-      '<p class="redcafe-curso-estado" role="status" aria-live="polite"></p>' +
-    '</div>';
-  }
 
   /* Material del curso para quien lo estudia: archivos para descargar y
      enlaces (una inscripción presencial, un formulario, un vídeo). Si el curso
      trae material pero la persona todavía no se matriculó, se le dice cuánto
      hay, sin entregarlo. */
-  function materialesCursoHtml(c, data) {
-    var lista = Array.isArray(c.materiales) ? c.materiales : [];
-    if (!lista.length) {
-      var n = Number(c.materiales_count || 0);
-      if (!n || data.acceso_concedido !== false) return "";
-      return '<div class="redcafe-curso-mat"><h2>Material del curso</h2>' +
-        '<p class="redcafe-curso-mat-aviso">Este curso trae ' + n +
-        (n === 1 ? ' documento o enlace de apoyo' : ' documentos y enlaces de apoyo') +
-        '. Se ven al matricularse.</p></div>';
-    }
-    return '<div class="redcafe-curso-mat"><h2>Material del curso</h2><ul>' +
-      lista.map(function (m) {
-        var esArchivo = (m.tipo || "enlace") === "archivo";
-        var externo = !esArchivo && /^https:/i.test(String(m.url || ""));
-        return '<li>' +
-          '<a href="' + esc(m.url || "#") + '"' +
-            (esArchivo ? ' download' : '') +
-            (externo ? ' target="_blank" rel="noreferrer"' : '') + '>' +
-            (esArchivo ? "📄 " : "🔗 ") + esc(m.titulo || (esArchivo ? "Documento" : "Enlace")) +
-          '</a>' +
-          (m.nota ? '<small>' + esc(m.nota) + '</small>' : '') +
-        '</li>';
-      }).join("") +
-      '</ul></div>';
-  }
 
 
   /* Advertencia obligatoria. El curso orienta; quien decide y responde por el
      resultado en su finca o su negocio es el miembro. Va al final, después del
      contenido, para que se lea con lo aprendido fresco y no estorbe al entrar. */
-  function avisoReferencial() {
-    return '<aside class="redcafe-aviso-referencial" role="note">' +
-      '<strong>Información referencial</strong>' +
-      '<p>Este curso es material de orientación general para el café ecuatoriano. ' +
-      'No sustituye la asistencia técnica, agronómica, legal, contable ni sanitaria de un profesional ' +
-      'que conozca tu finca o tu negocio. Las condiciones de suelo, clima, variedad, mercado y normativa ' +
-      'cambian de un sitio a otro y con el tiempo.</p>' +
-      '<p>Aplicar lo aquí descrito y los resultados que se obtengan son responsabilidad de quien lo aplica. ' +
-      'Antes de invertir, fumigar, certificar, exportar o firmar, consulta con un técnico y con la ' +
-      'entidad competente (MAG, Agrocalidad, SRI, aduana, según el caso).</p>' +
-      '</aside>';
-  }
 
-  function pintarCurso(host, data) {
-    var c = data.curso || {};
-    var completadas = data.completadas || [];
-    var total = data.total || 0;
-    var puedeCompletar = data.acceso_concedido !== false && (data.matriculado || data.puede_editar);
-
-    // El HTML exportado trae el titulo generico de la Academia porque las 9
-    // fichas comparten una sola plantilla estatica. React lo corregia al
-    // hidratar, poniendo el titulo del curso en la pestaña del navegador.
-    if (c.titulo) document.title = c.titulo + " \u00b7 Academia \u00b7 Red Caf\u00e9 Ecuador";
-
-    host.innerHTML =
-      '<div class="redcafe-curso-wrap">' +
-        '<p class="redcafe-curso-rotulo">' + esc(c.nivel || "") + (c.duracion ? " · " + esc(c.duracion) : "") +
-          (c.autor && c.autor_id ? ' · por ' + esc(c.autor) : '') + '</p>' +
-        '<img class="redcafe-curso-portada" src="' + esc(portadaDe(c)) + '" alt="" ' +
-          'loading="lazy" decoding="async" onerror="this.remove()">' +
-        '<p class="redcafe-curso-costo-ficha ' + claseCosto(c) + '">' + esc(precioDe(c)) + '</p>' +
-        '<h1 class="redcafe-curso-titulo">' + esc(c.titulo || "Curso") + '</h1>' +
-        (c.descripcion ? '<p class="redcafe-curso-desc">' + esc(c.descripcion) + '</p>' : '') +
-        ((data.acceso_concedido === false || !puedeCompletar) ? avisoAcceso(data) : '') +
-        (data.acceso_concedido !== false && total ? barraAvance(completadas.length, total) : '') +
-        (c.introduccion ? '<div class="redcafe-curso-intro"><p>' + esc(c.introduccion) + '</p></div>' : '') +
-        ((c.objetivos || []).length
-          ? '<div class="redcafe-curso-obj"><h2>Al terminar, podrás</h2><ul>' +
-            c.objetivos.map(function (o) { return "<li>" + esc(o) + "</li>"; }).join("") + '</ul></div>'
-          : '') +
-        (c.modulos || []).map(function (m, i) { return moduloHtml(c.id, i, m, completadas, puedeCompletar, !!c.publico); }).join("") +
-        materialesCursoHtml(c, data) +
-        ((c.recursos || []).length
-          ? '<div class="redcafe-curso-rec"><h2>Recursos y referencias</h2><ul>' +
-            c.recursos.map(function (r) { return "<li>" + esc(r) + "</li>"; }).join("") + '</ul></div>'
-          : '') +
-        (c.cierre ? '<div class="redcafe-curso-cierre"><h2>Para cerrar</h2><p>' + esc(c.cierre) + '</p></div>' : '') +
-        avisoReferencial() +
-        '<div class="redcafe-curso-pie">' +
-          '<a class="btn-ghost" href="/academia/">Volver a la Academia</a>' +
-          (puedeCompletar && total ? '<button type="button" class="redcafe-curso-reiniciar">Reiniciar mi avance</button>' : '') +
-          '<span class="redcafe-curso-estado" role="status" aria-live="polite"></span>' +
-        '</div>' +
-      '</div>';
-
-    var estado = host.querySelector(".redcafe-curso-estado");
-
-    host.addEventListener("change", function (ev) {
-      var check = ev.target;
-      if (!check || !check.getAttribute || check.getAttribute("data-completar") !== "1") return;
-      var art = check.closest(".redcafe-leccion");
-      json("/api/cursos.php?action=completar", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          curso: c.id,
-          modulo: Number(art.getAttribute("data-modulo")),
-          leccion: Number(art.getAttribute("data-leccion")),
-          hecho: check.checked
-        })
-      }).then(function (res) {
-        if (res && res.ok && res.data) {
-          art.classList.toggle("is-hecha", check.checked);
-          var barra = host.querySelector(".redcafe-avance");
-          if (barra) barra.outerHTML = barraAvance(res.data.completadas.length, res.data.total);
-          estado.textContent = "";
-        } else {
-          check.checked = !check.checked;
-          estado.textContent = (res && res.error) === "No autenticado."
-            ? "Crea tu perfil gratis para guardar tu avance."
-            : ((res && res.error) || "No se pudo guardar tu avance.");
-          estado.className = "redcafe-curso-estado is-error";
-        }
-      });
-    });
-
-    // Matrícula: un clic, sin preguntas. Es lo que abre el contenido de un
-    // curso libre y lo que hace que el avance quede a nombre de alguien.
-    // La etiqueta del botón varía (Empezar gratis / Pedir matrícula): se
-    // guarda al pulsar para restaurarla si algo falla.
-    var matricular = host.querySelector("button.redcafe-curso-matricular");
-    if (matricular) {
-      matricular.addEventListener("click", function () {
-        var avisoEstado = host.querySelector(".redcafe-curso-estado");
-        var etiqueta = (matricular.textContent || "Matricularme").trim();
-        matricular.disabled = true;
-        matricular.textContent = "Enviando…";
-        json("/api/cursos.php?action=matricular", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ curso: c.id })
-        }).then(function (r) {
-          if (r && r.ok && r.data && r.data.estado === "matriculado") {
-            // Con la matrícula hecha, el curso se vuelve a pedir ya con el
-            // contenido. El clic prometía empezar sin pasos intermedios: la
-            // primera lección se abre al terminar de pintarse (reintentos
-            // contados porque el visor llega por fetch).
-            montarVisor(true);
-            var intentos = 0;
-            (function abrir() {
-              var primera = document.getElementById("lec-0-0");
-              if (primera) {
-                primera.scrollIntoView({ behavior: "smooth", block: "center" });
-                return;
-              }
-              if (++intentos < 10) setTimeout(abrir, 250);
-            })();
-            return;
-          }
-          /* Cursos con aprobacion: la peticion salio bien pero el acceso
-             queda pendiente. Antes esto se contaba en una linea gris de 13 px
-             debajo del boton, que volvia a decir «Pedir matricula»: parecia
-             que no habia pasado nada y la gente volvia a pulsar. Ahora la
-             respuesta se ve como aviso y el boton deja de invitar al clic. */
-          var pendiente = !!(r && r.ok);
-          if (pendiente) {
-            matricular.disabled = true;
-            matricular.textContent = "Matrícula pedida";
-            matricular.classList.add("es-pedida");
-          } else {
-            matricular.disabled = false;
-            matricular.textContent = etiqueta;
-          }
-          if (avisoEstado) {
-            avisoEstado.textContent = (r && r.data && r.data.mensaje) ||
-              (r && r.error) || "No se pudo completar la matrícula.";
-            avisoEstado.className = "redcafe-curso-estado " +
-              (pendiente ? "is-ok" : "is-error");
-          }
-        });
-      });
-    }
-
-    var solicitar = host.querySelector("button.redcafe-curso-solicitar");
-    if (solicitar) {
-      solicitar.addEventListener("click", function () {
-        var motivo = window.prompt("Cuéntale a quien creó el curso para qué lo necesitas (opcional):", "");
-        if (motivo === null) return;
-        solicitar.disabled = true;
-        solicitar.textContent = "Enviando…";
-        json("/api/cursos.php?action=solicitar_acceso", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ curso: c.id, mensaje: motivo })
-        }).then(function (r) {
-          if (r && r.ok) location.reload();
-          else {
-            solicitar.disabled = false;
-            solicitar.textContent = "Solicitar acceso";
-            estado.textContent = (r && r.error) || "No se pudo enviar la solicitud.";
-            estado.className = "redcafe-curso-estado is-error";
-          }
-        });
-      });
-    }
-
-    var reiniciar = host.querySelector(".redcafe-curso-reiniciar");
-    if (reiniciar) {
-      reiniciar.addEventListener("click", function () {
-        if (!window.confirm("¿Borrar tu avance en este curso?")) return;
-        json("/api/cursos.php?action=reiniciar", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ curso: c.id })
-        }).then(function (res) {
-          if (res && res.ok) location.reload();
-        });
-      });
-    }
-  }
 
   // `rehacer` fuerza a volver a pedir el curso: se usa tras matricularse,
   // para que el contenido aparezca sin recargar la página.
-  function montarVisor(rehacer) {
-    var id = cursoDeLaRuta();
-    if (!id || id === "index.html") return;
-    // Las fichas presenciales de Legacy tienen condiciones y contacto propios
-    // en la página publicada; el visor de lecciones no debe sustituirlas.
-    if (/^legacy-/.test(id)) return;
-    var main = document.querySelector("main");
-    if (!main) return;
-    var previo = document.getElementById("redcafe-curso");
-    if (previo && !rehacer) return;
-    if (previo && rehacer && previo.parentNode) previo.parentNode.removeChild(previo);
-
-    /* Antes se esperaba la respuesta de la API y SOLO ENTONCES se ocultaba la
-       ficha de React. En una conexión lenta eso son uno o dos segundos en los
-       que el usuario ve la versión de React —con su imagen y los módulos
-       plegados— y de golpe la ve cambiar por la nuestra. Era el parpadeo que
-       se reportó.
-       Ahora se oculta de entrada y se deja un aviso de «cargando» del mismo
-       alto aproximado, para que no haya ni salto ni pantalla en blanco. Si la
-       consulta falla o el curso no tiene lecciones, se devuelve la página a
-       como estaba: hay que poder retroceder. */
-    var tapados = [];
-    Array.prototype.slice.call(main.children).forEach(function (el) {
-      if (el.getAttribute("data-redcafe-propio") === "1") return;
-      if (el.getAttribute("data-redcafe-oculto") === "1") return;
-      el.setAttribute("data-redcafe-oculto", "1");
-      tapados.push(el);
-    });
-    function devolverLaPagina() {
-      tapados.forEach(function (el) { el.removeAttribute("data-redcafe-oculto"); });
-      var esp = document.getElementById("redcafe-curso-esperando");
-      if (esp && esp.parentNode) esp.parentNode.removeChild(esp);
-      // Fusion: si React ya no pinta esta ruta no hay nada que devolver, asi que
-      // la pantalla quedaria en blanco. Ponemos nuestro propio aviso.
-      if (tapados.length === 0 && !document.getElementById("redcafe-curso")) {
-        if (document.getElementById("redcafe-curso-sinvia")) return;
-        var aviso = document.createElement("section");
-        aviso.id = "redcafe-curso-sinvia";
-        aviso.className = "redcafe-curso-esperando";
-        aviso.setAttribute("data-redcafe-propio", "1");
-        aviso.setAttribute("role", "status");
-        var t = document.createElement("p");
-        t.textContent = "No pudimos abrir este curso. Puede que ya no este disponible.";
-        var a = document.createElement("a");
-        a.href = "/academia/";
-        a.textContent = "Volver a la Academia";
-        aviso.appendChild(t); aviso.appendChild(a);
-        main.insertBefore(aviso, main.firstChild);
-      }
-    }
-
-    var esperando = document.createElement("section");
-    esperando.id = "redcafe-curso-esperando";
-    esperando.className = "redcafe-curso-esperando";
-    esperando.setAttribute("data-redcafe-propio", "1");
-    esperando.setAttribute("aria-live", "polite");
-    esperando.innerHTML = skeletonCurso();
-    main.insertBefore(esperando, main.firstChild);
-
-    json("/api/cursos.php?action=get&id=" + encodeURIComponent(id)).then(function (res) {
-      if (!res || !res.ok || !res.data || !res.data.curso || !res.data.total) {
-        devolverLaPagina();
-        return;
-      }
-      // El <h1> que viaja en el HTML es para quien no ejecuta JS y para los
-      // buscadores. El visor trae el suyo, asi que aqui se retira el servido
-      // para no tener dos titulos.
-      var servido = document.querySelector('#redcafe-hueco-titulo[data-redcafe-propio="1"]');
-      if (servido && servido.parentNode) servido.parentNode.removeChild(servido);
-
-      var host = document.createElement("section");
-      host.id = "redcafe-curso";
-      host.className = "redcafe-curso";
-      host.setAttribute("data-redcafe-propio", "1");
-      main.insertBefore(host, main.firstChild);
-      pintarCurso(host, res.data);
-      if (esperando.parentNode) esperando.parentNode.removeChild(esperando);
-    }).catch(devolverLaPagina);
-  }
 
   /* ── Listado de la academia con avance ───────────────────────────── */
 
@@ -558,16 +106,7 @@
      solo usaba tres de ellas y las repetía; aquí se cubren todas las categorías
      que acepta la API, y si aparece una nueva se cae a una genérica en vez de
      dejar el hueco. */
-  var PORTADAS = {
-    produccion:     "/img/academia/produccion.webp",
-    postcosecha:    "/img/academia/postcosecha.webp",
-    calidad:        "/img/academia/certificacion.webp",
-    comercial:      "/img/academia/comercial.webp",
-    administrativo: "/img/academia/capacitacion.webp",
-    barismo:        "/img/academia/barismo-taza.webp",
-    legal:          "/img/academia/certificacion.webp",
-    general:        "/img/academia/basico.webp"
-  };
+
   /* Portadas hechas para un curso concreto. Los cursos de Legacy llevan su
      propia imagen de marca; sin esto caian en la portada generica de barismo
      y las tres se veian iguales. */
@@ -584,22 +123,8 @@
   /* Etiqueta de costo. Los 3 cursos de Legacy son de pago (su valor esta en su
      descripcion, dictado por el aliado); los propios de Red Cafe son gratis.
      Un solo punto de verdad para no repetir el numero por el sitio. */
-  var PRECIOS = {
-    "legacy-barista-en-casa": "Promoción 143 USD · pareja/grupo 120 USD c/u",
-    "legacy-barismo-profesional": "Promoción 359 USD · pareja/grupo 320 USD c/u",
-    "legacy-barista-avanzado": "Promoción 550 USD"
-  };
-  function precioDe(c) {
-    var p = PRECIOS[String(c.id || "")];
-    return p || "Gratis";
-  }
-  function claseCosto(c) {
-    return PRECIOS[String(c.id || "")] ? "es-pago" : "es-gratis";
-  }
 
-  function portadaDe(c) {
-    return PORTADAS[String(c.categoria || "general")] || PORTADAS.general;
-  }
+
 
 
   /* ── Editor de cursos en el panel ────────────────────────────────── */
@@ -1296,7 +821,8 @@
   /* ── Arranque ────────────────────────────────────────────────────── */
 
   function iniciar() {
-    if (enAcademia()) { montarVisor(); return; }
+    // La Academia (lista y ficha del curso) ya es de React.
+    if (enAcademia()) return;
     if (!enPanel()) return;
     json("/api/auth.php?action=me").then(function (res) {
       var u = res && res.ok && res.data && res.data.user;
