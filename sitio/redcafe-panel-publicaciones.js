@@ -650,6 +650,7 @@
         '<div class="redcafe-pub-grid">' +
           campos.map(function (c) { return campoHtml(c, item[c.k]); }).join("") +
         '</div>' +
+        (tipo === "lote" ? mapaFincaHtml() : "") +
         fotosHtml(item.imagenes, tipo) +
         (tipo === "lote" ? docsHtml(item.documentos) : "") +
         '<div class="redcafe-pub-acciones">' +
@@ -736,6 +737,7 @@
     contenedor.innerHTML =
       lotes.map(function (l) { return tarjetaHtml(l, LOTE_CAMPOS, "lote", abiertas); }).join("") +
       servicios.map(function (s) { return tarjetaHtml(s, SERVICIO_CAMPOS, "servicio", abiertas); }).join("");
+    if (abiertas) setTimeout(function () { activarMapasFinca(contenedor); }, 0);
 
     enlazarDerechos(contenedor);
     contenedor.addEventListener("click", function (ev) {
@@ -749,6 +751,7 @@
         if (!cuerpoT) return;
         var abrir = cuerpoT.hidden;
         cuerpoT.hidden = !abrir;
+        if (abrir) activarMapasFinca(cardT);
         toggle.setAttribute("aria-expanded", abrir ? "true" : "false");
         toggle.textContent = abrir ? "Ocultar ficha"
           : (cardT.getAttribute("data-tipo") === "lote" ? "Editar ficha, fotos y certificados" : "Editar servicio y fotos");
@@ -1130,6 +1133,7 @@
         '</div>' +
         '<div class="redcafe-pub-grid">' + basicos + terminado + '</div>' +
         '<button type="button" class="redcafe-publicar-gps">Usar mi ubicación actual</button>' +
+        mapaFincaHtml() +
         '<details class="redcafe-publicar-ficha"><summary>Ficha técnica (opcional): humedad, zaranda, defectos, cosecha, entrega…</summary>' +
           '<div class="redcafe-pub-grid">' + ficha + '</div>' +
         '</details>' +
@@ -1315,6 +1319,133 @@
     }
   }
 
+  /* ── Elegir la ubicación de la finca en un mapa ──────────────────────
+     Escribir latitud y longitud es difícil para un productor. Debajo de
+     esos dos campos se pone un mapa pequeño: tocar el mapa (o arrastrar el
+     pin) los rellena, y si se escriben o llegan del GPS el pin se mueve.
+     Leaflet ya está en el sitio (lo usa el mapa del marketplace): se pide
+     el mismo módulo al cargador de Next en vez de traer otra copia. */
+  var MAPA_LIMITES = { latMin: -5, latMax: 2, lngMin: -82, lngMax: -75 }; // los que valida el servidor
+  var PIN_FINCA = '<svg width="30" height="40" viewBox="0 0 30 40" aria-hidden="true" style="display:block;filter:drop-shadow(0 2px 3px rgba(36,23,17,.35));">' +
+    '<path d="M15 1C7.3 1 1 7.2 1 14.9 1 25.3 15 39 15 39s14-13.7 14-24.1C29 7.2 22.7 1 15 1z" fill="#8C1E0E" stroke="#fff" stroke-width="2"/>' +
+    '<ellipse cx="15" cy="14.5" rx="6.2" ry="8" fill="#fff" transform="rotate(28 15 14.5)"/>' +
+    '<path d="M12.6 8.4c3.2 2.6 1.6 9.2 4.8 12.2" fill="none" stroke="#8C1E0E" stroke-width="1.8" stroke-linecap="round"/></svg>';
+  var promesaLeaflet = null;
+
+  function cargarLeaflet() {
+    if (promesaLeaflet) return promesaLeaflet;
+    promesaLeaflet = new Promise(function (ok, mal) {
+      var req = null;
+      try {
+        (self.webpackChunk_N_E = self.webpackChunk_N_E || []).push([["redcafe-mapa-finca"], {}, function (r) { req = r; }]);
+      } catch (e) {}
+      if (!req || typeof req.e !== "function") { mal(new Error("sin cargador")); return; }
+      req.e(1761).then(function () { ok(req(8741)); }, mal);
+    });
+    promesaLeaflet.catch(function () { promesaLeaflet = null; });
+    if (!document.querySelector('link[data-redcafe-leaflet="1"]')) {
+      var css = document.createElement("link");
+      css.rel = "stylesheet";
+      css.href = "https://unpkg.com/leaflet@1.9.4/dist/leaflet.css";
+      css.setAttribute("data-redcafe-leaflet", "1");
+      document.head.appendChild(css);
+    }
+    return promesaLeaflet;
+  }
+
+  function mapaFincaHtml() {
+    return '<div class="redcafe-mapa-finca" data-redcafe-propio="1" style="margin-top:.75rem;">' +
+      '<p class="redcafe-pub-ayuda" style="margin:0 0 .35rem;">Toca el mapa en el lugar de tu finca y se llenan la latitud y la longitud. Puedes arrastrar el pin para afinar.</p>' +
+      '<div class="redcafe-mapa-finca-caja" style="height:260px;width:100%;border:1px solid rgba(59,26,12,.2);border-radius:.5rem;overflow:hidden;background:#F3F1EA;"></div>' +
+      '<p class="redcafe-mapa-finca-aviso" role="status" aria-live="polite" style="margin:.35rem 0 0;font-size:.8rem;font-weight:700;color:#8C1E0E;" hidden></p>' +
+    '</div>';
+  }
+
+  function dentroDelPais(la, ln) {
+    return la >= MAPA_LIMITES.latMin && la <= MAPA_LIMITES.latMax && ln >= MAPA_LIMITES.lngMin && ln <= MAPA_LIMITES.lngMax;
+  }
+
+  // Monta los mapas visibles que aún no tienen Leaflet. Los de tarjetas
+  // plegadas esperan a que se abran (sin ancho, Leaflet no sabe pintar).
+  function activarMapasFinca(raiz) {
+    Array.prototype.slice.call((raiz || document).querySelectorAll(".redcafe-mapa-finca")).forEach(function (bloque) {
+      if (bloque.getAttribute("data-listo") === "1") {
+        if (bloque.__mapa) setTimeout(function () { bloque.__mapa.invalidateSize(); }, 50);
+        return;
+      }
+      var caja = bloque.querySelector(".redcafe-mapa-finca-caja");
+      if (!caja || !caja.offsetWidth) return;
+      var tarjeta = bloque.closest(".redcafe-pub-card") || bloque.parentNode;
+      var inLat = tarjeta.querySelector('[data-campo="lat"]');
+      var inLng = tarjeta.querySelector('[data-campo="lng"]');
+      if (!inLat || !inLng) return;
+      bloque.setAttribute("data-listo", "1");
+      var aviso = bloque.querySelector(".redcafe-mapa-finca-aviso");
+      cargarLeaflet().then(function (L) {
+        var mapa = L.map(caja, { center: [-1.6, -78.6], zoom: 6, scrollWheelZoom: false });
+        bloque.__mapa = mapa;
+        L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+          attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>',
+          maxZoom: 18
+        }).addTo(mapa);
+        var pin = null;
+        var avisar = function (texto) { aviso.textContent = texto || ""; aviso.hidden = !texto; };
+        var escribir = function (ll) {
+          inLat.value = ll.lat.toFixed(6);
+          inLng.value = ll.lng.toFixed(6);
+          // El botón «Guardar cambios» y otros vigilantes escuchan estos eventos.
+          ["input", "change"].forEach(function (t) { inLat.dispatchEvent(new Event(t, { bubbles: true })); inLng.dispatchEvent(new Event(t, { bubbles: true })); });
+        };
+        var ponerPin = function (ll, centrar) {
+          if (!pin) {
+            pin = L.marker(ll, {
+              draggable: true, title: "Ubicación de la finca",
+              icon: L.divIcon({ className: "", html: PIN_FINCA, iconSize: [30, 40], iconAnchor: [15, 39] })
+            }).addTo(mapa);
+            pin.on("dragend", function () {
+              var p = pin.getLatLng();
+              if (dentroDelPais(p.lat, p.lng)) { avisar(""); escribir(p); }
+              else { avisar("Ese punto está fuera del Ecuador continental. Elige un lugar dentro del país."); desdeCampos(); }
+            });
+          } else {
+            pin.setLatLng(ll);
+          }
+          if (centrar) mapa.setView(ll, Math.max(mapa.getZoom(), 12));
+        };
+        var desdeCampos = function () {
+          var la = inLat.value.trim() === "" ? NaN : Number(inLat.value);
+          var ln = inLng.value.trim() === "" ? NaN : Number(inLng.value);
+          if (!isFinite(la) || !isFinite(ln) || !dentroDelPais(la, ln)) {
+            if (pin) { pin.remove(); pin = null; }
+            return;
+          }
+          var ll = L.latLng(la, ln);
+          ponerPin(ll, !mapa.getBounds().contains(ll) || mapa.getZoom() < 10);
+        };
+        mapa.on("click", function (e) {
+          if (!dentroDelPais(e.latlng.lat, e.latlng.lng)) { avisar("Ese punto está fuera del Ecuador continental. Elige un lugar dentro del país."); return; }
+          avisar("");
+          ponerPin(e.latlng, false);
+          escribir(e.latlng);
+          if (mapa.getZoom() < 12) mapa.setView(e.latlng, Math.min(mapa.getZoom() + 3, 14));
+        });
+        [inLat, inLng].forEach(function (el) { el.addEventListener("input", function (ev) { if (ev.isTrusted) desdeCampos(); }); });
+        bloque.__desdeCampos = desdeCampos;
+        desdeCampos();
+        setTimeout(function () { mapa.invalidateSize(); }, 200);
+      }).catch(function () {
+        bloque.setAttribute("data-listo", "0");
+        avisar("No se pudo cargar el mapa. Escribe la latitud y la longitud o usa tu ubicación actual.");
+      });
+    });
+  }
+
+  // Tras «Usar mi ubicación actual»: el pin va al punto nuevo.
+  function refrescarMapaFinca(tarjeta) {
+    var b = tarjeta && tarjeta.querySelector(".redcafe-mapa-finca");
+    if (b && b.__desdeCampos) b.__desdeCampos();
+  }
+
   function montarPublicarCompleto() {
     if (location.pathname.indexOf("/panel") !== 0) return;
     // Antes se exigía ?ver=publicar en la dirección. Dentro del panel se llega
@@ -1343,6 +1474,7 @@
     caja.setAttribute("data-redcafe-original", formReact.tagName + "|" + String(formReact.textContent || "").replace(/\s+/g, " ").trim().slice(0, 200));
     formReact.setAttribute("data-redcafe-oculto-react", "1");
     formReact.insertAdjacentElement("afterend", caja);
+    [0, 400, 1500].forEach(function (ms) { setTimeout(function () { activarMapasFinca(caja); }, ms); });
 
     if (!publicarScrollHecho && /[?&]ver=publicar(?:&|$)/.test(location.search || "")) {
       publicarScrollHecho = true;
@@ -1394,6 +1526,7 @@
           tarjeta.querySelector('[data-campo="lat"]').value = pos.coords.latitude.toFixed(5);
           tarjeta.querySelector('[data-campo="lng"]').value = pos.coords.longitude.toFixed(5);
           est.textContent = "Ubicación añadida.";
+          refrescarMapaFinca(tarjeta);
         }, function () { est.textContent = "No se pudo obtener la ubicación. Escríbela a mano o déjala vacía."; },
         { timeout: 10000 });
       }
