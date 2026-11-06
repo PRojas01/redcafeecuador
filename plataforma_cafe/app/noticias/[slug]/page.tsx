@@ -101,7 +101,7 @@ export default async function NoticiaPage({ params }: { params: Promise<{ slug: 
             para productores, comerciantes y compradores.
           </p>
           <Link href="/afiliate" className="btn-accent mt-4">
-            Forma parte de la Red
+            Crear cuenta gratis
           </Link>
         </div>
       </div>

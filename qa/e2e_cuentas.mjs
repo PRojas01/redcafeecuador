@@ -37,7 +37,7 @@ await paso(V.p, "Portada: orden por prioridad y sin bloques repetidos", async ()
     const t = { hero: top("main section.hero-gradient"), cifras: top("#redcafe-cifras-red"), forma: top("#forma-parte"), perfiles: top("#perfiles"), mapa: top("#mapa-portada"), precio: top("#redcafe-home-price-strip"), confianza: top("#confianza") };
     const texto = document.querySelector("main").innerText;
     return { t, capaAcceso: !!document.getElementById("redcafe-acceso"), ocultas: document.querySelectorAll("main [data-redcafe-oculto-react]").length,
-      bar: /Historias, personas y cultura del café/.test(texto), noticias: /Noticias del sector/.test(texto), video: !!document.querySelector("main section.hero-gradient video"), tarjetaPerfiles: /Perfiles de entrada/i.test(texto) };
+      bar: /Historias, personas y cultura del café/.test(texto), noticias: /Noticias del sector/.test(texto), video: !!document.querySelector("main section.hero-gradient .rc-carrusel img"), tarjetaPerfiles: /Perfiles de entrada/i.test(texto) };
   });
   // Franja de precio retirada de la portada por decisión de Pedro (2026-11-01).
   // Las cifras se ocultan mientras la Red no tiene datos (base de pruebas vacía).
@@ -45,7 +45,7 @@ await paso(V.p, "Portada: orden por prioridad y sin bloques repetidos", async ()
   for (let i = 1; i < orden.length; i++) if (r.t[orden[i]] === null || r.t[orden[i - 1]] === null || r.t[orden[i]] <= r.t[orden[i - 1]]) throw new Error("orden: " + JSON.stringify(r.t));
   if (r.capaAcceso) throw new Error("sigue la copia de la capa de «Forma parte»");
   if (r.bar || r.noticias) throw new Error("Bar o Noticias siguen en la portada");
-  if (!r.video) throw new Error("falta el video en el hero");
+  if (!r.video) throw new Error("faltan las fotos del grano a la taza en el hero");
   if (r.tarjetaPerfiles) throw new Error("sigue la tarjeta «Perfiles de entrada»");
   return `orden correcto · bloques ocultos de React: ${r.ocultas}`;
 });
