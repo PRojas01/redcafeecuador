@@ -13,7 +13,7 @@ window.__redcafeReactListo = window.__redcafeReactListo || function () {
 (function () {
   "use strict";
 
-  var VERSION = "20261105a";
+  var VERSION = "20261106a";
   var WAPP = "593968641376";
   var path = normalizePath(location.pathname);
   var homeAuthChecking = false;
@@ -281,8 +281,8 @@ window.__redcafeReactListo = window.__redcafeReactListo || function () {
     if (path !== "/") return;
     var heroTitle = qs("main section:first-of-type h1");
     // React ya pinta este titular (20261005): sin copia ni ocultación.
-    if (heroTitle && text(heroTitle).indexOf("Crea tu perfil y conecta") !== 0 && heroTitle.getAttribute("data-redcafe-oculto-react") !== "1" && !heroTitle.closest("[data-redcafe-propio]")) {
-      reemplazarTextoSeguro(heroTitle, 'Crea tu perfil y conecta con oportunidades del <span class="text-acento-claro">café ecuatoriano</span>', true);
+    if (heroTitle && text(heroTitle).indexOf("Vende y compra directo el") !== 0 && heroTitle.getAttribute("data-redcafe-oculto-react") !== "1" && !heroTitle.closest("[data-redcafe-propio]")) {
+      reemplazarTextoSeguro(heroTitle, 'Vende y compra directo el <span class="text-acento-claro">café ecuatoriano</span>', true);
     }
     var heroParagraph = qsa("main section p").find(function (p) {
       var t = text(p);
@@ -292,7 +292,7 @@ window.__redcafeReactListo = window.__redcafeReactListo || function () {
         t === "Red Café Ecuador conecta actores del negocio cafetero en una plataforma abierta para mostrar oferta, encontrar oportunidades y trabajar con más información.";
     });
     if (!heroParagraph) return;
-    reemplazarTextoSeguro(heroParagraph, "Compra y vende café directo, sin intermediarios ni comisiones. Tu perfil gratis en dos minutos.", false);
+    reemplazarTextoSeguro(heroParagraph, "Sin intermediarios ni comisiones. Encuentra compradores, servicios y cursos en un solo lugar. Tu perfil es gratis y está listo en 2 minutos.", false);
   }
 
   function enhanceHomeProfilePanel() {
@@ -964,16 +964,17 @@ window.__redcafeReactListo = window.__redcafeReactListo || function () {
     var antes = document.getElementById("forma-parte");
     if (!antes || document.getElementById("rc-collage")) return;
     var T = [
-      ["proceso/cereza", "Vende tu café", "/marketplace/", "Cerezas de café maduras"],
-      ["proceso/secado", "Aprende el proceso", "/academia/", "Café secándose al sol"],
-      ["proceso/tostado", "Contrata servicios", "/servicios/", "Café tostado sobre la mesa"],
-      ["proceso/taza", "Recetas en casa", "/recetas/", "Taza de café recién servida"]
+      ["proceso/cereza", "Vende tu café", "Llega a compradores sin intermediarios", "Empezar a vender", "/marketplace/", "Cerezas de café maduras"],
+      ["proceso/pergamino", "Aprende a mejorar tu café", "Cursos de cultivo, poscosecha y tueste", "Ver cursos", "/academia/", "Café en grano listo para procesar"],
+      ["proceso/tostado", "Contrata servicios", "Catación, pilado, transporte y más", "Ver servicios", "/servicios/", "Café tostado sobre la mesa"],
+      ["proceso/taza", "Prepara mejor café en casa", "Recetas fáciles, paso a paso", "Ver recetas", "/recetas/", "Taza de café recién servida"]
     ];
     var h = '<section id="rc-collage" class="rc-collage" data-redcafe-propio aria-label="Explora la Red"><div class="rc-collage-fila">';
-    T.forEach(function (t, i) {
-      h += '<a class="rc-collage-foto" href="' + t[2] + '"><span class="rc-collage-velo" aria-hidden="true"></span>' +
-        '<span class="rc-collage-num" aria-hidden="true">0' + (i + 1) + '</span><span class="rc-collage-titulo">' + t[1] + '</span>' +
-        '<img src="/img/' + t[0] + '.webp" alt="' + t[3] + '" width="800" height="500" loading="lazy" decoding="async"></a>';
+    T.forEach(function (t) {
+      h += '<a class="rc-collage-foto" href="' + t[4] + '"><span class="rc-collage-velo" aria-hidden="true"></span>' +
+        '<span class="rc-collage-titulo"><span class="rc-collage-t">' + t[1] + '</span><span class="rc-collage-sub">' + t[2] + '</span>' +
+        '<span class="rc-collage-cta">' + t[3] + ' →</span></span>' +
+        '<img src="/img/' + t[0] + '.webp" alt="' + t[5] + '" width="800" height="500" loading="lazy" decoding="async"></a>';
     });
     h += "</div></section>";
     antes.insertAdjacentHTML("beforebegin", h);

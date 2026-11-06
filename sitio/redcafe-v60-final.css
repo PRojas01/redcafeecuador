@@ -5979,3 +5979,14 @@ html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5):not(#o6):not(#o7):not(#o8):not
 .rc-collage-velo { display: block !important; background: linear-gradient(180deg, rgba(140, 30, 14, 0) 35%, rgba(110, 23, 11, .85) 100%) !important; }
 .rc-collage-titulo { position: absolute !important; inset: 0; display: grid !important; align-items: end !important; margin: 0 !important; padding: 1rem 1rem 1.2rem !important; color: #ffffff !important; text-shadow: 0 2px 6px rgba(0, 0, 0, .5) !important; }
 .rc-collage-foto:is(:hover, :focus-visible) img { transform: scale(1.08) !important; }
+
+/* Collage con fotos propias del mismo estilo, beneficio y botón claros (6-nov-2026) */
+.rc-collage-foto img { filter: saturate(1.05) contrast(1.04); }
+.rc-collage-velo { background: linear-gradient(180deg, rgba(40, 12, 6, 0) 25%, rgba(40, 12, 6, .55) 55%, rgba(90, 20, 9, .92) 100%) !important; }
+.rc-collage-titulo { display: flex !important; flex-direction: column; justify-content: flex-end; align-items: flex-start !important; gap: .35rem; text-align: left !important; padding: 1.1rem 1.1rem 1.25rem !important; letter-spacing: 0 !important; text-transform: none !important; }
+.rc-collage-t { font-size: clamp(19px, 1.7vw, 24px); font-weight: 800; line-height: 1.15; }
+.rc-collage-sub { font-size: 15px; font-weight: 500; line-height: 1.35; opacity: .95; }
+.rc-collage-cta { margin-top: .4rem; display: inline-flex; align-items: center; min-height: 40px; padding: .45rem 1rem; border-radius: 999px; background: #ffffff; color: #8c1e0e; font-size: 15px; font-weight: 700; text-shadow: none; transition: background-color .25s ease, color .25s ease; }
+.rc-collage-foto:is(:hover, :focus-visible) .rc-collage-cta { background: #8c1e0e; color: #ffffff; }
+.rc-collage-foto:is(:hover, :focus-visible) .rc-collage-titulo { text-decoration: none !important; }
+@media (max-width: 767px) { .rc-collage-titulo { padding: .8rem .8rem 1rem !important; } .rc-collage-t { font-size: 17px !important; } .rc-collage-sub { font-size: 13px; } .rc-collage-cta { font-size: 14px; min-height: 36px; padding: .35rem .8rem; } }
