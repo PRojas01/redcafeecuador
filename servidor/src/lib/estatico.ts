@@ -80,7 +80,8 @@ export function servirEstatico(ruta: string, https: boolean): Response {
   }
   const ext = path.extname(archivo).toLowerCase();
   h.set("Content-Type", TIPOS[ext] ?? "application/octet-stream");
-  if ([".html", ".json", ".txt"].includes(ext)) h.set("Cache-Control", "no-store, no-cache, must-revalidate");
+  // sw.js no lleva ?v=: si se guardara un año, el navegador seguiría con la versión vieja.
+  if ([".html", ".json", ".txt"].includes(ext) || path.basename(archivo) === "sw.js") h.set("Cache-Control", "no-store, no-cache, must-revalidate");
   else if ([".js", ".css"].includes(ext)) h.set("Cache-Control", "public, max-age=31536000, immutable");
   if (archivo.startsWith(config.uploads + path.sep)) {
     h.set("Content-Disposition", "inline");
