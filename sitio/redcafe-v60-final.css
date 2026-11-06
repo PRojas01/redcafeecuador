@@ -6042,3 +6042,26 @@ html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5):not(#o6):not(#o7):not(#o8):not
 @media (max-width: 1023px) { .rc-collage-fila { grid-template-columns: 1fr 1fr !important; } .rc-collage-foto { aspect-ratio: 4 / 3; } }
 @media (max-width: 480px) { .rc-collage-foto { aspect-ratio: auto; min-height: 210px; } html body .rc-collage-sub { -webkit-line-clamp: 3 !important; } }
 html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5):not(#o6):not(#o7):not(#o8):not(#o9):not(#o10) body .redcafe-pub-eliminar { min-height: 44px; padding: .55rem 1rem; border: 1px solid #8c1e0e; border-radius: 12px; background: #ffffff; color: #8c1e0e; font-weight: 600; cursor: pointer; } html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5):not(#o6):not(#o7):not(#o8):not(#o9):not(#o10) body .redcafe-pub-eliminar:hover { background: #fbf4f2; }
+
+/* Gráfico de cierres diarios (/servicios/precios/): resumen del rango, velas y lectura de cada día. */
+.rcp-cabecera-valor { text-align: right; }
+.rcp-var { font-size: .95rem; font-weight: 700; margin-top: .35rem; }
+.rcp-var span { color: #5c5a50; font-weight: 500; }
+.rcp-controles { align-items: center; display: flex; flex-wrap: wrap; gap: 0 1rem; justify-content: space-between; }
+.rcp-controles .redcafe-range-tabs { margin: .8rem 0 .2rem; }
+.rcp-resumen { border-block: 1px solid rgba(59, 26, 12, .1); display: grid; gap: .6rem 1rem; grid-template-columns: repeat(4, minmax(0, 1fr)); margin: .6rem 0 0; padding: .7rem 0; }
+.rcp-resumen dt { color: #5c5a50; font-size: .7rem; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; }
+.rcp-resumen dd { color: #3b1a0c; font-size: 1.05rem; font-variant-numeric: tabular-nums; font-weight: 800; margin: .1rem 0 0; }
+.rcp-resumen dd.rcp-sub { color: #5c5a50; font-size: .74rem; font-weight: 500; margin: 0; }
+.redcafe-price-chart.rcp-grafico { height: 340px; touch-action: pan-y; }
+.rcp-grafico svg { cursor: crosshair; font-variant-numeric: tabular-nums; }
+.rcp-tip { background: #3b1a0c; border-radius: .6rem; box-shadow: 0 8px 22px rgba(0, 0, 0, .22); color: #ffffff; display: flex; flex-direction: column; font-size: .8rem; gap: .12rem; line-height: 1.3; padding: .5rem .7rem; pointer-events: none; position: absolute; top: .25rem; transform: translateX(-50%); white-space: nowrap; z-index: 2; }
+.rcp-tip-precio { font-size: 1.05rem; font-variant-numeric: tabular-nums; font-weight: 800; }
+.rcp-tip-precio small { font-size: .7rem; font-weight: 500; opacity: .9; }
+.rcp-tip-ohlc { color: #f3e9dc; font-size: .72rem; }
+.rcp-nota { color: #5c5a50; font-size: .78rem; line-height: 1.45; margin-top: .6rem; }
+@media (max-width: 640px) {
+  .rcp-resumen { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .redcafe-price-chart.rcp-grafico { height: 280px; }
+  .rcp-cabecera-valor { text-align: left; }
+}
