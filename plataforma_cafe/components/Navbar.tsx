@@ -158,7 +158,7 @@ const mobileLinks = [
   </Link>
   <InstalarPWA variant="menu" />
  <Link href="/afiliate" className="btn-primary !px-4 !py-2 text-[13px]">
-   Forma parte de la Red
+   Crear cuenta gratis
    </Link>
   </>
  )}
@@ -183,7 +183,7 @@ const mobileLinks = [
   onClick={() => setOpen(false)}
   className="btn-primary mt-2 text-center"
   >
-  Forma parte de la Red
+  Crear cuenta gratis
   </Link>
   <Link
   href="/login"

@@ -14,6 +14,8 @@ type Cifras = {
   productores: number;
   compran_cafe: number;
   provincias: number;
+  lotes_reales?: number;
+  servicios?: number;
   por_provincia?: Provincia[];
 };
 
@@ -53,6 +55,8 @@ export function CifrasRed() {
     [n(d?.productores), "productores"],
     [n(d?.compran_cafe), "compradores, tostadores y exportadores"],
     [n(d?.provincias), "provincias representadas"],
+    [n(d?.lotes_reales), "lotes de café publicados"],
+    [n(d?.servicios), "servicios disponibles"],
   ];
   return (
     <section id="redcafe-cifras-red" className="redcafe-cifras" aria-label="La Red hoy" aria-busy={d === undefined}>

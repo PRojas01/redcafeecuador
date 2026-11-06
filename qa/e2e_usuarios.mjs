@@ -78,7 +78,10 @@ async function registrarDesdePortada(ctx, persona) {
     await page.waitForTimeout(1500);
     // Puede haber una pantalla de revisión con confirmación final.
     const confirmar = page.getByRole("button", { name: /Crear (mi )?(perfil|cuenta)|Confirmar|Registrarme|Unirme|Listo/i });
-    if (await confirmar.count()) { await confirmar.first().click().catch(() => {}); }
+    const visible = confirmar.locator("visible=true");
+    if (await visible.count()) {
+      await visible.first().click({ timeout: 8000 });
+    }
     await page.waitForFunction(() => /panel|bienvenida/.test(location.href) || /Ya formas parte|bienvenid/i.test(document.body.innerText), null, { timeout: 15000 });
     return "llega a: " + new URL(page.url()).pathname;
   });

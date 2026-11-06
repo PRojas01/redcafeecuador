@@ -112,13 +112,7 @@
 
   /* ── 2 y 3. Portada ─────────────────────────────────────────────────── */
 
-  var preciosPedidos = false;
 
-  function formatoPrecio(precio) {
-    var n = Number(precio);
-    if (!isFinite(n)) return "";
-    return n === Math.floor(n) ? String(n) : n.toFixed(2);
-  }
 
   /* Copias propias y repintados de React. Para no escribir en un nodo de
      React se oculta el original y se pinta al lado una copia. Pero cuando
@@ -131,108 +125,8 @@
      Si no aparece, la copia sobra y se retira (es nuestra, no de React).
      Esta misma función está en redcafe-v60-final.js,
      redcafe-v60-mejoras-obligatorias.js y redcafe-conversion.js. */
-  function firmaNodo(el) {
-    return el.tagName + "|" + String(el.textContent || "").replace(/\s+/g, " ").trim().slice(0, 200);
-  }
-  function marcarCopia(copia, original) {
-    copia.setAttribute("data-redcafe-copia", "1");
-    copia.setAttribute("data-redcafe-original", firmaNodo(original));
-  }
-  function limpiarCopiasHuerfanas() {
-    Array.prototype.forEach.call(document.querySelectorAll('[data-redcafe-copia="1"]'), function (copia) {
-      var padre = copia.parentNode;
-      if (!padre) return;
-      var previo = copia.previousElementSibling;
-      if (previo && previo.getAttribute("data-redcafe-oculto-react") === "1") return;
-      var firma = copia.getAttribute("data-redcafe-original") || "";
-      var nuevo = null;
-      if (firma) {
-        Array.prototype.some.call(padre.children, function (h) {
-          if (h === copia || h.hasAttribute("data-redcafe-propio")) return false;
-          if (h.getAttribute("data-redcafe-oculto-react") === "1") return false;
-          if (firmaNodo(h) !== firma) return false;
-          nuevo = h;
-          return true;
-        });
-      }
-      if (nuevo) {
-        nuevo.setAttribute("data-redcafe-oculto-react", "1");
-        nuevo.insertAdjacentElement("afterend", copia);
-      } else {
-        padre.removeChild(copia);
-      }
-    });
-  }
 
-  function preciosReales() {
-    if (preciosPedidos) return;
-    var titulo = Array.prototype.slice.call(document.querySelectorAll("main p")).filter(function (p) {
-      return texto(p) === "Se contratan solo cuando los necesitas";
-    })[0];
-    if (!titulo) return;
-    var lista = titulo.nextElementSibling;
-    if (!lista || lista.tagName !== "UL" || lista.getAttribute("data-redcafe-oculto-react") === "1") return;
-    preciosPedidos = true;
 
-    var nombres = Array.prototype.slice.call(lista.querySelectorAll("li b")).map(texto);
-    fetch("/api/marketplace-servicios.php?action=list", { credentials: "include", cache: "no-store" })
-      .then(function (r) { return r.json(); })
-      .then(function (res) {
-        var servicios = (res && res.ok && res.data && res.data.servicios) || [];
-        var porTitulo = {};
-        servicios.forEach(function (s) { porTitulo[texto({ textContent: s.titulo })] = s; });
-        // Si falta cualquiera de los servicios de la lista, no se toca nada:
-        // mejor el precio antiguo que una lista a medias.
-        var filas = [];
-        for (var i = 0; i < nombres.length; i++) {
-          var s = porTitulo[nombres[i]];
-          if (!s || !(Number(s.precio) > 0)) return;
-          filas.push(s);
-        }
-        if (!filas.length) return;
-
-        var propia = document.createElement("ul");
-        propia.className = lista.className;
-        propia.setAttribute("data-redcafe-propio", "1");
-        filas.forEach(function (s) {
-          var li = document.createElement("li");
-          li.className = "flex items-baseline justify-between gap-4 py-2";
-          var izq = document.createElement("span");
-          izq.className = "text-pizarra-suave";
-          var b = document.createElement("b");
-          b.className = "text-cafe";
-          b.textContent = s.titulo;
-          izq.appendChild(b);
-          var der = document.createElement("span");
-          der.className = "dato shrink-0 text-right text-filtrado-600";
-          der.appendChild(document.createTextNode("desde $" + formatoPrecio(s.precio)));
-          if (s.unidad) {
-            var u = document.createElement("span");
-            u.className = "block text-[11px] font-normal leading-tight";
-            u.textContent = "/ " + s.unidad;
-            der.appendChild(u);
-          }
-          li.appendChild(izq);
-          li.appendChild(der);
-          propia.appendChild(li);
-        });
-        marcarCopia(propia, lista);
-        lista.setAttribute("data-redcafe-oculto-react", "1");
-        lista.parentNode.insertBefore(propia, lista.nextSibling);
-      })
-      .catch(function () { preciosPedidos = false; });
-  }
-
-  function sinTiempoLimitado() {
-    Array.prototype.slice.call(document.querySelectorAll("main p.rotulo")).forEach(function (p) {
-      if (texto(p) !== "Por tiempo limitado") return;
-      p.setAttribute("data-redcafe-oculto-react", "1");
-      // La frase con la fecha límite también contradice «Estar en la Red es
-      // gratis». Se oculta solo esa; el título «Únete gratis» y su botón quedan.
-      var fecha = p.nextElementSibling && p.nextElementSibling.nextElementSibling;
-      if (fecha && /gratuito hasta el/.test(texto(fecha))) fecha.setAttribute("data-redcafe-oculto-react", "1");
-    });
-  }
 
   /* 3 y 5 (cifras de la Red y provincias reales del mapa): migradas a React
      (components/PortadaDatos.tsx). */
@@ -250,60 +144,14 @@
     var hayPaso2 = false, hayPaso3 = false;
     botones.forEach(function (b) {
       var t = texto(b);
-      if (/^Continuar con \d+ perfil/.test(t) || /^Revisar y listo/.test(t) || t === "Crear mi cuenta" || t === "Creando cuenta…") {
-        var fila = b.parentElement;
-        if (fila && fila.getAttribute("data-redcafe-fijo") !== "1") fila.setAttribute("data-redcafe-fijo", "1");
-      }
       if (/^Revisar y listo/.test(t)) hayPaso2 = true;
       if (t === "Crear mi cuenta") hayPaso3 = true;
     });
     if (hayPaso2) medir("registro_paso2", true);
     if (hayPaso3) medir("registro_paso3", true);
-    document.documentElement.classList.toggle("redcafe-con-boton-fijo", !!main.querySelector('[data-redcafe-fijo="1"]'));
   }
 
-  /* ── 4b. Contraseña mínima 8 en el frontend ──────────────────────────── */
-  // El servidor ya exige 8 (api/auth.php). Aquí solo se ajustan ATRIBUTOS de
-  // inputs (permitido en inputs de React) en registro, cambio y restablecimiento.
-  // El LOGIN no se toca: las cuentas con 6 siguen entrando.
-  function clavesConMinimo8() {
-    var enLogin = ruta().indexOf("/login") === 0;
-    var enAdminLogin = ruta().indexOf("/admin") === 0;
-    Array.prototype.slice.call(document.querySelectorAll('input[type="password"]')).forEach(function (inp) {
-      if (inp.getAttribute("data-redcafe-min8") === "1") return;
-      if (enLogin || enAdminLogin) return;
-      // Solo contraseñas NUEVAS: la «contraseña actual» de una cuenta antigua
-      // puede tener 6 y exigirle 8 le impediría cambiarla.
-      var etiqueta = [inp.name, inp.id, inp.getAttribute("autocomplete"), inp.getAttribute("placeholder"),
-        inp.labels && inp.labels[0] ? inp.labels[0].textContent : ""].join(" ");
-      if (/actual|current/i.test(etiqueta)) return;
-      var esRegistro = /^\/(afiliate|recuperar)/.test(ruta());
-      if (!esRegistro && !/nuev|new|confirm|repet/i.test(etiqueta)) return;
-      inp.setAttribute("data-redcafe-min8", "1");
-      inp.setAttribute("minlength", "8");
-      var ph = inp.getAttribute("placeholder") || "";
-      if (ph === "" || /caracteres/i.test(ph)) {
-        inp.setAttribute("placeholder", "Mínimo 8 caracteres");
-      }
-    });
-    // Textos visibles «Mínimo 6 caracteres» (copia segura con 8), fuera del login.
-    if (!enLogin && !enAdminLogin) {
-      Array.prototype.slice.call(document.querySelectorAll("p,span,small,label,li,strong")).forEach(function (el) {
-        if (el.getAttribute("data-redcafe-oculto-react") === "1") return;
-        if (el.closest("[data-redcafe-propio]")) return;
-        if (el.children.length) return;
-        var t = texto(el);
-        if (/Mínimo 6 caracteres/.test(t)) {
-          var copia = el.cloneNode(false);
-          copia.setAttribute("data-redcafe-propio", "1");
-          copia.textContent = t.replace(/6/g, "8");
-          marcarCopia(copia, el);
-          el.setAttribute("data-redcafe-oculto-react", "1");
-          el.insertAdjacentElement("afterend", copia);
-        }
-      });
-    }
-  }
+  /* ── 4b. Contraseña mínima 8: ya en React (afiliate, recuperar y panel). */
 
   /* ── 4b2. Ver / ocultar contraseña ─────────────────────────────────── */
   // Botón propio junto a CADA campo de contraseña, en todas las páginas
@@ -406,33 +254,7 @@
   window.addEventListener("scroll", posicionarVerClave, { passive: true });
   window.addEventListener("resize", posicionarVerClave, { passive: true });
 
-  /* ── 4c. Lenguaje llano en la portada ────────────────────────────────── */
-  // Frases con jerga (QA crítico 20260917): se cambian SOLO en la portada y
-  // solo cuando son etiqueta/título/1 frase. Copia propia detrás del original.
-  var FRASES_LLANAS = [
-    ["Crear tu perfil es gratis · solo pagas los servicios especializados que uses",
-     "Crear cuenta y publicar café es gratis. Algunos servicios profesionales son opcionales y se pagan aparte, con precio a la vista."],
-    ["Dossier EUDR de tu Finca", "Documento EUDR de tu Finca"],
-    ["Conecto lotes auditados, dossier EUDR, verificadores, catadores y compradores globales.",
-     "Conecto lotes auditados, documentos EUDR, verificadores, catadores y compradores globales."],
-    ["Registra el GPS de tu finca y genera el documento de debida diligencia listo para exportar.",
-     "Registra el GPS de tu finca y genera el documento listo para exportar."],
-    ["Expediente EUDR", "Documento EUDR"],
-    ["Cuenta atrás para el EUDR: qué fecha te toca según a quién le vendes",
-     "Cuenta atrás: qué fecha te toca para exportar a Europa según a quién le vendes"]
-  ];
-  function lenguajeLianoPortada() {
-    if (!esPortada()) return;
-    FRASES_LLANAS.forEach(function (par) {
-      Array.prototype.slice.call(document.querySelectorAll("main p, main span, main h2, main h3, main small, main li, main b")).forEach(function (el) {
-        if (el.getAttribute("data-redcafe-oculto-react") === "1") return;
-        if (el.closest("[data-redcafe-oculto-react]")) return;
-        if (el.closest("[data-redcafe-propio]")) return;
-        if (texto(el) !== par[0]) return;
-        copiaPropia(el, par[1]);
-      });
-    });
-  }
+  /* ── 4c. Lenguaje llano: los textos ya están en React. */
 
   /* ── 6. Sesión guardada en el navegador pero caducada en el servidor ─── */
 
@@ -523,95 +345,9 @@
   /* ── 10, 11 y 12 (fecha límite, precios reales y nombres de /servicios/):
      migrados a React (components/ServiciosVivos.tsx y los textos de cada página). */
 
-  function copiaPropia(el, textoNuevo) {
-    if (!el || el.getAttribute("data-redcafe-oculto-react") === "1") return false;
-    if (el.closest("[data-redcafe-propio]")) return false;
-    var copia = el.cloneNode(false);
-    copia.removeAttribute("id");
-    copia.setAttribute("data-redcafe-propio", "1");
-    copia.textContent = textoNuevo;
-    marcarCopia(copia, el);
-    el.setAttribute("data-redcafe-oculto-react", "1");
-    el.insertAdjacentElement("afterend", copia);
-    return true;
-  }
 
-  /* ── 13. «Qué cuesta y qué no» se MUEVE a la comunidad ────────────────── */
-  // El propietario pidió moverlo, no duplicarlo: ese bloque estaba casi al
-  // final de la portada y ahora vive al pie de /comunidad/. Aquí se oculta el
-  // de la portada, con la misma regla de siempre: no se borra un nodo de
-  // React, se marca y el CSS deja de pintarlo.
-  function costesFueraDeLaPortada() {
-    if (!esPortada()) return;
-    Array.prototype.slice.call(document.querySelectorAll("main section")).forEach(function (sec) {
-      if (sec.getAttribute("data-redcafe-oculto-react") === "1") return;
-      if (sec.closest("[data-redcafe-propio]")) return;
-      var t = texto(sec);
-      if (t.indexOf("Estar en la Red es gratis. Los servicios, solo si los pides") === -1) return;
-      if (t.indexOf("Se contratan solo cuando los necesitas") === -1) return;
-      sec.setAttribute("data-redcafe-oculto-react", "1");
-    });
-  }
-
-  /* ── 14. «Lo que cambia para ti» y las herramientas, a Quiénes somos ─── */
-  // El propietario pidió MOVER de la portada a /quienes-somos/ la sección
-  // «Todo lo de esta sección entra con tu cuenta gratuita · Lo que cambia para
-  // ti cuando entras en la Red» (Marketplace, Academia, Servicios, Confianza) y
-  // «Herramientas para negociar con números». En la portada se oculta (regla
-  // de siempre: se marca, no se borra). En Quiénes somos se trae esa misma
-  // sección del HTML exportado de la portada y se pinta como bloque propio,
-  // antes del llamado final; así los textos y enlaces son los mismos.
-  var FIRMA_BENEFICIOS = "Lo que cambia para ti cuando entras en la Red";
-  var FIRMA_HERRAMIENTAS = "Herramientas para negociar con números";
-  function esSeccionBeneficios(sec) {
-    var t = texto(sec);
-    return t.indexOf(FIRMA_BENEFICIOS) !== -1 && t.indexOf(FIRMA_HERRAMIENTAS) !== -1 && t.length < 3000;
-  }
-  function esQuienesSomos() { return ruta().indexOf("/quienes-somos") === 0; }
-
-  function beneficiosFueraDeLaPortada() {
-    if (!esPortada()) return;
-    Array.prototype.slice.call(document.querySelectorAll("main section")).forEach(function (sec) {
-      if (sec.getAttribute("data-redcafe-oculto-react") === "1") return;
-      if (sec.closest("[data-redcafe-propio]")) return;
-      if (esSeccionBeneficios(sec)) sec.setAttribute("data-redcafe-oculto-react", "1");
-    });
-  }
-
-  var beneficiosPedidos = false;
-  var intentosBeneficios = 0;
-  function beneficiosEnQuienesSomos() {
-    if (!esQuienesSomos() || beneficiosPedidos || intentosBeneficios >= 3) return;
-    if (document.getElementById("redcafe-beneficios-red")) return;
-    var main = document.querySelector("main");
-    if (!main || !main.querySelector("h2")) return;
-    beneficiosPedidos = true;
-    intentosBeneficios++;
-    fetch("/", { credentials: "omit" })
-      .then(function (r) { return r.text(); })
-      .then(function (html) {
-        if (document.getElementById("redcafe-beneficios-red")) return;
-        var doc = new DOMParser().parseFromString(html, "text/html");
-        var origen = Array.prototype.slice.call(doc.querySelectorAll("main section")).filter(esSeccionBeneficios)[0];
-        if (!origen) { beneficiosPedidos = false; return; }
-        var propia = document.importNode(origen, true);
-        propia.id = "redcafe-beneficios-red";
-        propia.setAttribute("data-redcafe-propio", "1");
-        Array.prototype.slice.call(propia.querySelectorAll("[id]")).forEach(function (n) { n.removeAttribute("id"); });
-        // Antes del llamado final («Si trabajas alrededor del café…»); si no
-        // está, al final de la página.
-        var cierre = Array.prototype.slice.call(main.querySelectorAll("h2")).filter(function (h) {
-          return texto(h).indexOf("Si trabajas alrededor del café") === 0;
-        })[0];
-        var seccionCierre = cierre && cierre.closest("section");
-        if (seccionCierre && seccionCierre.parentNode) {
-          seccionCierre.parentNode.insertBefore(propia, seccionCierre);
-        } else {
-          main.appendChild(propia);
-        }
-      })
-      .catch(function () { beneficiosPedidos = false; });
-  }
+  /* ── 13 y 14. «Qué cuesta y qué no» (Comunidad, CostesRed.tsx) y «Lo que cambia
+     para ti» (Quiénes somos): ya en React; la capa no oculta ni copia nada. */
 
   /* ── 15. Portada: la puerta de registro ya es de React (AccesoPortada). */
   /* ── 16. Panel: la barra «Tus herramientas» ya es de React (AtajosPanel). */
@@ -740,15 +476,11 @@
   var programado = false;
   function aplicar() {
     programado = false;
-    limpiarCopiasHuerfanas();
-    clavesConMinimo8();
     verClave();
     ordenarPanel();
     panelSeguirVista();
     abrirVista();
     contratarSinServicio();
-    if (esPortada()) { preciosReales(); sinTiempoLimitado(); costesFueraDeLaPortada(); beneficiosFueraDeLaPortada(); lenguajeLianoPortada(); }
-    if (esQuienesSomos()) beneficiosEnQuienesSomos();
     if (esRegistro()) { registroMasCorto(); siguientePaso(); quitarAvisoSesionCaducada(); }
     else document.documentElement.classList.remove("redcafe-con-boton-fijo");
   }
@@ -763,9 +495,6 @@
 
   function alCargarRuta() {
     enviados = {};
-    preciosPedidos = false;
-    beneficiosPedidos = false;
-    intentosBeneficios = 0;
     medir("visita", true);
     medirLlegadaAlPanel();
     bajarARequerimientos();

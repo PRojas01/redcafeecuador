@@ -1022,7 +1022,6 @@ footer li {
 /* ============================================================
    Academia · visor de curso con avance
    ============================================================ */
-[data-redcafe-oculto="1"] { display: none !important; }
 /* El hueco mientras llega el curso: mismo sitio, sin salto ni pantalla blanca. */
 .redcafe-curso-esperando { color: #5e5850; font-size: .9rem; margin: 0 auto; max-width: 56rem; min-height: 60vh; padding: 3rem 1.1rem; }
 .redcafe-curso { background: var(--color-crema-oscuro, #efeae1); padding: 2rem 0 3rem; }
@@ -1121,10 +1120,6 @@ footer li {
 .redcafe-curso-etiqueta.es-preparacion { background: rgba(92, 90, 80, .14); color: #5c5a50; }
 /* Acciones dentro de las tarjetas de pedido del panel */
 .redcafe-panel-order-card .redcafe-ped-acciones { margin-top: .7rem; }
-
-/* El grid original de React se conserva en el DOM pero oculto: así React
-   mantiene sus referencias intactas y no falla al cambiar de pestaña. */
-[data-redcafe-oculto-react="1"] { display: none !important; }
 
 /* ============================================================
    Cabecera · "Precios" y menú "Más" fuera del <nav> de React
@@ -2422,8 +2417,6 @@ textarea.redcafe-pub-input { min-height: 4rem; }
    en estos li con un selector muy específico y le ganaba a la regla general de
    ocultado. Sin esto, al pasar los textos por reemplazarTextoSeguro (en vez de
    escribir en el nodo de React) se veían el original y la copia a la vez. */
-body[data-redcafe-route="/"] .redcafe-home-profile-native .redcafe-home-profile-included-native li[data-redcafe-oculto-react="1"],
-body[data-redcafe-route="/"] .redcafe-home-profile-native [data-redcafe-oculto-react="1"] { display: none !important; }
 
 /* ==========================================================================
    «Qué cuesta y qué no» al pie de la comunidad (Claude, 15 sep 2026)
@@ -4002,25 +3995,7 @@ html:not(#rc-t1):not(#rc-t2) body > div:not(#redcafe-video-fondo):not([class*="f
 }
 
 
-/* ═══════════════════════════════════════════════════════════════════════════
-   Una sola versión de cada pantalla
-   ---------------------------------------------------------------------------
-   El problema: en /academia/ y en la ficha de un curso convivían DOS versiones
-   —la de React y la nuestra—. React pinta enseguida; nuestros scripts van con
-   `defer` y tardan. El usuario veía la de React y, medio segundo después, cómo
-   cambiaba por la nuestra. Ocultarla desde JavaScript no llegaba a tiempo.
-
-   La marca `data-rc-vista` la pone un script de dos líneas en la cabecera, que
-   corre ANTES del primer pintado. Con eso, la versión de React ya nace oculta y
-   no llega a verse nunca.
-
-   Red de seguridad: ese mismo script retira la marca a los 5 segundos si
-   nuestra capa no ha aparecido. Si nuestro JavaScript fallara, la página vuelve
-   a mostrarse tal como la sirve React en vez de quedarse en blanco.
-   ═══════════════════════════════════════════════════════════════════════════ */
-html[data-rc-vista="curso"] body > main > *:not([data-redcafe-propio]) {
-  display: none !important;
-}
+/* (Una sola versión de cada pantalla: la Academia y la ficha del curso ya son de React; se retiró la guarda data-rc-vista.) */
 
 
 /* ===== Fusión: menú móvil propio en las rutas donde React ya no arranca ===== */
@@ -6043,6 +6018,19 @@ html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5):not(#o6):not(#o7):not(#o8):not
 @media (max-width: 480px) { .rc-collage-foto { aspect-ratio: auto; min-height: 210px; } html body .rc-collage-sub { -webkit-line-clamp: 3 !important; } }
 html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5):not(#o6):not(#o7):not(#o8):not(#o9):not(#o10) body .redcafe-pub-eliminar { min-height: 44px; padding: .55rem 1rem; border: 1px solid #8c1e0e; border-radius: 12px; background: #ffffff; color: #8c1e0e; font-weight: 600; cursor: pointer; } html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5):not(#o6):not(#o7):not(#o8):not(#o9):not(#o10) body .redcafe-pub-eliminar:hover { background: #fbf4f2; }
 
+/* El botón de la comunidad tapaba «Crear mi cuenta» en el registro móvil: con
+   la barra fija abajo, sube por encima de ella. */
+@media (max-width: 767.98px) {
+  html.redcafe-con-boton-fijo:not(#o1):not(#o2) .redcafe-hub { bottom: calc(5.5rem + env(safe-area-inset-bottom)); }
+}
+
+/* Una tarjeta que contiene la barra fija del registro no se mueve al pasar el
+   ratón: con transform, la barra dejaba de ser fija, el botón saltaba 50 px y
+   el clic se perdía (el paso 3 no se podía enviar). */
+@media (max-width: 767.98px) {
+  html:not(#o1):not(#o2) .card:has([data-redcafe-fijo="1"]),
+  html:not(#o1):not(#o2) .card:has([data-redcafe-fijo="1"]):hover { transform: none; }
+}
 /* Gráfico de cierres diarios (/servicios/precios/): resumen del rango, velas y lectura de cada día. */
 .rcp-cabecera-valor { text-align: right; }
 .rcp-var { font-size: .95rem; font-weight: 700; margin-top: .35rem; }

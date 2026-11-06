@@ -1152,7 +1152,6 @@
           '<button type="button" disabled data-derechos-enviar class="redcafe-pub-guardar redcafe-publicar-enviar">Publicar lote de café</button>' +
           '<span class="redcafe-pub-estado" role="status" aria-live="polite"></span>' +
         '</div>' +
-        '<p class="redcafe-publicar-rapido"><button type="button" class="redcafe-publicar-usar-rapido">Prefiero el formulario rápido anterior</button></p>' +
       '</div>';
   }
 
@@ -1211,7 +1210,7 @@
     if (ficha) ficha.hidden = (categoria === "terminado") || siembra;
   }
 
-  function enviarPublicacion(caja, formReact) {
+  function enviarPublicacion(caja) {
     if (!caja.querySelector('[name="acepta_derechos"]').checked) return;
     var categoria = caja.getAttribute("data-categoria") || "verde";
     var estado = caja.querySelector(".redcafe-pub-acciones .redcafe-pub-estado");
@@ -1453,13 +1452,10 @@
     // quedaba el formulario básico: es lo que el propietario vio como
     // «formulario incompleto». Ahora basta con que el formulario de la web
     // aparezca, venga de donde venga.
-    if (/[?&]editar=/.test(location.search || "")) return;
     if (document.getElementById("redcafe-publicar-completo")) return;
-    var titulo = Array.prototype.slice.call(document.querySelectorAll("main h2")).filter(function (h) {
-      return /Publicar lote en el Marketplace/.test(h.textContent || "");
-    })[0];
-    var formReact = titulo && titulo.parentNode && titulo.parentNode.querySelector("form");
-    if (!formReact) return;
+    // React deja un hueco vacío para este formulario y no lo toca.
+    var hueco = document.getElementById("redcafe-publicar-hueco");
+    if (!hueco) return;
 
     var caja = document.createElement("div");
     caja.id = "redcafe-publicar-completo";
@@ -1468,12 +1464,7 @@
     enlazarDerechos(caja);
     var tarjeta = caja.firstChild;
     marcarRequeridos(tarjeta, "verde");
-    // Firma del formulario de React: si React lo repinta, la limpieza de
-    // copias huérfanas (redcafe-v60-final.js) vuelve a colocar este detrás.
-    caja.setAttribute("data-redcafe-copia", "1");
-    caja.setAttribute("data-redcafe-original", formReact.tagName + "|" + String(formReact.textContent || "").replace(/\s+/g, " ").trim().slice(0, 200));
-    formReact.setAttribute("data-redcafe-oculto-react", "1");
-    formReact.insertAdjacentElement("afterend", caja);
+    hueco.appendChild(caja);
     [0, 400, 1500].forEach(function (ms) { setTimeout(function () { activarMapasFinca(caja); }, ms); });
 
     if (!publicarScrollHecho && /[?&]ver=publicar(?:&|$)/.test(location.search || "")) {
@@ -1512,12 +1503,7 @@
     caja.addEventListener("click", function (ev) {
       var t = ev.target;
       if (!t || !t.closest) return;
-      if (t.closest(".redcafe-publicar-enviar")) { enviarPublicacion(tarjeta, formReact); return; }
-      if (t.closest(".redcafe-publicar-usar-rapido")) {
-        formReact.removeAttribute("data-redcafe-oculto-react");
-        caja.hidden = true;
-        return;
-      }
+      if (t.closest(".redcafe-publicar-enviar")) { enviarPublicacion(tarjeta); return; }
       if (t.closest(".redcafe-publicar-gps")) {
         var est = tarjeta.querySelector(".redcafe-pub-acciones .redcafe-pub-estado");
         if (!navigator.geolocation) { est.textContent = "Tu navegador no da la ubicación."; return; }
@@ -1705,23 +1691,16 @@
 
   function montarPublicarServicio() {
     if (location.pathname.indexOf("/panel") !== 0) return;
-    if (/[?&]editar=/.test(location.search || "")) return;
     if (document.getElementById("redcafe-publicar-servicio-completo")) return;
-    var titulo = Array.prototype.slice.call(document.querySelectorAll("main h2")).filter(function (h) {
-      return /Publicar servicio en el Marketplace/.test(h.textContent || "");
-    })[0];
-    var formReact = titulo && titulo.parentNode && titulo.parentNode.querySelector("form");
-    if (!formReact) return;
+    var hueco = document.getElementById("redcafe-publicar-servicio-hueco");
+    if (!hueco) return;
 
     var caja = document.createElement("div");
     caja.id = "redcafe-publicar-servicio-completo";
     caja.setAttribute("data-redcafe-propio", "1");
     caja.innerHTML = formularioServicioPublicarHtml();
     enlazarDerechos(caja);
-    caja.setAttribute("data-redcafe-copia", "1");
-    caja.setAttribute("data-redcafe-original", formReact.tagName + "|" + String(formReact.textContent || "").replace(/\s+/g, " ").trim().slice(0, 200));
-    formReact.setAttribute("data-redcafe-oculto-react", "1");
-    formReact.insertAdjacentElement("afterend", caja);
+    hueco.appendChild(caja);
 
     caja.addEventListener("change", function (ev) {
       var el = ev.target;
