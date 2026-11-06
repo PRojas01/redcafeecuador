@@ -655,241 +655,27 @@ function ProductorProduccion() {
  );
 }
 
+/* Publicar lote: el formulario completo (fotos, mapa de la finca, derechos,
+   datos de cata) lo monta redcafe-panel-publicaciones.js dentro de este hueco.
+   Antes React pintaba aquí un formulario básico que la capa ocultaba: eran dos
+   versiones. Ahora hay una sola y React no la toca. */
 function ProductorPublicar() {
- const [aceptaDerechos, setAceptaDerechos] = useState(false);
- const [ok, setOk] = useState<string | null>(null);
- const [finca, setFinca] = useState("");
- const [provincia, setProvincia] = useState("");
- const [variedad, setVariedad] = useState("");
- const [proceso, setProceso] = useState("Lavado");
- const [altura, setAltura] = useState("");
- const [precioSaco, setPrecioSaco] = useState("");
- const [stockSacos, setStockSacos] = useState("");
-const [certificacion, setCertificacion] = useState("Convencional");
-  const [imagenes, setImagenes] = useState<File[]>([]);
-  const [subiendo, setSubiendo] = useState(false);
-  const [lat, setLat] = useState("");
-  const [lng, setLng] = useState("");
-  const [geoBuscando, setGeoBuscando] = useState(false);
-
-  const usarMiUbicacion = () => {
-    if (typeof navigator === "undefined" || !("geolocation" in navigator)) return;
-    setGeoBuscando(true);
-    navigator.geolocation.getCurrentPosition(
-      (pos) => {
-        setLat(pos.coords.latitude.toFixed(6));
-        setLng(pos.coords.longitude.toFixed(6));
-        setGeoBuscando(false);
-      },
-      () => setGeoBuscando(false),
-      { enableHighAccuracy: true, timeout: 10000, maximumAge: 30000 }
-    );
-  };
-
-  const publicar = async (e: React.FormEvent) => {
-  e.preventDefault();
- if (!aceptaDerechos) return;
-  if (!finca.trim() || !provincia.trim() || !variedad.trim() || !precioSaco.trim()) {
-  setOk("Completa finca, provincia, variedad y precio."); return;
-  }
-  setSubiendo(true);
-  const urls: string[] = [];
-  for (const file of imagenes) {
-  const up = await api.uploadImage(file, "lote", aceptaDerechos);
-  if (!up.ok || !up.data?.url) {
-  setSubiendo(false);
-  setOk(up.status === 401 ? "Tu sesión caducó. Vuelve a entrar para publicar el lote." : up.error || "No pudimos subir una imagen.");
-  return;
-  }
-  urls.push(up.data.url);
-  }
-  const latNum = lat.trim() === "" ? undefined : Number(lat);
-  const lngNum = lng.trim() === "" ? undefined : Number(lng);
-  const r = await api.lotePublish({
- acepta_derechos: aceptaDerechos,
-  finca, provincia, variedad, proceso,
-  altura: parseInt(altura) || 0, precioSaco: parseFloat(precioSaco),
-  stockSacos: parseInt(stockSacos) || 0, stockQuintales: Math.floor((parseInt(stockSacos) || 0) / 2),
-  certificacion, score: 80, imagenes: urls,
-  ...(typeof latNum === "number" && Number.isFinite(latNum) ? { lat: latNum } : {}),
-  ...(typeof lngNum === "number" && Number.isFinite(lngNum) ? { lng: lngNum } : {}),
-  });
-  setSubiendo(false);
-  if (r.ok) {
-  setOk("Lote publicado en el Marketplace. Si agregaste ubicación válida, también se actualizará en el mapa.");
-  reg("productor", "lote", `Lote publicado: ${finca} — ${variedad} ${proceso}`, { cantidad: parseInt(stockSacos) || 0, unidad: "sacos" });
-  setFinca(""); setProvincia(""); setVariedad(""); setAltura(""); setPrecioSaco(""); setStockSacos("");
-  setLat(""); setLng(""); setImagenes([]);
-  } else {
-  setOk(r.error || "Error al publicar.");
-  }
-  };
-
-  const seleccionarImagenes = (files: FileList | null) => {
-  const elegidas = Array.from(files ?? [])
-  .filter((file) => file.type.startsWith("image/") && file.size <= 2 * 1024 * 1024)
-  .slice(0, 6);
-  setImagenes(elegidas);
-  if ((files?.length ?? 0) > elegidas.length) setOk("Puedes adjuntar hasta 6 imágenes JPG, PNG o WebP de máximo 2 MB.");
-  };
-
  return (
  <div>
  <h2 className="mb-1 text-lg font-semibold text-cafe">Publicar lote en el Marketplace</h2>
  <p className="mb-4 text-sm text-pizarra/70">Comparte tu café con compradores y tostadores de toda la Red.</p>
- <form onSubmit={publicar} className="rounded-2xl border border-cafe/10 bg-white p-5">
- <div className="grid gap-3 sm:grid-cols-2">
- <input value={finca} onChange={(e) => setFinca(e.target.value)} placeholder="Nombre de finca o unidad productiva" className="rounded-lg border border-cafe/20 px-3 py-2" />
- <input value={provincia} onChange={(e) => setProvincia(e.target.value)} placeholder="Provincia" className="rounded-lg border border-cafe/20 px-3 py-2" />
- <input value={variedad} onChange={(e) => setVariedad(e.target.value)} placeholder="Variedad (ej: Geisha)" className="rounded-lg border border-cafe/20 px-3 py-2" />
- <select value={proceso} onChange={(e) => setProceso(e.target.value)} className="rounded-lg border border-cafe/20 px-3 py-2">
- <option>Lavado</option><option>Natural</option><option>Honey</option><option>Semi-lavado</option>
- </select>
- <input type="number" value={altura} onChange={(e) => setAltura(e.target.value)} placeholder="Altura (msnm)" className="rounded-lg border border-cafe/20 px-3 py-2" />
- <input type="number" step="0.01" value={precioSaco} onChange={(e) => setPrecioSaco(e.target.value)} placeholder="Precio por saco ($)" className="rounded-lg border border-cafe/20 px-3 py-2" />
- <input type="number" value={stockSacos} onChange={(e) => setStockSacos(e.target.value)} placeholder="Stock (sacos)" className="rounded-lg border border-cafe/20 px-3 py-2" />
-<select value={certificacion} onChange={(e) => setCertificacion(e.target.value)} className="rounded-lg border border-cafe/20 px-3 py-2">
-  <option>Convencional</option><option>Orgánico</option><option>Comercio Justo</option><option>Rainforest</option>
-  </select>
-  <div className="rounded-lg border border-dashed border-cafe/20 bg-crema/30 p-3 sm:col-span-2">
-  <p className="text-xs font-semibold text-pizarra/60">Ubicación de la finca (opcional — aparece en el mapa del Marketplace)</p>
-  <div className="mt-2 grid gap-2 sm:grid-cols-2">
-  <input type="number" step="any" value={lat} onChange={(e) => setLat(e.target.value)} placeholder="Latitud aproximada (ej: -3.99)" className="rounded-lg border border-cafe/20 px-3 py-2" />
-  <input type="number" step="any" value={lng} onChange={(e) => setLng(e.target.value)} placeholder="Longitud aproximada (ej: -79.20)" className="rounded-lg border border-cafe/20 px-3 py-2" />
-  </div>
-  <button type="button" onClick={usarMiUbicacion} disabled={geoBuscando} className="mt-2 rounded-full border border-hoja px-3 py-1.5 text-xs font-semibold text-hoja hover:bg-hoja/10 disabled:opacity-50">
-  {geoBuscando ? "Obteniendo ubicación…" : "Usar mi ubicación actual"}
-  </button>
-  </div>
-  <div className="rounded-lg border border-dashed border-cafe/20 bg-crema/30 p-3 sm:col-span-2">
-  <p className="text-xs font-semibold text-pizarra/60">Fotos del lote (opcional)</p>
-  <input
-  type="file"
-  accept="image/*" capture="environment"
-  multiple
-  onChange={(e) => seleccionarImagenes(e.target.files)}
-  className="mt-2 block w-full text-sm text-pizarra/70 file:mr-3 file:rounded-full file:border-0 file:bg-hoja file:px-3 file:py-1.5 file:text-sm file:font-semibold file:text-crema"
-  />
-  <p className="mt-1 text-xs text-pizarra/70">Toma la foto en el momento con tu cámara.</p>
-  {imagenes.length > 0 && (
-  <div className="mt-2 flex flex-wrap gap-2 text-xs text-pizarra/60">
-  {imagenes.map((img) => <span key={`${img.name}-${img.size}`} className="rounded-full bg-white px-2 py-1">{img.name}</span>)}
-  </div>
-  )}
-  </div>
-  </div>
- <DeclaracionDerechos aceptado={aceptaDerechos} onChange={setAceptaDerechos} />
- <button disabled={!aceptaDerechos || subiendo} className="mt-4 w-full rounded-full bg-hoja px-4 py-2.5 font-semibold text-crema hover:bg-hoja/90 disabled:opacity-60">{subiendo ? "Publicando..." : "Publicar lote de café"}</button>
- </form>
- {ok && <p className="mt-3 rounded-xl bg-hoja/15 p-3 text-center text-sm font-semibold text-hoja">{ok}</p>}
+ <div id="redcafe-publicar-hueco" data-redcafe-hueco="lote" />
  </div>
  );
 }
 
+/* Publicar servicio: igual que el lote, el formulario completo lo monta la capa. */
 function PublicarServicioMarketplace() {
- const [aceptaDerechos, setAceptaDerechos] = useState(false);
- const [ok, setOk] = useState<string | null>(null);
- const [titulo, setTitulo] = useState("");
- const [categoria, setCategoria] = useState("transporte");
- const [descripcion, setDescripcion] = useState("");
- const [provincia, setProvincia] = useState("");
- const [cobertura, setCobertura] = useState("");
- const [precio, setPrecio] = useState("");
- const [unidad, setUnidad] = useState("servicio");
- const [imagenes, setImagenes] = useState<File[]>([]);
- const [subiendo, setSubiendo] = useState(false);
-
- const seleccionarImagenes = (files: FileList | null) => {
- const elegidas = Array.from(files ?? [])
- .filter((file) => file.type.startsWith("image/") && file.size <= 2 * 1024 * 1024)
- .slice(0, 6);
- setImagenes(elegidas);
- if ((files?.length ?? 0) > elegidas.length) setOk("Puedes adjuntar hasta 6 imágenes JPG, PNG o WebP de máximo 2 MB.");
- };
-
- const publicar = async (e: React.FormEvent) => {
- e.preventDefault();
- if (!aceptaDerechos) return;
- setOk(null);
- if (!titulo.trim() || !descripcion.trim()) {
- setOk("Completa el título y la descripción del servicio.");
- return;
- }
- setSubiendo(true);
- const urls: string[] = [];
- for (const file of imagenes) {
- const up = await api.uploadImage(file, "marketplace", aceptaDerechos);
- if (!up.ok || !up.data?.url) {
- setSubiendo(false);
- setOk(up.status === 401 ? "Tu sesión caducó. Vuelve a entrar para publicar el servicio." : up.error || "No pudimos subir una imagen.");
- return;
- }
- urls.push(up.data.url);
- }
- const r = await api.marketplaceServicioPublish({
- acepta_derechos: aceptaDerechos,
- titulo,
- categoria: categoria as "transporte" | "catacion" | "asesoria" | "pilado" | "insumos" | "capacitacion" | "exportacion" | "otro",
- descripcion,
- provincia,
- cobertura,
- precio: parseFloat(precio) || 0,
- unidad,
- imagenes: urls,
- });
- setSubiendo(false);
- if (!r.ok) {
- setOk(r.error || "Error al publicar el servicio.");
- return;
- }
- setOk("Servicio publicado en el Marketplace.");
- setTitulo(""); setDescripcion(""); setProvincia(""); setCobertura(""); setPrecio(""); setUnidad("servicio"); setImagenes([]);
- };
-
  return (
  <div>
  <h2 className="mb-1 text-lg font-semibold text-cafe">Publicar servicio en el Marketplace</h2>
  <p className="mb-4 text-sm text-pizarra/70">Ofrece transporte, catación, asesoría, pilado, insumos u otros servicios para el negocio cafetero.</p>
- <form onSubmit={publicar} className="rounded-2xl border border-cafe/10 bg-white p-5">
- <div className="grid gap-3 sm:grid-cols-2">
- <input value={titulo} onChange={(e) => setTitulo(e.target.value)} placeholder="Nombre del servicio" className="rounded-lg border border-cafe/20 px-3 py-2" />
- <select value={categoria} onChange={(e) => setCategoria(e.target.value)} className="rounded-lg border border-cafe/20 px-3 py-2" aria-label="Categoría del servicio">
- <option value="transporte">Transporte</option>
- <option value="catacion">Catación</option>
- <option value="asesoria">Asesoría</option>
- <option value="pilado">Pilado / beneficio</option>
- <option value="insumos">Equipos e insumos</option>
- <option value="capacitacion">Capacitación</option>
- <option value="exportacion">Exportación</option>
- <option value="otro">Otro servicio</option>
- </select>
- <input value={provincia} onChange={(e) => setProvincia(e.target.value)} placeholder="Provincia base" className="rounded-lg border border-cafe/20 px-3 py-2" />
- <input value={cobertura} onChange={(e) => setCobertura(e.target.value)} placeholder="Cobertura (ej: provincia, zona o nacional)" className="rounded-lg border border-cafe/20 px-3 py-2" />
- <input type="number" step="0.01" min="0" value={precio} onChange={(e) => setPrecio(e.target.value)} placeholder="Precio referencial ($)" className="rounded-lg border border-cafe/20 px-3 py-2" />
- <input value={unidad} onChange={(e) => setUnidad(e.target.value)} placeholder="Unidad (viaje, muestra, hora, saco...)" className="rounded-lg border border-cafe/20 px-3 py-2" />
- <textarea value={descripcion} onChange={(e) => setDescripcion(e.target.value)} placeholder="Describe qué incluye, condiciones, tiempos y tipo de cliente al que atiendes." rows={4} className="rounded-lg border border-cafe/20 px-3 py-2 sm:col-span-2" />
- <div className="rounded-lg border border-dashed border-cafe/20 bg-crema/30 p-3 sm:col-span-2">
- <p className="text-xs font-semibold text-pizarra/60">Imágenes del servicio (opcional)</p>
- <input
- type="file"
- accept="image/jpeg,image/png,image/webp"
- multiple
- onChange={(e) => seleccionarImagenes(e.target.files)}
- className="mt-2 block w-full text-sm text-pizarra/70 file:mr-3 file:rounded-full file:border-0 file:bg-hoja file:px-3 file:py-1.5 file:text-sm file:font-semibold file:text-crema"
- />
- {imagenes.length > 0 && (
- <div className="mt-2 flex flex-wrap gap-2 text-xs text-pizarra/60">
- {imagenes.map((img) => <span key={`${img.name}-${img.size}`} className="rounded-full bg-white px-2 py-1">{img.name}</span>)}
- </div>
- )}
- </div>
- </div>
- <DeclaracionDerechos aceptado={aceptaDerechos} onChange={setAceptaDerechos} />
- <button disabled={!aceptaDerechos || subiendo} className="mt-4 w-full rounded-full bg-hoja px-4 py-2.5 font-semibold text-crema hover:bg-hoja/90 disabled:opacity-60">
- {subiendo ? "Publicando..." : "Publicar servicio"}
- </button>
- </form>
- {ok && <p className="mt-3 rounded-xl bg-hoja/15 p-3 text-center text-sm font-semibold text-hoja">{ok}</p>}
+ <div id="redcafe-publicar-servicio-hueco" data-redcafe-hueco="servicio" />
  </div>
  );
 }

@@ -1022,7 +1022,6 @@ footer li {
 /* ============================================================
    Academia · visor de curso con avance
    ============================================================ */
-[data-redcafe-oculto="1"] { display: none !important; }
 /* El hueco mientras llega el curso: mismo sitio, sin salto ni pantalla blanca. */
 .redcafe-curso-esperando { color: #5e5850; font-size: .9rem; margin: 0 auto; max-width: 56rem; min-height: 60vh; padding: 3rem 1.1rem; }
 .redcafe-curso { background: var(--color-crema-oscuro, #efeae1); padding: 2rem 0 3rem; }
@@ -1121,10 +1120,6 @@ footer li {
 .redcafe-curso-etiqueta.es-preparacion { background: rgba(92, 90, 80, .14); color: #5c5a50; }
 /* Acciones dentro de las tarjetas de pedido del panel */
 .redcafe-panel-order-card .redcafe-ped-acciones { margin-top: .7rem; }
-
-/* El grid original de React se conserva en el DOM pero oculto: así React
-   mantiene sus referencias intactas y no falla al cambiar de pestaña. */
-[data-redcafe-oculto-react="1"] { display: none !important; }
 
 /* ============================================================
    Cabecera · "Precios" y menú "Más" fuera del <nav> de React
@@ -2422,8 +2417,6 @@ textarea.redcafe-pub-input { min-height: 4rem; }
    en estos li con un selector muy específico y le ganaba a la regla general de
    ocultado. Sin esto, al pasar los textos por reemplazarTextoSeguro (en vez de
    escribir en el nodo de React) se veían el original y la copia a la vez. */
-body[data-redcafe-route="/"] .redcafe-home-profile-native .redcafe-home-profile-included-native li[data-redcafe-oculto-react="1"],
-body[data-redcafe-route="/"] .redcafe-home-profile-native [data-redcafe-oculto-react="1"] { display: none !important; }
 
 /* ==========================================================================
    «Qué cuesta y qué no» al pie de la comunidad (Claude, 15 sep 2026)

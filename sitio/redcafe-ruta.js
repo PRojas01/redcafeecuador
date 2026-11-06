@@ -41,7 +41,6 @@
   // creerá que ya hizo su trabajo.
   var MARCAS = [
     "data-redcafe-lotes-completos",
-    "data-redcafe-oculto-react",
     "data-redcafe-service-plans",
     "data-redcafe-acciones"
   ];
@@ -68,11 +67,6 @@
       if (ruta.indexOf(item.ruta) === 0) return;
       Array.prototype.slice.call(document.querySelectorAll(item.sel)).forEach(quitar);
     });
-
-    // Lo que ocultamos de React se devuelve a la vista: si no, al volver a
-    // esa ruta la página aparecería en blanco.
-    Array.prototype.slice.call(document.querySelectorAll("[data-redcafe-oculto]"))
-      .forEach(function (el) { el.removeAttribute("data-redcafe-oculto"); });
 
     MARCAS.forEach(function (marca) {
       Array.prototype.slice.call(document.querySelectorAll("[" + marca + "]"))
