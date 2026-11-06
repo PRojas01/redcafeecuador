@@ -13,7 +13,7 @@ window.__redcafeReactListo = window.__redcafeReactListo || function () {
 (function () {
   "use strict";
 
-  var VERSION = "20261106b";
+  var VERSION = "20261106c";
   var WAPP = "593968641376";
   var path = normalizePath(location.pathname);
   var homeAuthChecking = false;
