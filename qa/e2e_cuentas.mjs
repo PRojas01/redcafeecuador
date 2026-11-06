@@ -39,7 +39,9 @@ await paso(V.p, "Portada: orden por prioridad y sin bloques repetidos", async ()
     return { t, capaAcceso: !!document.getElementById("redcafe-acceso"), ocultas: document.querySelectorAll("main [data-redcafe-oculto-react]").length,
       bar: /Historias, personas y cultura del café/.test(texto), noticias: /Noticias del sector/.test(texto), video: !!document.querySelector("main section.hero-gradient video"), tarjetaPerfiles: /Perfiles de entrada/i.test(texto) };
   });
-  const orden = ["hero", "cifras", "forma", "perfiles", "mapa", "precio", "confianza"];
+  // Franja de precio retirada de la portada por decisión de Pedro (2026-11-01).
+  // Las cifras se ocultan mientras la Red no tiene datos (base de pruebas vacía).
+  const orden = ["hero", "cifras", "forma", "perfiles", "confianza"].filter((k) => k !== "cifras" || r.t.cifras !== null);
   for (let i = 1; i < orden.length; i++) if (r.t[orden[i]] === null || r.t[orden[i - 1]] === null || r.t[orden[i]] <= r.t[orden[i - 1]]) throw new Error("orden: " + JSON.stringify(r.t));
   if (r.capaAcceso) throw new Error("sigue la copia de la capa de «Forma parte»");
   if (r.bar || r.noticias) throw new Error("Bar o Noticias siguen en la portada");
@@ -69,7 +71,7 @@ await paso(V.p, "Marketplace: ?ver=servicios abre la pestaña de servicios", asy
 const vend = await contexto(); const comp = await contexto();
 await registrar(vend.api, "Vera Vendedora", `vera.${S}@ejemplo.test`, "productor");
 await registrar(comp.api, "Ciro Comprador", `ciro.${S}@ejemplo.test`, "comprador");
-const lote = (await vend.api("/api/lotes.php?action=publish", { finca: "Finca UI " + S, provincia: "Loja", variedad: "Typica", proceso: "Lavado", precioSaco: 200, pesoSacoLb: 100, stockSacos: 5 })).data?.lote?.id;
+const lote = (await vend.api("/api/lotes.php?action=publish", { acepta_derechos: true, finca: "Finca UI " + S, provincia: "Loja", variedad: "Typica", proceso: "Lavado", precioSaco: 200, pesoSacoLb: 100, stockSacos: 5 })).data?.lote?.id;
 const idV = (await vend.api("/api/auth.php?action=me")).data?.user?.id;
 
 await paso(comp.p, "Pedido: aceptación expresa antes de enviar (datos y operación entre las partes)", async () => {

@@ -97,11 +97,11 @@ await paso(p, "Secciones abiertas: el botón «Ocultar» queda a la vista al baj
 
 // ── Eliminar lo propio ──
 const T = { lote: "Finca M " + S, serv: "Servicio M " + S, req: "Req M " + S, emp: "Empleo M " + S, busco: "Busco empleo M " + S };
-await api("/api/lotes.php?action=publish", { finca: T.lote, provincia: "Loja", variedad: "Typica", proceso: "Lavado", precioSaco: 240, pesoSacoLb: 100, stockSacos: 10 });
-await api("/api/marketplace-servicios.php?action=publish", { titulo: T.serv, descripcion: DESC, categoria: "asesoria", precio: 30, unidad: "hora", provincia: "Loja", cobertura: "Loja", visibilidad: "publico" });
-await api("/api/requerimientos.php?action=publish", { titulo: T.req, descripcion: DESC, cantidad: 20, unidad: "quintales", provincia: "Loja", tipo: "verde", proceso: "lavado", contactoPreferido: "plataforma" });
-await api("/api/empleos.php?action=publish", { titulo: T.emp, descripcion: DESC, empresa: "Finca SA", provincia: "Loja", categoria: "calidad-catacion", modalidad: "presencial", jornada: "tiempo-completo", vacantes: 1, contactoPreferido: "plataforma", salarioPeriodo: "mes", experiencia: "sin-experiencia" });
-await api("/api/busco-empleo.php?action=publish", { titulo: T.busco, descripcion: DESC, categoria: "calidad-catacion", provincia: "Loja", modalidad: "presencial", jornada: "tiempo-completo", disponibilidad: "inmediata", experiencia: "1-2-anios", contactoPreferido: "plataforma" });
+await api("/api/lotes.php?action=publish", { acepta_derechos: true, finca: T.lote, provincia: "Loja", variedad: "Typica", proceso: "Lavado", precioSaco: 240, pesoSacoLb: 100, stockSacos: 10 });
+await api("/api/marketplace-servicios.php?action=publish", { acepta_derechos: true, titulo: T.serv, descripcion: DESC, categoria: "asesoria", precio: 30, unidad: "hora", provincia: "Loja", cobertura: "Loja", visibilidad: "publico" });
+await api("/api/requerimientos.php?action=publish", { acepta_derechos: true, titulo: T.req, descripcion: DESC, cantidad: 20, unidad: "quintales", provincia: "Loja", tipo: "verde", proceso: "lavado", contactoPreferido: "plataforma" });
+await api("/api/empleos.php?action=publish", { acepta_derechos: true, titulo: T.emp, descripcion: DESC, empresa: "Finca SA", provincia: "Loja", categoria: "calidad-catacion", modalidad: "presencial", jornada: "tiempo-completo", vacantes: 1, contactoPreferido: "plataforma", salarioPeriodo: "mes", experiencia: "sin-experiencia" });
+await api("/api/busco-empleo.php?action=publish", { acepta_derechos: true, titulo: T.busco, descripcion: DESC, categoria: "calidad-catacion", provincia: "Loja", modalidad: "presencial", jornada: "tiempo-completo", disponibilidad: "inmediata", experiencia: "1-2-anios", contactoPreferido: "plataforma" });
 const abrirTodo = async () => { for (let k = 0; k < 2; k++) { const c = await p.locator("main [aria-expanded=false]").count(); for (let i = 0; i < c; i++) { const e = p.locator("main .redcafe-col-boton[aria-expanded=false]").first(); if (!(await e.count())) break; await e.evaluate((x) => x.click()).catch(() => {}); await p.waitForTimeout(200); } } };
 const eliminarDesdePanel = async (titulo, boton, compruebaApi) => {
   await p.goto(BASE + "/panel/"); await p.waitForTimeout(4000); await abrirTodo(); await p.waitForTimeout(1500);
@@ -135,8 +135,8 @@ await paso(p, "Requerimiento: su autora lo elimina", () => eliminarDesdePanel(T.
 await paso(p, "Oferta de empleo: su autora la elimina", () => eliminarDesdePanel(T.emp, "Eliminar oferta", yaNo("/api/empleos.php?action=mias", T.emp)));
 await paso(p, "Busco empleo: su autora lo elimina", () => eliminarDesdePanel(T.busco, "Eliminar", yaNo("/api/busco-empleo.php?action=mias", T.busco)));
 await paso(p, "Comunidad: borra su propio comentario", async () => {
-  const r = await api("/api/comunidad.php?action=create", { titulo: "Pregunta M " + S, text: "¿Quién vende en Loja?" });
-  const id = r.data?.post?.id; await api("/api/comunidad.php?action=comment", { id, text: "Comentario M " + S });
+  const r = await api("/api/comunidad.php?action=create", { acepta_derechos: true, titulo: "Pregunta M " + S, text: "¿Quién vende en Loja?" });
+  const id = r.data?.post?.id; await api("/api/comunidad.php?action=comment", { acepta_derechos: true, id, text: "Comentario M " + S });
   await p.goto(BASE + "/comunidad/"); await p.waitForTimeout(4000);
   const post = p.locator("article.redcafe-muro-item").filter({ hasText: "Pregunta M " + S }).first();
   await post.locator(".redcafe-muro-comentar").evaluate((e) => e.click()); await p.waitForTimeout(500);
