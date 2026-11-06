@@ -6065,3 +6065,11 @@ html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5):not(#o6):not(#o7):not(#o8):not
   .redcafe-price-chart.rcp-grafico { height: 280px; }
   .rcp-cabecera-valor { text-align: left; }
 }
+
+/* Franja de precio del café (cabecera): el oro #dfa066 sobre rojo y el rojo sobre
+   oro daban 4,05:1. Oro #f0c36a (5,5:1); bajada en rosa claro, no en rojo sobre rojo. */
+html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5):not(#o6):not(#o7):not(#o8):not(#o9) body [aria-label="Precio referencial del café arábica"] .text-acento-claro { color: #f0c36a !important; }
+html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5):not(#o6):not(#o7):not(#o8):not(#o9) body [aria-label="Precio referencial del café arábica"] a.bg-acento-claro { background: #f0c36a !important; color: #8c1e0e !important; }
+html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5):not(#o6):not(#o7):not(#o8):not(#o9) body [aria-label="Precio referencial del café arábica"] a.bg-acento-claro:hover { background: #fbf6ef !important; color: #8c1e0e !important; }
+html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5):not(#o6):not(#o7):not(#o8):not(#o9) body [aria-label="Precio referencial del café arábica"] .text-cereza { color: #ffc9bd !important; }
+html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5):not(#o6):not(#o7):not(#o8):not(#o9) body [aria-label="Precio referencial del café arábica"] .text-hoja-clara { color: #c2ebc8 !important; }
