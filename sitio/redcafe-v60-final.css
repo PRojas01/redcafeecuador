@@ -5990,3 +5990,20 @@ html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5):not(#o6):not(#o7):not(#o8):not
 .rc-collage-foto:is(:hover, :focus-visible) .rc-collage-cta { background: #8c1e0e; color: #ffffff; }
 .rc-collage-foto:is(:hover, :focus-visible) .rc-collage-titulo { text-decoration: none !important; }
 @media (max-width: 767px) { .rc-collage-titulo { padding: .8rem .8rem 1rem !important; } .rc-collage-t { font-size: 17px !important; } .rc-collage-sub { font-size: 13px; } .rc-collage-cta { font-size: 14px; min-height: 36px; padding: .35rem .8rem; } }
+
+/* ═ Contraste AA (6-nov-2026): cifras de la portada fijas sobre rojo, sin
+   depender de reglas anteriores (dorado 5,5:1 y crema 8,5:1), y el lote agotado
+   se apaga solo en la foto: con la tarjeta entera al 72 % los textos bajaban de 4,5:1. */
+html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5):not(#o6):not(#o7):not(#o8):not(#o9) body .redcafe-cifras { background: #8c1e0e !important; background-image: none !important; }
+html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5):not(#o6):not(#o7):not(#o8):not(#o9) body .redcafe-cifras .redcafe-cifra strong { color: #f0c36a !important; opacity: 1 !important; }
+html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5):not(#o6):not(#o7):not(#o8):not(#o9) body .redcafe-cifras .redcafe-cifra span { color: #fbf6ef !important; opacity: 1 !important; }
+.redcafe-lote-tarjeta[data-disponibilidad="agotado"] { opacity: 1 !important; }
+.redcafe-lote-tarjeta[data-disponibilidad="agotado"] .redcafe-lote-foto { opacity: .72; }
+/* Dorado y crema sobre rojo: el oro #dfa066 daba 3,8:1 en textos pequeños (rótulo
+   «Ecuador» de la cabecera, «Registro gratuito», «Siguiente paso») y la crema al
+   50–55 % del pie y del menú «Más» daba 3,2:1. */
+html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5):not(#o6):not(#o7):not(#o8):not(#o9) body :is(header, footer) .text-acento-claro,
+html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5):not(#o6):not(#o7):not(#o8):not(#o9) body .redcafe-afil-rotulo,
+html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5):not(#o6):not(#o7):not(#o8):not(#o9) body main section.bg-cafe .badge.text-acento-claro { color: #f0c36a !important; }
+html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5):not(#o6):not(#o7):not(#o8):not(#o9) body :is(header, footer) :is(.text-crema\/50, .text-crema\/55, .text-crema\/60) { color: rgba(251, 246, 239, .85) !important; }
+html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5):not(#o6):not(#o7):not(#o8):not(#o9) body :is(header summary, .redcafe-socios-brand, footer a[href^="mailto:"]) { color: #fbf6ef !important; }
