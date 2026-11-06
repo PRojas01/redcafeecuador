@@ -13,7 +13,7 @@ window.__redcafeReactListo = window.__redcafeReactListo || function () {
 (function () {
   "use strict";
 
-  var VERSION = "20261106c";
+  var VERSION = "20261106i";
   var WAPP = "593968641376";
   var path = normalizePath(location.pathname);
   var homeAuthChecking = false;
@@ -964,17 +964,17 @@ window.__redcafeReactListo = window.__redcafeReactListo || function () {
     var antes = document.getElementById("forma-parte");
     if (!antes || document.getElementById("rc-collage")) return;
     var T = [
-      ["portada/vender", "Vende tu café", "Llega a compradores sin intermediarios", "Empezar a vender", "/marketplace/", "Café verde a la venta en un mercado"],
-      ["portada/aprender", "Aprende a mejorar tu café", "Cursos de cultivo, poscosecha y tueste", "Ver cursos", "/academia/", "Manos con cerezas de café recién cosechadas"],
-      ["portada/servicios", "Contrata servicios", "Catación, pilado, transporte y más", "Ver servicios", "/servicios/", "Trabajador cargando sacos de café"],
-      ["portada/recetas", "Prepara mejor café en casa", "Recetas fáciles, paso a paso", "Ver recetas", "/recetas/", "Café de filtro preparado en casa"]
+      ["portada/vender", "Compra y vende café", "Directo con productores y compradores, sin comisiones", "Marketplace", "/marketplace/", "Café verde a la venta en un mercado"],
+      ["portada/aprender", "Aprende a mejorar tu café", "Cursos gratis de cultivo, poscosecha y tueste", "Academia", "/academia/", "Manos con cerezas de café recién cosechadas"],
+      ["portada/servicios", "Contrata servicios", "Catación, pilado, transporte y más", "Servicios", "/servicios/", "Trabajador cargando sacos de café"],
+      ["portada/recetas", "Prepara mejor café en casa", "Recetas fáciles, paso a paso", "Recetas", "/recetas/", "Café de filtro preparado en casa"]
     ];
     var h = '<section id="rc-collage" class="rc-collage" data-redcafe-propio aria-label="Explora la Red"><div class="rc-collage-fila">';
     T.forEach(function (t) {
       h += '<a class="rc-collage-foto" href="' + t[4] + '"><span class="rc-collage-velo" aria-hidden="true"></span>' +
         '<span class="rc-collage-titulo"><span class="rc-collage-t">' + t[1] + '</span><span class="rc-collage-sub">' + t[2] + '</span>' +
         '<span class="rc-collage-cta">' + t[3] + ' →</span></span>' +
-        '<img src="/img/' + t[0] + '.webp" alt="' + t[5] + '" width="800" height="800" loading="lazy" decoding="async"></a>';
+        '<img src="/img/' + t[0] + '.webp" alt="' + t[5] + '" width="800" height="800" decoding="async"></a>';
     });
     h += "</div></section>";
     antes.insertAdjacentHTML("beforebegin", h);

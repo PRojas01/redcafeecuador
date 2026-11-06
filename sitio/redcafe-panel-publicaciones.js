@@ -654,10 +654,28 @@
         (tipo === "lote" ? docsHtml(item.documentos) : "") +
         '<div class="redcafe-pub-acciones">' +
           '<button type="button" disabled data-derechos-enviar class="redcafe-pub-guardar">Guardar cambios</button>' +
+          '<button type="button" class="redcafe-pub-eliminar">' + (tipo === "lote" ? "Eliminar lote" : "Eliminar servicio") + '</button>' +
           '<span class="redcafe-pub-estado" role="status" aria-live="polite"></span>' +
         '</div>' +
       '</div>' +
     '</article>';
+  }
+
+  // El dueño puede borrar su propio lote o servicio (el servidor comprueba que sea suyo).
+  function eliminarPublicacion(card, boton) {
+    var tipo = card.getAttribute("data-tipo");
+    var id = card.getAttribute("data-id");
+    var nombre = (card.querySelector(".redcafe-pub-head h4") || {}).textContent || "";
+    if (!window.confirm("¿Eliminar «" + nombre + "» definitivamente? Ya no se verá en el Marketplace.")) return;
+    var estado = card.querySelector(".redcafe-pub-estado");
+    boton.disabled = true;
+    if (estado) { estado.textContent = "Eliminando…"; estado.className = "redcafe-pub-estado"; }
+    var url = (tipo === "lote" ? "/api/lotes.php" : "/api/marketplace-servicios.php") + "?action=delete&id=" + encodeURIComponent(id);
+    json(url, { method: "POST" }).then(function (res) {
+      if (res && res.ok) { card.remove(); return; }
+      boton.disabled = false;
+      if (estado) { estado.textContent = (res && res.error) || "No se pudo eliminar."; estado.className = "redcafe-pub-estado is-error"; }
+    });
   }
 
   function guardar(card) {
@@ -790,6 +808,9 @@
         }
         return;
       }
+
+      var elim = t.closest(".redcafe-pub-eliminar");
+      if (elim) { eliminarPublicacion(elim.closest(".redcafe-pub-card"), elim); return; }
 
       var boton = t.closest(".redcafe-pub-guardar");
       if (boton) guardar(boton.closest(".redcafe-pub-card"));

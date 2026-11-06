@@ -87,9 +87,12 @@ await paso(pv, "Vendedora: completa la ficha del lote (incluye ubicación para e
   await pv.getByLabel(/^Descripción/).first().fill("Lote de prueba para el recorrido móvil.");
   await pv.getByLabel(/^Latitud/).first().fill("-4.2606");
   await pv.getByLabel(/^Longitud/).first().fill("-79.2233");
+  // Declaración de derechos sobre el lote (obligatoria desde la baja LOPDP).
+  await pv.getByRole("checkbox", { name: /Declaro que tengo los derechos/ }).locator("visible=true").first().check();
+
 });
 await paso(pv, "Vendedora: publica el lote", async () => {
-  const b = pv.getByRole("button", { name: /Publicar lote de café/ }).first();
+  const b = pv.getByRole("button", { name: /^Publicar lote (de café|en el Marketplace)/ }).first();
   await b.evaluate((e) => e.scrollIntoView({ block: "center", behavior: "instant" })); await b.click();
   await pv.waitForTimeout(3000);
   const r = await pv.evaluate(async (f) => { const j = await (await fetch("/api/lotes.php?action=mine", { credentials: "include" })).json(); const l = ((j.data && j.data.lotes) || []).find((x) => x.finca === f); return l ? l.id : ""; }, FINCA);
@@ -128,7 +131,10 @@ await paso(pv, "Vendedora: edita el lote (precio 240 → 255)", async () => {
   await editar.evaluate((e) => e.scrollIntoView({ block: "center", behavior: "instant" })); await editar.click(); await pv.waitForTimeout(1500);
   const precio = pv.getByLabel(/Precio por saco/).first();
   await precio.fill("255");
-  const guardar = pv.getByRole("button", { name: /Guardar|Actualizar|Publicar/ }).first();
+  // El botón «Guardar cambios» se activa al aceptar la declaración de derechos.
+  const tarjeta = precio.locator("xpath=ancestor::article[1]");
+  await tarjeta.locator('input[name="acepta_derechos"]').first().check();
+  const guardar = tarjeta.getByRole("button", { name: /Guardar|Actualizar/ }).first();
   await guardar.evaluate((e) => e.scrollIntoView({ block: "center", behavior: "instant" })); await guardar.click(); await pv.waitForTimeout(2500);
   const v = await pv.evaluate(async (id) => { const j = await (await fetch("/api/lotes.php?action=mine", { credentials: "include" })).json(); const l = ((j.data && j.data.lotes) || []).find((x) => x.id === id); return l && l.precioSaco; }, loteId);
   if (String(v) !== "255") throw new Error("precio guardado: " + v);
@@ -149,6 +155,7 @@ await paso(pv, "Vendedora: publica un servicio", async () => {
     const v = /nombre|título/.test(k) ? SERVICIO : /precio/.test(k) ? "30" : /provincia/.test(k) ? "Loja" : /cobertura/.test(k) ? "Loja y Zamora" : /unidad/.test(k) ? "hora" : /descr|incluye/.test(k) ? "Servicio de prueba del recorrido móvil, con detalle suficiente." : /tel|whats/.test(k) ? "0991234567" : c.req ? "Dato de prueba" : null;
     if (v !== null) await loc.fill(v).catch(() => {});
   }
+  await f.locator('input[name="acepta_derechos"]').first().check().catch(() => {});
   const b = f.getByRole("button", { name: /Publicar/ }).last();
   await b.evaluate((e) => e.scrollIntoView({ block: "center", behavior: "instant" })); await b.click(); await pv.waitForTimeout(2500);
   const ok = await pv.evaluate(async (s) => JSON.stringify(await (await fetch("/api/marketplace-servicios.php?action=list", { credentials: "include" })).json()).includes(s), SERVICIO);

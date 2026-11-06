@@ -299,6 +299,17 @@
       });
       acciones.appendChild(cerrar);
     }
+    var eliminar = el("button", { type: "button", className: "redcafe-req-btn-suave" }, "Eliminar");
+    eliminar.addEventListener("click", function () {
+      if (!window.confirm("¿Eliminar «" + (b.titulo || "esta publicación") + "» definitivamente?")) return;
+      eliminar.disabled = true;
+      api("delete", { id: b.id }).then(function (res) {
+        eliminar.disabled = false;
+        msg(section, res.ok ? "Publicación eliminada." : (res.error || "No se pudo eliminar."), res.ok ? "ok" : "error");
+        if (res.ok) cargar(section);
+      });
+    });
+    acciones.appendChild(eliminar);
     card.appendChild(acciones);
     return card;
   }

@@ -34,8 +34,8 @@ async function registrarDesdePortada(ctx, persona) {
     await page.goto(BASE + "/", { waitUntil: "load" });
     await page.waitForTimeout(1500);
   });
-  await paso(page, `${persona.etiqueta}: pulsa el botón principal del hero («Registrarse»)`, async () => {
-    await page.getByRole("link", { name: /^Registrarse$/i }).first().click();
+  await paso(page, `${persona.etiqueta}: pulsa el botón principal del hero («Crear cuenta gratis»)`, async () => {
+    await page.getByRole("link", { name: /^(Registrarse|Crear cuenta gratis)$/i }).first().click();
     await page.waitForURL(/afiliate/, { timeout: 10000 });
   });
   await paso(page, `${persona.etiqueta}: elige su perfil (${persona.perfil})`, async () => {
