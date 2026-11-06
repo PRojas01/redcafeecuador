@@ -6007,3 +6007,13 @@ html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5):not(#o6):not(#o7):not(#o8):not
 html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5):not(#o6):not(#o7):not(#o8):not(#o9) body main section.bg-cafe .badge.text-acento-claro { color: #f0c36a !important; }
 html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5):not(#o6):not(#o7):not(#o8):not(#o9) body :is(header, footer) :is(.text-crema\/50, .text-crema\/55, .text-crema\/60) { color: rgba(251, 246, 239, .85) !important; }
 html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5):not(#o6):not(#o7):not(#o8):not(#o9) body :is(header summary, .redcafe-socios-brand, footer a[href^="mailto:"]) { color: #fbf6ef !important; }
+/* Revisión con Impeccable (2026-11-06): sin brillos radiales, sin etiquetas sobre títulos, textos de ayuda legibles, cortes de línea limpios */
+html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5):not(#o6):not(#o7):not(#o8):not(#o9):not(#o10) body :is(.hero-gradient, .redcafe-afil-hero, .redcafe-socios-hero, [data-redcafe-route] main > div > section:first-child) { background-image: linear-gradient(160deg, #8c1e0e 0%, #6e170b 100%) !important; }
+html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5):not(#o6):not(#o7):not(#o8):not(#o9):not(#o10) body main :is(p, span).badge:has(+ :is(h1, h2)) { display: none !important; }
+html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5):not(#o6):not(#o7):not(#o8):not(#o9):not(#o10) body main :is(p, span).badge + :is(h1, h2) { margin-top: 0 !important; }
+html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5):not(#o6):not(#o7):not(#o8):not(#o9):not(#o10) body main :is(input, textarea):not(.hero-gradient *, .bg-cafe *, [class*="bg-cafe"], [class*="bg-white/"])::placeholder { color: #6f6b63 !important; opacity: 1 !important; }
+html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5):not(#o6):not(#o7):not(#o8):not(#o9):not(#o10) body :is(h1, h2, h3) { text-wrap: balance; }
+html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5):not(#o6):not(#o7):not(#o8):not(#o9):not(#o10) body main p { text-wrap: pretty; }
+html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5):not(#o6):not(#o7):not(#o8):not(#o9):not(#o10) body footer ul > li > a { padding-top: .4rem !important; padding-bottom: .4rem !important; }
+html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5):not(#o6):not(#o7):not(#o8):not(#o9):not(#o10) body main p { max-inline-size: 66ch; }
+html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5):not(#o6):not(#o7):not(#o8):not(#o9):not(#o10) body main :is(p.text-center, .text-center > p) { margin-inline: auto; }
