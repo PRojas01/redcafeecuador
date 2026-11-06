@@ -13,7 +13,7 @@ window.__redcafeReactListo = window.__redcafeReactListo || function () {
 (function () {
   "use strict";
 
-  var VERSION = "20261103a";
+  var VERSION = "20261106b";
   var WAPP = "593968641376";
   var path = normalizePath(location.pathname);
   var homeAuthChecking = false;
@@ -281,8 +281,8 @@ window.__redcafeReactListo = window.__redcafeReactListo || function () {
     if (path !== "/") return;
     var heroTitle = qs("main section:first-of-type h1");
     // React ya pinta este titular (20261005): sin copia ni ocultación.
-    if (heroTitle && text(heroTitle).indexOf("Crea tu perfil y conecta") !== 0 && heroTitle.getAttribute("data-redcafe-oculto-react") !== "1" && !heroTitle.closest("[data-redcafe-propio]")) {
-      reemplazarTextoSeguro(heroTitle, 'Crea tu perfil y conecta con oportunidades del <span class="text-acento-claro">café ecuatoriano</span>', true);
+    if (heroTitle && text(heroTitle).indexOf("Vende y compra directo el") !== 0 && heroTitle.getAttribute("data-redcafe-oculto-react") !== "1" && !heroTitle.closest("[data-redcafe-propio]")) {
+      reemplazarTextoSeguro(heroTitle, 'Vende y compra directo el <span class="text-acento-claro">café ecuatoriano</span>', true);
     }
     var heroParagraph = qsa("main section p").find(function (p) {
       var t = text(p);
@@ -292,7 +292,7 @@ window.__redcafeReactListo = window.__redcafeReactListo || function () {
         t === "Red Café Ecuador conecta actores del negocio cafetero en una plataforma abierta para mostrar oferta, encontrar oportunidades y trabajar con más información.";
     });
     if (!heroParagraph) return;
-    reemplazarTextoSeguro(heroParagraph, "Compra y vende café directo, sin intermediarios ni comisiones. Tu perfil gratis en dos minutos.", false);
+    reemplazarTextoSeguro(heroParagraph, "Sin intermediarios ni comisiones. Encuentra compradores, servicios y cursos en un solo lugar. Tu perfil es gratis y está listo en 2 minutos.", false);
   }
 
   function enhanceHomeProfilePanel() {
@@ -467,7 +467,7 @@ window.__redcafeReactListo = window.__redcafeReactListo || function () {
         '</div>' +
         '<div class="redcafe-panel-split">' +
           '<article><p class="rotulo text-filtrado-600">Precio de mercado del café</p><h3>El ticker muestra la cotización internacional base.</h3><p>En el panel completo ves histórico, fuentes oficiales y referencias para estimar precio en Ecuador.</p><a href="/servicios/precios/">Ver panel completo →</a></article>' +
-          '<article><p class="rotulo text-filtrado-600">Cómo garantizamos la confianza</p><h3>Una Red basada en personas reales</h3><p>La confianza comienza sabiendo con quién estás conectando: perfil claro, información de finca o empresa y contacto directo entre miembros.</p><a href="/servicios/">Conoce cómo funciona →</a></article>' +
+          '<article><p class="rotulo text-filtrado-600">Cómo garantizamos la confianza</p><h3>Una Red basada en personas reales</h3><p>La confianza comienza sabiendo con quién estás conectando: perfil claro, información de finca o empresa y contacto directo entre miembros.</p><a href="/servicios/">Ver cómo funciona →</a></article>' +
         '</div>';
       main.insertAdjacentElement("beforeend", wrap);
     }).catch(function () {}).finally(function () {
@@ -914,4 +914,74 @@ window.__redcafeReactListo = window.__redcafeReactListo || function () {
   //    pidió conservar; 4) enlazaba a /carreras-empleos y /requerimientos,
   //    que dan 404. El código se conserva para rehacerlo con la capa segura
   //    (ocultar + copia marcada) si el propietario confirma el mosaico.
+})();
+
+/* Fotos de la portada (3-nov-2026): pase de fotos con fundido y acercamiento
+   lento, como el carrusel «fade» de la plantilla Stradale de la carpeta local,
+   y el collage de la portada de esa plantilla. Fotos propias de /img/proceso/; dibujos del collage en /img/collage/
+   (herramientas/generar-imagenes-collage.py).
+   Espera a que React hidrate y no toca nada si ya existe. */
+(function () {
+  "use strict";
+  var p = location.pathname.replace(/\/index\.html$/, "/");
+  if (p !== "/" && p !== "") return;
+  var FOTOS = [
+    ["cereza", "Cereza madura"], ["secado", "Secado al sol"], ["pergamino", "Café pergamino"],
+    ["verde", "Café verde"], ["tostado", "Tostado"], ["molido", "Molido"], ["taza", "En la taza"]
+  ];
+  var quieto = window.matchMedia && matchMedia("(prefers-reduced-motion: reduce)").matches;
+  function img(n, alt, lazy) {
+    return '<img src="/img/proceso/' + n + '.webp" alt="' + alt + '" width="800" height="500" decoding="async"' + (lazy ? ' loading="lazy"' : "") + ">";
+  }
+  function carrusel() {
+    var caja = document.querySelector("#portada-hero .aspect-video");
+    if (!caja || caja.querySelector(".rc-carrusel")) return;
+    var h = '<div class="rc-carrusel" aria-roledescription="carrusel" aria-label="Del grano a la taza">';
+    FOTOS.forEach(function (f, i) {
+      h += '<figure class="rc-diapo' + (i === 0 ? " activa" : "") + '" aria-hidden="' + (i === 0 ? "false" : "true") + '">' + img(f[0], f[1], i > 0) + "<figcaption>" + f[1] + "</figcaption></figure>";
+    });
+    h += '<div class="rc-puntos">';
+    FOTOS.forEach(function (f, i) { h += '<button type="button" aria-label="Ver foto: ' + f[1] + '"' + (i === 0 ? ' aria-current="true"' : "") + "></button>"; });
+    h += "</div></div>";
+    caja.insertAdjacentHTML("beforeend", h);
+    var c = caja.querySelector(".rc-carrusel"), d = c.querySelectorAll(".rc-diapo"), b = c.querySelectorAll(".rc-puntos button"), n = 0, t = null;
+    function ir(i) {
+      d[n].classList.remove("activa"); d[n].setAttribute("aria-hidden", "true"); b[n].removeAttribute("aria-current");
+      n = (i + d.length) % d.length;
+      d[n].classList.add("activa"); d[n].setAttribute("aria-hidden", "false"); b[n].setAttribute("aria-current", "true");
+    }
+    function andar() { if (!quieto) { clearInterval(t); t = setInterval(function () { ir(n + 1); }, 5000); } }
+    Array.prototype.forEach.call(b, function (x, i) { x.addEventListener("click", function () { ir(i); andar(); }); });
+    c.addEventListener("mouseenter", function () { clearInterval(t); });
+    c.addEventListener("mouseleave", andar);
+    andar();
+  }
+  /* Collage de la portada de la plantilla Stradale (carpeta local): cuatro
+     fotos a todo lo ancho, con velo de color, título y número grande; al
+     pasar el ratón el velo se va y la foto se acerca. Cada foto lleva a su
+     sección. */
+  function collage() {
+    var antes = document.getElementById("forma-parte");
+    if (!antes || document.getElementById("rc-collage")) return;
+    var T = [
+      ["portada/vender", "Vende tu café", "Llega a compradores sin intermediarios", "Empezar a vender", "/marketplace/", "Café verde a la venta en un mercado"],
+      ["portada/aprender", "Aprende a mejorar tu café", "Cursos de cultivo, poscosecha y tueste", "Ver cursos", "/academia/", "Manos con cerezas de café recién cosechadas"],
+      ["portada/servicios", "Contrata servicios", "Catación, pilado, transporte y más", "Ver servicios", "/servicios/", "Trabajador cargando sacos de café"],
+      ["portada/recetas", "Prepara mejor café en casa", "Recetas fáciles, paso a paso", "Ver recetas", "/recetas/", "Café de filtro preparado en casa"]
+    ];
+    var h = '<section id="rc-collage" class="rc-collage" data-redcafe-propio aria-label="Explora la Red"><div class="rc-collage-fila">';
+    T.forEach(function (t) {
+      h += '<a class="rc-collage-foto" href="' + t[4] + '"><span class="rc-collage-velo" aria-hidden="true"></span>' +
+        '<span class="rc-collage-titulo"><span class="rc-collage-t">' + t[1] + '</span><span class="rc-collage-sub">' + t[2] + '</span>' +
+        '<span class="rc-collage-cta">' + t[3] + ' →</span></span>' +
+        '<img src="/img/' + t[0] + '.webp" alt="' + t[5] + '" width="800" height="800" loading="lazy" decoding="async"></a>';
+    });
+    h += "</div></section>";
+    antes.insertAdjacentHTML("beforebegin", h);
+  }
+  var k = 0;
+  (function esperar() {
+    if (!(window.__redcafeReactListo && window.__redcafeReactListo())) { if (++k < 60) setTimeout(esperar, 250); return; }
+    carrusel(); collage();
+  })();
 })();
