@@ -9,7 +9,7 @@
 9:I[9779,["8173","static/chunks/8173-742dddf291619891.js","5739","static/chunks/5739-b290f56e05b6426f.js","7177","static/chunks/app/layout-ad29d305f917d285.js"],"RegistrarPWA"]
 a:I[3704,["8173","static/chunks/8173-742dddf291619891.js","5739","static/chunks/5739-b290f56e05b6426f.js","7177","static/chunks/app/layout-ad29d305f917d285.js"],""]
 b:I[7033,[],"ClientPageRoot"]
-c:I[8444,["8173","static/chunks/8173-742dddf291619891.js","2808","static/chunks/2808-b7cdced39879e7c9.js","138","static/chunks/app/academia/page-0211c185211460e6.js"],"default"]
+c:I[8444,["8173","static/chunks/8173-742dddf291619891.js","2808","static/chunks/2808-b7cdced39879e7c9.js","138","static/chunks/app/academia/page-9becd7ba05b573ff.js"],"default"]
 f:I[6213,[],"OutletBoundary"]
 11:I[6213,[],"MetadataBoundary"]
 13:I[6213,[],"ViewportBoundary"]
