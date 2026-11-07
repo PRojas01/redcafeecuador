@@ -21,6 +21,7 @@ import { Icono } from "@/components/Icono";
 import { Toast, useToast } from "@/components/Toast";
 import { CotizacionesPanel } from "@/components/CotizacionesPanel";
 import { AtajosPanel } from "@/components/AtajosPanel";
+import { PedidosPanel, RecursosPanel } from "@/components/PanelPedidosRecursos";
 
 interface Prod { id: string; fecha: string; variedad: string; quintales: number; calidad: string }
 interface Venta { id: string; fecha: string; destino: string; quintales: number; precio: number; total: number }
@@ -348,6 +349,11 @@ function PanelContent() {
 
  return (
  <>
+ {/* Huecos que React deja vacíos y no toca: ahí monta la capa propia sus
+     secciones (acción recomendada arriba; bandeja, publicaciones, empleos,
+     cursos… abajo). Así nunca escribe dentro de nodos de React. */}
+ <div id="redcafe-capa-arriba" data-redcafe-hueco="panel-arriba" />
+ <PedidosPanel uid={String(sesion.id ?? "")} />
  <AtajosPanel roles={(sesion.roles?.length ? sesion.roles : [sesion.rol]).map(String)} />
  <div className="mx-auto max-w-6xl px-4 py-10">
  <div className="flex flex-wrap items-center justify-between gap-4">
@@ -472,6 +478,8 @@ function PanelContent() {
  )}
  </div>
  </div>
+ <div id="redcafe-capa" data-redcafe-hueco="panel" />
+ <RecursosPanel />
  </>
  );
 }

@@ -359,7 +359,7 @@
   function montar() {
     if (document.getElementById("redcafe-guias")) return true;
     if (!window.REDCAFE_GUIAS) return false;
-    var main = document.querySelector("main");
+    var main = document.getElementById("redcafe-capa") || document.querySelector("main");
     if (!main) return false;
 
     var seccion = document.createElement("section");

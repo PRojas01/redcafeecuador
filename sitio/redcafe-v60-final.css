@@ -1732,8 +1732,14 @@ main input:user-valid:not([type="checkbox"]):not([type="radio"]) {
 /* Panel: el bloque de recursos cierra la página, siempre.
    Se ordena con `order` en vez de mover el nodo: mover un nodo de React
    rompe su reconciliación, y el momento en que lo pinta es impredecible. */
-main.redcafe-panel-orden { display: flex; flex-direction: column; }
-main.redcafe-panel-orden > #redcafe-panel-resources { order: 99; }
+/* Plegado de las secciones del panel (React y capa usan las mismas clases). */
+.redcafe-col-boton{align-items:center;background:transparent;border:0;border-top:1px solid rgba(140,30,14,.14);color:var(--color-filtrado-800,#8c1e0e);cursor:pointer;display:flex;font:inherit;font-weight:700;gap:.6rem;justify-content:space-between;margin-top:.6rem;padding:.7rem 0 .2rem;text-align:left;width:100%}
+.redcafe-col-boton:focus-visible{outline:2px solid rgba(138,90,34,.45);outline-offset:2px}
+.redcafe-col-texto{font-size:.85rem}
+.redcafe-col-cuenta{background:var(--color-crema-oscuro,#efeae1);border-radius:999px;font-size:.7rem;font-weight:700;margin-left:.4rem;padding:.1rem .55rem}
+.redcafe-col-flecha{font-size:.8rem;transition:transform .15s ease}
+.redcafe-col-boton[aria-expanded="true"] .redcafe-col-flecha{transform:rotate(180deg)}
+.redcafe-col-cuerpo{padding-top:.4rem}
 
 /* Botón de vuelta al panel, presente en todo el sitio para quien entró */
 .redcafe-volver-panel { align-items: center; background: var(--rce-cafe); border-radius: 999px; bottom: 1.1rem; box-shadow: 0 8px 22px rgba(14,22,18,.28); color: #f7f0df; display: inline-flex; font-size: .85rem; font-weight: 700; gap: .4rem; left: 1.1rem; padding: .6rem 1.1rem; position: fixed; text-decoration: none; z-index: 9997; }

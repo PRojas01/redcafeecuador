@@ -446,8 +446,7 @@
     "redcafe-busco-empleo-panel",
     "redcafe-mis-cursos",
     "redcafe-mis-reportes",
-    "redcafe-registro-actividad",
-    "redcafe-panel-resources"
+    "redcafe-registro-actividad"
   ];
   var ordenPanelHecho = false;
   var intentosOrdenPanel = 0;

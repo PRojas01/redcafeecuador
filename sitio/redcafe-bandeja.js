@@ -289,7 +289,7 @@
 
   function montar(usuario, datos) {
     if (location.pathname.indexOf("/panel") !== 0) return;
-    var main = document.querySelector("main");
+    var main = document.getElementById("redcafe-capa") || document.querySelector("main");
     if (!main || document.getElementById("redcafe-bandeja")) return;
 
     var seccion = document.createElement("section");

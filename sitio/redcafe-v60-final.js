@@ -13,12 +13,10 @@ window.__redcafeReactListo = window.__redcafeReactListo || function () {
 (function () {
   "use strict";
 
-  var VERSION = "20261107a";
+  var VERSION = "20261107b";
   var WAPP = "593968641376";
   var path = normalizePath(location.pathname);
   var homeAuthChecking = false;
-  var panelOrdersLoading = false;
-  var panelResourcesLoading = false;
 
   /* Un bucle de peticiones que llevaba meses en producción
      ------------------------------------------------------------------
@@ -113,105 +111,18 @@ window.__redcafeReactListo = window.__redcafeReactListo || function () {
   // Franja del precio de la portada: migrada a React (components/PortadaDatos.tsx).
 
 
-  function esc(v) {
-    return String(v == null ? "" : v).replace(/[&<>"']/g, function (ch) {
-      return ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#039;" })[ch];
-    });
-  }
 
 
   // Pizarra de cierres diarios de /servicios/precios/: migrada a React (ClientPage · PizarraDiaria).
 
-  function enhancePanelOrders() {
-    if (path !== "/panel/" || panelOrdersLoading || document.getElementById("redcafe-panel-orders")) return;
-    if (agotadosLosIntentos("panel-pedidos")) return;
-    panelOrdersLoading = true;
-    api("/api/pedidos.php?action=list").then(function (res) {
-      var pedidos = res.pedidos || [];
-      var main = qs("main");
-      if (!main) return;
-      var wrap = document.createElement("section");
-      wrap.id = "redcafe-panel-orders";
-      wrap.setAttribute("data-redcafe-propio", "1");
-      wrap.className = "mx-auto max-w-6xl px-4 py-6";
-      wrap.innerHTML = '<div class="flex flex-wrap items-end justify-between gap-3 border-b border-cafe/10 pb-3"><div><p class="rotulo text-filtrado-600">Continuidad comercial</p><h2 class="font-titulo text-2xl font-bold text-cafe">Pedidos y solicitudes del Marketplace</h2></div><a class="redcafe-panel-link" href="/marketplace/">Solicitar en Marketplace</a></div><div class="redcafe-panel-orders-grid mt-5"></div>';
-      main.insertAdjacentElement("afterbegin", wrap);
-      var grid = qs(".redcafe-panel-orders-grid", wrap);
-      if (!pedidos.length) {
-        grid.innerHTML = '<p class="redcafe-launch-note">Todavía no tienes pedidos o solicitudes. Cuando solicites café o servicios, aparecerán aquí.</p>';
-        return;
-      }
-      grid.innerHTML = pedidos.slice(0, 12).map(function (p) {
-        return '<article class="redcafe-panel-order-card"><p class="rotulo text-filtrado-600">#' + esc(p.nro || "") + ' · ' + esc(p.tipo || "café") + '</p><h3 class="mt-1 font-titulo text-lg font-bold text-cafe">' + esc(p.servicio || p.finca || "Pedido") + '</h3><p class="mt-1 text-sm text-pizarra-suave">' + esc(p.productor || p.proveedor || "") + '</p><p class="mt-2 font-semibold text-cafe">' + esc(p.estado || "Solicitado") + '</p><p class="mt-1 text-xs text-pizarra-suave">' + esc(p.fecha || "") + '</p></article>';
-      }).join("");
-    }).catch(function () {}).finally(function () {
-      panelOrdersLoading = false;
-      anotarIntento("panel-pedidos");
-    });
-  }
 
-  function panelFooterCard(title, body, href, cta) {
-    return '<a class="redcafe-panel-resource-card" href="' + esc(href) + '">' +
-      '<h3>' + esc(title) + '</h3><p>' + esc(body) + '</p><span>' + esc(cta || "Explorar") + ' →</span></a>';
-  }
 
-  function enhancePanelResources() {
-    if (path !== "/panel/" || panelResourcesLoading || document.getElementById("redcafe-panel-resources")) return;
-    if (agotadosLosIntentos("panel-recursos")) return;
-    panelResourcesLoading = true;
-    api("/api/auth.php?action=me").then(function (res) {
-      if (!res || !res.user) return;
-      var main = qs("main");
-      if (!main) return;
-      var wrap = document.createElement("section");
-      wrap.id = "redcafe-panel-resources";
-      wrap.setAttribute("data-redcafe-propio", "1");
-      wrap.className = "mx-auto max-w-6xl px-4 pb-12 pt-8";
-      wrap.innerHTML =
-        '<div class="redcafe-panel-resources-head">' +
-          '<p class="rotulo text-filtrado-600">Todo lo de esta sección entra con tu cuenta gratuita</p>' +
-          '<h2>Lo que cambia para ti cuando entras en la Red</h2>' +
-          '<p>El registro y las herramientas básicas no tienen costo. Los servicios especializados se contratan aparte, solo si los necesitas.</p>' +
-        '</div>' +
-        '<div class="redcafe-panel-resource-grid">' +
-          panelFooterCard("Marketplace", "Publica lotes de café, encuentra oferta disponible y coordina operaciones con origen visible.", "/marketplace/", "Explorar") +
-          panelFooterCard("Academia", "Aprende lo que de verdad sube el precio de tu café: proceso, secado y taza.", "/academia/", "Explorar") +
-          panelFooterCard("Servicios", "Resuelve lo que te frena: exportar, formalizarte, cumplir con Europa.", "/servicios/", "Explorar") +
-          panelFooterCard("Confianza", "Sabes con quién tratas antes de mandar un solo saco.", "/comunidad/", "Explorar") +
-        '</div>' +
-        '<div class="redcafe-panel-resources-head redcafe-panel-resources-gap">' +
-          '<p class="rotulo text-filtrado-600">Herramientas para negociar con números, no a ciegas</p>' +
-        '</div>' +
-        '<div class="redcafe-panel-resource-grid redcafe-panel-resource-grid-tools">' +
-          panelFooterCard("Panel de Precios del Mercado", "Referencia ICE C y diferenciales para fijar tu oferta con información.", "/servicios/precios/", "Ver más") +
-          panelFooterCard("Calculadora de Venta", "Convierte quintales y sacos, estima tu ingreso neto y margen por lote.", "/servicios/calculadora/", "Ver más") +
-          panelFooterCard("Dossier EUDR de tu Finca", "Registra el GPS de tu finca y genera el documento de debida diligencia listo para exportar.", "/servicios/eudr/", "Ver más") +
-          panelFooterCard("Facturación Electrónica", "Herramientas de apoyo para organizar y emitir documentación comercial desde la Red.", "/servicios/factura/", "Ver más") +
-          panelFooterCard("Soporte y Comunidad WhatsApp", "Asistencia directa y una red de contactos comerciales en tu canal favorito.", "/comunidad/", "Ver más") +
-        '</div>' +
-        '<div class="redcafe-panel-eudr">' +
-          '<div><p class="rotulo text-filtrado-600">Cuenta atrás europea</p><h2>Tu comprador te va a pedir el origen antes de que llegue la fecha</h2>' +
-          '<p>El reglamento europeo se aplica desde el <b>30 de diciembre de 2026</b> a los compradores grandes y medianos, y desde el <b>30 de junio de 2027</b> a los pequeños. La obligación es de ellos, pero necesitan los datos de tu finca para cumplirla: <b>te los pedirán entre seis y doce meses antes</b>.</p></div>' +
-          '<div class="redcafe-action-row"><a href="/servicios/eudr/">Arma tu expediente</a><a href="/servicios/">Hablar con un asesor</a></div>' +
-        '</div>' +
-        '<div class="redcafe-panel-split">' +
-          '<article><p class="rotulo text-filtrado-600">Precio de mercado del café</p><h3>El ticker muestra la cotización internacional base.</h3><p>En el panel completo ves histórico, fuentes oficiales y referencias para estimar precio en Ecuador.</p><a href="/servicios/precios/">Ver panel completo →</a></article>' +
-          '<article><p class="rotulo text-filtrado-600">Cómo garantizamos la confianza</p><h3>Una Red basada en personas reales</h3><p>La confianza comienza sabiendo con quién estás conectando: perfil claro, información de finca o empresa y contacto directo entre miembros.</p><a href="/servicios/">Ver cómo funciona →</a></article>' +
-        '</div>';
-      main.insertAdjacentElement("beforeend", wrap);
-    }).catch(function () {}).finally(function () {
-      panelResourcesLoading = false;
-      anotarIntento("panel-recursos");
-    });
-  }
 
 
   function run() {
     path = normalizePath(location.pathname);
     setRouteFlag();
     redirectLoggedHome();
-    enhancePanelOrders();
-    enhancePanelResources();
   }
 
   function startEnhancements() {

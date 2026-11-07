@@ -175,6 +175,7 @@ export default function AdminPage() {
  ];
 
  return (
+ <>
  <div className="mx-auto max-w-7xl px-4 py-6">
  {/* Header */}
  <div className="flex flex-wrap items-center justify-between gap-4">
@@ -265,6 +266,9 @@ export default function AdminPage() {
  {tab === "cuenta" && <CuentaAdminTab />}
  </div>
  </div>
+ {/* Hueco que React deja vacío: ahí monta la capa propia sus secciones de administración. */}
+ <div id="redcafe-capa" data-redcafe-hueco="admin" />
+ </>
  );
 }
 

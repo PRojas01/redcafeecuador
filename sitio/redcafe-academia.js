@@ -589,7 +589,7 @@
 
   function montarEditor(usuario) {
     YO = String((usuario && usuario.id) || "");
-    var main = document.querySelector("main");
+    var main = document.getElementById("redcafe-capa") || document.querySelector("main");
     if (!main || document.getElementById("redcafe-mis-cursos")) return;
 
     json("/api/cursos.php?action=mine").then(function (res) {
@@ -827,7 +827,7 @@
     json("/api/auth.php?action=me").then(function (res) {
       var u = res && res.ok && res.data && res.data.user;
       if (!u || !u.id) return;
-      var main = document.querySelector("main");
+      var main = document.getElementById("redcafe-capa") || document.querySelector("main");
       montarMisMatriculas(main);
       montarEditor(u);
     });

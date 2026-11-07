@@ -23,10 +23,6 @@
   // Secciones que se pliegan. Se nombran una a una a propósito: plegar por
   // regla general acabaría escondiendo algún aviso corto que debe leerse.
   var SECCIONES = [
-    // Con muchos pedidos, esta tarjeta pintaba una fila entera por cada uno
-    // (hasta 12) directo al abrir el panel: en el móvil no dejaba ver nada
-    // más sin bajar mucho. Se pliega igual que el resto.
-    "redcafe-panel-orders",
     "redcafe-bandeja",
     "redcafe-mis-publicaciones",
     "redcafe-empleos-panel",
@@ -41,8 +37,6 @@
     "redcafe-registro-actividad",
     "redcafe-mis-reportes",
     "redcafe-solicitudes-curso",
-    // «Lo que cambia para ti…» es informativo y medía 2.897 px en el móvil.
-    "redcafe-panel-resources",
     // Requerimientos: 562 px en el móvil aunque el perfil no pueda publicar.
     // El enlace «Publicar qué café buscas» la abre al llegar (redcafe-conversion.js).
     "redcafe-requerimientos-panel"
