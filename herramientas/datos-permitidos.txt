@@ -21,6 +21,7 @@ git@github.com
 0994445566
 593999999999
 
-# Cédulas ficticias de prueba (dígito verificador válido, qa/qa_api.py)
+# Cédulas ficticias de prueba (dígito verificador válido; qa/qa_api.py y servidor/test/paises.test.ts)
 1710000009
 1100000007
+1710000009001
