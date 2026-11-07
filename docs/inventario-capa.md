@@ -47,3 +47,9 @@ de dónde la capa tapa a React, no un número exacto de bloques.
   `redcafe-v60-mejoras-obligatorias.js` (7). Son los primeros a pasar a React.
 - Hecho: carrusel y collage de la portada ya en React (`components/PortadaFotos.tsx`).
 - 13 scripts van en todas las páginas: son la «base común» de la fase 1.
+- 7-nov (20261107a): borrados `redcafe-menu.js` y `redcafe-v60-mejoras-obligatorias.js`
+  (solicitar/contactar lote, mapa, chat con Enter y menú «Más» ya en React).
+  `redcafe-mejoras-ui.js` solo limpia cachés. Login: tarjeta de registro en React.
+- Siguiente fase: panel. «Pedidos» y «Lo que cambia para ti» (redcafe-v60-final.js)
+  sirven de ancla a 12 módulos que se colocan antes o después de ellos dentro de
+  `<main>`; hay que darles a todos un hueco propio antes de pasarlos a React.

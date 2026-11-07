@@ -110,6 +110,23 @@ export default function MapaProductores({ lotes, onSelect, altura = "420px" }: P
  maxZoom: 18,
  }).addTo(map);
  map.on("zoomend", () => dibujarRef.current?.());
+ // Si el mapa nace en un contenedor sin ancho (pestaña oculta, hidratación),
+ // Leaflet calcula zoom 0. Al tomar tamaño se re-mide y, si quedó de mundo
+ // entero, se encuadra Ecuador. (Antes lo hacía la capa leyendo la fibra de React.)
+ if (typeof ResizeObserver === "function") {
+ let ancho = containerRef.current.getBoundingClientRect().width;
+ const obs = new ResizeObserver(() => {
+ const el = containerRef.current;
+ if (!el || !mapRef.current) return;
+ const w = el.getBoundingClientRect().width;
+ if (!w || w === ancho) return;
+ ancho = w;
+ mapRef.current.invalidateSize();
+ if (mapRef.current.getZoom() < 5) mapRef.current.setView([-1.6, -78.6], 6);
+ });
+ obs.observe(containerRef.current);
+ map.on("unload", () => obs.disconnect());
+ }
  }
 
  const map = mapRef.current;

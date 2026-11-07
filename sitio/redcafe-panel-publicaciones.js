@@ -300,6 +300,10 @@
 
     return '<div class="redcafe-foto-bloque">' +
       '<p class="redcafe-doc-titulo">' + (esServicio ? "Fotos del servicio" : "Fotos del lote") + '</p>' +
+      // Quien compra compara las fotos con la muestra: solo vale el café real.
+      (esServicio ? "" : '<p class="redcafe-nota-fotos" data-redcafe-nota-fotos="1"><strong>Toma las fotos del café real que estás vendiendo.</strong> ' +
+        "Muestra el grano de este lote (pergamino, oro o cereza según corresponda), el saco o empaque y, si puedes, la finca. " +
+        "Con luz de día y sin filtros. No uses fotos de internet ni de otra cosecha: quien compra las compara con la muestra.</p>") +
       '<p class="redcafe-pub-ayuda">' + (esServicio
         ? "Muestra tu trabajo: el camión, el laboratorio, la piladora, un curso tuyo. "
         : "Toma fotos reales de tu café: el grano, el saco, la finca. ") +

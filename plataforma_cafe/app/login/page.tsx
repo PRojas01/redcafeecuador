@@ -209,6 +209,12 @@ return (
               {loading ? "Verificando…" : "Continuar →"}
             </button>
           </form>
+          <section id="redcafe-login-register-choice" className="redcafe-login-register-choice">
+            <p className="redcafe-login-register-kicker">¿Primera vez en Red Café Ecuador?</p>
+            <h2>Crea tu perfil gratis</h2>
+            <p>El registro sirve para publicar, contactar, aprender y acceder a tu panel. Si ya tienes cuenta, entra con tu correo arriba.</p>
+            <a href="/afiliate/">Registrarme gratis</a>
+          </section>
         </>
       ) : (
         <>
