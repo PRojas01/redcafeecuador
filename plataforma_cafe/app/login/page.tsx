@@ -1,5 +1,6 @@
 "use client";
 
+import { CampoClave } from "@/components/CampoClave";
 import { AvisoSancion, verSancionPorEnlace, type SancionTitular } from "@/components/CuentaPropia";
 import { useEffect, useState } from "react";
 import Link from "next/link";
@@ -169,8 +170,7 @@ return (
                   ¿Olvidaste tu contraseña?
                 </Link>
               </div>
-              <input
-                type="password"
+              <CampoClave
                 name="password"
                 value={pass}
                 onChange={(e) => setPass(e.target.value)}
@@ -209,6 +209,12 @@ return (
               {loading ? "Verificando…" : "Continuar →"}
             </button>
           </form>
+          <section id="redcafe-login-register-choice" className="redcafe-login-register-choice">
+            <p className="redcafe-login-register-kicker">¿Primera vez en Red Café Ecuador?</p>
+            <h2>Crea tu perfil gratis</h2>
+            <p>El registro sirve para publicar, contactar, aprender y acceder a tu panel. Si ya tienes cuenta, entra con tu correo arriba.</p>
+            <a href="/afiliate/">Registrarme gratis</a>
+          </section>
         </>
       ) : (
         <>

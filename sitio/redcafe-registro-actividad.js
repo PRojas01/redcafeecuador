@@ -165,7 +165,7 @@
 
   function montar() {
     if (location.pathname.indexOf("/panel") !== 0) return;
-    var main = document.querySelector("main");
+    var main = document.getElementById("redcafe-capa") || document.querySelector("main");
     if (!main || document.getElementById("redcafe-registro-actividad")) return;
 
     var seccion = el("section", {

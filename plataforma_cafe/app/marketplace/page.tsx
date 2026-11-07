@@ -40,6 +40,7 @@ export default function MarketplacePage() {
   // usuario ya está autenticado, o a /afiliate si todavía no.
   const [sesion, setSesion] = useState<ApiUser | null>(null);
   useEffect(() => { setSesion(getStoredSession()); }, []);
+  const esAdmin = Boolean(sesion && ((sesion as { roles?: string[] }).roles ?? [(sesion as { rol?: string }).rol]).includes("admin"));
   const destinoPublicarLote = sesion ? "/panel?ver=publicar" : "/afiliate?rol=productor";
   const destinoPublicarServicio = sesion ? "/panel?ver=publicar_servicio" : "/afiliate?rol=proveedor";
   // null mientras llega la API: se enseña un esqueleto, nunca un listado que
@@ -414,7 +415,7 @@ export default function MarketplacePage() {
                       : "Ningún café coincide con esos filtros. Prueba con otra provincia o variedad, o limpia la búsqueda."}
                   </p>
                 ) : (
-                  filtrados.map((l) => <TarjetaLote key={String(l.id)} lote={l} sesion={conSesion} />)
+                  filtrados.map((l) => <TarjetaLote key={String(l.id)} lote={l} sesion={conSesion} admin={esAdmin} />)
                 )}
               </div>
             </>
@@ -443,7 +444,7 @@ export default function MarketplacePage() {
               ) : serviciosFiltrados.length === 0 ? (
                 <p className="redcafe-market-vacio">Todavía no hay servicios publicados.</p>
               ) : (
-                serviciosFiltrados.map((x) => <TarjetaServicio key={String(x.id)} servicio={x} />)
+                serviciosFiltrados.map((x) => <TarjetaServicio key={String(x.id)} servicio={x} admin={esAdmin} />)
               )}
             </div>
           </>

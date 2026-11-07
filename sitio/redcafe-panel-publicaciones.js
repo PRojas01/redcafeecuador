@@ -300,6 +300,10 @@
 
     return '<div class="redcafe-foto-bloque">' +
       '<p class="redcafe-doc-titulo">' + (esServicio ? "Fotos del servicio" : "Fotos del lote") + '</p>' +
+      // Quien compra compara las fotos con la muestra: solo vale el café real.
+      (esServicio ? "" : '<p class="redcafe-nota-fotos" data-redcafe-nota-fotos="1"><strong>Toma las fotos del café real que estás vendiendo.</strong> ' +
+        "Muestra el grano de este lote (pergamino, oro o cereza según corresponda), el saco o empaque y, si puedes, la finca. " +
+        "Con luz de día y sin filtros. No uses fotos de internet ni de otra cosecha: quien compra las compara con la muestra.</p>") +
       '<p class="redcafe-pub-ayuda">' + (esServicio
         ? "Muestra tu trabajo: el camión, el laboratorio, la piladora, un curso tuyo. "
         : "Toma fotos reales de tu café: el grano, el saco, la finca. ") +
@@ -650,6 +654,7 @@
         '<div class="redcafe-pub-grid">' +
           campos.map(function (c) { return campoHtml(c, item[c.k]); }).join("") +
         '</div>' +
+        (tipo === "lote" ? mapaFincaHtml() : "") +
         fotosHtml(item.imagenes, tipo) +
         (tipo === "lote" ? docsHtml(item.documentos) : "") +
         '<div class="redcafe-pub-acciones">' +
@@ -736,6 +741,7 @@
     contenedor.innerHTML =
       lotes.map(function (l) { return tarjetaHtml(l, LOTE_CAMPOS, "lote", abiertas); }).join("") +
       servicios.map(function (s) { return tarjetaHtml(s, SERVICIO_CAMPOS, "servicio", abiertas); }).join("");
+    if (abiertas) setTimeout(function () { activarMapasFinca(contenedor); }, 0);
 
     enlazarDerechos(contenedor);
     contenedor.addEventListener("click", function (ev) {
@@ -749,6 +755,7 @@
         if (!cuerpoT) return;
         var abrir = cuerpoT.hidden;
         cuerpoT.hidden = !abrir;
+        if (abrir) activarMapasFinca(cardT);
         toggle.setAttribute("aria-expanded", abrir ? "true" : "false");
         toggle.textContent = abrir ? "Ocultar ficha"
           : (cardT.getAttribute("data-tipo") === "lote" ? "Editar ficha, fotos y certificados" : "Editar servicio y fotos");
@@ -906,58 +913,6 @@
 
   // La sección de pedidos del sitio muestra los datos pero no deja actuar.
   // Aquí se le añaden las acciones que autoriza la API, sin duplicar la lista.
-  function activarAccionesEnPedidosDelSitio(uid) {
-    var intentos = 0;
-    var timer = setInterval(function () {
-      intentos += 1;
-      var grid = document.querySelector(".redcafe-panel-orders-grid");
-      var tarjetas = grid ? grid.querySelectorAll(".redcafe-panel-order-card") : [];
-      if (intentos > 24) { clearInterval(timer); return; }
-      if (!tarjetas.length) return;
-      clearInterval(timer);
-
-      json("/api/pedidos.php?action=list").then(function (r) {
-        var pedidos = (r && r.ok && r.data && r.data.pedidos) || [];
-        var porNro = {};
-        pedidos.forEach(function (p) { porNro[String(p.nro)] = p; });
-
-        Array.prototype.slice.call(tarjetas).forEach(function (card) {
-          if (card.querySelector(".redcafe-ped-acciones")) return;
-          var rot = card.querySelector("p");
-          var m = rot ? (rot.textContent || "").match(/#\s*(\d+)/) : null;
-          if (!m) return;
-          var nro = m[1];
-          var p = porNro[nro];
-          if (!p) return;
-
-          card.setAttribute("data-nro", nro);
-          var estado = p.estado || "Solicitado";
-          var esMio = String(p.solicitante_id || "") === uid;
-          var acciones = "";
-          if (estado !== "Entregado" && estado !== "Cancelado") {
-            acciones += '<button type="button" class="redcafe-ped-btn" data-accion="cancelar">Cancelar pedido</button>';
-          }
-          if (esMio && (estado === "Solicitado" || estado === "Cancelado")) {
-            acciones += '<button type="button" class="redcafe-ped-btn is-borrar" data-accion="delete">Eliminar</button>';
-          }
-          if (!acciones) return;
-
-          var caja = document.createElement("div");
-          caja.className = "redcafe-ped-acciones";
-          caja.innerHTML = acciones + '<span class="redcafe-pub-estado" role="status" aria-live="polite"></span>';
-          card.appendChild(caja);
-        });
-
-        if (grid.getAttribute("data-redcafe-acciones") === "1") return;
-        grid.setAttribute("data-redcafe-acciones", "1");
-        grid.addEventListener("click", function (ev) {
-          var b = ev.target && ev.target.closest && ev.target.closest(".redcafe-ped-btn");
-          if (!b) return;
-          accionPedido(b.closest(".redcafe-panel-order-card"), b.getAttribute("data-accion"));
-        });
-      });
-    }, 500);
-  }
 
   /* La acción recomendada va ARRIBA del panel, no dentro de «Mis
      publicaciones», que a propósito se coloca casi al final. Para un productor
@@ -992,18 +947,16 @@
   }
 
   function colocarArriba(main, bloque) {
-    if (!main) return;
-    var pedidos = document.getElementById("redcafe-panel-orders");
-    if (pedidos && pedidos.parentNode === main) {
-      if (pedidos.previousElementSibling !== bloque) main.insertBefore(bloque, pedidos);
-    } else if (main.firstElementChild !== bloque) {
-      main.insertBefore(bloque, main.firstElementChild);
-    }
+    // React deja vacío #redcafe-capa-arriba (encima de los pedidos) para esto.
+    var arriba = document.getElementById("redcafe-capa-arriba");
+    if (arriba) { if (bloque.parentNode !== arriba) arriba.appendChild(bloque); return; }
+    if (main && main.firstElementChild !== bloque) main.insertBefore(bloque, main.firstElementChild);
   }
+
 
   function montar(usuario) {
     if (location.pathname.indexOf("/panel") !== 0) return;
-    var main = document.querySelector("main");
+    var main = document.getElementById("redcafe-capa") || document.querySelector("main");
     if (!main || document.getElementById("redcafe-mis-publicaciones")) return;
 
     var seccion = document.createElement("section");
@@ -1026,17 +979,14 @@
     // sección se coloca después, justo antes del bloque de recursos del pie,
     // para no empujar hacia abajo lo que el usuario espera ver al entrar.
     var recursos = document.getElementById("redcafe-panel-resources");
-    if (recursos) main.insertBefore(seccion, recursos);
+    if (recursos && recursos.parentNode === main) main.insertBefore(seccion, recursos);
     else main.appendChild(seccion);
 
     montarAccionRecomendada(main, usuario);
 
     var lista = seccion.querySelector("#redcafe-pub-lista");
 
-    // Los pedidos ya los lista la sección "Pedidos y solicitudes del
-    // Marketplace" que pinta el propio sitio. En vez de duplicarla, se le
-    // añaden ahí las acciones de cancelar y eliminar.
-    activarAccionesEnPedidosDelSitio(String(usuario.id || ""));
+    // Pedidos y sus acciones (cancelar/eliminar): en React (PanelPedidosRecursos.tsx).
 
     Promise.all([
       json("/api/lotes.php?action=mine"),
@@ -1072,11 +1022,6 @@
   //
   // Ahora no se mueve nada: se ordena con CSS. `order` no depende del momento
   // en que React pinte, así que el bloque cae al pie siempre.
-  function recursosAlPie() {
-    var main = document.querySelector("main");
-    if (!main) return;
-    main.classList.add("redcafe-panel-orden");
-  }
 
 
   // ── Publicar lote con la ficha completa ───────────────────────────────
@@ -1130,6 +1075,7 @@
         '</div>' +
         '<div class="redcafe-pub-grid">' + basicos + terminado + '</div>' +
         '<button type="button" class="redcafe-publicar-gps">Usar mi ubicación actual</button>' +
+        mapaFincaHtml() +
         '<details class="redcafe-publicar-ficha"><summary>Ficha técnica (opcional): humedad, zaranda, defectos, cosecha, entrega…</summary>' +
           '<div class="redcafe-pub-grid">' + ficha + '</div>' +
         '</details>' +
@@ -1148,7 +1094,6 @@
           '<button type="button" disabled data-derechos-enviar class="redcafe-pub-guardar redcafe-publicar-enviar">Publicar lote de café</button>' +
           '<span class="redcafe-pub-estado" role="status" aria-live="polite"></span>' +
         '</div>' +
-        '<p class="redcafe-publicar-rapido"><button type="button" class="redcafe-publicar-usar-rapido">Prefiero el formulario rápido anterior</button></p>' +
       '</div>';
   }
 
@@ -1207,7 +1152,7 @@
     if (ficha) ficha.hidden = (categoria === "terminado") || siembra;
   }
 
-  function enviarPublicacion(caja, formReact) {
+  function enviarPublicacion(caja) {
     if (!caja.querySelector('[name="acepta_derechos"]').checked) return;
     var categoria = caja.getAttribute("data-categoria") || "verde";
     var estado = caja.querySelector(".redcafe-pub-acciones .redcafe-pub-estado");
@@ -1315,6 +1260,133 @@
     }
   }
 
+  /* ── Elegir la ubicación de la finca en un mapa ──────────────────────
+     Escribir latitud y longitud es difícil para un productor. Debajo de
+     esos dos campos se pone un mapa pequeño: tocar el mapa (o arrastrar el
+     pin) los rellena, y si se escriben o llegan del GPS el pin se mueve.
+     Leaflet ya está en el sitio (lo usa el mapa del marketplace): se pide
+     el mismo módulo al cargador de Next en vez de traer otra copia. */
+  var MAPA_LIMITES = { latMin: -5, latMax: 2, lngMin: -82, lngMax: -75 }; // los que valida el servidor
+  var PIN_FINCA = '<svg width="30" height="40" viewBox="0 0 30 40" aria-hidden="true" style="display:block;filter:drop-shadow(0 2px 3px rgba(36,23,17,.35));">' +
+    '<path d="M15 1C7.3 1 1 7.2 1 14.9 1 25.3 15 39 15 39s14-13.7 14-24.1C29 7.2 22.7 1 15 1z" fill="#8C1E0E" stroke="#fff" stroke-width="2"/>' +
+    '<ellipse cx="15" cy="14.5" rx="6.2" ry="8" fill="#fff" transform="rotate(28 15 14.5)"/>' +
+    '<path d="M12.6 8.4c3.2 2.6 1.6 9.2 4.8 12.2" fill="none" stroke="#8C1E0E" stroke-width="1.8" stroke-linecap="round"/></svg>';
+  var promesaLeaflet = null;
+
+  function cargarLeaflet() {
+    if (promesaLeaflet) return promesaLeaflet;
+    promesaLeaflet = new Promise(function (ok, mal) {
+      var req = null;
+      try {
+        (self.webpackChunk_N_E = self.webpackChunk_N_E || []).push([["redcafe-mapa-finca"], {}, function (r) { req = r; }]);
+      } catch (e) {}
+      if (!req || typeof req.e !== "function") { mal(new Error("sin cargador")); return; }
+      req.e(1761).then(function () { ok(req(8741)); }, mal);
+    });
+    promesaLeaflet.catch(function () { promesaLeaflet = null; });
+    if (!document.querySelector('link[data-redcafe-leaflet="1"]')) {
+      var css = document.createElement("link");
+      css.rel = "stylesheet";
+      css.href = "https://unpkg.com/leaflet@1.9.4/dist/leaflet.css";
+      css.setAttribute("data-redcafe-leaflet", "1");
+      document.head.appendChild(css);
+    }
+    return promesaLeaflet;
+  }
+
+  function mapaFincaHtml() {
+    return '<div class="redcafe-mapa-finca" data-redcafe-propio="1" style="margin-top:.75rem;">' +
+      '<p class="redcafe-pub-ayuda" style="margin:0 0 .35rem;">Toca el mapa en el lugar de tu finca y se llenan la latitud y la longitud. Puedes arrastrar el pin para afinar.</p>' +
+      '<div class="redcafe-mapa-finca-caja" style="height:260px;width:100%;border:1px solid rgba(59,26,12,.2);border-radius:.5rem;overflow:hidden;background:#F3F1EA;"></div>' +
+      '<p class="redcafe-mapa-finca-aviso" role="status" aria-live="polite" style="margin:.35rem 0 0;font-size:.8rem;font-weight:700;color:#8C1E0E;" hidden></p>' +
+    '</div>';
+  }
+
+  function dentroDelPais(la, ln) {
+    return la >= MAPA_LIMITES.latMin && la <= MAPA_LIMITES.latMax && ln >= MAPA_LIMITES.lngMin && ln <= MAPA_LIMITES.lngMax;
+  }
+
+  // Monta los mapas visibles que aún no tienen Leaflet. Los de tarjetas
+  // plegadas esperan a que se abran (sin ancho, Leaflet no sabe pintar).
+  function activarMapasFinca(raiz) {
+    Array.prototype.slice.call((raiz || document).querySelectorAll(".redcafe-mapa-finca")).forEach(function (bloque) {
+      if (bloque.getAttribute("data-listo") === "1") {
+        if (bloque.__mapa) setTimeout(function () { bloque.__mapa.invalidateSize(); }, 50);
+        return;
+      }
+      var caja = bloque.querySelector(".redcafe-mapa-finca-caja");
+      if (!caja || !caja.offsetWidth) return;
+      var tarjeta = bloque.closest(".redcafe-pub-card") || bloque.parentNode;
+      var inLat = tarjeta.querySelector('[data-campo="lat"]');
+      var inLng = tarjeta.querySelector('[data-campo="lng"]');
+      if (!inLat || !inLng) return;
+      bloque.setAttribute("data-listo", "1");
+      var aviso = bloque.querySelector(".redcafe-mapa-finca-aviso");
+      cargarLeaflet().then(function (L) {
+        var mapa = L.map(caja, { center: [-1.6, -78.6], zoom: 6, scrollWheelZoom: false });
+        bloque.__mapa = mapa;
+        L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+          attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>',
+          maxZoom: 18
+        }).addTo(mapa);
+        var pin = null;
+        var avisar = function (texto) { aviso.textContent = texto || ""; aviso.hidden = !texto; };
+        var escribir = function (ll) {
+          inLat.value = ll.lat.toFixed(6);
+          inLng.value = ll.lng.toFixed(6);
+          // El botón «Guardar cambios» y otros vigilantes escuchan estos eventos.
+          ["input", "change"].forEach(function (t) { inLat.dispatchEvent(new Event(t, { bubbles: true })); inLng.dispatchEvent(new Event(t, { bubbles: true })); });
+        };
+        var ponerPin = function (ll, centrar) {
+          if (!pin) {
+            pin = L.marker(ll, {
+              draggable: true, title: "Ubicación de la finca",
+              icon: L.divIcon({ className: "", html: PIN_FINCA, iconSize: [30, 40], iconAnchor: [15, 39] })
+            }).addTo(mapa);
+            pin.on("dragend", function () {
+              var p = pin.getLatLng();
+              if (dentroDelPais(p.lat, p.lng)) { avisar(""); escribir(p); }
+              else { avisar("Ese punto está fuera del Ecuador continental. Elige un lugar dentro del país."); desdeCampos(); }
+            });
+          } else {
+            pin.setLatLng(ll);
+          }
+          if (centrar) mapa.setView(ll, Math.max(mapa.getZoom(), 12));
+        };
+        var desdeCampos = function () {
+          var la = inLat.value.trim() === "" ? NaN : Number(inLat.value);
+          var ln = inLng.value.trim() === "" ? NaN : Number(inLng.value);
+          if (!isFinite(la) || !isFinite(ln) || !dentroDelPais(la, ln)) {
+            if (pin) { pin.remove(); pin = null; }
+            return;
+          }
+          var ll = L.latLng(la, ln);
+          ponerPin(ll, !mapa.getBounds().contains(ll) || mapa.getZoom() < 10);
+        };
+        mapa.on("click", function (e) {
+          if (!dentroDelPais(e.latlng.lat, e.latlng.lng)) { avisar("Ese punto está fuera del Ecuador continental. Elige un lugar dentro del país."); return; }
+          avisar("");
+          ponerPin(e.latlng, false);
+          escribir(e.latlng);
+          if (mapa.getZoom() < 12) mapa.setView(e.latlng, Math.min(mapa.getZoom() + 3, 14));
+        });
+        [inLat, inLng].forEach(function (el) { el.addEventListener("input", function (ev) { if (ev.isTrusted) desdeCampos(); }); });
+        bloque.__desdeCampos = desdeCampos;
+        desdeCampos();
+        setTimeout(function () { mapa.invalidateSize(); }, 200);
+      }).catch(function () {
+        bloque.setAttribute("data-listo", "0");
+        avisar("No se pudo cargar el mapa. Escribe la latitud y la longitud o usa tu ubicación actual.");
+      });
+    });
+  }
+
+  // Tras «Usar mi ubicación actual»: el pin va al punto nuevo.
+  function refrescarMapaFinca(tarjeta) {
+    var b = tarjeta && tarjeta.querySelector(".redcafe-mapa-finca");
+    if (b && b.__desdeCampos) b.__desdeCampos();
+  }
+
   function montarPublicarCompleto() {
     if (location.pathname.indexOf("/panel") !== 0) return;
     // Antes se exigía ?ver=publicar en la dirección. Dentro del panel se llega
@@ -1322,13 +1394,10 @@
     // quedaba el formulario básico: es lo que el propietario vio como
     // «formulario incompleto». Ahora basta con que el formulario de la web
     // aparezca, venga de donde venga.
-    if (/[?&]editar=/.test(location.search || "")) return;
     if (document.getElementById("redcafe-publicar-completo")) return;
-    var titulo = Array.prototype.slice.call(document.querySelectorAll("main h2")).filter(function (h) {
-      return /Publicar lote en el Marketplace/.test(h.textContent || "");
-    })[0];
-    var formReact = titulo && titulo.parentNode && titulo.parentNode.querySelector("form");
-    if (!formReact) return;
+    // React deja un hueco vacío para este formulario y no lo toca.
+    var hueco = document.getElementById("redcafe-publicar-hueco");
+    if (!hueco) return;
 
     var caja = document.createElement("div");
     caja.id = "redcafe-publicar-completo";
@@ -1337,12 +1406,8 @@
     enlazarDerechos(caja);
     var tarjeta = caja.firstChild;
     marcarRequeridos(tarjeta, "verde");
-    // Firma del formulario de React: si React lo repinta, la limpieza de
-    // copias huérfanas (redcafe-v60-final.js) vuelve a colocar este detrás.
-    caja.setAttribute("data-redcafe-copia", "1");
-    caja.setAttribute("data-redcafe-original", formReact.tagName + "|" + String(formReact.textContent || "").replace(/\s+/g, " ").trim().slice(0, 200));
-    formReact.setAttribute("data-redcafe-oculto-react", "1");
-    formReact.insertAdjacentElement("afterend", caja);
+    hueco.appendChild(caja);
+    [0, 400, 1500].forEach(function (ms) { setTimeout(function () { activarMapasFinca(caja); }, ms); });
 
     if (!publicarScrollHecho && /[?&]ver=publicar(?:&|$)/.test(location.search || "")) {
       publicarScrollHecho = true;
@@ -1380,12 +1445,7 @@
     caja.addEventListener("click", function (ev) {
       var t = ev.target;
       if (!t || !t.closest) return;
-      if (t.closest(".redcafe-publicar-enviar")) { enviarPublicacion(tarjeta, formReact); return; }
-      if (t.closest(".redcafe-publicar-usar-rapido")) {
-        formReact.removeAttribute("data-redcafe-oculto-react");
-        caja.hidden = true;
-        return;
-      }
+      if (t.closest(".redcafe-publicar-enviar")) { enviarPublicacion(tarjeta); return; }
       if (t.closest(".redcafe-publicar-gps")) {
         var est = tarjeta.querySelector(".redcafe-pub-acciones .redcafe-pub-estado");
         if (!navigator.geolocation) { est.textContent = "Tu navegador no da la ubicación."; return; }
@@ -1394,6 +1454,7 @@
           tarjeta.querySelector('[data-campo="lat"]').value = pos.coords.latitude.toFixed(5);
           tarjeta.querySelector('[data-campo="lng"]').value = pos.coords.longitude.toFixed(5);
           est.textContent = "Ubicación añadida.";
+          refrescarMapaFinca(tarjeta);
         }, function () { est.textContent = "No se pudo obtener la ubicación. Escríbela a mano o déjala vacía."; },
         { timeout: 10000 });
       }
@@ -1572,23 +1633,16 @@
 
   function montarPublicarServicio() {
     if (location.pathname.indexOf("/panel") !== 0) return;
-    if (/[?&]editar=/.test(location.search || "")) return;
     if (document.getElementById("redcafe-publicar-servicio-completo")) return;
-    var titulo = Array.prototype.slice.call(document.querySelectorAll("main h2")).filter(function (h) {
-      return /Publicar servicio en el Marketplace/.test(h.textContent || "");
-    })[0];
-    var formReact = titulo && titulo.parentNode && titulo.parentNode.querySelector("form");
-    if (!formReact) return;
+    var hueco = document.getElementById("redcafe-publicar-servicio-hueco");
+    if (!hueco) return;
 
     var caja = document.createElement("div");
     caja.id = "redcafe-publicar-servicio-completo";
     caja.setAttribute("data-redcafe-propio", "1");
     caja.innerHTML = formularioServicioPublicarHtml();
     enlazarDerechos(caja);
-    caja.setAttribute("data-redcafe-copia", "1");
-    caja.setAttribute("data-redcafe-original", formReact.tagName + "|" + String(formReact.textContent || "").replace(/\s+/g, " ").trim().slice(0, 200));
-    formReact.setAttribute("data-redcafe-oculto-react", "1");
-    formReact.insertAdjacentElement("afterend", caja);
+    hueco.appendChild(caja);
 
     caja.addEventListener("change", function (ev) {
       var el = ev.target;
@@ -1643,7 +1697,7 @@
   }
 
   function identidad(usuario) {
-    var main = document.querySelector("main");
+    var main = document.getElementById("redcafe-capa") || document.querySelector("main");
     if (!main || document.getElementById("redcafe-identidad")) return;
     var bloque = document.createElement("section");
     bloque.id = "redcafe-identidad";
@@ -1691,9 +1745,6 @@
       intentosPublicar = 0;
       vecesVigilante = 0;
       programarPublicarCompleto();
-      // El bloque de recursos cierra el panel: se comprueba varias veces
-      // porque el sitio lo inserta de forma diferida.
-      [1500, 3000, 5000].forEach(function (t) { setTimeout(recursosAlPie, t); });
     });
   }
 
@@ -1704,68 +1755,4 @@
   document.addEventListener("redcafe:ruta", function () { setTimeout(iniciar, 900); });
 })();
 
-/* Red Café Ecuador — «Descargar mis datos» en /panel/ (LOPDP: acceso y portabilidad).
-   Añade un botón junto a «Cerrar mi cuenta y eliminar mis datos». No toca los
-   nodos de React: inserta un bloque propio después de que React hidrate. */
-(function () {
-  "use strict";
-  var ID = "redcafe-mis-datos";
-
-  function descargar(boton) {
-    boton.disabled = true;
-    var texto = boton.textContent;
-    boton.textContent = "Preparando…";
-    fetch("/api/members.php?action=mis_datos", { credentials: "same-origin", headers: { Accept: "application/json" } })
-      .then(function (r) { return r.json(); })
-      .then(function (res) {
-        if (!res || !res.ok) throw new Error((res && res.error) || "No se pudo preparar la descarga.");
-        var blob = new Blob([JSON.stringify(res.data.datos, null, 2)], { type: "application/json" });
-        var a = document.createElement("a");
-        a.href = URL.createObjectURL(blob);
-        a.download = "mis-datos-redcafe-" + new Date().toISOString().slice(0, 10) + ".json";
-        document.body.appendChild(a);
-        a.click();
-        setTimeout(function () { URL.revokeObjectURL(a.href); a.remove(); }, 1000);
-      })
-      .catch(function (e) { alert(e.message || "No se pudo preparar la descarga."); })
-      .then(function () { boton.disabled = false; boton.textContent = texto; });
-  }
-
-  function montar() {
-    if (document.getElementById(ID)) return true;
-    var main = document.querySelector("main");
-    if (!main) return false;
-    var ancla = null, nodos = main.querySelectorAll("summary, h2, h3, button");
-    for (var i = 0; i < nodos.length; i++) {
-      if (/cerrar mi cuenta/i.test(nodos[i].textContent || "")) { ancla = nodos[i].closest("details, section, div"); break; }
-    }
-    var caja = document.createElement("div");
-    caja.id = ID;
-    caja.className = "mt-4 rounded-xl border p-4 text-sm";
-    var p = document.createElement("p");
-    p.textContent = "Puedes descargar una copia de todos tus datos en la Red (perfil, publicaciones, mensajes, valoraciones, matrículas) en formato JSON.";
-    var b = document.createElement("button");
-    b.type = "button";
-    b.className = "mt-2 rounded-lg border px-3 py-2 font-semibold";
-    b.textContent = "Descargar mis datos";
-    b.addEventListener("click", function () { descargar(b); });
-    caja.appendChild(p);
-    caja.appendChild(b);
-    if (ancla && ancla.parentNode) ancla.parentNode.insertBefore(caja, ancla);
-    else main.appendChild(caja);
-    return true;
-  }
-
-  var intentos = 0;
-  function iniciar() {
-    if (location.pathname.indexOf("/panel") !== 0) return;
-    if (!window.__redcafeReactListo || !window.__redcafeReactListo()) { if (++intentos < 50) setTimeout(iniciar, 250); return; }
-    fetch("/api/auth.php?action=me", { credentials: "same-origin" }).then(function (r) { return r.json(); }).then(function (res) {
-      if (res && res.ok && res.data && res.data.user && res.data.user.id) montar();
-    }).catch(function () {});
-  }
-
-  if (document.readyState === "complete") setTimeout(iniciar, 1500);
-  else window.addEventListener("load", function () { setTimeout(iniciar, 1500); }, { once: true });
-  document.addEventListener("redcafe:ruta", function () { intentos = 0; setTimeout(iniciar, 1200); });
-})();
+/* «Descargar mis datos»: en React (components/CuentaPropia.tsx). */

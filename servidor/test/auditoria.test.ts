@@ -188,7 +188,7 @@ describe("auditoría local", () => {
   it("d: el formulario propio envía la contraseña actual con los datos de perfil", () => {
     const fuente = fs.readFileSync(new URL("../../plataforma_cafe/app/panel/page.tsx", import.meta.url), "utf8");
     expect(fuente).toContain("Contraseña actual (solo si cambias el correo)");
-    expect(fuente).toContain('type="password" value={passwordActualCuenta}');
+    expect(fuente).toContain('<CampoClave value={passwordActualCuenta}');
     expect(fuente).toContain("password_actual: passwordActualCuenta");
   });
 

@@ -1,5 +1,6 @@
 "use client";
 
+import { CampoClave } from "@/components/CampoClave";
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { PLANES } from "@/lib/data";
@@ -9,6 +10,7 @@ import type { Rol } from "@/lib/data";
 import { Icono, type IconoNombre } from "@/components/Icono";
 import { CONFIG } from "@/lib/config";
 import { SkeletonGrid } from "@/components/Skeleton";
+import { PAISES, PROVINCIAS_EC, documentoEcuadorValido, nombrePais, telefonoInternacional } from "@/lib/paises";
 
 const PASOS = ["Perfil", "Datos", "Listo"] as const;
 
@@ -260,6 +262,12 @@ export default function AfiliatePage() {
     setSesion(getStoredSession());
     setRouterReady(true);
   }, []);
+  // En el móvil el botón para avanzar va fijo abajo (CSS en redcafe-v60-final.css:
+  // [data-redcafe-fijo] y html.redcafe-con-boton-fijo deja sitio al pie).
+  useEffect(() => {
+    document.documentElement.classList.add("redcafe-con-boton-fijo");
+    return () => document.documentElement.classList.remove("redcafe-con-boton-fijo");
+  }, []);
   useEffect(() => {
     if (!routerReady || !sesion) return;
     const rol = new URLSearchParams(window.location.search).get("rol");
@@ -339,6 +347,9 @@ function AfiliateForm() {
   const [telefono, setTelefono] = useState("");
   const [cedula, setCedula] = useState("");
   const [provincia, setProvincia] = useState("");
+  const [pais, setPais] = useState("EC");
+  const enEcuador = pais === "EC";
+  const prefijo = PAISES.find((p) => p.c === pais)?.t ?? "";
   // Público por defecto: el motivo de registrarse es que te encuentren. Quien
   // prefiera lo contrario lo cambia aquí mismo, no enterrado en ajustes.
   const [visibilidad, setVisibilidad] = useState<"publico" | "registrados">("publico");
@@ -417,6 +428,10 @@ const introduccionPerfil = INTRODUCCION_PERFIL[rol];
       setError("Para crear tu cuenta debes aceptar los Términos, la Política de Privacidad y la Política de Uso de Datos.");
       return;
     }
+    if (enEcuador && cedula.trim() && !documentoEcuadorValido(cedula)) {
+      setError("Revisa la cédula (10 dígitos) o el RUC (13 dígitos). Si no lo tienes a mano, déjalo vacío.");
+      return;
+    }
     setPaso(3);
     const id = setTimeout(() => {
       document.getElementById("afiliar-form")?.scrollIntoView({ behavior: "smooth" });
@@ -435,10 +450,14 @@ const introduccionPerfil = INTRODUCCION_PERFIL[rol];
       setError("Para crear tu cuenta debes aceptar los Términos, la Política de Privacidad y la Política de Uso de Datos.");
       return;
     }
+    if (enEcuador && cedula.trim() && !documentoEcuadorValido(cedula)) {
+      setError("Revisa la cédula (10 dígitos) o el RUC (13 dígitos). Si no lo tienes a mano, déjalo vacío.");
+      return;
+    }
     setLoading(true);
     const r = await api.register(
       nombre, email, pass, rol, plan, roles,
-      { telefono, cedula, provincia, visibilidad },
+      { telefono: telefonoInternacional(telefono, pais), cedula, provincia, pais, visibilidad },
       {
         terminos: aceptaTerminos,
         privacidad: aceptaTerminos,
@@ -565,7 +584,7 @@ const introduccionPerfil = INTRODUCCION_PERFIL[rol];
               </div>
             </div>
             {error && <p className="mt-4 rounded-xl bg-danger/10 p-3 text-center text-sm font-semibold text-danger">{error}</p>}
-            <div className="mt-6 flex justify-center">
+            <div className="mt-6 flex justify-center" data-redcafe-fijo="1">
               <button
                 type="button"
                 onClick={() => {
@@ -645,9 +664,8 @@ const introduccionPerfil = INTRODUCCION_PERFIL[rol];
                 </div>
                 <div>
                   <label htmlFor="af-pass" className="text-xs font-semibold text-coffee-700">Contraseña</label>
-                  <input
+                  <CampoClave
                     id="af-pass"
-                    type="password"
                     value={pass}
                     onChange={(e) => setPass(e.target.value)}
                     placeholder="Mínimo 8 caracteres"
@@ -658,43 +676,79 @@ const introduccionPerfil = INTRODUCCION_PERFIL[rol];
                   />
                 </div>
                 <div>
-                  <label htmlFor="af-whatsapp" className="text-xs font-semibold text-coffee-700">WhatsApp</label>
-                  <input
-                    id="af-whatsapp"
-                    type="tel"
-                    inputMode="tel"
-                    value={telefono}
-                    onChange={(e) => setTelefono(e.target.value)}
-                    placeholder="Ej: 09X XXX XXXX"
+                  <label htmlFor="af-pais" className="text-xs font-semibold text-coffee-700">País</label>
+                  <select
+                    id="af-pais"
+                    value={pais}
+                    onChange={(e) => { setPais(e.target.value); setProvincia(""); }}
                     className="mt-1 w-full rounded-lg border border-border-soft bg-surface px-3 py-2"
-                    autoComplete="tel"
-                  />
+                    autoComplete="country"
+                  >
+                    {PAISES.map((p) => (
+                      <option key={p.c} value={p.c}>{p.n}</option>
+                    ))}
+                  </select>
                 </div>
                 <div>
-                  <label htmlFor="af-cedula" className="text-xs font-semibold text-coffee-700">Cédula o RUC</label>
+                  <label htmlFor="af-provincia" className="text-xs font-semibold text-coffee-700">
+                    {enEcuador ? "Provincia" : "Estado, provincia o ciudad"}
+                  </label>
+                  {enEcuador ? (
+                    <select
+                      id="af-provincia"
+                      value={provincia}
+                      onChange={(e) => setProvincia(e.target.value)}
+                      className="mt-1 w-full rounded-lg border border-border-soft bg-surface px-3 py-2"
+                    >
+                      <option value="">Seleccionar provincia…</option>
+                      {PROVINCIAS_EC.map((p) => (
+                        <option key={p} value={p}>{p}</option>
+                      ))}
+                    </select>
+                  ) : (
+                    <input
+                      id="af-provincia"
+                      value={provincia}
+                      onChange={(e) => setProvincia(e.target.value)}
+                      placeholder="Ej: Huila, Medellín, California"
+                      maxLength={80}
+                      autoComplete="address-level1"
+                      className="mt-1 w-full rounded-lg border border-border-soft bg-surface px-3 py-2"
+                    />
+                  )}
+                </div>
+                <div>
+                  <label htmlFor="af-whatsapp" className="text-xs font-semibold text-coffee-700">WhatsApp</label>
+                  <div className="mt-1 flex items-stretch">
+                    <span className="inline-flex items-center rounded-l-lg border border-r-0 border-border-soft bg-cream-200/70 px-3 text-sm font-semibold text-coffee-900" aria-hidden="true">+{prefijo}</span>
+                    <input
+                      id="af-whatsapp"
+                      type="tel"
+                      inputMode="tel"
+                      value={telefono}
+                      onChange={(e) => setTelefono(e.target.value)}
+                      placeholder={enEcuador ? "Ej: 099 123 4567" : "Número sin el prefijo"}
+                      aria-describedby="af-whatsapp-ayuda"
+                      className="w-full min-w-0 rounded-r-lg border border-border-soft bg-surface px-3 py-2"
+                      autoComplete="tel-national"
+                    />
+                  </div>
+                  <p id="af-whatsapp-ayuda" className="mt-1 text-xs text-text-secondary">Se guarda con el prefijo +{prefijo} de {nombrePais(pais)}.</p>
+                </div>
+                <div>
+                  <label htmlFor="af-cedula" className="text-xs font-semibold text-coffee-700">
+                    {enEcuador ? "Cédula o RUC" : "Documento de identidad"} <span className="font-normal text-text-secondary">(opcional)</span>
+                  </label>
                   <input
                     id="af-cedula"
                     value={cedula}
                     onChange={(e) => setCedula(e.target.value)}
-                    placeholder="Ej: documento o RUC"
-                    inputMode="numeric"
+                    placeholder={enEcuador ? "10 dígitos (cédula) o 13 (RUC)" : "Pasaporte, DNI, ID o número fiscal"}
+                    inputMode={enEcuador ? "numeric" : "text"}
+                    maxLength={20}
                     autoComplete="off"
                     className="mt-1 w-full rounded-lg border border-border-soft bg-surface px-3 py-2"
                   />
-                </div>
-                <div>
-                  <label htmlFor="af-provincia" className="text-xs font-semibold text-coffee-700">Provincia</label>
-                  <select
-                    id="af-provincia"
-                    value={provincia}
-                    onChange={(e) => setProvincia(e.target.value)}
-                    className="mt-1 w-full rounded-lg border border-border-soft bg-surface px-3 py-2"
-                  >
-                    <option value="">Seleccionar provincia…</option>
-                    {["Azuay","Bolívar","Cañar","Carchi","Chimborazo","Cotopaxi","El Oro","Esmeraldas","Galápagos","Guayas","Imbabura","Loja","Los Ríos","Manabí","Morona Santiago","Napo","Orellana","Pastaza","Pichincha","Santa Elena","Santo Domingo de los Tsáchilas","Sucumbíos","Tungurahua","Zamora Chinchipe"].map((p) => (
-                      <option key={p} value={p}>{p}</option>
-                    ))}
-                  </select>
                 </div>
               </div>
 
@@ -763,7 +817,7 @@ const introduccionPerfil = INTRODUCCION_PERFIL[rol];
 
               {error && <p className="mt-3 rounded-xl bg-danger/10 p-3 text-center text-sm font-semibold text-danger">{error}</p>}
 
-              <div className="mt-5 flex flex-wrap gap-3">
+              <div className="mt-5 flex flex-wrap gap-3" data-redcafe-fijo="1">
                 <button type="button" onClick={() => setPaso(1)} className="btn-ghost">
                   ← Cambiar perfil
                 </button>
@@ -803,11 +857,11 @@ const introduccionPerfil = INTRODUCCION_PERFIL[rol];
               </div>
               <div className="rounded-xl border border-border-soft bg-surface-soft p-3">
                 <dt className="text-xs font-semibold uppercase tracking-widest text-text-muted">WhatsApp</dt>
-                <dd className="mt-0.5 font-semibold text-coffee-900">{telefono || "—"}</dd>
+                <dd className="mt-0.5 font-semibold text-coffee-900">{telefono ? telefonoInternacional(telefono, pais) : "—"}</dd>
               </div>
               <div className="rounded-xl border border-border-soft bg-surface-soft p-3">
-                <dt className="text-xs font-semibold uppercase tracking-widest text-text-muted">Provincia</dt>
-                <dd className="mt-0.5 font-semibold text-coffee-900">{provincia || "—"}</dd>
+                <dt className="text-xs font-semibold uppercase tracking-widest text-text-muted">{enEcuador ? "Provincia" : "País y región"}</dt>
+                <dd className="mt-0.5 font-semibold text-coffee-900">{enEcuador ? (provincia || "—") : nombrePais(pais) + (provincia ? " · " + provincia : "")}</dd>
               </div>
             </dl>
 
@@ -819,7 +873,7 @@ const introduccionPerfil = INTRODUCCION_PERFIL[rol];
 
             {error && <p className="mt-3 rounded-xl bg-danger/10 p-3 text-center text-sm font-semibold text-danger">{error}</p>}
 
-            <div className="mt-5 flex flex-wrap gap-3">
+            <div className="mt-5 flex flex-wrap gap-3" data-redcafe-fijo="1">
               <button type="button" onClick={() => setPaso(2)} className="btn-ghost">← Atrás</button>
               <button type="submit" disabled={loading} className="btn-primary flex-1 sm:flex-none">
                 {loading ? "Creando cuenta…" : "Crear mi cuenta"}
@@ -859,7 +913,6 @@ const introduccionPerfil = INTRODUCCION_PERFIL[rol];
             <p className="mt-3 max-w-3xl text-sm leading-relaxed text-pizarra-suave md:mt-4 md:text-base">
               {introduccionPerfil.texto}
             </p>
-  
             <ol className="mt-8 hidden gap-5 md:grid md:grid-cols-3 md:gap-6">
               {introduccionPerfil.pasos.map((p) => (
                 <li key={p.n} className="border-l-2 border-latte pl-5">
@@ -869,7 +922,6 @@ const introduccionPerfil = INTRODUCCION_PERFIL[rol];
                 </li>
               ))}
             </ol>
-  
             <p className="mt-4 hidden max-w-3xl border-t border-cafe/10 pt-6 leading-relaxed text-pizarra-suave md:block">
               {introduccionPerfil.cierre}
             </p>

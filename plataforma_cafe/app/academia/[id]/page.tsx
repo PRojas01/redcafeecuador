@@ -7,6 +7,7 @@ import { notFound, useParams } from "next/navigation";
 import { CURSOS } from "@/lib/data";
 import { guardarBitacora, leerBitacora, leerSesion, type Sesion } from "@/lib/sesion";
 import { CamasSecado, CerezaMadura, FincaTerrazas, SacoExportacion } from "@/components/Lamina";
+import { VisorCurso } from "@/components/VisorCurso";
 
 const categoriaNombres: Record<string, string> = {
 	produccion: "Producción",
@@ -50,6 +51,24 @@ const laminaPorCategoria: Record<string, ReactNode> = {
 };
 
 export default function CursoPage() {
+	const params = useParams<{ id: string }>();
+	const curso = CURSOS.find((c) => c.id === params.id);
+	if (!curso) notFound();
+	// Los cursos de Legacy (de pago, presenciales) conservan su ficha con
+	// precio, matrícula y contacto. El resto se lee con sus lecciones.
+	if (curso.precios || curso.id.startsWith("legacy-")) return <CursoLocal />;
+	// Sin el servidor de cursos (o si no tiene este curso), la ficha local de
+	// siempre, con el avance guardado en el navegador.
+	return (
+		<VisorCurso
+			id={curso.id}
+			respaldo={<CursoLocal />}
+			inicial={{ id: curso.id, titulo: curso.titulo, nivel: curso.nivel, duracion: curso.duracion, categoria: curso.categoria, descripcion: curso.descripcion, modulos: curso.modulos }}
+		/>
+	);
+}
+
+function CursoLocal() {
 	const params = useParams<{ id: string }>();
 	const curso = CURSOS.find((c) => c.id === params.id);
 

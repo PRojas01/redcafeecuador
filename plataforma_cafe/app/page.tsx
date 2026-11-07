@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { Icono, type IconoNombre } from "@/components/Icono";
 import { InicioPanelRedirect } from "@/components/InicioPanelRedirect";
-import { VideoTransformacion } from "@/components/VideoTransformacion";
+import { CarruselPortada, CollagePortada } from "@/components/PortadaFotos";
 import { AccesoPortada } from "@/components/AccesoPortada";
 import { CifrasRed, FranjaPrecio, ProvinciasReales } from "@/components/PortadaDatos";
 import { CamasSecado, FincaTerrazas } from "@/components/Lamina";
@@ -43,16 +43,16 @@ export default function HomePage() {
           <div>
             <p className="badge mb-4 bg-filtrado-800 text-acento-claro">Nueva plataforma · Red Café Ecuador</p>
             <h1 className="max-w-4xl font-titulo text-4xl font-bold leading-[1.08] md:text-6xl">
-              Crea tu perfil y conecta con oportunidades del <span className="text-acento-claro">café ecuatoriano</span>
+              Vende y compra directo el <span className="text-acento-claro">café ecuatoriano</span>
             </h1>
             <p className="mt-5 max-w-2xl text-lg leading-relaxed text-crema/85">
-              Compra y vende café directo, sin intermediarios ni comisiones. Tu perfil gratis en dos minutos.
+              Sin intermediarios ni comisiones. Encuentra compradores, servicios y cursos en un solo lugar. Tu perfil es gratis y está listo en 2 minutos.
             </p>
             {/* Tres botones con la misma forma y un color por función:
                 registrarse (el más llamativo), WhatsApp (verde oficial) y
                 acceder (el cobre que antes llevaba «Unirme a la Red»). */}
             <div className="portada-botones mt-8 flex flex-wrap gap-3">
-              <Link href="/afiliate" className="btn-accent btn-registro min-h-11">Registrarse</Link>
+              <Link href="/afiliate" className="btn-accent btn-registro min-h-11">Crear cuenta gratis</Link>
               <a
                 href={waLink("Hola, quiero conocer Red Café Ecuador y crear mi perfil.")}
                 target="_blank"
@@ -65,7 +65,7 @@ export default function HomePage() {
                 </svg>
                 WhatsApp
               </a>
-              <Link href="/login" className="btn-accent min-h-11">Acceder</Link>
+              <Link href="/login" className="btn-accent min-h-11">Entrar</Link>
             </div>
           </div>
 
@@ -73,7 +73,7 @@ export default function HomePage() {
               «Forma parte» y lo traía aquí). La tarjeta «Perfiles de entrada»
               se borró: repetía los perfiles de «Elige tu perfil». */}
           <div className="overflow-hidden rounded-2xl border border-crema/20 shadow-lg">
-            <VideoTransformacion className="aspect-video w-full" base="" />
+            <CarruselPortada />
           </div>
         </div>
       </section>
@@ -83,6 +83,7 @@ export default function HomePage() {
       <FranjaPrecio />
 
       {/* 2. Forma parte (antes copia de la capa sobre dos secciones ocultas) */}
+      <CollagePortada />
       <AccesoPortada />
 
       {/* 5. Perfiles */}
@@ -107,7 +108,7 @@ export default function HomePage() {
                 <p className="mt-2 font-semibold leading-snug text-latte">{perfil.bajada}</p>
                 <p className="mt-2 text-sm leading-relaxed text-pizarra-suave">{perfil.texto}</p>
                 <span className="mt-3 inline-block text-sm font-bold text-cereza-roja underline-offset-4 group-hover:underline">
-                  {perfil.cta ?? "Forma parte de la Red"} →
+                  {perfil.cta ?? "Crear cuenta gratis"} →
                 </span>
               </Link>
             ))}
@@ -137,7 +138,7 @@ export default function HomePage() {
             ))}
           </div>
           <div className="mt-10 text-center">
-            <Link href="/servicios" className="btn-accent min-h-11">Conoce cómo funciona</Link>
+            <Link href="/servicios" className="btn-accent min-h-11">Ver cómo funciona</Link>
           </div>
         </div>
       </section>
@@ -148,14 +149,14 @@ export default function HomePage() {
           <div>
             <p className="badge badge-verde">Concepto territorial</p>
             <h2 className="titulo-subrayado mt-3 max-w-xl font-titulo text-3xl font-bold text-cafe md:text-4xl">
-              Ponemos el café ecuatoriano en el mapa
+              Encuentra café de cada provincia
             </h2>
             <p className="mt-3 max-w-2xl text-pizarra-suave">
               Explora productores, fincas, cafés y actores de diferentes provincias del Ecuador.
             </p>
             {/* Provincias reales con lotes y miembros (antes seis provincias de muestra que la capa sustituía) */}
             <ProvinciasReales />
-            <Link href="/marketplace" className="btn-primary mt-8 min-h-11">Explorar Marketplace</Link>
+            <Link href="/marketplace" className="btn-primary mt-8 min-h-11">Ver cafés en venta</Link>
           </div>
           <div className="relative overflow-hidden rounded-2xl border border-cafe/10 bg-white shadow-md">
             <FincaTerrazas className="aspect-video w-full" />

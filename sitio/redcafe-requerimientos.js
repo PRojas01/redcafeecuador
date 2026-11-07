@@ -519,7 +519,7 @@
 
   function montar() {
     if (location.pathname.indexOf("/panel") !== 0) return;
-    var main = document.querySelector("main");
+    var main = document.getElementById("redcafe-capa") || document.querySelector("main");
     if (!main || document.getElementById("redcafe-requerimientos-panel")) return;
     estilos();
     var section = el("section", {

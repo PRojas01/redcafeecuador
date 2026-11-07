@@ -12,12 +12,12 @@ import { CONFIG, waLink } from "@/lib/config";
 */
 
 const BENEFICIOS: { icono: IconoNombre; titulo: string; detalle: string; href: string }[] = [
-  { icono: "productor", titulo: "Vender mi café", detalle: "Lote visible en marketplace y mapa", href: "/afiliate/?rol=productor" },
-  { icono: "comprador", titulo: "Comprar café", detalle: "Filtra por provincia, variedad y datos del lote", href: "/marketplace/" },
-  { icono: "precio", titulo: "Negociar con referencia", detalle: "Precio mensual con fuente visible", href: "/servicios/precios/" },
-  { icono: "academia", titulo: "Aprender y avanzar", detalle: "Cursos con progreso guardado", href: "/academia/" },
-  { icono: "asesor", titulo: "Contratar apoyo", detalle: "Catación, exportación, pilado y más", href: "/servicios/" },
-  { icono: "comunidad", titulo: "Encontrar oportunidades", detalle: "Requerimientos, empleo y contactos", href: "/comunidad/" },
+  { icono: "productor", titulo: "Comprar y vender café", detalle: "Publica tu lote o encuentra café de todo el país", href: "/afiliate/?rol=productor" },
+  { icono: "comprador", titulo: "Comprar café", detalle: "Elige por provincia, variedad y finca", href: "/marketplace/" },
+  { icono: "precio", titulo: "Saber el precio", detalle: "Negocia con el precio del mes y su fuente", href: "/servicios/precios/" },
+  { icono: "academia", titulo: "Aprender", detalle: "Cursos paso a paso, a tu ritmo", href: "/academia/" },
+  { icono: "asesor", titulo: "Contratar servicios", detalle: "Catación, pilado, transporte y exportación", href: "/servicios/" },
+  { icono: "comunidad", titulo: "Conseguir clientes y trabajo", detalle: "Pedidos de compra, empleo y contactos", href: "/comunidad/" },
 ];
 
 export function AccesoPortada() {
@@ -26,16 +26,16 @@ export function AccesoPortada() {
       <div className="mx-auto max-w-6xl px-4">
         <p className="badge">Forma parte</p>
         <h2 id="forma-parte-titulo" className="mt-3 max-w-2xl font-titulo text-3xl font-semibold leading-tight text-cafe md:text-4xl">
-          Haz visible tu trabajo en el negocio del café ecuatoriano.
+          Haz que los compradores te encuentren.
         </h2>
         <p className="mt-3 max-w-2xl leading-relaxed text-pizarra-suave">
-          Crea tu perfil gratis para publicar café o servicios, revisar precios, estudiar cursos y recibir contactos directos desde la Red.
+          Con tu perfil gratis publicas tu café o tus servicios, ves el precio del mes, estudias cursos y recibes contactos directos.
         </p>
         <div className="mt-6 flex flex-wrap gap-3">
           <Link href="/afiliate/" className="btn-primary min-h-11">Crear mi perfil gratis</Link>
           <Link href="/login/" className="btn-ghost min-h-11">Ya tengo cuenta · Entrar</Link>
         </div>
-        <p className="mt-8 font-semibold text-cafe">¿Qué ganas al entrar?</p>
+        <p className="mt-8 font-semibold text-cafe">¿Qué quieres hacer hoy?</p>
         <div className="mt-3 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
           {BENEFICIOS.map((b) => (
             <Link key={b.titulo} href={b.href} className="flex min-h-11 items-start gap-3 rounded-xl border border-cafe/10 bg-white p-4 transition hover:border-latte/50">

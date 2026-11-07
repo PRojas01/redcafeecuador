@@ -61,8 +61,14 @@ st, _, r = pedir(otro, "/api/comunidad.php?action=create", {"titulo": "Pregunta 
 post = dato(r, "post").get("id", "")
 st, _, r = pedir(c, "/api/comunidad.php?action=comment", {"id": post, "text": "Yo vendo en Loja."})
 caso("Comentario en comunidad", "comentar", okr(st, r), err(st, r))
-acciones = [a for a in ("delete_comment", "comment_delete", "borrar_comentario", "uncomment") if f"'{a}'" in open(os.path.join(SITIO, "api", "comunidad.php"), encoding="utf8").read()]
-caso("Comentario en comunidad", "su autora lo elimina", bool(acciones), "existe: " + ",".join(acciones) if acciones else "comunidad.php no tiene acción para borrar comentarios")
+# Se prueba de verdad: la autora borra su comentario por la API.
+st, _, r = pedir(c, "/api/comunidad.php?action=list")
+_d = js(r).get("data") or {}
+_posts = _d.get("posts") if isinstance(_d, dict) else _d
+_p = next((p for p in (_posts or []) if p.get("id") == post), {})
+_cid = next((x.get("id") for x in (_p.get("comments") or []) if "Loja" in str(x.get("text", ""))), "")
+st, _, r = pedir(c, "/api/comunidad.php?action=comment_delete", {"id": post, "comment_id": _cid})
+caso("Comentario en comunidad", "su autora lo elimina", bool(_cid) and okr(st, r), err(st, r) if _cid else "no se encontró el comentario en el listado")
 
 for t, a, ok, d in R: print(f"{'✔' if ok else '✘'} {t:<26} {a}" + ("" if ok else f"  → {d}"))
 print(f"\n{sum(x[2] for x in R)}/{len(R)} correctos")

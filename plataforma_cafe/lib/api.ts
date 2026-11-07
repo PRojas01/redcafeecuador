@@ -15,6 +15,7 @@ export interface ApiUser {
   telefono?: string;
   whatsapp?: string;
   provincia?: string;
+  pais?: string;
 }
 
 export function getStoredSession(): ApiUser | null {
@@ -234,7 +235,7 @@ export const api = {
     rol: string,
     plan: string,
     roles?: string[],
-    extra?: { telefono?: string; cedula?: string; provincia?: string; visibilidad?: "publico" | "registrados" },
+    extra?: { telefono?: string; cedula?: string; provincia?: string; pais?: string; visibilidad?: "publico" | "registrados" },
     consents?: { terminos: boolean; privacidad: boolean; uso_datos: boolean; marketing?: boolean }
   ) => {
     const body = {
@@ -291,7 +292,7 @@ export const api = {
   // --- Members ---
   membersList: () => call(CONFIG.api("/api/members.php?action=list")),
   memberGet: (id: string) => call(CONFIG.api("/api/members.php?action=get&id=" + encodeURIComponent(id))),
-  memberUpdate: (data: { nombre: string; email: string; password_actual?: string; telefono?: string; whatsapp?: string; provincia?: string }) =>
+  memberUpdate: (data: { nombre: string; email: string; password_actual?: string; telefono?: string; whatsapp?: string; provincia?: string; pais?: string }) =>
     call(CONFIG.api("/api/members.php?action=update"), j(data)),
   memberRolesUpdate: (roles: string[], rol?: string) => call(CONFIG.api("/api/members.php?action=roles_update"), j({ roles, rol: rol ?? roles[0] })),
   memberVerify: (id: string) => call(CONFIG.api("/api/members.php?action=verify"), j({ id })),

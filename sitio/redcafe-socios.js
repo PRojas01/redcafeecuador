@@ -73,7 +73,7 @@
   }
 
   function montar(datosIniciales) {
-    var main = document.querySelector("main");
+    var main = document.getElementById("redcafe-capa") || document.querySelector("main");
     if (!main || document.getElementById("redcafe-socios-admin")) return;
 
     var seccion = document.createElement("section");

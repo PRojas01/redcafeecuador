@@ -4,8 +4,8 @@
 // (redcafe-v60-mejoras-obligatorias.js · loteCardHtml / serviceCardHtml) sobre
 // el listado de React, que quedaba oculto. Mismas clases y textos.
 //
-// «Solicitar este lote» y los enlaces .redcafe-contactar los atiende la capa
-// por delegación (registra el contacto y crea el pedido con el aviso previo).
+// «Solicitar este lote» y el registro de contactos: AccionesLote.tsx.
+import { BotonSolicitarLote, registrarContacto } from "@/components/marketplace/AccionesLote";
 import {
   type LoteApi,
   s,
@@ -39,7 +39,17 @@ function Sellos({ item, lote }: { item: LoteApi; lote?: boolean }) {
   );
 }
 
-export function TarjetaLote({ lote, sesion }: { lote: LoteApi; sesion: boolean }) {
+/** Atajo de la administración para editar una publicación desde el listado. */
+function EditarAdmin({ id, tipo }: { id: string; tipo: "lote" | "servicio" }) {
+  if (!id) return null;
+  return (
+    <a className="redcafe-edit-overlay btn-ghost mt-2 !px-3 !py-1 text-xs" href={`/panel/?ver=publicar&editar=${encodeURIComponent(id)}&tipo=${tipo}`}>
+      Editar
+    </a>
+  );
+}
+
+export function TarjetaLote({ lote, sesion, admin = false }: { lote: LoteApi; sesion: boolean; admin?: boolean }) {
   const terminado = esTerminado(lote);
   const siembra = esSiembraLote(lote);
   const titulo = terminado
@@ -66,7 +76,7 @@ export function TarjetaLote({ lote, sesion }: { lote: LoteApi; sesion: boolean }
       const cantidad = [stock ? stock + " disponibles" : "", lote.ventaMinima ? "pedido desde " + lote.ventaMinima : ""].filter(Boolean).join(", ");
       const mensaje = msgWhatsapp("Hola, quiero consultar por el café " + titulo + " de " + finca + (cantidad ? " (" + cantidad + ")" : "") + ".", "lote", id);
       contactar = (
-        <a className="btn-primary !px-4 !py-2 text-sm redcafe-contactar" data-lote={id} target="_blank" rel="noreferrer" href={`https://wa.me/${wa}?text=${mensaje}`}>
+        <a className="btn-primary !px-4 !py-2 text-sm redcafe-contactar" data-lote={id} onClick={() => registrarContacto(id)} target="_blank" rel="noreferrer" href={`https://wa.me/${wa}?text=${mensaje}`}>
           {disp === "agotado" ? "Preguntar por el próximo lote" : "Contactar"}
         </a>
       );
@@ -79,16 +89,7 @@ export function TarjetaLote({ lote, sesion }: { lote: LoteApi; sesion: boolean }
     }
   } else if (sesion || demo) {
     contactar = (
-      <button
-        type="button"
-        className="btn-primary !px-4 !py-2 text-sm redcafe-solicitar-lote"
-        data-lote={id}
-        data-finca={s(lote.finca)}
-        data-productor={s(lote.productor)}
-        data-precio={String(lote.precioSaco || 0)}
-      >
-        Solicitar este lote
-      </button>
+      <BotonSolicitarLote className="btn-primary !px-4 !py-2 text-sm" lote={id} finca={s(lote.finca)} productor={s(lote.productor)} precio={Number(lote.precioSaco) || 0} />
     );
   } else {
     contactar = (
@@ -131,6 +132,7 @@ export function TarjetaLote({ lote, sesion }: { lote: LoteApi; sesion: boolean }
           Ver café
         </a>
         {contactar}
+        {admin && <EditarAdmin id={id} tipo="lote" />}
       </div>
     </article>
   );
@@ -151,7 +153,7 @@ export type ServicioApi = LoteApi & {
 
 export const esGratis = (sv: ServicioApi) => sv.gratis === true || sv.plan === "gratis" || sv.tipo_plan === "gratis";
 
-export function TarjetaServicio({ servicio }: { servicio: ServicioApi }) {
+export function TarjetaServicio({ servicio, admin = false }: { servicio: ServicioApi; admin?: boolean }) {
   const titulo = servicio.titulo || servicio.nombre || "Servicio RedCafé";
   const gratis = esGratis(servicio);
   const precio = servicio.precio_etiqueta || (gratis ? "Gratis" : n(servicio.precio) > 0 ? "$ " + n(servicio.precio) : "A convenir");
@@ -202,6 +204,7 @@ export function TarjetaServicio({ servicio }: { servicio: ServicioApi }) {
           Entra para contactar a quien lo ofrece
         </a>
       )}
+      {admin && <EditarAdmin id={s(servicio.id)} tipo="servicio" />}
     </article>
   );
 }

@@ -7,11 +7,10 @@
  ponía la suya encima. Ahora es la única versión, con las mismas clases
  (redcafe-lote-*), así que los estilos de redcafe-v60-final.css siguen valiendo.
 
- Los botones «Solicitar este lote» y los enlaces de contacto los atiende la
- capa por delegación (.redcafe-solicitar-lote, .redcafe-contactar), igual que
- en las tarjetas del marketplace, y «Reportar al vendedor» lo abre
- redcafe-reportes.js (data-reportar-uid).
+ «Solicitar este lote» y el registro de contactos están en AccionesLote.tsx;
+ «Reportar al vendedor» lo abre redcafe-reportes.js (data-reportar-uid).
 */
+import { BotonSolicitarLote, registrarContacto } from "@/components/marketplace/AccionesLote";
 import { useEffect, useState, type ReactNode } from "react";
 import { CONFIG } from "@/lib/config";
 
@@ -263,22 +262,13 @@ function Ficha({ lote, sesion }: { lote: LoteApi; sesion: boolean }) {
     const dueno = s(lote.productor_id || lote.published_by);
     accion = (
       <>
-        <button
-          type="button"
-          className="btn-primary redcafe-solicitar-lote"
-          data-lote={idLote}
-          data-finca={s(lote.finca)}
-          data-productor={s(lote.productor)}
-          data-precio={String(lote.precioSaco || 0)}
-        >
-          Solicitar este lote
-        </button>
+        <BotonSolicitarLote className="btn-primary" lote={idLote} finca={s(lote.finca)} productor={s(lote.productor)} precio={Number(lote.precioSaco) || 0} />
         {wa ? (
-          <a className="btn-ghost redcafe-contactar" data-lote={idLote} target="_blank" rel="noreferrer" href={`https://wa.me/${wa}?text=${mensaje}`}>
+          <a className="btn-ghost redcafe-contactar" data-lote={idLote} onClick={() => registrarContacto(idLote)} target="_blank" rel="noreferrer" href={`https://wa.me/${wa}?text=${mensaje}`}>
             Contactar por WhatsApp
           </a>
         ) : contacto.email ? (
-          <a className="btn-ghost redcafe-contactar" data-lote={idLote} href={`mailto:${contacto.email}?subject=${mensaje}`}>
+          <a className="btn-ghost redcafe-contactar" data-lote={idLote} onClick={() => registrarContacto(idLote)} href={`mailto:${contacto.email}?subject=${mensaje}`}>
             Escribir al correo
           </a>
         ) : null}
@@ -422,6 +412,7 @@ function Ficha({ lote, sesion }: { lote: LoteApi; sesion: boolean }) {
             <a
               className="btn-ghost redcafe-contactar"
               data-lote={idLote}
+              onClick={() => registrarContacto(idLote)}
               target="_blank"
               rel="noreferrer"
               href={`https://wa.me/${wa}?text=${msgWhatsapp(pedirFaltantes, "lote", idLote)}`}

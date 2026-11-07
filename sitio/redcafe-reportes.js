@@ -238,7 +238,7 @@
     // dentro del <main> del panel, delante del bloque de recursos, que es el
     // que cierra la página. Nunca DENTRO de un nodo de React: se añade como
     // hijo propio del main, sin tocar los que ya están.
-    var main = document.querySelector("main");
+    var main = document.getElementById("redcafe-capa") || document.querySelector("main");
     var recursos = document.getElementById("redcafe-panel-resources");
     if (main && recursos && recursos.parentNode === main) main.insertBefore(wrap, recursos);
     else if (main) main.appendChild(wrap);

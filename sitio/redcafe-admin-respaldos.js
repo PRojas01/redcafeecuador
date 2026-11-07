@@ -144,7 +144,7 @@
 
   function montar() {
     if (document.getElementById("redcafe-admin-respaldos")) return true;
-    var main = document.querySelector("main");
+    var main = document.getElementById("redcafe-capa") || document.querySelector("main");
     if (!main) return false;
     var seccion = document.createElement("section");
     seccion.id = "redcafe-admin-respaldos";

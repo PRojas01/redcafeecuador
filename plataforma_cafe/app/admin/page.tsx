@@ -1,5 +1,6 @@
 "use client";
 
+import { CampoClave } from "@/components/CampoClave";
 import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { api, type Lote, type ApiUser, type Pedido } from "@/lib/api";
@@ -121,8 +122,7 @@ export default function AdminPage() {
  ¿Olvidaste la contraseña?
  </button>
  </div>
- <input
- type="password"
+ <CampoClave
  name="admin-password"
  value={pass}
  onChange={(e) => setPass(e.target.value)}
@@ -175,6 +175,7 @@ export default function AdminPage() {
  ];
 
  return (
+ <>
  <div className="mx-auto max-w-7xl px-4 py-6">
  {/* Header */}
  <div className="flex flex-wrap items-center justify-between gap-4">
@@ -265,6 +266,9 @@ export default function AdminPage() {
  {tab === "cuenta" && <CuentaAdminTab />}
  </div>
  </div>
+ {/* Hueco que React deja vacío: ahí monta la capa propia sus secciones de administración. */}
+ <div id="redcafe-capa" data-redcafe-hueco="admin" />
+ </>
  );
 }
 
@@ -1973,17 +1977,17 @@ function CuentaAdminTab() {
  <form onSubmit={cambiar} className="mt-4 space-y-3 max-w-md">
  <div>
  <label className="block text-xs font-semibold text-pizarra/60">Contraseña actual</label>
- <input type="password" value={current} onChange={(e) => setCurrent(e.target.value)}
+ <CampoClave value={current} onChange={(e) => setCurrent(e.target.value)}
  required className="mt-1 w-full rounded-lg border border-cafe/20 px-3 py-2" />
  </div>
  <div>
  <label className="block text-xs font-semibold text-pizarra/60">Nueva contraseña (mínimo 6)</label>
- <input type="password" value={newPass} onChange={(e) => setNewPass(e.target.value)}
+ <CampoClave value={newPass} onChange={(e) => setNewPass(e.target.value)}
  required minLength={6} className="mt-1 w-full rounded-lg border border-cafe/20 px-3 py-2" />
  </div>
  <div>
  <label className="block text-xs font-semibold text-pizarra/60">Confirmar nueva contraseña</label>
- <input type="password" value={confirm} onChange={(e) => setConfirm(e.target.value)}
+ <CampoClave value={confirm} onChange={(e) => setConfirm(e.target.value)}
  required className="mt-1 w-full rounded-lg border border-cafe/20 px-3 py-2" />
  </div>
  <button type="submit" className="rounded-full bg-hoja px-5 py-2.5 text-sm font-semibold text-crema hover:bg-hoja/90">

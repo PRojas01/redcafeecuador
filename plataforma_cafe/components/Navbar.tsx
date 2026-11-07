@@ -158,11 +158,13 @@ const mobileLinks = [
   </Link>
   <InstalarPWA variant="menu" />
  <Link href="/afiliate" className="btn-primary !px-4 !py-2 text-[13px]">
-   Forma parte de la Red
+   Crear cuenta gratis
    </Link>
   </>
  )}
  </nav>
+ {/* Hueco vacío que React no toca: ahí cuelga la capa la campana de avisos. */}
+ <div id="redcafe-nav-extra" className="redcafe-nav-extra" data-redcafe-hueco="nav" />
 
  <button
  onClick={() => setOpen(!open)}
@@ -183,7 +185,7 @@ const mobileLinks = [
   onClick={() => setOpen(false)}
   className="btn-primary mt-2 text-center"
   >
-  Forma parte de la Red
+  Crear cuenta gratis
   </Link>
   <Link
   href="/login"

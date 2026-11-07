@@ -89,6 +89,7 @@ export function miembroPublico(u: Doc) {
     rol: u.rol ?? "",
     roles: miembroRoles(u),
     provincia: u.provincia ?? "",
+    pais: u.pais ?? "EC",
     verificado: !!u.verificado,
     creado: u.creado ?? "",
   };

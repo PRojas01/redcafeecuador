@@ -115,7 +115,7 @@
   // ─── Construcción de la sección (capaz propia, sin tocar React) ──────────
 
   function montar() {
-    var main = document.querySelector("main");
+    var main = document.getElementById("redcafe-capa") || document.querySelector("main");
     if (!main || $id("redcafe-admin-difusion")) return true;
 
     var provOpts = '<option value="" selected>Todas</option>' +

@@ -252,7 +252,7 @@
 
   function montar() {
     if (!enPanel()) return;
-    var main = document.querySelector("main");
+    var main = document.getElementById("redcafe-capa") || document.querySelector("main");
     if (!main) return;
     if (document.getElementById("redcafe-cursos-autor")) return;
 
