@@ -1,5 +1,6 @@
 "use client";
 
+import { CampoClave } from "@/components/CampoClave";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { Suspense, useState } from "react";
@@ -72,8 +73,7 @@ function RecuperarContenido() {
           <>
             <div>
               <label className="text-xs font-semibold text-coffee-700">Nueva contraseña</label>
-              <input
-                type="password"
+              <CampoClave
                 value={newPass}
                 onChange={(e) => setNewPass(e.target.value)}
                 className="mt-1 w-full rounded-lg border border-border-soft bg-surface px-3 py-2"
@@ -85,8 +85,7 @@ function RecuperarContenido() {
             </div>
             <div>
               <label className="text-xs font-semibold text-coffee-700">Confirmar contraseña</label>
-              <input
-                type="password"
+              <CampoClave
                 value={confirm}
                 onChange={(e) => setConfirm(e.target.value)}
                 className="mt-1 w-full rounded-lg border border-border-soft bg-surface px-3 py-2"

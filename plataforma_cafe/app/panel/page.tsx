@@ -1,4 +1,5 @@
 "use client";
+import { CampoClave } from "@/components/CampoClave";
 import { DeclaracionDerechos } from "@/components/DeclaracionDerechos";
 
 import { Suspense, useCallback, useEffect, useState, useRef } from "react";
@@ -2228,7 +2229,7 @@ function MiCuenta({ sesion, onSesion }: { sesion: ApiUser; onSesion: (u: ApiUser
  </div>
  <div>
  <label className="block text-xs font-semibold text-pizarra/60">Contraseña actual (solo si cambias el correo)
- <input type="password" value={passwordActualCuenta} onChange={(e) => setPasswordActualCuenta(e.target.value)}
+ <CampoClave value={passwordActualCuenta} onChange={(e) => setPasswordActualCuenta(e.target.value)}
  autoComplete="current-password" className="mt-1 w-full rounded-lg border border-cafe/20 px-3 py-2" />
  </label>
  </div>
@@ -2324,17 +2325,17 @@ function MiCuenta({ sesion, onSesion }: { sesion: ApiUser; onSesion: (u: ApiUser
  <form onSubmit={cambiar} className="mt-4 space-y-3 max-w-md">
  <div>
  <label className="block text-xs font-semibold text-pizarra/60">Contraseña actual</label>
- <input type="password" value={current} onChange={(e) => setCurrent(e.target.value)}
+ <CampoClave value={current} onChange={(e) => setCurrent(e.target.value)}
  required className="mt-1 w-full rounded-lg border border-cafe/20 px-3 py-2" />
  </div>
  <div>
  <label className="block text-xs font-semibold text-pizarra/60">Nueva contraseña (mínimo 8 caracteres)</label>
- <input type="password" value={newPass} onChange={(e) => setNewPass(e.target.value)}
+ <CampoClave value={newPass} onChange={(e) => setNewPass(e.target.value)}
  required minLength={8} className="mt-1 w-full rounded-lg border border-cafe/20 px-3 py-2" />
  </div>
  <div>
  <label className="block text-xs font-semibold text-pizarra/60">Confirmar nueva contraseña</label>
- <input type="password" value={confirm} onChange={(e) => setConfirm(e.target.value)}
+ <CampoClave value={confirm} onChange={(e) => setConfirm(e.target.value)}
  required className="mt-1 w-full rounded-lg border border-cafe/20 px-3 py-2" />
  </div>
  <button type="submit" disabled={loading}
