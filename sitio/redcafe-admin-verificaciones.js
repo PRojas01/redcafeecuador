@@ -230,7 +230,7 @@
 
   function montar(datos) {
     if (!window.__redcafeReactListo || !window.__redcafeReactListo()) { setTimeout(function () { montar(datos); }, 200); return; }
-    var main = document.querySelector("main");
+    var main = document.getElementById("redcafe-capa") || document.querySelector("main");
     if (!main || document.getElementById("redcafe-admin-verificaciones")) return;
 
     var seccion = document.createElement("section");

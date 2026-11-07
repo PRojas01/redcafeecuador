@@ -913,58 +913,6 @@
 
   // La sección de pedidos del sitio muestra los datos pero no deja actuar.
   // Aquí se le añaden las acciones que autoriza la API, sin duplicar la lista.
-  function activarAccionesEnPedidosDelSitio(uid) {
-    var intentos = 0;
-    var timer = setInterval(function () {
-      intentos += 1;
-      var grid = document.querySelector(".redcafe-panel-orders-grid");
-      var tarjetas = grid ? grid.querySelectorAll(".redcafe-panel-order-card") : [];
-      if (intentos > 24) { clearInterval(timer); return; }
-      if (!tarjetas.length) return;
-      clearInterval(timer);
-
-      json("/api/pedidos.php?action=list").then(function (r) {
-        var pedidos = (r && r.ok && r.data && r.data.pedidos) || [];
-        var porNro = {};
-        pedidos.forEach(function (p) { porNro[String(p.nro)] = p; });
-
-        Array.prototype.slice.call(tarjetas).forEach(function (card) {
-          if (card.querySelector(".redcafe-ped-acciones")) return;
-          var rot = card.querySelector("p");
-          var m = rot ? (rot.textContent || "").match(/#\s*(\d+)/) : null;
-          if (!m) return;
-          var nro = m[1];
-          var p = porNro[nro];
-          if (!p) return;
-
-          card.setAttribute("data-nro", nro);
-          var estado = p.estado || "Solicitado";
-          var esMio = String(p.solicitante_id || "") === uid;
-          var acciones = "";
-          if (estado !== "Entregado" && estado !== "Cancelado") {
-            acciones += '<button type="button" class="redcafe-ped-btn" data-accion="cancelar">Cancelar pedido</button>';
-          }
-          if (esMio && (estado === "Solicitado" || estado === "Cancelado")) {
-            acciones += '<button type="button" class="redcafe-ped-btn is-borrar" data-accion="delete">Eliminar</button>';
-          }
-          if (!acciones) return;
-
-          var caja = document.createElement("div");
-          caja.className = "redcafe-ped-acciones";
-          caja.innerHTML = acciones + '<span class="redcafe-pub-estado" role="status" aria-live="polite"></span>';
-          card.appendChild(caja);
-        });
-
-        if (grid.getAttribute("data-redcafe-acciones") === "1") return;
-        grid.setAttribute("data-redcafe-acciones", "1");
-        grid.addEventListener("click", function (ev) {
-          var b = ev.target && ev.target.closest && ev.target.closest(".redcafe-ped-btn");
-          if (!b) return;
-          accionPedido(b.closest(".redcafe-panel-order-card"), b.getAttribute("data-accion"));
-        });
-      });
-    }, 500);
-  }
 
   /* La acción recomendada va ARRIBA del panel, no dentro de «Mis
      publicaciones», que a propósito se coloca casi al final. Para un productor
@@ -999,18 +947,16 @@
   }
 
   function colocarArriba(main, bloque) {
-    if (!main) return;
-    var pedidos = document.getElementById("redcafe-panel-orders");
-    if (pedidos && pedidos.parentNode === main) {
-      if (pedidos.previousElementSibling !== bloque) main.insertBefore(bloque, pedidos);
-    } else if (main.firstElementChild !== bloque) {
-      main.insertBefore(bloque, main.firstElementChild);
-    }
+    // React deja vacío #redcafe-capa-arriba (encima de los pedidos) para esto.
+    var arriba = document.getElementById("redcafe-capa-arriba");
+    if (arriba) { if (bloque.parentNode !== arriba) arriba.appendChild(bloque); return; }
+    if (main && main.firstElementChild !== bloque) main.insertBefore(bloque, main.firstElementChild);
   }
+
 
   function montar(usuario) {
     if (location.pathname.indexOf("/panel") !== 0) return;
-    var main = document.querySelector("main");
+    var main = document.getElementById("redcafe-capa") || document.querySelector("main");
     if (!main || document.getElementById("redcafe-mis-publicaciones")) return;
 
     var seccion = document.createElement("section");
@@ -1033,17 +979,14 @@
     // sección se coloca después, justo antes del bloque de recursos del pie,
     // para no empujar hacia abajo lo que el usuario espera ver al entrar.
     var recursos = document.getElementById("redcafe-panel-resources");
-    if (recursos) main.insertBefore(seccion, recursos);
+    if (recursos && recursos.parentNode === main) main.insertBefore(seccion, recursos);
     else main.appendChild(seccion);
 
     montarAccionRecomendada(main, usuario);
 
     var lista = seccion.querySelector("#redcafe-pub-lista");
 
-    // Los pedidos ya los lista la sección "Pedidos y solicitudes del
-    // Marketplace" que pinta el propio sitio. En vez de duplicarla, se le
-    // añaden ahí las acciones de cancelar y eliminar.
-    activarAccionesEnPedidosDelSitio(String(usuario.id || ""));
+    // Pedidos y sus acciones (cancelar/eliminar): en React (PanelPedidosRecursos.tsx).
 
     Promise.all([
       json("/api/lotes.php?action=mine"),
@@ -1079,11 +1022,6 @@
   //
   // Ahora no se mueve nada: se ordena con CSS. `order` no depende del momento
   // en que React pinte, así que el bloque cae al pie siempre.
-  function recursosAlPie() {
-    var main = document.querySelector("main");
-    if (!main) return;
-    main.classList.add("redcafe-panel-orden");
-  }
 
 
   // ── Publicar lote con la ficha completa ───────────────────────────────
@@ -1759,7 +1697,7 @@
   }
 
   function identidad(usuario) {
-    var main = document.querySelector("main");
+    var main = document.getElementById("redcafe-capa") || document.querySelector("main");
     if (!main || document.getElementById("redcafe-identidad")) return;
     var bloque = document.createElement("section");
     bloque.id = "redcafe-identidad";
@@ -1807,9 +1745,6 @@
       intentosPublicar = 0;
       vecesVigilante = 0;
       programarPublicarCompleto();
-      // El bloque de recursos cierra el panel: se comprueba varias veces
-      // porque el sitio lo inserta de forma diferida.
-      [1500, 3000, 5000].forEach(function (t) { setTimeout(recursosAlPie, t); });
     });
   }
 
@@ -1820,68 +1755,4 @@
   document.addEventListener("redcafe:ruta", function () { setTimeout(iniciar, 900); });
 })();
 
-/* Red Café Ecuador — «Descargar mis datos» en /panel/ (LOPDP: acceso y portabilidad).
-   Añade un botón junto a «Cerrar mi cuenta y eliminar mis datos». No toca los
-   nodos de React: inserta un bloque propio después de que React hidrate. */
-(function () {
-  "use strict";
-  var ID = "redcafe-mis-datos";
-
-  function descargar(boton) {
-    boton.disabled = true;
-    var texto = boton.textContent;
-    boton.textContent = "Preparando…";
-    fetch("/api/members.php?action=mis_datos", { credentials: "same-origin", headers: { Accept: "application/json" } })
-      .then(function (r) { return r.json(); })
-      .then(function (res) {
-        if (!res || !res.ok) throw new Error((res && res.error) || "No se pudo preparar la descarga.");
-        var blob = new Blob([JSON.stringify(res.data.datos, null, 2)], { type: "application/json" });
-        var a = document.createElement("a");
-        a.href = URL.createObjectURL(blob);
-        a.download = "mis-datos-redcafe-" + new Date().toISOString().slice(0, 10) + ".json";
-        document.body.appendChild(a);
-        a.click();
-        setTimeout(function () { URL.revokeObjectURL(a.href); a.remove(); }, 1000);
-      })
-      .catch(function (e) { alert(e.message || "No se pudo preparar la descarga."); })
-      .then(function () { boton.disabled = false; boton.textContent = texto; });
-  }
-
-  function montar() {
-    if (document.getElementById(ID)) return true;
-    var main = document.querySelector("main");
-    if (!main) return false;
-    var ancla = null, nodos = main.querySelectorAll("summary, h2, h3, button");
-    for (var i = 0; i < nodos.length; i++) {
-      if (/cerrar mi cuenta/i.test(nodos[i].textContent || "")) { ancla = nodos[i].closest("details, section, div"); break; }
-    }
-    var caja = document.createElement("div");
-    caja.id = ID;
-    caja.className = "mt-4 rounded-xl border p-4 text-sm";
-    var p = document.createElement("p");
-    p.textContent = "Puedes descargar una copia de todos tus datos en la Red (perfil, publicaciones, mensajes, valoraciones, matrículas) en formato JSON.";
-    var b = document.createElement("button");
-    b.type = "button";
-    b.className = "mt-2 rounded-lg border px-3 py-2 font-semibold";
-    b.textContent = "Descargar mis datos";
-    b.addEventListener("click", function () { descargar(b); });
-    caja.appendChild(p);
-    caja.appendChild(b);
-    if (ancla && ancla.parentNode) ancla.parentNode.insertBefore(caja, ancla);
-    else main.appendChild(caja);
-    return true;
-  }
-
-  var intentos = 0;
-  function iniciar() {
-    if (location.pathname.indexOf("/panel") !== 0) return;
-    if (!window.__redcafeReactListo || !window.__redcafeReactListo()) { if (++intentos < 50) setTimeout(iniciar, 250); return; }
-    fetch("/api/auth.php?action=me", { credentials: "same-origin" }).then(function (r) { return r.json(); }).then(function (res) {
-      if (res && res.ok && res.data && res.data.user && res.data.user.id) montar();
-    }).catch(function () {});
-  }
-
-  if (document.readyState === "complete") setTimeout(iniciar, 1500);
-  else window.addEventListener("load", function () { setTimeout(iniciar, 1500); }, { once: true });
-  document.addEventListener("redcafe:ruta", function () { intentos = 0; setTimeout(iniciar, 1200); });
-})();
+/* «Descargar mis datos»: en React (components/CuentaPropia.tsx). */

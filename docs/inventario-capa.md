@@ -50,6 +50,8 @@ de dónde la capa tapa a React, no un número exacto de bloques.
 - 7-nov (20261107a): borrados `redcafe-menu.js` y `redcafe-v60-mejoras-obligatorias.js`
   (solicitar/contactar lote, mapa, chat con Enter y menú «Más» ya en React).
   `redcafe-mejoras-ui.js` solo limpia cachés. Login: tarjeta de registro en React.
-- Siguiente fase: panel. «Pedidos» y «Lo que cambia para ti» (redcafe-v60-final.js)
-  sirven de ancla a 12 módulos que se colocan antes o después de ellos dentro de
-  `<main>`; hay que darles a todos un hueco propio antes de pasarlos a React.
+- 7-nov (20261107b): panel y admin. «Pedidos» (con cancelar/eliminar), «Lo que cambia
+  para ti» y «Descargar mis datos» en React. React deja dos huecos vacíos
+  (`#redcafe-capa-arriba`, `#redcafe-capa`; en admin solo `#redcafe-capa`) y los
+  módulos de la capa montan ahí sus secciones: ya no escriben en nodos de React.
+- Siguiente: pasar a React, una a una, las secciones que hoy viven en los huecos.

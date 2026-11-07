@@ -14,6 +14,38 @@ const MEDIDA: Record<string, string> = { advertencia: "Advertencia", suspension:
 const fecha = (v?: string | null) => (v ? new Date(v).toLocaleDateString("es-EC", { day: "numeric", month: "long", year: "numeric" }) : "");
 const campo = "w-full rounded-lg border border-cafe/20 bg-white px-3 py-2.5 text-base text-cafe";
 
+/** «Descargar mis datos» (LOPDP: acceso y portabilidad). Antes lo añadía la capa propia. */
+function DescargarMisDatos() {
+  const [preparando, setPreparando] = useState(false);
+  const descargar = async () => {
+    setPreparando(true);
+    try {
+      const r = await fetch(CONFIG.api("/api/members.php?action=mis_datos"), { credentials: "include", headers: { Accept: "application/json" } });
+      const res = await r.json();
+      if (!res?.ok) throw new Error(res?.error || "No se pudo preparar la descarga.");
+      const blob = new Blob([JSON.stringify(res.data.datos, null, 2)], { type: "application/json" });
+      const a = document.createElement("a");
+      a.href = URL.createObjectURL(blob);
+      a.download = "mis-datos-redcafe-" + new Date().toISOString().slice(0, 10) + ".json";
+      document.body.appendChild(a);
+      a.click();
+      setTimeout(() => { URL.revokeObjectURL(a.href); a.remove(); }, 1000);
+    } catch (e) {
+      alert((e as Error).message || "No se pudo preparar la descarga.");
+    } finally {
+      setPreparando(false);
+    }
+  };
+  return (
+    <div id="redcafe-mis-datos" className="mb-4 rounded-xl border p-4 text-sm">
+      <p>Puedes descargar una copia de todos tus datos en la Red (perfil, publicaciones, mensajes, valoraciones, matrículas) en formato JSON.</p>
+      <button type="button" className="mt-2 rounded-lg border px-3 py-2 font-semibold" disabled={preparando} onClick={descargar}>
+        {preparando ? "Preparando…" : "Descargar mis datos"}
+      </button>
+    </div>
+  );
+}
+
 async function post(ruta: string, cuerpo: Record<string, unknown>) {
   const r = await fetch(CONFIG.api(ruta), { method: "POST", credentials: "include", headers: { "Content-Type": "application/json" }, body: JSON.stringify(cuerpo) });
   const j = await r.json().catch(() => ({}));
@@ -86,6 +118,8 @@ export function CerrarMiCuenta() {
     window.location.href = "/?cuenta=eliminada";
   };
   return (
+    <>
+      <DescargarMisDatos />
     <section className="rounded-2xl border border-cafe/15 bg-white p-5" aria-labelledby="baja-titulo">
       <h3 id="baja-titulo" className="font-titulo text-lg font-semibold text-cafe">Cerrar mi cuenta y eliminar mis datos</h3>
       {!abierto ? (
@@ -115,6 +149,7 @@ export function CerrarMiCuenta() {
         </div>
       )}
     </section>
+    </>
   );
 }
 
