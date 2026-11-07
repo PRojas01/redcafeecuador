@@ -9,7 +9,7 @@
 9:I[9779,["8173","static/chunks/8173-742dddf291619891.js","5739","static/chunks/5739-b290f56e05b6426f.js","7177","static/chunks/app/layout-ad29d305f917d285.js"],"RegistrarPWA"]
 a:I[3704,["8173","static/chunks/8173-742dddf291619891.js","5739","static/chunks/5739-b290f56e05b6426f.js","7177","static/chunks/app/layout-ad29d305f917d285.js"],""]
 b:I[7033,[],"ClientPageRoot"]
-c:I[3210,["8173","static/chunks/8173-742dddf291619891.js","2808","static/chunks/2808-b7cdced39879e7c9.js","3823","static/chunks/3823-c5397456535a9cd4.js","2480","static/chunks/app/academia/%5Bid%5D/page-36cdb01ca8a8d4d4.js"],"default"]
+c:I[3210,["8173","static/chunks/8173-742dddf291619891.js","2808","static/chunks/2808-b7cdced39879e7c9.js","3823","static/chunks/3823-c5397456535a9cd4.js","2480","static/chunks/app/academia/%5Bid%5D/page-508ef605cc6a7ed2.js"],"default"]
 f:I[6213,[],"OutletBoundary"]
 11:I[6213,[],"MetadataBoundary"]
 13:I[6213,[],"ViewportBoundary"]
