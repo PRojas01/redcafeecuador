@@ -1,5 +1,6 @@
 "use client";
 
+import { CampoClave } from "@/components/CampoClave";
 import { AvisoSancion, verSancionPorEnlace, type SancionTitular } from "@/components/CuentaPropia";
 import { useEffect, useState } from "react";
 import Link from "next/link";
@@ -169,8 +170,7 @@ return (
                   ¿Olvidaste tu contraseña?
                 </Link>
               </div>
-              <input
-                type="password"
+              <CampoClave
                 name="password"
                 value={pass}
                 onChange={(e) => setPass(e.target.value)}

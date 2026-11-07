@@ -1,5 +1,6 @@
 "use client";
 
+import { CampoClave } from "@/components/CampoClave";
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { PLANES } from "@/lib/data";
@@ -651,9 +652,8 @@ const introduccionPerfil = INTRODUCCION_PERFIL[rol];
                 </div>
                 <div>
                   <label htmlFor="af-pass" className="text-xs font-semibold text-coffee-700">Contraseña</label>
-                  <input
+                  <CampoClave
                     id="af-pass"
-                    type="password"
                     value={pass}
                     onChange={(e) => setPass(e.target.value)}
                     placeholder="Mínimo 8 caracteres"
@@ -865,7 +865,6 @@ const introduccionPerfil = INTRODUCCION_PERFIL[rol];
             <p className="mt-3 max-w-3xl text-sm leading-relaxed text-pizarra-suave md:mt-4 md:text-base">
               {introduccionPerfil.texto}
             </p>
-  
             <ol className="mt-8 hidden gap-5 md:grid md:grid-cols-3 md:gap-6">
               {introduccionPerfil.pasos.map((p) => (
                 <li key={p.n} className="border-l-2 border-latte pl-5">
@@ -875,7 +874,6 @@ const introduccionPerfil = INTRODUCCION_PERFIL[rol];
                 </li>
               ))}
             </ol>
-  
             <p className="mt-4 hidden max-w-3xl border-t border-cafe/10 pt-6 leading-relaxed text-pizarra-suave md:block">
               {introduccionPerfil.cierre}
             </p>

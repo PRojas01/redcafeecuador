@@ -1,5 +1,6 @@
 "use client";
 
+import { CampoClave } from "@/components/CampoClave";
 import { useEffect, useState } from "react";
 import { CONFIG } from "@/lib/config";
 
@@ -137,7 +138,7 @@ export function CerrarMiCuenta() {
           <label className="font-semibold text-cafe" htmlFor="baja-motivo">¿Por qué te vas? (opcional)</label>
           <input id="baja-motivo" className={campo} maxLength={300} value={motivo} onChange={(e) => setMotivo(e.target.value)} />
           <label className="font-semibold text-cafe" htmlFor="baja-pass">Tu contraseña</label>
-          <input id="baja-pass" type="password" autoComplete="current-password" className={campo} value={pass} onChange={(e) => setPass(e.target.value)} />
+          <CampoClave id="baja-pass" autoComplete="current-password" className={campo} value={pass} onChange={(e) => setPass(e.target.value)} />
           <label className="font-semibold text-cafe" htmlFor="baja-conf">Escribe ELIMINAR para confirmar</label>
           <input id="baja-conf" className={campo} value={conf} onChange={(e) => setConf(e.target.value)} autoComplete="off" />
           {error && <p className="text-cereza" role="alert">{error}</p>}

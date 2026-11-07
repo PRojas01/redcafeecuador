@@ -153,106 +153,7 @@
 
   /* ── 4b. Contraseña mínima 8: ya en React (afiliate, recuperar y panel). */
 
-  /* ── 4b2. Ver / ocultar contraseña ─────────────────────────────────── */
-  // Botón propio junto a CADA campo de contraseña, en todas las páginas
-  // (login, registro paso 2, recuperar, cambio de clave del panel y acceso
-  // de /admin/). El input es de React: nunca se envuelve ni se mueve; el
-  // botón va como hermano, después del campo, y se coloca con CSS
-  // (position:fixed) sobre su borde derecho, tomando sus medidas.
-  var SVG_OJO = '<svg class="redcafe-ojo" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>';
-  var SVG_OJO_NO = '<svg class="redcafe-ojo-oculto" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/></svg>';
-  var retriesVerClave = 0;
-  var formasVerClave = window.WeakSet ? new WeakSet() : { add: function () {}, has: function () { return false; } };
-
-  function verClave() {
-    // Reintentos CONTADOS (patrón del archivo): si React repinta el input y lo
-    // reemplaza, el botón hermano puede quedarse huérfano o quedar el campo sin
-    // botón; con tope, no puede convertirse en bucle.
-    if (retriesVerClave >= 200) return;
-    Array.prototype.forEach.call(document.querySelectorAll("button.redcafe-ver-clave"), function (b) {
-      var previo = b.previousElementSibling;
-      // En texto plano sigue siendo el mismo campo (marcado por nosotros);
-      // solo se descarta un botón huérfano (React reemplazó el input).
-      if (previo && previo.tagName === "INPUT" && previo.hasAttribute("data-redcafe-verclave")) return;
-      if (b.parentNode) b.parentNode.removeChild(b); // es nuestro, no de React
-    });
-    Array.prototype.slice.call(document.querySelectorAll('input[type="password"]')).forEach(function (inp) {
-      if (!inp.parentNode) return;
-      var existente = inp.nextElementSibling;
-      if (existente && existente.className.indexOf("redcafe-ver-clave") !== -1 && existente._campo === inp) return;
-      // React pudo reemplazar el input pero el botón viejo quedaría apuntando a
-      // un nodo desconectado: se retiran los botones propios que sobren alrededor
-      // del campo actual antes de volver a montar.
-      var nodo = inp;
-      while (nodo.nextElementSibling && nodo.nextElementSibling.className &&
-             nodo.nextElementSibling.className.indexOf("redcafe-ver-clave") !== -1) {
-        var sobrante = nodo.nextElementSibling;
-        if (sobrante.parentNode) sobrante.parentNode.removeChild(sobrante);
-      }
-      retriesVerClave += 1;
-      if (retriesVerClave >= 200) return;
-      var boton = document.createElement("button");
-      boton.type = "button";
-      boton.className = "redcafe-ver-clave";
-      boton._campo = inp;
-      boton.setAttribute("aria-label", "Mostrar contraseña");
-      boton.setAttribute("aria-pressed", "false");
-      boton.innerHTML = SVG_OJO + SVG_OJO_NO;
-      boton.addEventListener("click", function () { alternarVerClave(inp, boton); });
-      inp.insertAdjacentElement("afterend", boton);
-      inp.setAttribute("data-redcafe-verclave", "1");
-      var form = inp.closest("form");
-      if (form && !formasVerClave.has(form)) {
-        formasVerClave.add(form);
-        form.addEventListener("submit", function () { reiniciarVerClave(); });
-      }
-    });
-    posicionarVerClave();
-  }
-
-  function alternarVerClave(campo, boton) {
-    var mostrando = campo.type === "text";
-    campo.type = mostrando ? "password" : "text";
-    boton.classList.toggle("redcafe-ver-clave-activa", !mostrando);
-    boton.setAttribute("aria-pressed", mostrando ? "false" : "true");
-    boton.setAttribute("aria-label", mostrando ? "Mostrar contraseña" : "Ocultar contraseña");
-    campo.focus();
-  }
-
-  function posicionarVerClave() {
-    Array.prototype.forEach.call(document.querySelectorAll("button.redcafe-ver-clave"), function (b) {
-      var campo = b.previousElementSibling;
-      if (!campo || campo.tagName !== "INPUT") return;
-      var ancho = 46, alto = 46;
-      var rect = campo.getBoundingClientRect();
-      b.style.position = "fixed";
-      b.style.width = ancho + "px";
-      b.style.height = alto + "px";
-      b.style.left = Math.max(0, rect.right - ancho - 2) + "px";
-      b.style.top = (rect.top + rect.height / 2 - alto / 2) + "px";
-    });
-  }
-
-  /* Al enviar el formulario o al cambiar de ruta la contraseña vuelve a estar
-     oculta: un campo despejado tras el alta quedaría en la caché del
-     autocompletado del navegador. */
-  function reiniciarVerClave() {
-    retriesVerClave = 0;
-    Array.prototype.forEach.call(document.querySelectorAll('[data-redcafe-verclave="1"]'), function (inp) {
-      if (inp && inp.type !== "password") inp.type = "password";
-      var b = inp.nextElementSibling;
-      if (b && b.className.indexOf("redcafe-ver-clave") !== -1) {
-        b.classList.remove("redcafe-ver-clave-activa");
-        b.setAttribute("aria-pressed", "false");
-        b.setAttribute("aria-label", "Mostrar contraseña");
-      }
-    });
-    posicionarVerClave();
-  }
-  document.addEventListener("redcafe:ruta", reiniciarVerClave);
-  window.addEventListener("popstate", reiniciarVerClave);
-  window.addEventListener("scroll", posicionarVerClave, { passive: true });
-  window.addEventListener("resize", posicionarVerClave, { passive: true });
+  /* ── 4b2. Ver / ocultar contraseña: en React (components/CampoClave.tsx). */
 
   /* ── 4c. Lenguaje llano: los textos ya están en React. */
 
@@ -475,7 +376,6 @@
   var programado = false;
   function aplicar() {
     programado = false;
-    verClave();
     ordenarPanel();
     panelSeguirVista();
     abrirVista();

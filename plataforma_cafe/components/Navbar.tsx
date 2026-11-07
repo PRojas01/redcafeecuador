@@ -163,6 +163,8 @@ const mobileLinks = [
   </>
  )}
  </nav>
+ {/* Hueco vacío que React no toca: ahí cuelga la capa la campana de avisos. */}
+ <div id="redcafe-nav-extra" className="redcafe-nav-extra" data-redcafe-hueco="nav" />
 
  <button
  onClick={() => setOpen(!open)}
