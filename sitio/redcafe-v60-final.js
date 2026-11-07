@@ -13,7 +13,7 @@ window.__redcafeReactListo = window.__redcafeReactListo || function () {
 (function () {
   "use strict";
 
-  var VERSION = "20261106m";
+  var VERSION = "20261107a";
   var WAPP = "593968641376";
   var path = normalizePath(location.pathname);
   var homeAuthChecking = false;
@@ -104,87 +104,7 @@ window.__redcafeReactListo = window.__redcafeReactListo || function () {
     });
   }
 
-  /* Si React hidrató, su propio <header> (components/Navbar.tsx) ya trae
-     el enlace «Precios», el desplegable «Más» y el menú móvil completo
-     (incluido «Salir» cuando hay sesión). Antes de que existiera el fuente
-     de React reconstruible, esta función rellenaba ese hueco a mano — pero
-     nunca se le puso esta guarda, así que seguía construyendo un SEGUNDO
-     menú móvil por encima del de React en todas las páginas: al abrir el
-     menú se veían los dos superpuestos. Mismo patrón ya establecido en
-     redcafe-menu.js y redcafe-fusion.js. */
-  function reactVivo() {
-    return !!document.querySelector('script[src*="/_next/static/chunks/main-app-"]');
-  }
-
-  function enhanceNav() {
-    if (reactVivo()) return;
-    var nav = qs("header nav");
-    var links = '<a href="/marketplace/">Marketplace</a>' +
-      '<a href="/academia/">Academia</a>' +
-      '<a href="/servicios/">Servicios RedCafé</a>' +
-      '<a href="/quienes-somos/">Quiénes somos</a>' +
-      '<a href="/comunidad/">Comunidad</a>' +
-      '<a href="/servicios/precios/">Precios</a>' +
-      '<a href="/marketplace/#mapa">Mapa nacional y lotes</a>' +
-      '<a href="/laboratorio/">Laboratorio</a>' +
-      '<a href="/bar/">Bares y cafeterías</a>' +
-      '<a href="/recetas/">Recetas</a>' +
-      '<a href="/noticias/">Noticias</a>' +
-      '<a href="/servicios/calculadora/">Calculadora</a>' +
-      '<a href="/servicios/eudr/">Trazabilidad / EUDR</a>' +
-      '<a href="/servicios/factura/">Facturación</a>' +
-      '<a href="/legal/">Centro legal</a>' +
-      '<a href="/terminos-y-condiciones/">Términos</a>' +
-      '<a href="/politica-de-privacidad/">Privacidad</a>';
-    if (nav && !document.querySelector(".redcafe-more")) {
-      // "Precios" y el menú "Más" NO se insertan dentro del <nav>: ese nodo lo
-      // gestiona React y añadirle hijos rompía su reconciliación al navegar
-      // ("NotFoundError: Failed to execute 'removeChild'"). Se colocan en un
-      // contenedor propio, hermano del nav, que React no conoce.
-      var extra = document.getElementById("redcafe-nav-extra");
-      if (!extra) {
-        extra = document.createElement("div");
-        extra.id = "redcafe-nav-extra";
-        extra.className = "redcafe-nav-extra";
-        nav.insertAdjacentElement("afterend", extra);
-      }
-      if (!qsa("a", nav).some(function (a) { return /servicios\/precios/.test(a.getAttribute("href") || ""); })) {
-        var price = document.createElement("a");
-        price.href = "/servicios/precios/";
-        price.className = "redcafe-nav-precios";
-        price.textContent = "Precios";
-        extra.appendChild(price);
-      }
-      var details = document.createElement("details");
-      details.className = "redcafe-more";
-      details.innerHTML = '<summary>Más ▾</summary><div class="redcafe-more-menu">' + links + '</div>';
-      extra.appendChild(details);
-      document.addEventListener("click", function (ev) {
-        if (!details.contains(ev.target)) details.removeAttribute("open");
-      }, { passive: true });
-    }
-    enhanceMobileMenu(links);
-  }
-
-  function enhanceMobileMenu(links) {
-    if (document.getElementById("redcafe-mobile-menu")) return;
-    var header = qs("header");
-    var btn = qs('header button[aria-label*="menú"], header button[aria-label*="menu"]');
-    if (!header || !btn) return;
-    var menu = document.createElement("div");
-    menu.id = "redcafe-mobile-menu";
-    menu.className = "redcafe-mobile-menu";
-    menu.setAttribute("aria-hidden", "true");
-    menu.innerHTML = '<a href="/login/">Entrar a mi perfil</a><a href="/afiliate/">Crear perfil</a>' + links;
-    // Colgado del body, no del <header> de React, por el mismo motivo.
-    // Su posición la fija el CSS, así que se ve igual.
-    document.body.appendChild(menu);
-    btn.addEventListener("click", function () {
-      var open = menu.getAttribute("aria-hidden") !== "false";
-      menu.setAttribute("aria-hidden", String(!open));
-      btn.setAttribute("aria-expanded", String(open));
-    });
-  }
+  /* Cabecera, menú «Más», menú móvil y tarjeta «Crea tu perfil gratis» del login: en React. */
 
 
   /* (Las copias de texto sobre nodos de React se retiraron: los textos ya están en React.) */
@@ -192,39 +112,12 @@ window.__redcafeReactListo = window.__redcafeReactListo || function () {
 
   // Franja del precio de la portada: migrada a React (components/PortadaDatos.tsx).
 
-  function enhanceLoginRegisterChoice() {
-    if (path !== "/login/" || document.getElementById("redcafe-login-register-choice")) return;
-    var form = qs("main form");
-    if (!form) return;
-    var card = document.createElement("section");
-    card.id = "redcafe-login-register-choice";
-    card.className = "redcafe-login-register-choice";
-    card.innerHTML =
-      '<p class="redcafe-login-register-kicker">¿Primera vez en Red Café Ecuador?</p>' +
-      '<h2>Crea tu perfil gratis</h2>' +
-      '<p>El registro sirve para publicar, contactar, aprender y acceder a tu panel. Si ya tienes cuenta, entra con tu correo arriba.</p>' +
-      '<a href="/afiliate/">Registrarme gratis</a>';
-    form.insertAdjacentElement("afterend", card);
-  }
 
   function esc(v) {
     return String(v == null ? "" : v).replace(/[&<>"']/g, function (ch) {
       return ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#039;" })[ch];
     });
   }
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
   // Pizarra de cierres diarios de /servicios/precios/: migrada a React (ClientPage · PizarraDiaria).
@@ -317,8 +210,6 @@ window.__redcafeReactListo = window.__redcafeReactListo || function () {
     path = normalizePath(location.pathname);
     setRouteFlag();
     redirectLoggedHome();
-    enhanceNav();
-    enhanceLoginRegisterChoice();
     enhancePanelOrders();
     enhancePanelResources();
   }
