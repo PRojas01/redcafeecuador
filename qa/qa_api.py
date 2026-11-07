@@ -105,10 +105,10 @@ caso("SEG-10", "Seguridad", "HSTS ≥ 1 año (.htaccess)", m and int(m.group(1))
 sufijo = secrets.token_hex(3)
 PASS = "Prueba-" + secrets.token_hex(6)
 A = {"nombre": "Productora Prueba", "email": f"prod.{sufijo}@ejemplo.test", "pass": PASS, "rol": "productor",
-     "roles": ["productor"], "telefono": "0990000001", "cedula": "0000000001", "provincia": "Loja",
+     "roles": ["productor"], "telefono": "0990000001", "cedula": "1710000009", "provincia": "Loja",
      "acepta_terminos": True, "acepta_privacidad": True, "acepta_uso_datos": True}
 B = dict(A, nombre="Comprador Prueba", email=f"comp.{sufijo}@ejemplo.test", rol="comprador", roles=["comprador"],
-         telefono="0990000002", cedula="0000000002", provincia="Pichincha")
+         telefono="0990000002", cedula="1100000007", provincia="Pichincha")
 
 ca, cb = cliente(), cliente()
 st, _, r = pedir(ca, "/api/auth.php?action=register", A)

@@ -22,6 +22,7 @@ import { Toast, useToast } from "@/components/Toast";
 import { CotizacionesPanel } from "@/components/CotizacionesPanel";
 import { AtajosPanel } from "@/components/AtajosPanel";
 import { PedidosPanel, RecursosPanel } from "@/components/PanelPedidosRecursos";
+import { PAISES } from "@/lib/paises";
 
 interface Prod { id: string; fecha: string; variedad: string; quintales: number; calidad: string }
 interface Venta { id: string; fecha: string; destino: string; quintales: number; precio: number; total: number }
@@ -2115,6 +2116,7 @@ function MiCuenta({ sesion, onSesion }: { sesion: ApiUser; onSesion: (u: ApiUser
  const [telefonoCuenta, setTelefonoCuenta] = useState(sesion.telefono ?? "");
  const [whatsappCuenta, setWhatsappCuenta] = useState(sesion.whatsapp ?? "");
  const [provinciaCuenta, setProvinciaCuenta] = useState(sesion.provincia ?? "");
+ const [paisCuenta, setPaisCuenta] = useState(sesion.pais || "EC");
  const [datosMsg, setDatosMsg] = useState<{ tipo: "ok" | "err"; texto: string } | null>(null);
  const [current, setCurrent] = useState("");
  const [newPass, setNewPass] = useState("");
@@ -2131,6 +2133,7 @@ function MiCuenta({ sesion, onSesion }: { sesion: ApiUser; onSesion: (u: ApiUser
  setTelefonoCuenta(sesion.telefono ?? "");
  setWhatsappCuenta(sesion.whatsapp ?? "");
  setProvinciaCuenta(sesion.provincia ?? "");
+ setPaisCuenta(sesion.pais || "EC");
  setRolesCuenta(rolesDeUsuario(sesion));
  }, [sesion]);
 
@@ -2147,6 +2150,7 @@ function MiCuenta({ sesion, onSesion }: { sesion: ApiUser; onSesion: (u: ApiUser
   telefono: telefonoCuenta,
   whatsapp: whatsappCuenta,
   provincia: provinciaCuenta,
+  pais: paisCuenta,
  });
  setLoading(false);
  if (r.ok && r.data) {
@@ -2239,7 +2243,14 @@ function MiCuenta({ sesion, onSesion }: { sesion: ApiUser; onSesion: (u: ApiUser
  inputMode="tel" autoComplete="tel" placeholder="+593..." className="mt-1 w-full rounded-lg border border-cafe/20 px-3 py-2" />
  </div>
  <div>
- <label className="block text-xs font-semibold text-pizarra/60">Provincia / ciudad base</label>
+ <label htmlFor="cuenta-pais" className="block text-xs font-semibold text-pizarra/60">País</label>
+ <select id="cuenta-pais" value={paisCuenta} onChange={(e) => setPaisCuenta(e.target.value)}
+ autoComplete="country" className="mt-1 w-full rounded-lg border border-cafe/20 bg-white px-3 py-2">
+ {PAISES.map((p) => <option key={p.c} value={p.c}>{p.n}</option>)}
+ </select>
+ </div>
+ <div>
+ <label className="block text-xs font-semibold text-pizarra/60">{paisCuenta === "EC" ? "Provincia / ciudad base" : "Estado, provincia o ciudad"}</label>
  <input value={provinciaCuenta} onChange={(e) => setProvinciaCuenta(e.target.value)}
  autoComplete="address-level1" className="mt-1 w-full rounded-lg border border-cafe/20 px-3 py-2" />
  </div>
