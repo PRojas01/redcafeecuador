@@ -8,6 +8,7 @@ import {
 } from "../lib/usuarios.js";
 import { emailValido, largo, nowIso, str, textoEntrada } from "../lib/util.js";
 import { cupo } from "../lib/seguridad.js";
+import { paisValido } from "../lib/paises.js";
 import { datosDeMiembro } from "../lib/borrado.js";
 import { extraCon, verificarPass } from "./auth.js";
 
@@ -86,6 +87,9 @@ const acciones: Modulo["acciones"] = {
     if (telefono && !/^[0-9+()\-\s.]{7,30}$/.test(telefono)) fail("Teléfono inválido.", 422);
     if (whatsapp && !/^[0-9+()\-\s.]{7,30}$/.test(whatsapp)) fail("WhatsApp inválido.", 422);
     if (largo(provincia) > 80) fail("Provincia demasiado larga.", 422);
+    // El país solo cambia si se envía; si no, se conserva el guardado.
+    const pais = i.pais === undefined ? null : paisValido(i.pais);
+    if (pais === "") fail("País no válido.", 422);
     if (email !== u.email) {
       if (!(await cupo(ctx, "cambiar_email", 10, 3600))) fail("Demasiados intentos. Espera una hora.", 429);
       const actual = await db.usuario.findUnique({ where: { id: u.id } });
@@ -94,7 +98,7 @@ const acciones: Modulo["acciones"] = {
     try {
       const fila = await db.usuario.update({
         where: { id: u.id },
-        data: { nombre, email, telefono, whatsapp, provincia, extra: await extraCon(u.id, { updated_at: nowIso() }) },
+        data: { nombre, email, telefono, whatsapp, provincia, extra: await extraCon(u.id, { updated_at: nowIso(), ...(pais ? { pais } : {}) }) },
       });
       invalidarUsuario(ctx);
       return { user: aDoc(fila) };

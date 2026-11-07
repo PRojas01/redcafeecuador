@@ -13,6 +13,7 @@ import { config } from "../lib/config.js";
 import { escribirPassAdmin, esHash, passAdminGuardada, provisionalCaducada, verificarPassAdmin } from "../lib/admin.js";
 import { emailValido, largo, nowIso, sha256, str, textoEntrada, uid } from "../lib/util.js";
 import { vistaTitular } from "./moderacion-comun.js";
+import { documentoValido, paisValido } from "../lib/paises.js";
 
 const REGISTRO_GRATIS_HASTA = "2026-12-31";
 const COSTE_BCRYPT = 10;
@@ -55,10 +56,14 @@ const acciones: Modulo["acciones"] = {
     const rol = roles[0];
     const plan = await planValido(i.plan);
     const telefono = textoEntrada(i.telefono, 30);
-    const cedula = textoEntrada(i.cedula, 20);
+    const cedula0 = textoEntrada(i.cedula, 20);
     const provincia = textoEntrada(i.provincia, 80);
+    // Ecuador por defecto (los formularios antiguos no envían país).
+    const pais = paisValido(i.pais);
+    if (!pais) fail("País no válido.", 422);
     if (telefono && !/^[0-9+()\-\s.]{7,30}$/.test(telefono)) fail("Teléfono inválido.", 422);
-    if (cedula && !/^[0-9A-Za-z-]{5,20}$/.test(cedula)) fail("Cédula o RUC inválido.", 422);
+    const cedula = documentoValido(cedula0, pais);
+    if (cedula === null) fail(pais === "EC" ? "Cédula (10 dígitos) o RUC (13 dígitos) no válido." : "Documento de identidad no válido.", 422);
     const visibilidad = i.visibilidad === "registrados" ? "registrados" : "publico";
     const acepta = { terminos: !!i.acepta_terminos, privacidad: !!i.acepta_privacidad, usoDatos: !!i.acepta_uso_datos, marketing: !!i.acepta_marketing };
     if (!acepta.terminos || !acepta.privacidad || !acepta.usoDatos) fail("Debes aceptar Términos, Privacidad y Uso de Datos para registrarte.", 422);
@@ -84,7 +89,7 @@ const acciones: Modulo["acciones"] = {
             passHash: await hashPass(pass),
             cedulaCifrada: cifrar(cedula), cedulaHuella: huella(cedula),
             fundador: new Date().toISOString().slice(0, 10) <= REGISTRO_GRATIS_HASTA,
-            extra: { consentimientos, created_at: ahora },
+            extra: { consentimientos, pais, created_at: ahora },
           },
         }),
         db.consentimiento.create({
@@ -97,9 +102,9 @@ const acciones: Modulo["acciones"] = {
     }
     const m = aDoc((await db.usuario.findUnique({ where: { id } }))!);
     await enviarCorreo("welcome", email, { nombre, rol });
-    await notificarAdmins("miembro", "Nuevo miembro: " + nombre, "Perfil " + rol + (provincia ? " · " + provincia : "") + ".", "/admin/");
+    await notificarAdmins("miembro", "Nuevo miembro: " + nombre, "Perfil " + rol + (provincia ? " · " + provincia : "") + (pais !== "EC" ? " · " + pais : "") + ".", "/admin/");
     iniciarSesion(ctx, id, false);
-    await registrarActividad(ctx, "miembro-alta", { actor_id: id, actor: nombre, rol, objeto_tipo: "miembro", objeto_id: id, detalle: "Alta con perfil " + rol + (provincia ? " en " + provincia : "") });
+    await registrarActividad(ctx, "miembro-alta", { actor_id: id, actor: nombre, rol, objeto_tipo: "miembro", objeto_id: id, detalle: "Alta con perfil " + rol + (provincia ? " en " + provincia : "") + (pais !== "EC" ? " (" + pais + ")" : "") });
     await publicarAvisoComunidad("miembro", m);
     await notificar(id, "sistema", "Te damos la bienvenida a Red Café Ecuador", "Completa tu perfil y publica tu primer lote o servicio desde el panel.", "/panel/");
     return { user: m };
