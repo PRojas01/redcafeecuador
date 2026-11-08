@@ -145,6 +145,29 @@ caso("C-26", "La autora quita a la coautora", st == 200, f"HTTP {st}")
 st, r = api(coaut, f"/api/cursos.php?action=matriculados&curso={curso}")
 caso("C-27", "La coautora retirada ya NO ve los inscritos", "Luis Alumno" not in json.dumps(r, ensure_ascii=False), f"HTTP {st}")
 
+# Privacidad: un miembro que además tiene sesión de administración no ve en su
+# panel las matrículas de cursos ajenos; la vista de todos es solo /admin/ (todos=1).
+api(cli(), "/api/auth.php?action=admin_login", {"pass": "incorrecta"})  # crea el archivo si no existe
+cands = [os.path.join(os.path.dirname(os.path.abspath(SITIO)), ".redcafe_admin_pass"), os.path.join(SITIO, "data", ".redcafe_admin_pass")]
+fpass = next((c for c in cands if os.path.exists(c)), "")
+clave_adm = open(fpass).read().strip() if fpass else ""
+if clave_adm and not clave_adm.startswith("$2"):
+    st, r = api(intru, "/api/auth.php?action=admin_login", {"pass": clave_adm})
+    st, r = api(intru, "/api/cursos.php?action=matriculados")
+    caso("C-28", "Miembro con sesión admin NO ve en su panel inscritos de cursos ajenos", "Luis Alumno" not in json.dumps(r, ensure_ascii=False), f"HTTP {st}")
+    st, r = api(intru, f"/api/cursos.php?action=exportar&curso={curso}")
+    caso("C-29", "Ni los exporta sin pedir la vista de administración", "Luis Alumno" not in str(r), f"HTTP {st}")
+    adm = cli()
+    api(adm, "/api/auth.php?action=admin_login", {"pass": clave_adm})
+    st, r = api(adm, "/api/cursos.php?action=matriculados&todos=1")
+    caso("C-30", "La administración (todos=1) ve los inscritos de todos los cursos", "Luis Alumno" in json.dumps(r, ensure_ascii=False), f"HTTP {st}")
+    st, r = api(alum2, "/api/cursos.php?action=matriculados&todos=1")
+    caso("C-31", "Un miembro sin administración no obtiene nada con todos=1", "Luis Alumno" not in json.dumps(r, ensure_ascii=False), f"HTTP {st}")
+st, r = api(alum2, f"/api/cursos.php?action=get&id={c2}")
+cur = ((r or {}).get("data") or {}).get("curso") or {} if isinstance(r, dict) else {}
+lecs = [l for m in cur.get("modulos", []) for l in m.get("lecciones", [])]
+caso("C-32", "Sin matrícula, el curso privado se ve sin el contenido de las lecciones", lecs and all(set(l) <= {"titulo"} for l in lecs), f"HTTP {st}")
+
 ok = sum(1 for x in R if x[2])
 for x in R:
     print(f"{'✔' if x[2] else '✘'} {x[0]} {x[1]} | {x[3]}")
