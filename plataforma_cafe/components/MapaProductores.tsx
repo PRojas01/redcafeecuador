@@ -28,10 +28,10 @@ const esc = (v: unknown) =>
 const numero = (v: unknown) => (v === "" || v === null || v === undefined ? NaN : Number(v));
 
 function pinHtml(ejemplo: boolean) {
- const fondo = ejemplo ? "#7A7768" : "#18251F"; // café expreso
+ const fondo = ejemplo ? "#7A7768" : "#3B1A0C"; // café expreso
  return `<svg width="30" height="40" viewBox="0 0 30 40" aria-hidden="true" style="display:block;filter:drop-shadow(0 2px 3px rgba(36,23,17,.35));${ejemplo ? "opacity:.8;" : ""}">` +
  `<path d="M15 1C7.3 1 1 7.2 1 14.9 1 25.3 15 39 15 39s14-13.7 14-24.1C29 7.2 22.7 1 15 1z" fill="${fondo}" stroke="#fff" stroke-width="2"${ejemplo ? ' stroke-dasharray="3 2"' : ""}/>` +
- `<ellipse cx="15" cy="14.5" rx="6.2" ry="8" fill="#CA8E46" transform="rotate(28 15 14.5)"/>` +
+ `<ellipse cx="15" cy="14.5" rx="6.2" ry="8" fill="#D4893F" transform="rotate(28 15 14.5)"/>` +
  `<path d="M12.6 8.4c3.2 2.6 1.6 9.2 4.8 12.2" fill="none" stroke="${fondo}" stroke-width="1.8" stroke-linecap="round"/>` +
  `</svg>`;
 }
@@ -160,11 +160,11 @@ export default function MapaProductores({ lotes, onSelect, altura = "420px" }: P
  const n = g.items.length;
  const r = Math.max(20, 4.8 * n);
  const centro = map.layerPointToLatLng(g.p);
- L.circleMarker(centro, { radius: 4, color: "#18251F", weight: 1.5, fillColor: "#CA8E46", fillOpacity: 1, interactive: false }).addTo(capa);
+ L.circleMarker(centro, { radius: 4, color: "#3B1A0C", weight: 1.5, fillColor: "#D4893F", fillOpacity: 1, interactive: false }).addTo(capa);
  g.items.forEach((it, i) => {
  const ang = (2 * Math.PI * i) / n - Math.PI / 2;
  const ll = map.layerPointToLatLng(L.point(g.p.x + r * Math.cos(ang), g.p.y + r * Math.sin(ang)));
- L.polyline([centro, ll], { color: "#18251F", weight: 1, opacity: 0.55, interactive: false }).addTo(capa);
+ L.polyline([centro, ll], { color: "#3B1A0C", weight: 1, opacity: 0.55, interactive: false }).addTo(capa);
  pin(it.l, ll).addTo(capa);
  });
  });
