@@ -13,7 +13,7 @@ export default function PrivacidadPage() {
  <PoliticaLayout titulo="Política de Privacidad" resumen="Cómo recopilamos, usamos y protegemos tus datos personales.">
  <Section titulo="1. Responsable del tratamiento">
  <p>
- <strong>Red Café Ecuador</strong>, con domicilio en Quito, Ecuador.
+ <strong>Pedro Rojas — SolucionesPro</strong>, titular de la plataforma <strong>Red Café Ecuador</strong>, con domicilio en Quito, Ecuador.
  Contacto: <a href={`mailto:${CONFIG.email}`} className="text-cereza underline">{CONFIG.email}</a>.
  </p>
  </Section>
@@ -35,7 +35,8 @@ export default function PrivacidadPage() {
  <li>Operar el marketplace de café (publicación de lotes, pedidos, escrow).</li>
  <li>Generar dossiers de trazabilidad EUDR.</li>
  <li>Mostrar tu perfil público a otros miembros verificados.</li>
- <li>Mejorar el servicio y desarrollar nuevas funcionalidades.</li>
+ <li>Enviarte novedades por correo o WhatsApp, solo si lo aceptaste (ver sección 7).</li>
+<li>Mejorar el servicio y desarrollar nuevas funcionalidades.</li>
  <li>Cumplir obligaciones legales y contables.</li>
  </ul>
  </Section>
@@ -51,12 +52,16 @@ export default function PrivacidadPage() {
 
  <Section titulo="5. Conservación de los datos">
  <p>
- Conservamos tus datos durante la vigencia de tu membresía y por
- <strong> 2 años adicionales</strong> tras su cancelación, para atender
- disputas, cumplir obligaciones contables y mantener trazabilidad de
- pedidos completados.
+ Conservamos tus datos mientras tu cuenta esté activa. Si cierras tu
+ cuenta (desde «Mi cuenta» en tu panel), <strong>borramos en ese momento</strong> tu
+ perfil, tus datos de contacto, tu documento, tus publicaciones, tus
+ conversaciones y tus avisos. Solo conservamos, <strong>sin tus datos de
+ contacto</strong>, los pedidos ya cerrados con otras personas (hasta 7 años,
+ por obligación tributaria) y los registros de moderación necesarios para
+ atender reclamos.
  </p>
  <p>
+ 
  Los datos de bitácoras (producción, ventas, costos) viven exclusivamente
  en tu navegador. Si los borras, se pierden permanentemente y la Red no
  puede recuperarlos.
@@ -81,27 +86,47 @@ export default function PrivacidadPage() {
  </p>
  </Section>
 
- <Section titulo="7. Seguridad">
+ <Section titulo="7. Comunicaciones por correo y WhatsApp">
+ <p>
+ Los avisos necesarios para el servicio (tus pedidos, la seguridad de tu
+ cuenta, medidas sobre tu cuenta) te llegan siempre. Las <strong>novedades</strong> de
+ la Red (cursos, eventos, oportunidades) solo te llegan si lo aceptaste,
+ y por separado para cada canal:
+ </p>
+ <ul>
+ <li><strong>Correo:</strong> cada correo de novedades incluye un enlace para darte de baja con un clic.</li>
+ <li><strong>WhatsApp:</strong> los envía la administración desde su número; cada mensaje indica cómo dejar de recibirlos (responder «BAJA»).</li>
+ <li>Puedes activar o desactivar cada canal cuando quieras en <strong>«Mi cuenta» → Comunicaciones de la Red</strong>, dentro de tu panel. Retirar el consentimiento no afecta a tu cuenta.</li>
+ </ul>
+ <p>
+ Para estos envíos usamos tu nombre, tu correo, tu teléfono de WhatsApp y,
+ para elegir a quién va cada mensaje, tu perfil, tu provincia y los cursos
+ en los que estás matriculado.
+ </p>
+ </Section>
+ <Section titulo="8. Seguridad">
  <p>Implementamos medidas técnicas y organizativas para proteger tus datos:</p>
  <ul>
  <li>Cifrado en tránsito (HTTPS/TLS).</li>
  <li>Contraseñas almacenadas con hash bcrypt.</li>
+ <li>Número de cédula o RUC guardado cifrado.</li>
  <li>Cookies de sesión con flags <code>HttpOnly</code>, <code>Secure</code>, <code>SameSite=Lax</code>.</li>
  <li>Control de acceso por roles y autorización en cada operación.</li>
  <li>Rate limiting en login y endpoints sensibles.</li>
  </ul>
  </Section>
 
- <Section titulo="8. Cesión a terceros">
+ <Section titulo="9. Cesión a terceros">
  <p>
  <strong>No vendemos ni cedemos tus datos a terceros con fines comerciales.</strong>
  Solo compartimos datos cuando es estrictamente necesario para operar el
- servicio (proveedor de hosting, pasarela de pago) o cuando la ley lo
- exige.
+ servicio (proveedor de hosting, pasarela de pago, servicio de envío de
+ correo y WhatsApp) o cuando la ley lo exige. La lista completa está en la
+ <Link href="/politica-de-uso-de-datos/" className="text-cereza underline">Política de Uso de Datos</Link>.
  </p>
  </Section>
 
- <Section titulo="9. Transferencias internacionales">
+ <Section titulo="10. Transferencias internacionales">
  <p>
 						Red Café Ecuador funciona sobre la infraestructura de su proveedor de
 						alojamiento, cuyos servidores están ubicados en los Estados Unidos de
@@ -114,7 +139,7 @@ export default function PrivacidadPage() {
  </p>
  </Section>
 
- <Section titulo="10. Cambios a esta política">
+ <Section titulo="11. Cambios a esta política">
  <p>
  Podemos actualizar esta política. Te notificaremos por correo y dentro
  de la plataforma antes de que los cambios entren en vigencia. El uso
@@ -123,14 +148,14 @@ export default function PrivacidadPage() {
  </p>
  </Section>
 
- <Section titulo="11. Autoridad de control">
+ <Section titulo="12. Autoridad de control">
  <p>
  Si consideras que tus derechos no han sido atendidos, puedes presentar
  una denuncia ante la <strong>Autoridad de Protección de Datos Personales</strong> del Ecuador.
  </p>
  </Section>
 
- <Section titulo="12. Contacto">
+ <Section titulo="13. Contacto">
  <p>
  Para cualquier consulta sobre privacidad y datos personales:{" "}
  <a href={`mailto:${CONFIG.email}`} className="text-cereza underline">{CONFIG.email}</a>.
@@ -149,7 +174,7 @@ function PoliticaLayout({ titulo, resumen, children }: { titulo: string; resumen
  <p className="text-sm font-semibold uppercase tracking-widest text-cereza">Documento legal</p>
  <h1 className="mt-1 font-titulo text-3xl font-bold text-cafe">{titulo}</h1>
  <p className="mt-2 text-pizarra/80">{resumen}</p>
- <p className="mt-1 text-xs text-pizarra/50">Última actualización: 14 de agosto de 2026.</p>
+ <p className="mt-1 text-xs text-pizarra/50">Última actualización: 8 de noviembre de 2026.</p>
  <div className="mt-6 space-y-8 text-sm leading-relaxed text-pizarra/85">{children}</div>
  </div>
  );

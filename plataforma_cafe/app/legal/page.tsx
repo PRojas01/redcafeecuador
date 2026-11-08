@@ -80,8 +80,8 @@ export default function LegalPage() {
 
  <Bloque titulo="Privacidad">
  <P>
- <strong>Responsable del tratamiento:</strong> Red Café Ecuador, con
- domicilio en Quito, Ecuador. Contacto: {CONFIG.email}.
+ <strong>Responsable del tratamiento:</strong> Pedro Rojas — SolucionesPro, titular de Red Café Ecuador, con
+ domicilio en Quito, Ecuador. Contacto: {CONFIG.email}. Las novedades por correo y WhatsApp solo llegan a quien las aceptó y se desactivan en «Mi cuenta» o con el enlace de cada mensaje.
  </P>
  <P>Recopilamos y tratamos tus datos personales solo para las finalidades de la membresía:</P>
  <Lista
@@ -207,8 +207,9 @@ export default function LegalPage() {
 
  <Bloque titulo="Retención de datos">
  <P>
- Conservamos tus datos personales durante el tiempo que tu membresía esté activa
- y por un periodo adicional de 2 años después de su cancelación, para:
+ Conservamos tus datos personales mientras tu cuenta esté activa. Al cerrarla se borran
+ en el momento; solo quedan, sin tus datos de contacto, los pedidos cerrados (hasta 7 años) y
+ los registros de moderación, para:
  </P>
  <Lista
  items={[

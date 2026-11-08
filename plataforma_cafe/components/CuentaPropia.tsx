@@ -53,6 +53,39 @@ async function post(ruta: string, cuerpo: Record<string, unknown>) {
   return { ok: !!j.ok, error: j.error as string | undefined, extra: j };
 }
 
+/** Preferencias de comunicaciones (LOPDP: dar o retirar el consentimiento cuando quiera). */
+function MisComunicaciones() {
+  const [pref, setPref] = useState<{ correo: boolean; whatsapp: boolean } | null>(null);
+  const [msg, setMsg] = useState("");
+  useEffect(() => {
+    fetch(CONFIG.api("/api/notificaciones.php?action=mis_preferencias"), { credentials: "include", cache: "no-store" })
+      .then((r) => r.json()).then((j) => { if (j?.ok) setPref(j.data); }).catch(() => {});
+  }, []);
+  const cambiar = async (campo: "correo" | "whatsapp", v: boolean) => {
+    setMsg("");
+    const r = await post("/api/notificaciones.php?action=preferencias", { [campo]: v });
+    if (!r.ok) { setMsg(r.error || "No se pudo guardar."); return; }
+    setPref(r.extra.data);
+    setMsg("Preferencias guardadas.");
+  };
+  if (!pref) return null;
+  return (
+    <section id="redcafe-comunicaciones" className="mb-4 rounded-xl border p-4 text-sm" aria-labelledby="comunicaciones-titulo">
+      <h3 id="comunicaciones-titulo" className="font-semibold text-cafe">Comunicaciones de la Red</h3>
+      <p className="mt-1 text-pizarra/70">Novedades, cursos y oportunidades. Los avisos de tus pedidos y de tu cuenta te llegan siempre.</p>
+      <label className="mt-2 flex min-h-11 items-center gap-3">
+        <input type="checkbox" className="h-5 w-5" checked={pref.correo} onChange={(e) => cambiar("correo", e.target.checked)} />
+        Recibir novedades por correo
+      </label>
+      <label className="flex min-h-11 items-center gap-3">
+        <input type="checkbox" className="h-5 w-5" checked={pref.whatsapp} onChange={(e) => cambiar("whatsapp", e.target.checked)} />
+        Recibir novedades por WhatsApp
+      </label>
+      {msg && <p className="mt-1 text-pizarra/70" role="status">{msg}</p>}
+    </section>
+  );
+}
+
 export function MedidasDeMiCuenta() {
   const [lista, setLista] = useState<Sancion[] | null>(null);
   const [apelando, setApelando] = useState("");
@@ -120,6 +153,7 @@ export function CerrarMiCuenta() {
   };
   return (
     <>
+      <MisComunicaciones />
       <DescargarMisDatos />
     <section className="rounded-2xl border border-cafe/15 bg-white p-5" aria-labelledby="baja-titulo">
       <h3 id="baja-titulo" className="font-titulo text-lg font-semibold text-cafe">Cerrar mi cuenta y eliminar mis datos</h3>

@@ -7,12 +7,14 @@ import { actualizarDonde, buscarPor, campoSql, conBloqueo, listar, type Doc } fr
 import { db, Prisma } from "../lib/db.js";
 import { tieneRol, todosLosMiembros, usuarioActual } from "../lib/usuarios.js";
 import { AVISOS_ADMIN_UID, notificar, registrarActividad } from "../lib/avisos.js";
-import { enviarCorreo } from "../lib/correo.js";
+import { enviarCorreosLote, type CorreoLote } from "../lib/correo.js";
+import { aceptaNovedades, aceptaWhatsapp, activo, filtrarMiembros, leerFiltros, resumenCanales, siNo } from "../lib/audiencia.js";
+import { cupo } from "../lib/seguridad.js";
 import { bool, emailValido, int, largo, nowIso, str } from "../lib/util.js";
 import { secreto } from "./moderacion-comun.js";
 
 const AVISO_TIPOS = ["pedido", "pedido-estado", "mensaje", "curso", "curso-acceso", "lote", "servicio", "miembro", "reporte", "sistema"];
-const TOPE_CORREO = 250;
+const TOPE_CORREO = Math.max(1, Math.min(5000, Number(process.env.REDCAFE_TOPE_CORREO) || 250));
 
 async function actorUid(ctx: Ctx): Promise<string> {
   const u = await usuarioActual(ctx);
@@ -30,10 +32,36 @@ function enlaceAbsoluto(e: string): string {
   if (e.startsWith("/") && !e.startsWith("//")) return "https://redcafeecuador.com" + e;
   return "https://redcafeecuador.com/panel/";
 }
-function consiente(m: Doc): boolean {
-  if ("activo" in m && !m.activo) return false;
-  if (["bloqueado", "suspendido", "eliminado"].includes(str(m.estado))) return false;
-  return !!m.acepta_marketing || !!m.consentimientos?.marketing?.aceptado;
+
+async function adminDeAvisos(ctx: Ctx): Promise<Doc> {
+  const u = await usuarioActual(ctx);
+  const admin = ctx.ses.d.admin ? u ?? { id: "admin", nombre: "Administración" } : u && tieneRol(ctx, u, "admin") ? u : null;
+  if (!admin) fail("Solo la administración envía avisos a otros miembros.", 403);
+  return admin;
+}
+
+/** destino: todos | rol (un perfil) | filtro (perfiles, provincia, curso, segmento) | miembros (ids). */
+async function destinatarios(ctx: Ctx): Promise<Doc[]> {
+  const destino = str(ctx.in.destino).trim();
+  const miembros = await todosLosMiembros();
+  if (destino === "todos") return filtrarMiembros(leerFiltros({}), miembros);
+  if (destino === "rol") {
+    const rol = str(ctx.in.rol).trim();
+    if (!rol) fail("Indica el perfil al que quieres avisar.", 422);
+    return miembros.filter((m) => activo(m) && tieneRol(ctx, m, rol));
+  }
+  if (destino === "filtro") {
+    const f = leerFiltros(ctx.in.filtros && typeof ctx.in.filtros === "object" && !Array.isArray(ctx.in.filtros) ? (ctx.in.filtros as Doc) : ctx.in);
+    return filtrarMiembros(f, miembros);
+  }
+  if (destino === "miembros") {
+    let ids = ctx.in.ids;
+    if (typeof ids === "string") ids = ids.split(",").map((s) => s.trim()).filter(Boolean);
+    if (!Array.isArray(ids) || !ids.length) fail("Indica al menos un miembro destinatario.", 422);
+    const quiero = new Set((ids as unknown[]).map((x) => str(x).trim()).filter(Boolean));
+    return miembros.filter((m) => quiero.has(str(m.id)));
+  }
+  fail("Destino no válido: usa todos, rol, filtro o miembros.", 422);
 }
 
 /* Avisos de curso del estudiante («Te matriculaste en…», «¿Sigues con…?»,
@@ -100,54 +128,86 @@ const acciones: Modulo["acciones"] = {
     return { borrado: id };
   },
 
+  /** Recuento previo: cuántos recibirían el mensaje por cada canal. */
+  async audiencia(ctx) {
+    await adminDeAvisos(ctx);
+    const ms = await destinatarios(ctx);
+    return resumenCanales(ms);
+  },
+
   async enviar(ctx) {
-    const u = await usuarioActual(ctx);
-    const admin = ctx.ses.d.admin ? u ?? { id: "admin", nombre: "Administración" } : u && tieneRol(ctx, u, "admin") ? u : null;
-    if (!admin) fail("Solo la administración envía avisos a otros miembros.", 403);
-    const destino = str(ctx.in.destino).trim(), titulo = str(ctx.in.titulo).trim(), texto = str(ctx.in.texto).trim(), enlace = str(ctx.in.enlace).trim();
+    const admin = await adminDeAvisos(ctx);
+    const titulo = str(ctx.in.titulo).trim(), texto = str(ctx.in.texto).trim(), enlace = str(ctx.in.enlace).trim();
     let tipo = str(ctx.in.tipo ?? "sistema").trim();
     if (!AVISO_TIPOS.includes(tipo)) tipo = "sistema";
+    const campana = siNo(ctx.in.campana, true), porCorreo = siNo(ctx.in.correo, false);
+    if (!campana && !porCorreo) fail("Elige al menos un canal: campana de la Red o correo.", 422);
     if (!titulo) fail("El título del aviso es obligatorio.", 422);
     if (largo(titulo) > 140) fail("El título no puede superar 140 caracteres.", 422);
-    if (largo(texto) > 400) fail("El texto no puede superar 400 caracteres.", 422);
-    const miembros = await todosLosMiembros();
-    let dest: string[] = [];
-    if (destino === "todos") dest = miembros.map((m) => str(m.id)).filter(Boolean);
-    else if (destino === "rol") {
-      const rol = str(ctx.in.rol).trim();
-      if (!rol) fail("Indica el perfil al que quieres avisar.", 422);
-      dest = miembros.filter((m) => tieneRol(ctx, m, rol)).map((m) => m.id);
-    } else if (destino === "miembros") {
-      let ids = ctx.in.ids;
-      if (typeof ids === "string") ids = ids.split(",").map((s) => s.trim()).filter(Boolean);
-      if (!Array.isArray(ids) || !ids.length) fail("Indica al menos un miembro destinatario.", 422);
-      const existentes = new Set(miembros.map((m) => m.id));
-      dest = (ids as unknown[]).map((x) => str(x).trim()).filter((x) => x && existentes.has(x));
-    } else fail("Destino no válido: usa todos, rol o miembros.", 422);
-    dest = [...new Set(dest)];
+    if (largo(texto) > 2000) fail("El texto no puede superar 2000 caracteres.", 422);
+    const dest = await destinatarios(ctx);
     if (!dest.length) fail("No se encontró a quién enviar el aviso.", 404);
-    for (const d of dest) await notificar(d, tipo, titulo, texto, enlace);
+    if (porCorreo && !(await cupo(ctx, "admin_correo_masivo", 20, 3600))) fail("Demasiados envíos masivos seguidos. Espera un poco.", 429);
+    if (campana) for (const m of dest) await notificar(str(m.id), tipo, titulo, texto, enlace);
     const correo = { enviados: 0, sin_consentimiento: 0, sin_correo: 0, fuera_de_tope: 0, fallidos: 0 };
-    if (ctx.in.correo) {
-      const porId = new Map(miembros.map((m) => [m.id, m]));
-      for (const d of dest) {
-        const m = porId.get(d);
-        if (!m) continue;
-        if (!consiente(m)) { correo.sin_consentimiento++; continue; }
+    if (porCorreo) {
+      const lista: CorreoLote[] = [];
+      for (const m of dest) {
+        if (!aceptaNovedades(m)) { correo.sin_consentimiento++; continue; }
         if (!emailValido(str(m.email))) { correo.sin_correo++; continue; }
-        if (correo.enviados + correo.fallidos >= TOPE_CORREO) { correo.fuera_de_tope++; continue; }
-        const ok = await enviarCorreo("aviso", m.email, {
-          nombre: m.nombre, titulo, texto, enlace: enlaceAbsoluto(enlace),
-          baja: `https://redcafeecuador.com/api/notificaciones.php?action=baja_correo&u=${encodeURIComponent(d)}&t=${await firmaBaja(d)}`,
-        });
-        correo[ok ? "enviados" : "fallidos"]++;
+        if (lista.length >= TOPE_CORREO) { correo.fuera_de_tope++; continue; }
+        const d = str(m.id);
+        const baja = `https://redcafeecuador.com/api/notificaciones.php?action=baja_correo&u=${encodeURIComponent(d)}&t=${await firmaBaja(d)}`;
+        lista.push({ para: str(m.email), baja, vars: { nombre: m.nombre, titulo, texto, enlace: enlaceAbsoluto(enlace), baja } });
       }
+      const r = await enviarCorreosLote("aviso", lista);
+      correo.enviados = r.enviados; correo.fallidos = r.fallidos;
     }
     await registrarActividad(ctx, "aviso-admin-enviado", {
       actor_id: admin.id ?? "admin", actor: admin.nombre ?? "Administración", objeto_tipo: "notificacion",
-      detalle: `${titulo} · enviado a ${dest.length} miembro(s)` + (ctx.in.correo ? ` · ${correo.enviados} por correo` : "") + ".",
+      detalle: `${titulo} · ${dest.length} miembro(s)` + (campana ? " en la campana" : "") + (porCorreo ? ` · ${correo.enviados} por correo` : "") + ".",
     });
-    return { enviados: dest.length, correo: ctx.in.correo ? correo : null };
+    return { enviados: campana ? dest.length : 0, destinatarios: dest.length, correo: porCorreo ? correo : null };
+  },
+
+  /** Preferencias de comunicaciones del propio miembro (revocar o dar el consentimiento). */
+  async mis_preferencias(ctx) {
+    const u = await usuarioActual(ctx);
+    if (!u) fail("No autenticado.", 401);
+    return { correo: aceptaNovedades(u), whatsapp: aceptaWhatsapp(u) };
+  },
+
+  /** El miembro cambia las suyas; la administración puede dar de baja a otro (p. ej. respondió BAJA por WhatsApp). */
+  async preferencias(ctx) {
+    const u = await usuarioActual(ctx);
+    const admin = ctx.ses.d.admin || (u && tieneRol(ctx, u, "admin"));
+    const objetivo = str(ctx.in.uid).trim();
+    let uidM = u?.id ?? "";
+    if (objetivo && objetivo !== uidM) {
+      if (!admin) fail("Solo la administración cambia las preferencias de otro miembro.", 403);
+      uidM = objetivo;
+    }
+    if (!uidM) fail("No autenticado.", 401);
+    const f = await db.usuario.findUnique({ where: { id: uidM } });
+    if (!f) fail("Miembro no encontrado.", 404);
+    const extra: Doc = { ...((f.extra as Doc) ?? {}) };
+    const consent: Doc = { ...(extra.consentimientos ?? {}) };
+    const ahora = nowIso(), origen = uidM === u?.id ? "preferencias" : "admin";
+    const cambios: string[] = [];
+    for (const [campo, clave] of [["correo", "marketing"], ["whatsapp", "whatsapp"]] as const) {
+      if (!(campo in ctx.in)) continue;
+      const v = siNo(ctx.in[campo], false);
+      // La administración solo puede dar de baja, nunca dar un consentimiento en nombre del miembro.
+      if (v && origen === "admin") fail("El consentimiento solo lo puede dar el propio miembro.", 403);
+      consent[clave] = { aceptado: v, fecha: ahora, version: origen };
+      if (clave === "marketing") extra.acepta_marketing = v;
+      cambios.push(`${campo}: ${v ? "sí" : "no"}`);
+    }
+    if (!cambios.length) fail("Indica correo o whatsapp.", 422);
+    extra.consentimientos = consent;
+    await db.usuario.update({ where: { id: uidM }, data: { extra } });
+    await registrarActividad(ctx, "preferencias-comunicaciones", { objeto_tipo: "miembro", objeto_id: uidM, detalle: `${origen} · ${cambios.join(", ")}` });
+    return { correo: aceptaNovedades({ ...extra, id: uidM }), whatsapp: aceptaWhatsapp({ ...extra, id: uidM }) };
   },
 
   async baja_correo(ctx) {

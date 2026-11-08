@@ -65,7 +65,7 @@ const acciones: Modulo["acciones"] = {
     const cedula = documentoValido(cedula0, pais);
     if (cedula === null) fail(pais === "EC" ? "Cédula (10 dígitos) o RUC (13 dígitos) no válido." : "Documento de identidad no válido.", 422);
     const visibilidad = i.visibilidad === "registrados" ? "registrados" : "publico";
-    const acepta = { terminos: !!i.acepta_terminos, privacidad: !!i.acepta_privacidad, usoDatos: !!i.acepta_uso_datos, marketing: !!i.acepta_marketing };
+    const acepta = { terminos: !!i.acepta_terminos, privacidad: !!i.acepta_privacidad, usoDatos: !!i.acepta_uso_datos, marketing: !!i.acepta_marketing, whatsapp: !!(i.acepta_whatsapp ?? i.acepta_marketing) };
     if (!acepta.terminos || !acepta.privacidad || !acepta.usoDatos) fail("Debes aceptar Términos, Privacidad y Uso de Datos para registrarte.", 422);
     if (largo(nombre) < 2 || largo(nombre) > 100) fail("Nombre: 2-100 caracteres.", 422);
     if (!emailValido(email)) fail("Correo electrónico inválido.", 422);
@@ -77,7 +77,8 @@ const acciones: Modulo["acciones"] = {
       terminos: { aceptado: true, fecha: ahora, version: "v1" },
       privacidad: { aceptado: true, fecha: ahora, version: "v1" },
       uso_datos: { aceptado: true, fecha: ahora, version: "v1" },
-      marketing: { aceptado: acepta.marketing, fecha: ahora, version: "v1" },
+      marketing: { aceptado: acepta.marketing, fecha: ahora, version: "v2" },
+      whatsapp: { aceptado: acepta.whatsapp, fecha: ahora, version: "v2" },
     };
     const id = uid();
     try {
