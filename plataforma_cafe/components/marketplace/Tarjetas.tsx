@@ -189,14 +189,16 @@ export function TarjetaServicio({ servicio, admin = false }: { servicio: Servici
         {precio}
         {!sinImporte && <span className="text-xs font-semibold uppercase text-text-muted"> / {servicio.unidad || "servicio"}</span>}
       </p>
-      {/* El botón lleva al WhatsApp de quien ofrece el servicio. Sin sesión la API
+      {/* «Solicitar servicio»: redcafe-aviso-pedidos.js registra la solicitud
+          (data-solicitar-servicio) y luego abre el WhatsApp de quien lo ofrece.
+          El botón lleva al WhatsApp de quien ofrece el servicio. Sin sesión la API
           no entrega su teléfono: se pide entrar en vez de mandar al de la Red. */}
       {wa ? (
-        <a className="btn-primary mt-4 !px-4 !py-2 text-sm" href={`https://wa.me/${wa}?text=${mensaje}`} target="_blank" rel="noreferrer">
+        <a className="btn-primary mt-4 !px-4 !py-2 text-sm" href={`https://wa.me/${wa}?text=${mensaje}`} target="_blank" rel="noreferrer" data-solicitar-servicio={s(servicio.id)}>
           Solicitar servicio
         </a>
       ) : servicio.oficial_redcafe ? (
-        <a className="btn-primary mt-4 !px-4 !py-2 text-sm" href={`https://wa.me/593968641376?text=${mensaje}`} target="_blank" rel="noreferrer">
+        <a className="btn-primary mt-4 !px-4 !py-2 text-sm" href={`https://wa.me/593968641376?text=${mensaje}`} target="_blank" rel="noreferrer" data-solicitar-servicio={s(servicio.id)}>
           Solicitar servicio
         </a>
       ) : (

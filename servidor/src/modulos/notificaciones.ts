@@ -3,7 +3,7 @@
 // (copias de la base y monitoreo), no a una petición de usuario.
 import { createHmac, timingSafeEqual } from "node:crypto";
 import { fail, Cruda, type Ctx, type Modulo } from "../lib/http.js";
-import { actualizarDonde, buscarPor, campoSql, conBloqueo, type Doc } from "../lib/docs.js";
+import { actualizarDonde, buscarPor, campoSql, conBloqueo, listar, type Doc } from "../lib/docs.js";
 import { db, Prisma } from "../lib/db.js";
 import { tieneRol, todosLosMiembros, usuarioActual } from "../lib/usuarios.js";
 import { AVISOS_ADMIN_UID, notificar, registrarActividad } from "../lib/avisos.js";
@@ -64,6 +64,30 @@ async function destinatarios(ctx: Ctx): Promise<Doc[]> {
   fail("Destino no válido: usa todos, rol, filtro o miembros.", 422);
 }
 
+/* Avisos de curso del estudiante («Te matriculaste en…», «¿Sigues con…?»,
+   acceso aprobado): llevan al curso, a la lección donde quedó (#continuar).
+   Los avisos viejos (importados o de antes de este cambio) se corrigen al
+   leerlos: si no traen el enlace del curso, se busca el curso por su título. */
+const RE_CURSO = /^(?:Te matriculaste en|¿Sigues con|Te aprobaron el acceso a|Ya tienes acceso a)[^«]*«(.+)»/;
+async function enlacesDeCurso(avisos: Doc[]): Promise<Doc[]> {
+  if (!avisos.some((a) => RE_CURSO.test(str(a.titulo)))) return avisos;
+  let cursos: Doc[] | null = null;
+  const out: Doc[] = [];
+  for (const a of avisos) {
+    const m = str(a.titulo).match(RE_CURSO);
+    if (!m) { out.push(a); continue; }
+    let enlace = str(a.enlace);
+    if (!/^\/academia\/[^/?#]+\/?/.test(enlace)) {
+      cursos ??= await listar("contenido-cursos");
+      const c = cursos.find((x) => str(x.titulo) === m[1]);
+      enlace = c ? "/academia/" + encodeURIComponent(str(c.id)) + "/" : "/academia/";
+    }
+    if (/^\/academia\/[^/?#]+\/?$/.test(enlace)) enlace = enlace.replace(/\/?$/, "/") + "#continuar";
+    out.push({ ...a, enlace });
+  }
+  return out;
+}
+
 const acciones: Modulo["acciones"] = {
   async list(ctx) {
     const uidM = await actorUid(ctx);
@@ -71,7 +95,7 @@ const acciones: Modulo["acciones"] = {
     const sinLeer = mias.filter((a) => !a.leido).length;
     if (str(ctx.query.solo) === "nuevos") mias = mias.filter((a) => !a.leido);
     const limite = Math.max(1, Math.min(100, int(ctx.query.limite ?? 30) || 30));
-    return { notificaciones: mias.slice(0, limite), sin_leer: sinLeer };
+    return { notificaciones: await enlacesDeCurso(mias.slice(0, limite)), sin_leer: sinLeer };
   },
 
   async contador(ctx) {

@@ -34,7 +34,7 @@ function oficialParaMarketplace(s: Doc): Doc {
   };
 }
 
-const INTERMEDIACION: Doc = {
+export const INTERMEDIACION: Doc = {
   id: "intermediacion-compraventa", nombre: "Intermediación en compraventa de café",
   descripcion: "Para compradores: búsqueda de calidad, mejor proveedor, validación de lote, visita técnica y acompañamiento a la compra. Para vendedores: preparación de oferta, validación de lote, definición de precio, conexión con comprador y acompañamiento de la venta.",
   precio: 0, moneda: "USD", unidad: "según alcance", categoria: "asesoria", perfil: "all", disponible: true, cobertura: "Ecuador",

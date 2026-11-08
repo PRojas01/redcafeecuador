@@ -409,7 +409,7 @@ const acciones: Modulo["acciones"] = {
       await notificar(str(c.autor_id), "curso-acceso", `${u.nombre ?? "Un miembro"} quiere matricularse en «${titulo}»`, "Resuélvelo desde la academia.", enlaceCurso(cid));
       return { estado: "pendiente", mensaje: "Este curso lo modera su autor. Te avisaremos cuando responda." };
     }
-    await notificar(uid, "curso", `Te matriculaste en «${titulo}»`, "Ya puedes estudiarlo y tu avance queda registrado.", enlaceCurso(cid));
+    await notificar(uid, "curso", `Te matriculaste en «${titulo}»`, "Ya puedes estudiarlo y tu avance queda registrado.", enlaceCurso(cid) + "#continuar");
     if (str(c.autor_id)) await notificar(str(c.autor_id), "curso", `${u.nombre ?? "Un miembro"} se matriculó en «${titulo}»`, "Ya puedes ver su avance y sus datos de contacto desde el panel.", "/panel/");
     return { estado: "matriculado", mensaje: "Matrícula hecha. Ya puedes empezar." };
   },
@@ -479,7 +479,7 @@ const acciones: Modulo["acciones"] = {
       rechazado: [`Tu solicitud de acceso a «${titulo}» no fue aprobada`, "Puedes escribir al autor si necesitas revisarlo."],
       pendiente: [`Tu acceso a «${titulo}» vuelve a estar pendiente`, "El autor lo revisará de nuevo."],
     };
-    await notificar(destino, "curso-acceso", msj[decision][0], msj[decision][1], enlaceCurso(cid));
+    await notificar(destino, "curso-acceso", msj[decision][0], msj[decision][1], enlaceCurso(cid) + (decision === "aprobado" ? "#continuar" : ""));
     await registrarActividad(ctx, "curso-acceso-" + decision, { objeto_tipo: "curso", objeto_id: cid, detalle: titulo, contraparte: await nombreMiembro(destino) });
     return { curso: cid, usuario: destino, estado: decision };
   },
@@ -539,7 +539,7 @@ const acciones: Modulo["acciones"] = {
       return cs;
     });
     const titulo = str(c.titulo || cid);
-    for (const uid of avisar) await notificar(uid, "curso", `¿Sigues con «${titulo}»?`, `Hace más de ${dias} días que no avanzas en este curso. Tu avance está guardado: continúa donde lo dejaste.`, enlaceCurso(cid));
+    for (const uid of avisar) await notificar(uid, "curso", `¿Sigues con «${titulo}»?`, `Hace más de ${dias} días que no avanzas en este curso. Tu avance está guardado: continúa donde lo dejaste.`, enlaceCurso(cid) + "#continuar");
     return { avisados: avisar.length, dias, curso: cid };
   },
 
