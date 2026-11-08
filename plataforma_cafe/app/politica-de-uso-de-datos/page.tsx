@@ -64,9 +64,10 @@ export default function UsoDeDatosPage() {
  con los siguientes <strong>encargados del tratamiento</strong>:
  </p>
  <ul>
- <li><strong>Proveedor de hosting:</strong> almacenamiento de la base de datos y archivos.</li>
+ <li><strong>Proveedor de hosting (GoDaddy, EE. UU.):</strong> almacenamiento de la base de datos y archivos.</li>
  <li><strong>Pasarela de pago:</strong> procesamiento de pagos de membresía (no almacenamos datos de tarjeta).</li>
- <li><strong>Servicio de correo:</strong> envío de notificaciones transaccionales.</li>
+ <li><strong>Servicio de correo (Resend, EE. UU.):</strong> envío de notificaciones del servicio y, si lo aceptaste, de novedades.</li>
+ <li><strong>WhatsApp (Meta Platforms):</strong> mensajes que la administración envía desde su número a quien aceptó recibirlos por ese canal.</li>
  <li><strong>Herramientas de inteligencia artificial:</strong> asistentes de código y de contenido usados por el equipo para mantener y dar soporte a la plataforma (ver sección anterior).</li>
  </ul>
  <p>
@@ -105,10 +106,11 @@ export default function UsoDeDatosPage() {
  </thead>
  <tbody className="text-xs">
  <tr className="border-b border-cafe/10"><td className="py-2">Datos de cuenta activa</td><td className="py-2">Mientras la membresía esté activa</td></tr>
- <tr className="border-b border-cafe/10"><td className="py-2">Datos tras cancelar membresía</td><td className="py-2">2 años adicionales</td></tr>
+ <tr className="border-b border-cafe/10"><td className="py-2">Al cerrar la cuenta</td><td className="py-2">Se borran en el momento; quedan solo pedidos cerrados y registros de moderación, sin tus datos de contacto</td></tr>
  <tr className="border-b border-cafe/10"><td className="py-2">Registros contables de pedidos</td><td className="py-2">7 años (obligación tributaria)</td></tr>
  <tr className="border-b border-cafe/10"><td className="py-2">Bitácoras locales (tu navegador)</td><td className="py-2">Hasta que las borres</td></tr>
- <tr><td className="py-2">Comunicaciones de chat</td><td className="py-2">Mientras la cuenta esté activa + 1 año</td></tr>
+ <tr className="border-b border-cafe/10"><td className="py-2">Comunicaciones de chat</td><td className="py-2">Mientras la cuenta esté activa; se borran al cerrarla</td></tr>
+<tr><td className="py-2">Consentimiento para novedades (correo / WhatsApp)</td><td className="py-2">Hasta que lo retires; queda la fecha del cambio</td></tr>
  </tbody>
  </table>
  </Section>

@@ -810,7 +810,7 @@ const introduccionPerfil = INTRODUCCION_PERFIL[rol];
                 <label className="flex items-start gap-2 text-xs text-text-secondary">
                   <input type="checkbox" checked={aceptaMarketing} onChange={(e) => setAceptaMarketing(e.target.checked)} className="mt-0.5" />
                   <span>
-                    (Opcional) Deseo recibir comunicaciones comerciales y novedades de la Red por correo.
+                    (Opcional) Deseo recibir comunicaciones comerciales y novedades de la Red por correo y WhatsApp. Puedo darme de baja cuando quiera desde mi cuenta o con el enlace de cada mensaje.
                   </span>
                 </label>
               </div>

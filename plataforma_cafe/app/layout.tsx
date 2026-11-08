@@ -12,7 +12,7 @@ import "./globals.css";
 const SITE_URL = "https://redcafeecuador.com";
 
 export const viewport: Viewport = {
-  themeColor: "#3B1A0C",
+  themeColor: "#8C3604",
 };
 
 export const metadata = {
