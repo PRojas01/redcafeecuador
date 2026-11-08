@@ -59,11 +59,20 @@ export type Modulo = {
 };
 
 export const LIMITE_CUERPO = 12 * 1024 * 1024;
+/** El paquete cifrado de /admin/importar/ lleva las fotos: el módulo admite hasta 150 MB
+ *  (y exige sesión de administración y REDCAFE_IMPORTACION=1). */
+export const LIMITE_IMPORTACION = 152 * 1024 * 1024;
+
+export function limiteDe(url: string): number {
+  return new URL(url).pathname === "/api/importacion.php" ? LIMITE_IMPORTACION : LIMITE_CUERPO;
+}
 
 /** Limita los bytes antes de usar los analizadores JSON o multipart. */
 export async function limitarCuerpo(req: Request): Promise<Request> {
+  const limite = limiteDe(req.url);
+  const mensaje = `El cuerpo de la petición supera el límite de ${Math.round(limite / 1048576)} MB.`;
   const longitud = Number(req.headers.get("content-length"));
-  if (longitud > LIMITE_CUERPO) fail("El cuerpo de la petición supera el límite de 12 MB.", 413);
+  if (longitud > limite) fail(mensaje, 413);
   if (!req.body) return req;
   const lector = req.body.getReader();
   const partes: Uint8Array[] = [];
@@ -73,7 +82,7 @@ export async function limitarCuerpo(req: Request): Promise<Request> {
       const { done, value } = await lector.read();
       if (done) break;
       total += value.byteLength;
-      if (total > LIMITE_CUERPO) { await lector.cancel(); fail("El cuerpo de la petición supera el límite de 12 MB.", 413); }
+      if (total > limite) { await lector.cancel(); fail(mensaje, 413); }
       partes.push(value);
     }
   } finally { lector.releaseLock(); }
