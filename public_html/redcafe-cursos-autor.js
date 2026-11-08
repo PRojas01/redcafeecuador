@@ -24,6 +24,10 @@
   window.__redcafeCursosAutor = true;
 
   function enPanel() { return location.pathname.indexOf("/panel") === 0; }
+  // En /admin/ la administración revisa las matrículas de todos los cursos
+  // (todos=1). En el panel cada miembro ve solo las de sus propios cursos.
+  function enAdmin() { return location.pathname.indexOf("/admin") === 0 && location.pathname.indexOf("/admin/importar") !== 0; }
+  function todosQ() { return enAdmin() ? "&todos=1" : ""; }
 
   function esc(v) {
     return String(v === null || v === undefined ? "" : v)
@@ -182,13 +186,14 @@
           '<span class="redcafe-autor-metrica"><strong>' + m.pendientes + '</strong> pendientes de aprobar</span>' +
           '<span class="redcafe-autor-metrica"><strong>' + m.avanceMedio + ' %</strong> avance medio</span>' +
         '</div>' +
+        '<label class="redcafe-derechos"><input type="checkbox" name="acepta_derechos" required> Declaro que tengo los derechos sobre este contenido y asumo la responsabilidad ante cualquier reclamo de terceros.</label>' +
         selectorModo(c) +
         '<span class="redcafe-autor-estado" role="status" aria-live="polite"></span>' +
       '</header>' +
       '<div class="redcafe-autor-barra-acciones">' +
         '<div class="redcafe-autor-filtros">' + filtros + '</div>' +
         '<div class="redcafe-autor-curso-botones">' +
-          '<a class="redcafe-autor-btn" href="/api/cursos.php?action=exportar&amp;curso=' + esc(c.curso) + '">Exportar CSV</a>' +
+          '<a class="redcafe-autor-btn" href="/api/cursos.php?action=exportar&amp;curso=' + esc(c.curso) + (enAdmin() ? '&amp;todos=1' : '') + '">Exportar CSV</a>' +
           (c.puede_gestionar_asociados ? '<button type="button" class="redcafe-autor-btn es-avisar" data-autor-avisar="' + esc(c.curso) + '">Avisar a los inactivos (30 días)</button>' : '') +
         '</div>' +
       '</div>' +
@@ -240,7 +245,7 @@
   // Tras resolver una petición se pide de nuevo el curso: así los totales, las
   // filas y los botones quedan al día sin inventar nada en el navegador.
   function refrescarCursoTrasResolver(seccion, cursoId) {
-    json("/api/cursos.php?action=matriculados&curso=" + encodeURIComponent(cursoId)).then(function (r) {
+    json("/api/cursos.php?action=matriculados&curso=" + encodeURIComponent(cursoId) + todosQ()).then(function (r) {
       if (!r || !r.ok) return;
       var nuevo = r.data && r.data.cursos && r.data.cursos[0];
       if (!nuevo) return;
@@ -250,18 +255,20 @@
   }
 
   function montar() {
-    if (!enPanel()) return;
-    var main = document.querySelector("main");
+    if (!enPanel() && !enAdmin()) return;
+    var main = document.getElementById("redcafe-capa") || document.querySelector("main");
     if (!main) return;
     if (document.getElementById("redcafe-cursos-autor")) return;
 
-    // GATE: solo si quien entra tiene al menos un curso propio.
-    json("/api/cursos.php?action=mine").then(function (m) {
+    // GATE: en el panel, solo si quien entra tiene al menos un curso propio.
+    // En /admin/ el servidor solo responde a una sesión de administración.
+    var gate = enAdmin() ? Promise.resolve({ ok: true, data: { cursos: [1] } }) : json("/api/cursos.php?action=mine");
+    gate.then(function (m) {
       if (!m || !m.ok || !m.data) return;
       var mios = m.data.cursos || [];
       if (!mios.length) return;
 
-      json("/api/cursos.php?action=matriculados").then(function (r) {
+      json("/api/cursos.php?action=matriculados" + (enAdmin() ? "&todos=1" : "")).then(function (r) {
         if (!r || !r.ok || !r.data) return;
         var datos = r.data;
         var seccion = document.createElement("section");
@@ -407,6 +414,12 @@
           }
         });
 
+        seccion.querySelectorAll('.redcafe-derechos input').forEach(function (input) {
+          var selector = input.closest('.redcafe-autor-curso').querySelector('[data-autor-modo]');
+          if (!selector) return;
+          selector.disabled = true;
+          input.addEventListener('change', function () { selector.disabled = !input.checked; });
+        });
         seccion.addEventListener("change", function (ev) {
           var sel = ev.target;
           if (!sel || !sel.getAttribute || sel.getAttribute("data-autor-modo") === null) return;
@@ -417,7 +430,7 @@
           json("/api/cursos.php?action=update", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ id: cursoId, acceso: sel.value })
+            body: JSON.stringify({ id: cursoId, acceso: sel.value, acepta_derechos: true })
           }).then(function (r) {
             if (r && r.ok) {
               cont.setAttribute("data-acceso", sel.value);

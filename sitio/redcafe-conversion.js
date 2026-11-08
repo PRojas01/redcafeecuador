@@ -284,8 +284,22 @@
       if (!sec) return;
       var boton = sec.querySelector(".redcafe-col-boton, button[aria-expanded]");
       if (boton && boton.getAttribute("aria-expanded") !== "true") boton.click();
+      sec.style.scrollMarginTop = "84px";
       sec.scrollIntoView({ block: "start" });
       vistaHecha = true;
+      // El resto del panel sigue pintándose encima y empuja la sección hacia
+      // abajo: se vuelve a llevar la vista hasta ella mientras la persona no
+      // haya movido la página.
+      var tocado = false;
+      var marcar = function () { tocado = true; };
+      ["wheel", "touchstart", "keydown"].forEach(function (t) { window.addEventListener(t, marcar, { once: true, passive: true }); });
+      [500, 1200, 2500, 4000].forEach(function (ms) {
+        setTimeout(function () {
+          if (tocado) return;
+          var top = sec.getBoundingClientRect().top;
+          if (Math.abs(top - 84) > 24) sec.scrollIntoView({ block: "start" });
+        }, ms);
+      });
       return;
     }
 
