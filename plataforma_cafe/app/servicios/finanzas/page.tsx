@@ -1,6 +1,7 @@
 import ClientPage from "./ClientPage";
 
 export const metadata = {
+  alternates: { canonical: "/servicios/finanzas/" },
  title: "Finanzas para productores de café",
  description: "Calcula costos por quintal, margen total y rentabilidad estimada de una venta de café.",
 };

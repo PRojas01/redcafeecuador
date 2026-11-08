@@ -200,7 +200,13 @@ export function crearApp(opciones: { ipDe?: (c: any) => string } = {}) {
     if (ruta.endsWith("/") && fs.existsSync(phpIndex) && !fs.existsSync(path.join(config.sitio, ruta, "index.html"))) {
       return new Response("Página aún no disponible en la nueva plataforma.", { status: 501 });
     }
-    return servirEstatico(cruda, esProduccion());
+    return servirEstatico(cruda, esProduccion(), {
+      consulta: new URL(c.req.url).search,
+      aceptaCodificacion: c.req.header("accept-encoding") ?? "",
+      siNoCoincide: c.req.header("if-none-match") ?? "",
+      rango: c.req.header("range") ?? "",
+      metodo: c.req.method,
+    });
   });
 
   app.onError((e, c) => {

@@ -33,7 +33,8 @@ export const metadata = {
  "trazabilidad café",
  "precio del café Ecuador",
  ],
-  alternates: { canonical: SITE_URL },
+  // Sin canonical aquí: lo heredaban todas las páginas que no ponían el suyo
+  // (noticias, recetas, cursos, legales…) y Google las tomaba por copias de la portada.
   openGraph: {
     images: [
       {
@@ -45,7 +46,6 @@ export const metadata = {
     ],
     type: "website",
     locale: "es_EC",
-    url: SITE_URL,
     siteName: "Red Café Ecuador",
     title: "Red Café Ecuador | Todo el café ecuatoriano, conectado",
     description:

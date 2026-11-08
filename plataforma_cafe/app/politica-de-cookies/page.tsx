@@ -2,7 +2,8 @@ import type { ReactNode } from "react";
 import Link from "next/link";
 
 export const metadata = {
- title: "Política de Cookies — Red Café Ecuador",
+  alternates: { canonical: "/politica-de-cookies/" },
+ title: "Política de Cookies",
  description: "Qué cookies y almacenamiento local usa Red Café Ecuador.",
 };
 

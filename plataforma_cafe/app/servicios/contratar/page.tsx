@@ -2,7 +2,9 @@ import { Suspense } from "react";
 import ContratarInner from "./ClientPage";
 
 export const metadata = {
-  title: "Contratar servicios de Red Café Ecuador",
+  alternates: { canonical: "/servicios/contratar/" },
+  robots: { index: false, follow: false },
+  title: { absolute: "Contratar servicios de Red Café Ecuador" },
   description: "Solicita asesorías, capacitaciones, certificaciones y logística para el sector cafetero.",
 };
 

@@ -3,7 +3,8 @@ import Link from "next/link";
 import { CONFIG } from "@/lib/config";
 
 export const metadata = {
- title: "Política de Privacidad — Red Café Ecuador",
+  alternates: { canonical: "/politica-de-privacidad/" },
+ title: "Política de Privacidad",
  description: "Cómo Red Café Ecuador trata tus datos personales conforme a la LOPDP de Ecuador.",
 };
 

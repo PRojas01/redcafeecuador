@@ -1,7 +1,7 @@
 import type { ReactNode } from "react";
 
 export const metadata = {
-  title: "Comunidad de la Red Café Ecuador",
+  title: { absolute: "Comunidad de la Red Café Ecuador" },
   description: "Conversación entre productores, tostadores, baristas y compradores del café ecuatoriano.",
   alternates: { canonical: "/comunidad/" },
 };

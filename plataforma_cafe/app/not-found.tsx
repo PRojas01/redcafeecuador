@@ -1,7 +1,7 @@
 import Link from "next/link";
 
 export const metadata = {
- title: "404 — Página no encontrada | Red Café Ecuador",
+ title: "404 — Página no encontrada",
 };
 
 export default function NotFound() {

@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import mediaSemilla from "@/public/data/_semilla/media.json";
+import mediaSemilla from "@/lib/contenido/media-semilla.json";
 import Link from "next/link";
 import { api } from "@/lib/api";
 import { CONFIG } from "@/lib/config";

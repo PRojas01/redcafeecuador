@@ -2,7 +2,8 @@ import type { ReactNode } from "react";
 import Link from "next/link";
 
 export const metadata = {
- title: "Propiedad y uso — Red Café Ecuador",
+  alternates: { canonical: "/propiedad-y-uso/" },
+ title: "Propiedad y uso",
  description: "Documento de firma de propiedad intelectual, marca, datos y licencia de uso.",
 };
 
