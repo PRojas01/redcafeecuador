@@ -2,7 +2,7 @@ import type { ReactNode } from "react";
 import Link from "next/link";
 
 export const metadata = {
- title: "Términos y Condiciones — Red Café Ecuador",
+ title: "Términos y Condiciones",
  description: "Reglas de uso de la plataforma Red Café Ecuador.",
  alternates: { canonical: "/terminos-y-condiciones/" },
  openGraph: {

@@ -1,5 +1,5 @@
-import recetasJson from "../public/data/contenido-recetas.json";
-import cursosLegacyJson from "../public/data/contenido-cursos-legacy.json";
+import recetasJson from "./contenido/recetas.json";
+import cursosLegacyJson from "./contenido/cursos-legacy.json";
 
 export type Rol =
   | "productor"

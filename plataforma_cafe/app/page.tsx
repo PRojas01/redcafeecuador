@@ -7,6 +7,10 @@ import { CifrasRed, FranjaPrecio, ProvinciasReales } from "@/components/PortadaD
 import { CamasSecado, FincaTerrazas } from "@/components/Lamina";
 import { CONFIG, waLink } from "@/lib/config";
 
+export const metadata = {
+ alternates: { canonical: "/" },
+};
+
 const PERFILES: Array<{
   href: string;
   icono: IconoNombre;

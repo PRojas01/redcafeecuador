@@ -1,0 +1,170 @@
+[
+ {
+  "id": "v60",
+  "slug": "v60",
+  "titulo": "Café V60 (goteo manual)",
+  "resumen": "El filtro en cono resalta la acidez y los aromas: método limpio, por infusión, muy usado en cafeterías de especialidad.",
+  "metodo": "V60",
+  "dificultad": "media",
+  "minutos": 4,
+  "porciones": 1,
+  "ratio": "1:16",
+  "molienda": "Media (textura de azúcar granulada)",
+  "temperatura": "92 °C",
+  "ingredientes": [
+   "15 g de café",
+   "250 ml de agua filtrada",
+   "1 filtro de papel V60 (#02)"
+  ],
+  "pasos": [
+   "Hierve el agua y espera a que baje a 92 °C.",
+   "Coloca el filtro de papel en el cono y enjuágalo con agua caliente para quitar sabor a papel; desecha el agua.",
+   "Muele el café con molienda media y vierte los 15 g en el cono, nivelándolo suavemente.",
+   "Vierte 45 g de agua en círculos suaves (primer vertido o bloom) y espera 30 segundos para que el café libere gases.",
+   "Continúa vertiendo en espiral, de adentro hacia afuera, hasta llegar a 250 ml en total.",
+   "Realiza un giro suave del cono y deja que el agua termine de drenar. El total debe quedar entre 3:30 y 4:00 minutos.",
+   "Sirve de inmediato y agita la taza suavemente antes de beber para integrar los sabores."
+  ],
+  "consejo": "Usa café recién tostado y muele justo antes de preparar: el bloom será más espumoso y la taza, más aromática.",
+  "origenSugerido": "Cafés lavados con acidez brillante y dulzor: notas a cítricos, flores y frutas destacan con el filtro de papel."
+ },
+ {
+  "id": "prensa-francesa",
+  "slug": "prensa-francesa",
+  "titulo": "Prensa francesa",
+  "resumen": "El método más sencillo para una taza con cuerpo y redondez. El café queda en contacto con el agua durante toda la infusión.",
+  "metodo": "Prensa francesa",
+  "dificultad": "fácil",
+  "minutos": 6,
+  "porciones": 2,
+  "ratio": "1:15",
+  "molienda": "Gruesa (textura de pan rallado grueso)",
+  "temperatura": "94 °C",
+  "ingredientes": [
+   "30 g de café",
+   "450 ml de agua",
+   "1 prensa francesa de 500 ml"
+  ],
+  "pasos": [
+   "Hierve el agua y déjala enfriar hasta 94 °C.",
+   "Muele el café grueso y añádelo a la jarra de la prensa.",
+   "Vierte el agua caliente sobre el café hasta cubrirlo y espera 30 segundos.",
+   "Remueve suavemente el costra con una cuchara para que el café se mezcle.",
+   "Coloca la tapa sin presionar el émbolo y espera 4 minutos más.",
+   "Presiona el émbolo lentamente hasta el fondo y sirve. El café restante sigue extrayendo, por eso sirve todo al momento."
+  ],
+  "consejo": "El café continúa extrayendo al quedarse en contacto con el agua: vacía la jarra después de servir para que no amargue.",
+  "origenSugerido": "Cafés de tueste medio o medio-oscuro con notas a chocolate, cacao y nuez: la prensa los hace redondos y dulces."
+ },
+ {
+  "id": "moka-italiana",
+  "slug": "moka-italiana",
+  "titulo": "Moka italiana",
+  "resumen": "La clásica cafetera de 3 cuerpos produce un café concentrado con cuerpo. Ideal para tazas marcadas o bases de bebidas con leche.",
+  "metodo": "Moka italiana",
+  "dificultad": "fácil",
+  "minutos": 5,
+  "porciones": 2,
+  "ratio": "1:10",
+  "molienda": "Fina-media (más fina que para V60, sin llegar a pulverizada)",
+  "temperatura": "Fuego medio-bajo; agua fría en el depósito",
+  "ingredientes": [
+   "18 g de café",
+   "180 ml de agua",
+   "1 moka italiana de 3 tazas"
+  ],
+  "pasos": [
+   "Llena el depósito inferior con agua hasta la válvula de seguridad, sin pasarla.",
+   "Llena la cesta con café de molienda fina-media sin compactarlo ni amontonarlo.",
+   "Enrosca las 3 piezas con firmeza y pon la cafetera sobre fuego medio-bajo.",
+   "Retira la moka en cuanto el café suba y empiece a sonar burbujeando: no dejes que hierva en exceso.",
+   "Remueve el café brevemente en la jarra y sirve. Si lo prefieres con leche, relaja el cuerpo con agua caliente."
+  ],
+  "consejo": "No compactes el café en la cesta y apaga el fuego apenas empieza a burbujear: menos amargor y mejor control.",
+  "origenSugerido": "Mezclas o coffees de tueste medio con notas a caramelo y avellana, que aguantan el cuerpo de la moka."
+ },
+ {
+  "id": "cold-brew",
+  "slug": "cold-brew",
+  "titulo": "Cold brew",
+  "resumen": "Extracción en frío durante horas: un concentrado dulce, de baja acidez, perfecto para diluir o tomar solo.",
+  "metodo": "Cold brew",
+  "dificultad": "fácil",
+  "minutos": 1020,
+  "porciones": 4,
+  "ratio": "1:8",
+  "molienda": "Muy gruesa (casi partida, como migas grandes)",
+  "temperatura": "Fría o ambiente, sin calor en ningún momento",
+  "ingredientes": [
+   "100 g de café",
+   "800 ml de agua",
+   "1 jarra o frasco con tapa",
+   "1 filtro de tela o papel para colar"
+  ],
+  "pasos": [
+   "Muele el café muy grueso y colócalo en la jarra.",
+   "Vierte los 800 ml de agua fría sobre el café y mezcla bien para mojar todo el café.",
+   "Tapa la jarra y deja reposar entre 16 y 18 horas en el refrigerador (o 12-14 horas a temperatura ambiente).",
+   "Filtra el concentrado con el filtro de tela o papel, descartando el café molido.",
+   "Diluye a tu gusto (suele diluirse 1:1 con agua o leche) y sirve con hielo."
+  ],
+  "consejo": "El concentrado se conserva hasta 5 días en el refrigerador. Prepara el lote el día anterior y listo.",
+  "origenSugerido": "Cafés con dulzor natural y notas a chocolate, panela o frutas maduras: la extracción fría los vuelve suaves."
+ },
+ {
+  "id": "aeropress",
+  "slug": "aeropress",
+  "titulo": "Aeropress",
+  "resumen": "Infusión corta con presión manual: rápido, versátil y de limpieza fácil. Método de culto para tazas limpias en minutos.",
+  "metodo": "Aeropress",
+  "dificultad": "media",
+  "minutos": 3,
+  "porciones": 1,
+  "ratio": "1:13",
+  "molienda": "Media-fina (textura de arena, más fina que para V60)",
+  "temperatura": "80 °C",
+  "ingredientes": [
+   "15 g de café",
+   "200 ml de agua",
+   "1 filtro de papel de Aeropress"
+  ],
+  "pasos": [
+   "Calienta el agua a 80 °C. Coloca el filtro en el portafiltros y enjuágalo con un poco de agua caliente.",
+   "Muele el café medio-fino y añádelo a la cámara de la Aeropress, colocada sobre la taza.",
+   "Vierte unos 30 g de agua y espera 30 segundos (bloom).",
+   "Vierte el resto del agua hasta 200 ml y remueve con la cuchara unos 10 segundos.",
+   "Coloca el émbolo y presiona de forma lenta y constante durante unos 30 segundos.",
+   "Sirve y disfruta. La fuerza de la presión queda en la mano: presiona firme pero sin apurar."
+  ],
+  "consejo": "Invierte el montaje (método invertido) si quieres más control del tiempo de infusión antes de presionar.",
+  "origenSugerido": "Cafés lavados frutales o florales: la taza sale limpia y con la acidez bien equilibrada."
+ },
+ {
+  "id": "espresso-casero",
+  "slug": "espresso-casero",
+  "titulo": "Espresso casero",
+  "resumen": "30 mililitros concentrados en unos 30 segundos: la base de las bebidas preparadas con máquina espresso y la prueba de fuego de la molienda.",
+  "metodo": "Espresso casero",
+  "dificultad": "alta",
+  "minutos": 1,
+  "porciones": 1,
+  "ratio": "1:2",
+  "molienda": "Fina (textura pulverizada propia de espresso)",
+  "temperatura": "93 °C",
+  "ingredientes": [
+   "18 g de café",
+   "Agua filtrada (unos 60 ml en el depósito)",
+   "Máquina de espresso con portafiltros"
+  ],
+  "pasos": [
+   "Muele el café fino y llena el portafiltros. Distribuye el café con los dedos para evitar espacios.",
+   "Prensa con el tamper en horizontal y firme (15-20 kg), sin inclinar.",
+   "Bloquea el portafiltros en el grupo y coloca la taza bajo el flujo.",
+   "Inicia la extracción. El primer café debe caer a los 5-8 segundos.",
+   "Detén el flujo cuando tengas 36 g de café (el doble de la dosis), entre 25 y 30 segundos en total.",
+   "Sirve de inmediato; la crema debe ser densa y de color avellana."
+  ],
+  "consejo": "Si la extracción corre muy rápido, la molienda está gruesa; si gotea lento, está demasiado fina. Ajusta una variable a la vez.",
+  "origenSugerido": "Café de tueste medio con notas a cacao y nuez, que equilibra cuerpo y dulzor bajo la presión de la máquina."
+ }
+]

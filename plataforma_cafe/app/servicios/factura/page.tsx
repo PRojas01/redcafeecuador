@@ -1,6 +1,7 @@
 import ClientPage from "./ClientPage";
 
 export const metadata = {
+  alternates: { canonical: "/servicios/factura/" },
   title: "Facturación electrónica SRI — Próximamente",
   description: "Herramienta de facturación electrónica para el sector cafetero ecuatoriano. Próximamente con integración al SRI.",
 };

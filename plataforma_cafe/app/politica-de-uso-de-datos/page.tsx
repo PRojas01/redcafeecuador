@@ -3,7 +3,8 @@ import Link from "next/link";
 import { CONFIG } from "@/lib/config";
 
 export const metadata = {
- title: "Política de Uso de Datos — Red Café Ecuador",
+  alternates: { canonical: "/politica-de-uso-de-datos/" },
+ title: "Política de Uso de Datos",
  description: "Reglas específicas sobre el uso, tratamiento y cesión de datos personales en Red Café Ecuador.",
 };
 

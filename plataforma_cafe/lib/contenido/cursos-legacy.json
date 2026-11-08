@@ -1,0 +1,41 @@
+[
+ {
+  "id": "legacy-barista-en-casa",
+  "titulo": "Barista en casa",
+  "nivel": "Básico",
+  "duracion": "2 horas",
+  "descripcion": "Contenido de prueba (marcador local).",
+  "modulos": [
+   {
+    "titulo": "Módulo 1",
+    "minutos": 30
+   }
+  ]
+ },
+ {
+  "id": "legacy-barismo-profesional",
+  "titulo": "Barismo profesional",
+  "nivel": "Básico",
+  "duracion": "2 horas",
+  "descripcion": "Contenido de prueba (marcador local).",
+  "modulos": [
+   {
+    "titulo": "Módulo 1",
+    "minutos": 30
+   }
+  ]
+ },
+ {
+  "id": "legacy-barista-avanzado",
+  "titulo": "Barista avanzado",
+  "nivel": "Básico",
+  "duracion": "2 horas",
+  "descripcion": "Contenido de prueba (marcador local).",
+  "modulos": [
+   {
+    "titulo": "Módulo 1",
+    "minutos": 30
+   }
+  ]
+ }
+]
