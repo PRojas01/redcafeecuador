@@ -23,7 +23,7 @@ import { members } from "../src/modulos/members.js";
 import { admin } from "../src/modulos/admin.js";
 import { pedidos } from "../src/modulos/pedidos.js";
 import { cupo } from "../src/lib/seguridad.js";
-import { leerEntrada, limitarCuerpo, LIMITE_CUERPO } from "../src/lib/http.js";
+import { leerEntrada, limitarCuerpo, LIMITE_CUERPO, LIMITE_IMPORTACION } from "../src/lib/http.js";
 const fixture = { id: "sintetico", cedula: "XXXXXXX123", passHash: "sensible", two_factor_secret: "sensible", backup_codes: ["sensible"], token: "sensible" };
 const ctx = (input = {}, query = {}): any => ({ in: input, query, ses: new EstadoSesion(), cache: new Map(), ip: "local", metodo: "POST", cabecera: () => "" });
 beforeEach(() => {
@@ -152,6 +152,13 @@ describe("auditoría local", () => {
   it("i: rechaza cuerpos excesivos por longitud o por bytes recibidos", async () => {
     await expect(limitarCuerpo(new Request("https://local.test", { method: "POST", headers: { "content-length": String(LIMITE_CUERPO + 1) }, body: "x" }))).rejects.toMatchObject({ codigo: 413 });
     await expect(limitarCuerpo(new Request("https://local.test", { method: "POST", body: "x".repeat(LIMITE_CUERPO + 1) }))).rejects.toMatchObject({ codigo: 413 });
+  });
+  it("i2: el paquete de /admin/importar/ puede pasar de 12 MB (hasta 150 MB), el resto no", async () => {
+    const grande = "x".repeat(20 * 1024 * 1024);
+    const ok = await limitarCuerpo(new Request("https://local.test/api/importacion.php?action=simular", { method: "POST", body: grande }));
+    expect((await ok.arrayBuffer()).byteLength).toBe(grande.length);
+    await expect(limitarCuerpo(new Request("https://local.test/api/lotes.php?action=x", { method: "POST", body: grande }))).rejects.toMatchObject({ codigo: 413 });
+    await expect(limitarCuerpo(new Request("https://local.test/api/importacion.php", { method: "POST", headers: { "content-length": String(LIMITE_IMPORTACION + 1) }, body: "x" }))).rejects.toMatchObject({ codigo: 413 });
   });
   it("j: serializa intentos concurrentes bajo el mismo bloqueo", async () => {
     let cola = Promise.resolve(), usados = 0;
