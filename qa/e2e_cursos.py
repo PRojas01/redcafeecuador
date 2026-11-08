@@ -167,6 +167,12 @@ st, r = api(alum2, f"/api/cursos.php?action=get&id={c2}")
 cur = ((r or {}).get("data") or {}).get("curso") or {} if isinstance(r, dict) else {}
 lecs = [l for m in cur.get("modulos", []) for l in m.get("lecciones", [])]
 caso("C-32", "Sin matrícula, el curso privado se ve sin el contenido de las lecciones", lecs and all(set(l) <= {"titulo"} for l in lecs), f"HTTP {st}")
+st, r = api(alum1, "/api/notificaciones.php?action=list")
+avs = ((r or {}).get("data") or {}).get("notificaciones") or [] if isinstance(r, dict) else []
+enl = [a.get("enlace", "") for a in avs if str(a.get("titulo", "")).startswith("Te matriculaste en")]
+caso("C-33", "El aviso de matrícula lleva al curso, a la lección donde quedó", any(e == f"/academia/{curso}/#continuar" for e in enl), f"{enl}")
+st, r = api(alum1, "/api/pedidos.php?action=create_service", {"servicioId": "intermediacion-compraventa", "cantidad": 1, "aviso_aceptado": True})
+caso("C-34", "«Solicitar servicio» de intermediación queda registrado", st == 200 and (r.get("data") or {}).get("pedido", {}).get("proveedor_id") == "redcafe", f"HTTP {st} {r.get('error','') if isinstance(r, dict) else ''}")
 
 ok = sum(1 for x in R if x[2])
 for x in R:

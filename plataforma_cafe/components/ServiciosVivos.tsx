@@ -89,10 +89,17 @@ export function Intermediacion() {
           </p>
         </div>
         <div className="redcafe-action-row">
-          <Link href="/marketplace/?ver=servicios">Solicitar servicio</Link>
-          <a href={waLink("Hola, quiero solicitar intermediación en compraventa de café.")} target="_blank" rel="noreferrer">
-            WhatsApp
+          {/* Antes llevaba al Marketplace; ahora solicita de verdad: registra la
+              solicitud (redcafe-aviso-pedidos.js) y abre el WhatsApp de la Red. */}
+          <a
+            href={waLink("Hola, quiero solicitar intermediación en compraventa de café.")}
+            target="_blank"
+            rel="noreferrer"
+            data-solicitar-servicio="intermediacion-compraventa"
+          >
+            Solicitar servicio
           </a>
+          <Link href="/marketplace/?ver=servicios">Ver más servicios</Link>
         </div>
       </article>
     </section>

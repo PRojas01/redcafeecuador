@@ -4,7 +4,7 @@
 4:I[9000,["8173","static/chunks/8173-742dddf291619891.js","5739","static/chunks/5739-b290f56e05b6426f.js","7177","static/chunks/app/layout-ad29d305f917d285.js"],"TickerPrecio"]
 5:I[5244,[],""]
 6:I[3866,[],""]
-7:I[8173,["8173","static/chunks/8173-742dddf291619891.js","6104","static/chunks/app/servicios/page-82a73af639ad8b51.js"],""]
+7:I[8173,["8173","static/chunks/8173-742dddf291619891.js","6104","static/chunks/app/servicios/page-ef7084978882ad56.js"],""]
 8:I[7062,["8173","static/chunks/8173-742dddf291619891.js","5739","static/chunks/5739-b290f56e05b6426f.js","7177","static/chunks/app/layout-ad29d305f917d285.js"],"HubFlotante"]
 9:I[9779,["8173","static/chunks/8173-742dddf291619891.js","5739","static/chunks/5739-b290f56e05b6426f.js","7177","static/chunks/app/layout-ad29d305f917d285.js"],"RegistrarPWA"]
 a:I[3704,["8173","static/chunks/8173-742dddf291619891.js","5739","static/chunks/5739-b290f56e05b6426f.js","7177","static/chunks/app/layout-ad29d305f917d285.js"],""]
