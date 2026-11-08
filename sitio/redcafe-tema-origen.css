@@ -1151,3 +1151,8 @@ html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5):not(#o6):not(#o7):not(#o8):not
 html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5):not(#o6):not(#o7):not(#o8):not(#o9) body [aria-label="Precio referencial del café arábica"] a.bg-acento-claro:hover { background: #fbf6ef !important; color: #8c1e0e !important; }
 html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5):not(#o6):not(#o7):not(#o8):not(#o9) body [aria-label="Precio referencial del café arábica"] .text-cereza { color: #ffc9bd !important; }
 html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5):not(#o6):not(#o7):not(#o8):not(#o9) body [aria-label="Precio referencial del café arábica"] .text-hoja-clara { color: #c2ebc8 !important; }
+
+/* 20261107e · Contraste AA en «Acción recomendada» del panel: el oro #DFA066
+   sobre rojo #8C1E0E daba 4,06:1; #E9B47E da 4,9:1 (texto y botón). */
+html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5):not(#o6):not(#o7):not(#o8):not(#o9):not(#o10):not(#o11) .redcafe-panel-next-card.is-primary p { color: #E9B47E !important; }
+html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5):not(#o6):not(#o7):not(#o8):not(#o9):not(#o10):not(#o11) .redcafe-panel-next-card.is-primary a { background: #E9B47E !important; color: #8C1E0E !important; }

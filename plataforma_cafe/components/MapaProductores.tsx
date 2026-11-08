@@ -17,13 +17,11 @@ interface Props {
    provincia) quedaban uno encima de otro: en la vista nacional solo se veía
    el de arriba. Ahora:
    - cada lote es un pin rojo con un grano de café dibujado en SVG;
-   - los pines que se tocan se agrupan en un círculo con el número de lotes;
-     al pulsarlo se acerca el mapa y, si ya no se puede acercar más (misma
-     finca o mismo punto), los lotes se abren en abanico para elegir uno;
+   - todos los lotes se ven a la vez, sin grupos con número (como el sitio
+     original); los que caen en el mismo punto se abren en círculo;
    - las coordenadas que llegan como texto («-1.23») también cuentan. */
 
-const RADIO_GRUPO = 50; // px: dos pines a menos de esto se agrupan
-const ZOOM_MAX_GRUPO = 14;
+const RADIO_JUNTOS = 18; // px: pines a menos de esto se abren en círculo
 
 const esc = (v: unknown) =>
  String(v ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c] as string);
@@ -36,11 +34,6 @@ function pinHtml(ejemplo: boolean) {
  `<ellipse cx="15" cy="14.5" rx="6.2" ry="8" fill="#fff" transform="rotate(28 15 14.5)"/>` +
  `<path d="M12.6 8.4c3.2 2.6 1.6 9.2 4.8 12.2" fill="none" stroke="${fondo}" stroke-width="1.8" stroke-linecap="round"/>` +
  `</svg>`;
-}
-
-function grupoHtml(n: number) {
- const t = n > 99 ? 46 : 40;
- return `<div style="display:flex;align-items:center;justify-content:center;width:${t}px;height:${t}px;border-radius:50%;background:#8C1E0E;border:3px solid #fff;box-shadow:0 2px 8px rgba(36,23,17,.4);color:#fff;font:700 15px/1 Inter,system-ui,sans-serif;">${n}</div>`;
 }
 
 function precioTexto(l: LoteApi) {
@@ -148,24 +141,14 @@ export default function MapaProductores({ lotes, onSelect, altura = "420px" }: P
  return m;
  };
 
- // Abre en abanico los lotes que siguen juntos al máximo acercamiento.
- const abanico = (grupo: typeof puntos, centro: L.LatLng) => {
- const c = map.latLngToLayerPoint(centro);
- const r = Math.max(46, grupo.length * 11);
- grupo.forEach((p, i) => {
- const ang = (2 * Math.PI * i) / grupo.length - Math.PI / 2;
- const ll = map.layerPointToLatLng(L.point(c.x + r * Math.cos(ang), c.y + r * Math.sin(ang)));
- L.polyline([centro, ll], { color: "#8C1E0E", weight: 1.5, opacity: 0.7, interactive: false }).addTo(capa);
- pin(p.l, ll).addTo(capa);
- });
- };
-
  const dibujar = () => {
  capa.clearLayers();
+ // Sin grupos con número: cada lote tiene su pin. Los que caen en el mismo
+ // punto (p. ej. centro de la provincia) se abren en círculo alrededor de él.
  const grupos: { p: L.Point; items: typeof puntos }[] = [];
  puntos.forEach((it) => {
  const p = map.latLngToLayerPoint(it.ll);
- const g = grupos.find((x) => x.p.distanceTo(p) < RADIO_GRUPO);
+ const g = grupos.find((x) => x.p.distanceTo(p) < RADIO_JUNTOS);
  if (g) g.items.push(it);
  else grupos.push({ p, items: [it] });
  });
@@ -174,26 +157,22 @@ export default function MapaProductores({ lotes, onSelect, altura = "420px" }: P
  pin(g.items[0].l, g.items[0].ll).addTo(capa);
  return;
  }
- const limites = L.latLngBounds(g.items.map((i) => i.ll));
- const centro = limites.getCenter();
- const t = g.items.length > 99 ? 46 : 40;
- const icon = L.divIcon({ className: "", html: grupoHtml(g.items.length), iconSize: [t, t], iconAnchor: [t / 2, t / 2] });
- const m = L.marker(centro, { icon, title: `${g.items.length} lotes en esta zona`, zIndexOffset: 500 }).addTo(capa);
- m.on("click", () => {
- const z = Math.min(map.getBoundsZoom(limites.pad(0.3)), ZOOM_MAX_GRUPO);
- if (z > map.getZoom()) map.fitBounds(limites.pad(0.3), { maxZoom: ZOOM_MAX_GRUPO });
- else {
- dibujar();
- capa.eachLayer((ly) => { if ((ly as L.Marker).getLatLng && (ly as L.Marker).getLatLng().equals(centro)) capa.removeLayer(ly); });
- abanico(g.items, centro);
- }
+ const n = g.items.length;
+ const r = Math.max(20, 4.8 * n);
+ const centro = map.layerPointToLatLng(g.p);
+ L.circleMarker(centro, { radius: 4, color: "#fff", weight: 1.5, fillColor: "#8C1E0E", fillOpacity: 1, interactive: false }).addTo(capa);
+ g.items.forEach((it, i) => {
+ const ang = (2 * Math.PI * i) / n - Math.PI / 2;
+ const ll = map.layerPointToLatLng(L.point(g.p.x + r * Math.cos(ang), g.p.y + r * Math.sin(ang)));
+ L.polyline([centro, ll], { color: "#8C1E0E", weight: 1, opacity: 0.55, interactive: false }).addTo(capa);
+ pin(it.l, ll).addTo(capa);
  });
  });
  };
  dibujarRef.current = dibujar;
 
  if (puntos.length > 0) {
- map.fitBounds(L.latLngBounds(puntos.map((p) => p.ll)), { padding: [30, 30], maxZoom: 9 });
+ map.fitBounds(L.latLngBounds(puntos.map((p) => p.ll)), { paddingTopLeft: [50, 80], paddingBottomRight: [50, 50], maxZoom: 9 });
  }
  dibujar();
  }

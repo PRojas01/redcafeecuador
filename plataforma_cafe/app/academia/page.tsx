@@ -33,8 +33,7 @@ type CursoLista = {
   verificado_por?: string;
 };
 
-/* Portadas por categoría (las fotos de /uploads/user-content/ por curso no
-   existen en el servidor y daban 404 y un segundo cambio de imagen). */
+/* Portadas por categoría, para cursos sin portada propia. */
 const PORTADAS: Record<string, string> = {
   produccion: "/img/academia/produccion.webp",
   postcosecha: "/img/academia/postcosecha.webp",
@@ -44,6 +43,24 @@ const PORTADAS: Record<string, string> = {
   barismo: "/img/academia/barismo-taza.webp",
   legal: "/img/academia/certificacion.webp",
   general: "/img/academia/basico.webp",
+};
+
+/* Portada propia de cada curso (las mismas de redcafeecuador.com), servidas desde
+   /img/academia/cursos/; si un curso nuevo no tiene, se usa la de su categoría. */
+const PORTADAS_POR_CURSO: Record<string, string> = {
+  "buenas-practicas": "/img/academia/cursos/buenas-practicas.webp",
+  "cafe-de-especialidad-de-la-finca-a-la-taza": "/img/academia/cursos/cafe-de-especialidad-de-la-finca-a-la-taza.webp",
+  "cafe-especial": "/img/academia/cursos/cafe-especial.webp",
+  "exportacion": "/img/academia/cursos/exportacion.webp",
+  "formalizacion": "/img/academia/cursos/formalizacion.webp",
+  "legacy-barismo-profesional": "/img/academia/cursos/legacy-barismo-profesional.webp",
+  "legacy-barista-avanzado": "/img/academia/cursos/legacy-barista-avanzado.webp",
+  "legacy-barista-en-casa": "/img/academia/cursos/legacy-barista-en-casa.webp",
+  "manejo-plagas": "/img/academia/cursos/manejo-plagas.webp",
+  "postcosecha": "/img/academia/cursos/postcosecha.webp",
+  "trazabilidad": "/img/academia/cursos/trazabilidad.webp",
+  "tueste": "/img/academia/cursos/tueste.webp",
+  "ventas-comercial": "/img/academia/cursos/ventas-comercial.webp",
 };
 
 const SELLOS: Record<string, string> = {
@@ -76,7 +93,7 @@ const PRECIOS: Record<string, string> = {
   "legacy-barista-avanzado": "Promoción 550 USD",
 };
 
-const portadaDe = (c: CursoLista) => PORTADAS[c.categoria || "general"] || PORTADAS.general;
+const portadaDe = (c: CursoLista) => PORTADAS_POR_CURSO[c.id] || PORTADAS[c.categoria || "general"] || PORTADAS.general;
 const selloDe = (c: CursoLista) => SELLOS[c.id] || (PRECIOS[c.id] ? "Formación con Legacy" : "Aprende gratis · a tu ritmo");
 const pct = (v: unknown) => {
   const n = Number(v);
