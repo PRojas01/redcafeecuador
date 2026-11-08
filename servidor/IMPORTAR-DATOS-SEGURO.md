@@ -15,8 +15,17 @@ ni por ningún archivo del servidor nuevo.
 
 ## Paso a paso
 
-1. **Descarga el respaldo** del hosting antiguo: `public_html/data/`, `public_html/uploads/`
-   y el archivo `.redcafe_admin_pass` (está fuera de `public_html`). Un solo `.zip`.
+1. **Descarga el respaldo** del hosting antiguo con el script
+   `herramientas/exportar-respaldo.php`:
+   - Súbelo a `public_html/` con el Administrador de archivos de cPanel (si quieres,
+     cámbiale el nombre por uno difícil de adivinar).
+   - Ábrelo en el navegador (`https://redcafeecuador.com/exportar-respaldo.php`), escribe
+     la contraseña de administración y pulsa **Descargar respaldo**.
+   - Sale un solo `.zip` con `data/`, `uploads/user-content/` y `.redcafe_admin_pass`
+     (sin sesiones, OTP ni copias viejas). Por defecto el script **se borra solo** al
+     terminar; compruébalo en el Administrador de archivos.
+   - Si el hosting no tiene la extensión `zip` de PHP, el script lo dice: actívala en
+     cPanel o descarga a mano `data/`, `uploads/` y `.redcafe_admin_pass` en un `.zip`.
 2. **Abre `procesar-respaldo.html`** con doble clic (Chrome o Edge) y elige el `.zip`.
    Revisa la tabla: qué va al paquete cifrado, qué va a la copia anónima y qué se descarta.
 3. **Crea el paquete cifrado:** elige una contraseña de 12 caracteres o más.
@@ -54,6 +63,26 @@ lo que cambie allí, repite el proceso con un respaldo nuevo y elige el modo
 Lo que alguien cree en la plataforma nueva antes del cambio de dominio se pierde en la
 siguiente sincronización (salvo los miembros nuevos): úsala solo para revisar.
 Primero **Simular**, siempre. Entre importaciones deja `REDCAFE_IMPORTACION` apagada.
+
+## Datos que los miembros guardan en su navegador
+
+Los cuadernos de campo (producción, ventas, compras, tostados, siembras, limpiezas,
+pilados, envíos, fletes, costos, turnos), las fincas favoritas, el registro de actividad
+y los informes solicitados **no están en el servidor**: viven en el `localStorage` del
+navegador de cada miembro (así lo promete la política de cookies). No entran en el
+respaldo y no hay que importarlos:
+
+- **Al cambiar el dominio no se pierden.** El navegador guarda esos datos por dominio
+  (`https://redcafeecuador.com`); el sitio nuevo se sirve en el mismo dominio (los dos
+  redirigen `www` al dominio sin `www`) y el código React lee las mismas claves.
+  Una prueba (`servidor/test/datos-navegador.test.ts`) falla si alguien las renombra.
+- **Para cambiar de navegador o equipo**, o por si acaso antes del corte, cada miembro
+  abre **`/mis-datos-del-navegador/`**: ve qué tiene guardado, descarga una copia
+  `.json` y la recupera en otro navegador (las listas se juntan sin repetir). La página
+  no se conecta a internet, así que nada pasa por el servidor.
+- Para ofrecerla **ya** en el sitio PHP, sube `sitio/mis-datos-del-navegador/index.html`
+  a `public_html/mis-datos-del-navegador/index.html`. Funciona igual en los dos sitios.
+- No se copia la sesión (`redcafe_sesion`): tras el cambio cada uno vuelve a entrar.
 
 ## Qué protege cada capa
 

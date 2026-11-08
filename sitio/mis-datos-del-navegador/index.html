@@ -1,0 +1,191 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<!-- Esta página no se conecta a nada: lo que lee del navegador no sale del equipo. -->
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'unsafe-inline'; style-src 'unsafe-inline'; img-src 'self'; connect-src 'none'; form-action 'none'">
+<meta name="robots" content="noindex">
+<title>Mis datos del navegador · Red Café Ecuador</title>
+<link rel="icon" href="/favicon.ico" sizes="any">
+<style>
+  :root { --rojo: #a20e00; --texto: #2b1a12; --suave: #5c4636; --fondo: #fbf7f1; --borde: #e6d9c8; --ok: #1d6b35; }
+  * { box-sizing: border-box; }
+  body { margin: 0; padding: 24px 16px 48px; background: var(--fondo); color: var(--texto); font: 16px/1.55 system-ui, -apple-system, "Segoe UI", sans-serif; }
+  main { max-width: 720px; margin: 0 auto; }
+  a { color: var(--rojo); }
+  h1 { font-size: 1.6rem; line-height: 1.2; margin: 0 0 .4rem; color: var(--rojo); }
+  h2 { font-size: 1.1rem; margin: 0 0 .6rem; }
+  .caja { background: #fff; border: 1px solid var(--borde); border-radius: 14px; padding: 18px; margin: 16px 0; }
+  .nota { color: var(--suave); font-size: .92rem; }
+  table { width: 100%; border-collapse: collapse; font-size: .95rem; }
+  th, td { text-align: left; padding: .4rem .2rem; border-bottom: 1px solid #f0e7dc; vertical-align: top; }
+  td.n { text-align: right; white-space: nowrap; }
+  .boton { display: inline-block; background: var(--rojo); color: #fff; border: 0; border-radius: 10px; padding: .7rem 1.1rem; font: inherit; font-weight: 600; cursor: pointer; text-decoration: none; }
+  .boton:focus-visible, input:focus-visible { outline: 3px solid #f7d08a; outline-offset: 2px; }
+  .boton[disabled] { opacity: .55; cursor: not-allowed; }
+  input[type=file] { font: inherit; max-width: 100%; }
+  .estado { margin-top: .8rem; font-weight: 600; }
+  .estado.ok { color: var(--ok); }
+  .estado.error { color: var(--rojo); }
+  @media (prefers-reduced-motion: no-preference) { .boton { transition: filter .15s; } .boton:hover { filter: brightness(1.12); } }
+</style>
+</head>
+<body>
+<main>
+  <p><a href="/">← Volver a Red Café Ecuador</a></p>
+  <h1>Mis datos guardados en este navegador</h1>
+  <p class="nota">Tus cuadernos de campo (producción, ventas, costos, siembras, turnos…), favoritos e informes solicitados se guardan <strong>solo en este navegador</strong>. Aquí puedes descargar una copia y recuperarla en otro navegador o equipo. Esta página no envía nada a internet.</p>
+
+  <section class="caja" aria-labelledby="t-hay">
+    <h2 id="t-hay">Qué hay guardado aquí</h2>
+    <div id="inventario"><p class="nota">Leyendo…</p></div>
+  </section>
+
+  <section class="caja" aria-labelledby="t-bajar">
+    <h2 id="t-bajar">1. Descargar una copia</h2>
+    <p class="nota">Se descarga un archivo <code>.json</code>. Guárdalo en tu equipo o en tu nube; no lo compartas: puede incluir montos, ventas y datos de tu finca.</p>
+    <button class="boton" id="bajar" type="button">Descargar mi copia</button>
+    <p class="estado" id="estado-bajar" role="status"></p>
+  </section>
+
+  <section class="caja" aria-labelledby="t-subir">
+    <h2 id="t-subir">2. Recuperar una copia</h2>
+    <p class="nota">Elige el archivo que descargaste. Lo que ya tengas en este navegador <strong>no se borra</strong>: las listas se juntan sin repetir registros.</p>
+    <label for="archivo" class="nota">Archivo de copia (.json)</label><br>
+    <input type="file" id="archivo" accept=".json,application/json">
+    <p class="estado" id="estado-subir" role="status"></p>
+  </section>
+</main>
+<script>
+(function () {
+  "use strict";
+  var FORMATO = "redcafe-navegador/1";
+  var MAX_VALOR = 4 * 1024 * 1024;
+
+  // Lo que guarda el sitio (plataforma_cafe/lib/*.ts y capa propia). Si se cambia
+  // un nombre de clave en el código, los datos de los usuarios dejan de verse.
+  var NOMBRES = {
+    redcafe_registros: "Registro de actividad",
+    redcafe_produccion: "Producción",
+    redcafe_ventas: "Ventas",
+    redcafe_compras: "Compras",
+    redcafe_tostados: "Tostados",
+    redcafe_siembras: "Siembras",
+    redcafe_limpiezas: "Limpiezas",
+    redcafe_pilados: "Pilados",
+    redcafe_envios: "Envíos",
+    redcafe_fletes: "Fletes",
+    redcafe_costos_productor: "Costos (productor)",
+    redcafe_costos_vendedor: "Costos (vendedor)",
+    redcafe_turnos_barista: "Turnos de barista",
+    redcafe_favoritos: "Fincas favoritas",
+    redcafe_certificados: "Informes técnicos solicitados",
+    redcafe_feedback: "Opiniones del laboratorio"
+  };
+  // Nunca se copian: la sesión se vuelve a abrir entrando, y el resto es temporal.
+  function excluida(k) {
+    return k === "redcafe_sesion" || k === "redcafe_visual_preview" || k === "redcafe_login_email" ||
+      k.indexOf("redcafe_reloaded_") === 0;
+  }
+  function nuestra(k) { return /^(redcafe|rc-)/.test(k) && !excluida(k); }
+
+  function $(id) { return document.getElementById(id); }
+  function leer(k) { try { return window.localStorage.getItem(k); } catch (e) { return null; } }
+  function claves() {
+    var out = [];
+    try { for (var i = 0; i < localStorage.length; i++) { var k = localStorage.key(i); if (k && nuestra(k)) out.push(k); } } catch (e) {}
+    return out.sort(function (a, b) { return (NOMBRES[a] ? 0 : 1) - (NOMBRES[b] ? 0 : 1) || a.localeCompare(b); });
+  }
+  function cuantos(valor) {
+    try { var v = JSON.parse(valor); return Array.isArray(v) ? v.length + (v.length === 1 ? " registro" : " registros") : "1 ajuste"; } catch (e) { return "1 ajuste"; }
+  }
+  function estado(id, texto, clase) { var p = $(id); p.textContent = texto; p.className = "estado " + (clase || ""); }
+
+  function pintar() {
+    var ks = claves(), caja = $("inventario");
+    caja.textContent = "";
+    if (!ks.length) {
+      var p = document.createElement("p"); p.className = "nota";
+      p.textContent = "Este navegador no tiene datos de la Red guardados. Si los usabas en otro navegador o equipo, abre esta misma página allí y descarga la copia.";
+      caja.appendChild(p); $("bajar").disabled = true; return;
+    }
+    $("bajar").disabled = false;
+    var t = document.createElement("table"), cab = t.insertRow();
+    ["Qué", "Cuánto"].forEach(function (x) { var th = document.createElement("th"); th.textContent = x; cab.appendChild(th); });
+    ks.forEach(function (k) {
+      var f = t.insertRow();
+      f.insertCell().textContent = NOMBRES[k] || "Ajuste del sitio (" + k + ")";
+      var c = f.insertCell(); c.className = "n"; c.textContent = cuantos(leer(k));
+    });
+    caja.appendChild(t);
+  }
+
+  $("bajar").addEventListener("click", function () {
+    var datos = {};
+    claves().forEach(function (k) { var v = leer(k); if (v !== null) datos[k] = v; });
+    var copia = { formato: FORMATO, origen: location.origin, generado: new Date().toISOString(), claves: datos };
+    var url = URL.createObjectURL(new Blob([JSON.stringify(copia, null, 1)], { type: "application/json" }));
+    var a = document.createElement("a");
+    a.href = url; a.download = "redcafe-mis-datos-" + new Date().toISOString().slice(0, 10) + ".json";
+    document.body.appendChild(a); a.click(); a.remove();
+    setTimeout(function () { URL.revokeObjectURL(url); }, 2000);
+    estado("estado-bajar", "Copia descargada (" + Object.keys(datos).length + " grupos de datos).", "ok");
+  });
+
+  // Une dos listas sin repetir: por «id» si lo tienen, si no por contenido.
+  function unir(local, copia) {
+    var vistos = {}, out = local.slice(), nuevos = 0;
+    function huella(x) { return x && typeof x === "object" && x.id != null ? "id:" + String(x.id) : "js:" + JSON.stringify(x); }
+    local.forEach(function (x) { vistos[huella(x)] = true; });
+    copia.forEach(function (x) { var h = huella(x); if (!vistos[h]) { vistos[h] = true; out.push(x); nuevos++; } });
+    return { lista: out, nuevos: nuevos };
+  }
+
+  $("archivo").addEventListener("change", function (ev) {
+    var f = ev.target.files && ev.target.files[0];
+    if (!f) return;
+    if (f.size > 20 * 1024 * 1024) { estado("estado-subir", "El archivo es demasiado grande para ser una copia de la Red.", "error"); return; }
+    var lector = new FileReader();
+    lector.onload = function () {
+      var copia;
+      try { copia = JSON.parse(String(lector.result)); } catch (e) { copia = null; }
+      if (!copia || copia.formato !== FORMATO || !copia.claves || typeof copia.claves !== "object") {
+        estado("estado-subir", "Ese archivo no es una copia de «Mis datos del navegador».", "error"); return;
+      }
+      var anadidos = 0, juntados = 0, conservados = 0, fallos = 0;
+      Object.keys(copia.claves).forEach(function (k) {
+        var v = copia.claves[k];
+        if (!nuestra(k) || typeof v !== "string" || v.length > MAX_VALOR) { fallos++; return; }
+        var actual = leer(k);
+        try {
+          if (actual === null) { localStorage.setItem(k, v); anadidos++; return; }
+          var a = JSON.parse(actual), b = JSON.parse(v);
+          if (Array.isArray(a) && Array.isArray(b)) {
+            var r = unir(a, b);
+            if (r.nuevos) { localStorage.setItem(k, JSON.stringify(r.lista)); juntados += r.nuevos; }
+            return;
+          }
+          conservados++;
+        } catch (e) {
+          if (actual === null || e && e.name === "QuotaExceededError") fallos++; else conservados++;
+        }
+      });
+      pintar();
+      var partes = [];
+      if (anadidos) partes.push("recuperados " + anadidos + " grupos de datos");
+      if (juntados) partes.push(juntados + " registros añadidos a tus listas");
+      if (conservados) partes.push(conservados + " ajustes ya existían y se conservaron");
+      if (fallos) partes.push(fallos + " no se pudieron guardar");
+      estado("estado-subir", partes.length ? "Listo: " + partes.join(", ") + "." : "No había nada nuevo: este navegador ya tenía todo.", fallos ? "error" : "ok");
+      ev.target.value = "";
+    };
+    lector.onerror = function () { estado("estado-subir", "No se pudo leer el archivo.", "error"); };
+    lector.readAsText(f);
+  });
+
+  pintar();
+})();
+</script>
+</body>
+</html>
