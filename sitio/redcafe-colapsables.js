@@ -65,10 +65,10 @@
     var s = document.createElement("style");
     s.id = "redcafe-colapsables-css";
     s.textContent =
-      ".redcafe-col-boton{align-items:center;background:transparent;border:0;border-top:1px solid rgba(59, 26, 12,.14);" +
-      "color:var(--color-filtrado-800,#3b1a0c);cursor:pointer;display:flex;font:inherit;font-weight:700;gap:.6rem;" +
+      ".redcafe-col-boton{align-items:center;background:transparent;border:0;border-top:1px solid rgba(162, 14, 0,.14);" +
+      "color:var(--color-filtrado-800,#a20e00);cursor:pointer;display:flex;font:inherit;font-weight:700;gap:.6rem;" +
       "justify-content:space-between;margin-top:.6rem;padding:.7rem 0 .2rem;text-align:left;width:100%}" +
-      ".redcafe-col-boton:hover{color:var(--color-filtrado-600,#3b1a0c)}" +
+      ".redcafe-col-boton:hover{color:var(--color-filtrado-600,#a20e00)}" +
       ".redcafe-col-boton:focus-visible{outline:2px solid rgba(138,90,34,.45);outline-offset:2px}" +
       ".redcafe-col-texto{font-size:.85rem}" +
       ".redcafe-col-cuenta{background:var(--color-crema-oscuro,#efeae1);border-radius:999px;font-size:.7rem;" +
@@ -76,9 +76,9 @@
       ".redcafe-col-flecha{font-size:.8rem;transition:transform .15s ease}" +
       '.redcafe-col-boton[aria-expanded="true"] .redcafe-col-flecha{transform:rotate(180deg)}' +
       ".redcafe-col-cuerpo{padding-top:.4rem}" +
-      ".redcafe-form-abrir{background:var(--color-filtrado-800,#3b1a0c);border:0;border-radius:999px;color:#f7f4ef;" +
+      ".redcafe-form-abrir{background:var(--color-filtrado-800,#a20e00);border:0;border-radius:999px;color:#f7f4ef;" +
       "cursor:pointer;font:inherit;font-size:.85rem;font-weight:700;margin:.4rem 0 .6rem;min-height:2.5rem;padding:.5rem 1rem}" +
-      '.redcafe-form-abrir[aria-expanded="true"]{background:transparent;border:1px solid rgba(59, 26, 12,.3);color:var(--color-filtrado-800,#3b1a0c)}' +
+      '.redcafe-form-abrir[aria-expanded="true"]{background:transparent;border:1px solid rgba(162, 14, 0,.3);color:var(--color-filtrado-800,#a20e00)}' +
       "form[hidden]{display:none!important}";
     document.head.appendChild(s);
   }
