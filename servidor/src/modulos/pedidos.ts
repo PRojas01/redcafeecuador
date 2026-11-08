@@ -9,6 +9,7 @@ import { enviarCorreo } from "../lib/correo.js";
 import { db } from "../lib/db.js";
 import { bool, cortar, int, num, nowIso, str, textoEntrada, today } from "../lib/util.js";
 import { esSiembra, lotesTodos } from "./lotes.js";
+import { INTERMEDIACION } from "./marketplace-servicios.js";
 
 const ESTADOS = ["Solicitado", "Aceptado", "En camino", "Entregado"];
 const plata = (n: number) => n.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
@@ -119,7 +120,9 @@ const acciones: Modulo["acciones"] = {
       titulo = cortar(str(tercero.titulo), 120);
       precioUnit = num(tercero.precio);
     } else {
-      const oficial = (await listar("servicios")).find((s) => str(s.id) === servicioId);
+      // La intermediación es un servicio oficial fijo: no siempre está guardado en «servicios».
+      const oficial = (await listar("servicios")).find((s) => str(s.id) === servicioId)
+        ?? (servicioId === str(INTERMEDIACION.id) ? INTERMEDIACION : undefined);
       if (!oficial || oficial.oculto || !visible(oficial)) fail("Servicio no encontrado.", 404);
       titulo = cortar(str(oficial.nombre), 120); precioUnit = num(oficial.precio);
       // «redcafe» (marketplace) o «redcafe_admin» (catálogo antiguo): el chat del admin depende de ello.

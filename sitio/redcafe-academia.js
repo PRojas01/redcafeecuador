@@ -781,7 +781,7 @@
     var estadoTexto = curso.mi_solicitud === "pendiente"
       ? "Solicitud pendiente de aprobación"
       : (pct >= 100 ? "Curso completado" : pct + "% completado");
-    return '<a class="redcafe-curso-card" href="/academia/' + esc(curso.id || "") + '/">' +
+    return '<a class="redcafe-curso-card" href="/academia/' + esc(curso.id || "") + '/' + (pct > 0 && pct < 100 ? '#continuar' : '') + '">' +
       '<div class="redcafe-curso-card-rot">' + esc(curso.categoria || "Academia") + ' · ' + esc(curso.nivel || "") + '</div>' +
       '<p class="redcafe-pub-titulo" style="margin-top:.3rem">' + esc(curso.titulo || "Curso") + '</p>' +
       '<div class="redcafe-avance mini">' +
@@ -820,9 +820,37 @@
 
   /* ── Arranque ────────────────────────────────────────────────────── */
 
+  /* «Continuar» (aviso de matrícula, tarjeta de Mis cursos): con #continuar
+     en la dirección, al abrir el curso se baja a la primera lección sin
+     completar. Solo desplaza la página; no toca el DOM de React. Se repite
+     unos segundos por si la página aún se está acomodando, salvo que la
+     persona ya haya movido la página por su cuenta. */
+  function continuarCurso() {
+    if (location.hash !== "#continuar" || !/^\/academia\/[^/]+\/?$/.test(location.pathname)) return;
+    var movio = false, n = 0;
+    var parar = function () { movio = true; };
+    ["wheel", "touchstart", "keydown"].forEach(function (e) { window.addEventListener(e, parar, { once: true, passive: true }); });
+    (function ir() {
+      if (movio) return;
+      var checks = document.querySelectorAll('input[data-completar]');
+      var destino = null;
+      for (var i = 0; i < checks.length; i++) { if (!checks[i].checked) { destino = checks[i]; break; } }
+      if (!destino && checks.length) destino = checks[checks.length - 1];
+      var bloque = destino && (destino.closest("article.redcafe-leccion") || destino);
+      var tit = bloque && bloque.querySelector('[id^="lec-"]');
+      var obj = tit || bloque;
+      if (obj) {
+        obj.style.scrollMarginTop = "84px";
+        var top = obj.getBoundingClientRect().top;
+        if (Math.abs(top - 84) > 24) obj.scrollIntoView({ behavior: n ? "auto" : "smooth", block: "start" });
+      }
+      if (++n < 12) setTimeout(ir, obj ? 450 : 300);
+    })();
+  }
+
   function iniciar() {
     // La Academia (lista y ficha del curso) ya es de React.
-    if (enAcademia()) return;
+    if (enAcademia()) { continuarCurso(); return; }
     if (!enPanel()) return;
     json("/api/auth.php?action=me").then(function (res) {
       var u = res && res.ok && res.data && res.data.user;

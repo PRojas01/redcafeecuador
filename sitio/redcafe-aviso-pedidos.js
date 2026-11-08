@@ -216,6 +216,67 @@
       fondo.appendChild(caja); document.body.appendChild(fondo); seguir.focus();
     });
   }
+  /* ── «Solicitar servicio» ─────────────────────────────────────────
+     Los botones con data-solicitar-servicio (Marketplace y /servicios/)
+     hacen lo que hacía el sitio original: registran la solicitud (Mis
+     órdenes del panel y aviso a quien ofrece el servicio) y después abren
+     su WhatsApp con el mensaje listo. La advertencia de pedidos sale antes,
+     como en cualquier pedido; si la persona cancela, no se envía nada. Sin
+     sesión, solo queda el WhatsApp con su aviso de siempre. */
+  function abrirWa(href, destino) {
+    // Sin «noopener» en el tercer argumento: con él window.open devuelve null
+    // y no se sabría si el navegador bloqueó la ventana.
+    if (destino === "_blank") { var w = window.open(href, "_blank"); if (w) { try { w.opener = null; } catch (e) {} return; } }
+    location.href = href;
+  }
+  function aviso(texto, ok) {
+    var t = el("div", { className: "redcafe-solicitud-aviso" + (ok ? " es-ok" : ""), role: "status" }, texto);
+    t.style.cssText = "position:fixed;left:50%;bottom:24px;transform:translateX(-50%);z-index:2147483000;max-width:min(92vw,420px);padding:12px 16px;border-radius:12px;font-weight:600;font-size:15px;line-height:1.35;box-shadow:0 8px 24px rgba(0,0,0,.18);background:" + (ok ? "#1f5130" : "#5e2402") + ";color:#fff";
+    document.body.appendChild(t);
+    setTimeout(function () { if (t.parentNode) t.parentNode.removeChild(t); }, 6000);
+  }
+  document.addEventListener("click", function (ev) {
+    var a = ev.target && ev.target.closest ? ev.target.closest("a[data-solicitar-servicio]") : null;
+    if (!a || ev.defaultPrevented || ev.button !== 0 || ev.metaKey || ev.ctrlKey) return;
+    var id = a.getAttribute("data-solicitar-servicio");
+    if (!id) return;
+    ev.preventDefault(); ev.stopPropagation();
+    if (a.getAttribute("aria-busy") === "true") return;
+    a.setAttribute("aria-busy", "true");
+    var href = a.href, destino = a.getAttribute("target");
+    function soloWhatsapp() {
+      var visto = false;
+      try { visto = sessionStorage.getItem(CLAVE_WA) === "1"; } catch (e) {}
+      if (visto) { abrirWa(href, destino); return; }
+      avisoWhatsapp(href).then(function (ok) { if (ok) abrirWa(href, destino); });
+    }
+    // Sin sesión no hay solicitud que registrar: directo al WhatsApp.
+    fetchOriginal("/api/auth.php?action=me", { credentials: "include" }).then(function (r) { return r.json(); }).then(function (j) {
+      return !!(j && j.ok && j.data && j.data.user && j.data.user.id);
+    }, function () { return false; }).then(function (conSesion) {
+    if (!conSesion) { a.removeAttribute("aria-busy"); soloWhatsapp(); return; }
+    window.fetch("/api/pedidos.php?action=create_service", {
+      method: "POST", credentials: "include",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ servicioId: id, servicio_id: id, cantidad: 1 })
+    }).then(function (r) {
+      return r.json().catch(function () { return {}; }).then(function (j) { return { status: r.status, j: j || {} }; });
+    }, function () { return { status: 0, j: {} }; }).then(function (res) {
+      a.removeAttribute("aria-busy");
+      if (res.status === 409) return;                       // canceló la advertencia
+      if (res.j.ok) {
+        aviso("Solicitud registrada. La verás en «Mis órdenes» de tu panel. Te abrimos WhatsApp para coordinar.", true);
+        // La advertencia de pedidos ya explicó lo de WhatsApp: no se repite.
+        try { sessionStorage.setItem(CLAVE_WA, "1"); } catch (e) {}
+        abrirWa(href, destino);
+        return;
+      }
+      if (res.status === 401) { soloWhatsapp(); return; }   // la sesión caducó
+      aviso(res.j.error || "No se pudo registrar la solicitud. Inténtalo de nuevo.", false);
+    });
+    });
+  }, true);
+
   document.addEventListener("click", function (ev) {
     var a = ev.target && ev.target.closest ? ev.target.closest('a[href*="wa.me/"], a[href*="api.whatsapp.com/"], a[href^="whatsapp:"]') : null;
     if (!a || ev.defaultPrevented || ev.button !== 0 || ev.metaKey || ev.ctrlKey) return;
