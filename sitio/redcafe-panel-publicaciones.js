@@ -1268,9 +1268,9 @@
      el mismo módulo al cargador de Next en vez de traer otra copia. */
   var MAPA_LIMITES = { latMin: -5, latMax: 2, lngMin: -82, lngMax: -75 }; // los que valida el servidor
   var PIN_FINCA = '<svg width="30" height="40" viewBox="0 0 30 40" aria-hidden="true" style="display:block;filter:drop-shadow(0 2px 3px rgba(36,23,17,.35));">' +
-    '<path d="M15 1C7.3 1 1 7.2 1 14.9 1 25.3 15 39 15 39s14-13.7 14-24.1C29 7.2 22.7 1 15 1z" fill="#A20E00" stroke="#fff" stroke-width="2"/>' +
+    '<path d="M15 1C7.3 1 1 7.2 1 14.9 1 25.3 15 39 15 39s14-13.7 14-24.1C29 7.2 22.7 1 15 1z" fill="#8C3604" stroke="#fff" stroke-width="2"/>' +
     '<ellipse cx="15" cy="14.5" rx="6.2" ry="8" fill="#fff" transform="rotate(28 15 14.5)"/>' +
-    '<path d="M12.6 8.4c3.2 2.6 1.6 9.2 4.8 12.2" fill="none" stroke="#A20E00" stroke-width="1.8" stroke-linecap="round"/></svg>';
+    '<path d="M12.6 8.4c3.2 2.6 1.6 9.2 4.8 12.2" fill="none" stroke="#8C3604" stroke-width="1.8" stroke-linecap="round"/></svg>';
   var promesaLeaflet = null;
 
   function cargarLeaflet() {
@@ -1297,8 +1297,8 @@
   function mapaFincaHtml() {
     return '<div class="redcafe-mapa-finca" data-redcafe-propio="1" style="margin-top:.75rem;">' +
       '<p class="redcafe-pub-ayuda" style="margin:0 0 .35rem;">Toca el mapa en el lugar de tu finca y se llenan la latitud y la longitud. Puedes arrastrar el pin para afinar.</p>' +
-      '<div class="redcafe-mapa-finca-caja" style="height:260px;width:100%;border:1px solid rgba(162, 14, 0,.2);border-radius:.5rem;overflow:hidden;background:#F3F1EA;"></div>' +
-      '<p class="redcafe-mapa-finca-aviso" role="status" aria-live="polite" style="margin:.35rem 0 0;font-size:.8rem;font-weight:700;color:#A20E00;" hidden></p>' +
+      '<div class="redcafe-mapa-finca-caja" style="height:260px;width:100%;border:1px solid rgba(140, 54, 4,.2);border-radius:.5rem;overflow:hidden;background:#F3F1EA;"></div>' +
+      '<p class="redcafe-mapa-finca-aviso" role="status" aria-live="polite" style="margin:.35rem 0 0;font-size:.8rem;font-weight:700;color:#8C3604;" hidden></p>' +
     '</div>';
   }
 
