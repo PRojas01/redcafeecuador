@@ -25,7 +25,8 @@ function Lista({ items }: { items: ReactNode[] }) {
 }
 
 export const metadata = {
- title: "Información legal — Red Café Ecuador",
+  alternates: { canonical: "/legal/" },
+ title: "Información legal",
 };
 
 export default function LegalPage() {

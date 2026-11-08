@@ -118,6 +118,8 @@ datos, `.zip`, `.sql` no permitidos o `.env`.
 
 ## Pendiente
 
+Auditoría técnica del 8-nov (rendimiento, seguridad, SEO): `docs/AUDITORIA-TECNICA-2026-11-08.md`.
+
 1. **Desplegar en GoDaddy** (lo hace el propietario): variables, tablas, Deploy. Confirmar en
    el panel los nombres de las variables de la base y la **carpeta persistente** para fotos
    subidas (`REDCAFE_UPLOADS`; una fuente menciona `/public/assets/`).

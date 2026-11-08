@@ -19,9 +19,12 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   const { slug } = await params;
   const n = NOTICIAS.find((x) => (x.slug ?? x.id) === slug);
   if (!n) return { title: "Noticia no encontrada" };
+  const url = `/noticias/${n.slug ?? n.id}/`;
   return {
     title: n.titulo,
     description: n.resumen,
+    alternates: { canonical: url },
+    openGraph: { title: n.titulo, description: n.resumen, url, type: "article", images: ["/img/og-redcafe.jpg"] },
   };
 }
 
