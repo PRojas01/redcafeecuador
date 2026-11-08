@@ -154,7 +154,7 @@ export function AvisosTab() {
       <h2 className="font-titulo text-xl font-semibold text-cafe">Mensajes a los miembros</h2>
       <p className="mt-1 text-sm text-pizarra/70">
         Un mensaje, tres canales: la campana de la Red (y notificación push), el correo y WhatsApp.
-        Por correo y WhatsApp solo llega a quien aceptó recibir novedades; cada correo lleva su enlace de baja.
+        Por correo solo llega a quien aceptó novedades y por WhatsApp a quien aceptó WhatsApp (cada miembro lo cambia en «Mi cuenta»). Cada correo lleva su enlace de baja y cada WhatsApp la indicación «responde BAJA»; si alguien la pide, usa «Dar de baja de novedades» en su ficha.
       </p>
 
       {PLANTILLAS.length > 0 && <div className="mt-4 rounded-xl border border-cafe/10 bg-white p-3">

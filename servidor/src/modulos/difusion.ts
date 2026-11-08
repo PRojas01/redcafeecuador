@@ -3,12 +3,13 @@
 import { fail, type Ctx, type Modulo } from "../lib/http.js";
 import { listar, mutar, type Doc } from "../lib/docs.js";
 import { miembroRoles, tieneRol, usuarioActual } from "../lib/usuarios.js";
-import { aceptaNovedades, filtrarMiembros, leerFiltros, siNo, telefonoInternacional, whatsappDe } from "../lib/audiencia.js";
+import { aceptaWhatsapp, filtrarMiembros, leerFiltros, siNo, telefonoInternacional, whatsappDe } from "../lib/audiencia.js";
 import { registrarActividad } from "../lib/avisos.js";
 import { largo, nowIso, str, uid } from "../lib/util.js";
 
 const MAX_CAMPANAS = 50;
 const SITIO = "https://redcafeecuador.com";
+export const PIE_BAJA = "_Para no recibir más mensajes de la Red por WhatsApp, responde BAJA o desactívalo en redcafeecuador.com/panel/_";
 
 async function soloAdmin(ctx: Ctx) {
   if (ctx.ses.d.admin) return;
@@ -26,7 +27,7 @@ async function calcular(f: ReturnType<typeof filtros>) {
   const destinatarios: Doc[] = [];
   let sinConsentimiento = 0, sinTelefono = 0;
   for (const m of await filtrarMiembros(f)) {
-    if (f.solo_consentimiento && !aceptaNovedades(m)) { sinConsentimiento++; continue; }
+    if (f.solo_consentimiento && !aceptaWhatsapp(m)) { sinConsentimiento++; continue; }
     const tel = whatsappDe(m);
     if (!tel) { sinTelefono++; continue; }
     destinatarios.push({ id: str(m.id), nombre: str(m.nombre), telefono: tel, roles: miembroRoles(m), provincia: str(m.provincia) });
@@ -51,9 +52,11 @@ const acciones: Modulo["acciones"] = {
   },
   async guardar(ctx) {
     await soloAdmin(ctx);
-    const titulo = str(ctx.in.titulo).trim(), mensaje = str(ctx.in.mensaje).trim();
+    const titulo = str(ctx.in.titulo).trim(), cuerpo = str(ctx.in.mensaje).trim();
     if (largo(titulo) < 3 || largo(titulo) > 200) fail("Título interno: entre 3 y 200 caracteres.", 422);
-    if (!mensaje || largo(mensaje) > 1000) fail("El mensaje es obligatorio y no puede pasar de 1000 caracteres.", 422);
+    if (!cuerpo || largo(cuerpo) > 1000) fail("El mensaje es obligatorio y no puede pasar de 1000 caracteres.", 422);
+    // LOPDP: cada mensaje dice cómo dejar de recibirlos.
+    const mensaje = cuerpo.includes(PIE_BAJA) ? cuerpo : `${cuerpo}\n\n${PIE_BAJA}`;
     const enlace = enlaceFinal(str(ctx.in.enlace));
     const f = filtros(ctx.in.filtros && typeof ctx.in.filtros === "object" && !Array.isArray(ctx.in.filtros) ? (ctx.in.filtros as Doc) : ctx.in);
     const { destinatarios } = await calcular(f);

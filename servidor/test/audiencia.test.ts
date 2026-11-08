@@ -12,7 +12,7 @@ vi.mock("../src/lib/usuarios.js", async () => {
   return { ROLES_MIEMBRO: real.ROLES_MIEMBRO, miembroRoles: real.miembroRoles, todosLosMiembros: vi.fn(async () => structuredClone(m.cols.miembros)) };
 });
 
-const { filtrarMiembros, leerFiltros, resumenCanales, telefonoInternacional } = await import("../src/lib/audiencia.js");
+const { aceptaWhatsapp, filtrarMiembros, leerFiltros, resumenCanales, telefonoInternacional } = await import("../src/lib/audiencia.js");
 const { enviarCorreosLote } = await import("../src/lib/correo.js");
 const { config } = await import("../src/lib/config.js");
 
@@ -22,7 +22,7 @@ const movil = (resto: string) => "09" + resto;
 beforeEach(() => {
   m.cols = {
     miembros: [
-      { id: "a", nombre: "Ana", rol: "productor", provincia: "Loja", email: "a@ejemplo.test", whatsapp: movil("91234567"), ...si },
+      { id: "a", nombre: "Ana", rol: "productor", provincia: "Loja", email: "a@ejemplo.test", whatsapp: movil("91234567"), ...si, consentimientos: { whatsapp: { aceptado: true } } },
       { id: "b", nombre: "Beto", rol: "barista", provincia: "Loja", email: "b@ejemplo.test", ...si },
       { id: "c", nombre: "Cata", rol: "productor", provincia: "Pichincha", email: "c@ejemplo.test", whatsapp: movil("97654321") },
       { id: "d", nombre: "Dani", rol: "productor", provincia: "Loja", email: "d@ejemplo.test", estado: "suspendido", ...si },
@@ -52,6 +52,10 @@ describe("audiencia de mensajes masivos", () => {
   it("cuenta por canal solo a quien aceptó novedades", async () => {
     const r = resumenCanales(await filtrarMiembros(leerFiltros({})));
     expect(r).toEqual({ total: 3, con_correo: 2, con_whatsapp: 1, sin_consentimiento: 1 });
+  });
+  it("WhatsApp exige su propio consentimiento", async () => {
+    const ms = await filtrarMiembros(leerFiltros({}));
+    expect(ms.filter(aceptaWhatsapp).map((x) => x.id)).toEqual(["a"]);
   });
   it("normaliza teléfonos de Ecuador", () => {
     expect(telefonoInternacional("09 9 123 4567")).toBe("593" + movil("91234567").slice(1));

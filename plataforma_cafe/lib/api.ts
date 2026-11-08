@@ -244,6 +244,7 @@ export const api = {
       acepta_privacidad: consents?.privacidad ?? false,
       acepta_uso_datos: consents?.uso_datos ?? false,
       acepta_marketing: consents?.marketing ?? false,
+      acepta_whatsapp: consents?.marketing ?? false,
     };
     return call(CONFIG.api("/api/auth.php?action=register"), j(body));
   },

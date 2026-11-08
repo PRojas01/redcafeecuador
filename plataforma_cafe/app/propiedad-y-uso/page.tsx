@@ -108,8 +108,9 @@ export default function PropiedadYUsoPage() {
  <li>Lista de consentimientos otorgados.</li>
  </ul>
  <p>
- Estos datos se conservan durante la vigencia de la cuenta y por
- 2 años adicionales.
+ Estos datos se conservan mientras la cuenta exista. Cada cambio de
+ consentimiento (por ejemplo, darse de baja de novedades) queda registrado
+ con su fecha.
  </p>
  </Subsection>
  </Section>

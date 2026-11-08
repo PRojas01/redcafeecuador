@@ -25,6 +25,8 @@ export function leerFiltros(i: Doc): Filtros {
 
 export const activo = (m: Doc) => !("activo" in m && !m.activo) && !["bloqueado", "suspendido", "eliminado"].includes(str(m.estado));
 export const aceptaNovedades = (m: Doc) => activo(m) && (!!m.acepta_marketing || !!m.consentimientos?.marketing?.aceptado);
+/** WhatsApp lleva consentimiento propio: el antiguo «novedades» solo hablaba de correo. */
+export const aceptaWhatsapp = (m: Doc) => activo(m) && m.consentimientos?.whatsapp?.aceptado === true;
 
 export function telefonoInternacional(raw: unknown): string {
   let d = str(raw).replace(/\D+/g, "");
@@ -70,9 +72,10 @@ export async function filtrarMiembros(f: Filtros, miembros?: Doc[]): Promise<Doc
 export function resumenCanales(ms: Doc[]) {
   let correo = 0, whatsapp = 0, sinConsentimiento = 0;
   for (const m of ms) {
-    if (!aceptaNovedades(m)) { sinConsentimiento++; continue; }
-    if (emailValido(str(m.email))) correo++;
-    if (whatsappDe(m)) whatsapp++;
+    const c = aceptaNovedades(m), w = aceptaWhatsapp(m);
+    if (!c && !w) { sinConsentimiento++; continue; }
+    if (c && emailValido(str(m.email))) correo++;
+    if (w && whatsappDe(m)) whatsapp++;
   }
   return { total: ms.length, con_correo: correo, con_whatsapp: whatsapp, sin_consentimiento: sinConsentimiento };
 }

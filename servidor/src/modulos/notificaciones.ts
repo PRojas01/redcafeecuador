@@ -8,7 +8,7 @@ import { db, Prisma } from "../lib/db.js";
 import { tieneRol, todosLosMiembros, usuarioActual } from "../lib/usuarios.js";
 import { AVISOS_ADMIN_UID, notificar, registrarActividad } from "../lib/avisos.js";
 import { enviarCorreosLote, type CorreoLote } from "../lib/correo.js";
-import { aceptaNovedades, activo, filtrarMiembros, leerFiltros, resumenCanales, siNo } from "../lib/audiencia.js";
+import { aceptaNovedades, aceptaWhatsapp, activo, filtrarMiembros, leerFiltros, resumenCanales, siNo } from "../lib/audiencia.js";
 import { cupo } from "../lib/seguridad.js";
 import { bool, emailValido, int, largo, nowIso, str } from "../lib/util.js";
 import { secreto } from "./moderacion-comun.js";
@@ -144,6 +144,46 @@ const acciones: Modulo["acciones"] = {
       detalle: `${titulo} · ${dest.length} miembro(s)` + (campana ? " en la campana" : "") + (porCorreo ? ` · ${correo.enviados} por correo` : "") + ".",
     });
     return { enviados: campana ? dest.length : 0, destinatarios: dest.length, correo: porCorreo ? correo : null };
+  },
+
+  /** Preferencias de comunicaciones del propio miembro (revocar o dar el consentimiento). */
+  async mis_preferencias(ctx) {
+    const u = await usuarioActual(ctx);
+    if (!u) fail("No autenticado.", 401);
+    return { correo: aceptaNovedades(u), whatsapp: aceptaWhatsapp(u) };
+  },
+
+  /** El miembro cambia las suyas; la administración puede dar de baja a otro (p. ej. respondió BAJA por WhatsApp). */
+  async preferencias(ctx) {
+    const u = await usuarioActual(ctx);
+    const admin = ctx.ses.d.admin || (u && tieneRol(ctx, u, "admin"));
+    const objetivo = str(ctx.in.uid).trim();
+    let uidM = u?.id ?? "";
+    if (objetivo && objetivo !== uidM) {
+      if (!admin) fail("Solo la administración cambia las preferencias de otro miembro.", 403);
+      uidM = objetivo;
+    }
+    if (!uidM) fail("No autenticado.", 401);
+    const f = await db.usuario.findUnique({ where: { id: uidM } });
+    if (!f) fail("Miembro no encontrado.", 404);
+    const extra: Doc = { ...((f.extra as Doc) ?? {}) };
+    const consent: Doc = { ...(extra.consentimientos ?? {}) };
+    const ahora = nowIso(), origen = uidM === u?.id ? "preferencias" : "admin";
+    const cambios: string[] = [];
+    for (const [campo, clave] of [["correo", "marketing"], ["whatsapp", "whatsapp"]] as const) {
+      if (!(campo in ctx.in)) continue;
+      const v = siNo(ctx.in[campo], false);
+      // La administración solo puede dar de baja, nunca dar un consentimiento en nombre del miembro.
+      if (v && origen === "admin") fail("El consentimiento solo lo puede dar el propio miembro.", 403);
+      consent[clave] = { aceptado: v, fecha: ahora, version: origen };
+      if (clave === "marketing") extra.acepta_marketing = v;
+      cambios.push(`${campo}: ${v ? "sí" : "no"}`);
+    }
+    if (!cambios.length) fail("Indica correo o whatsapp.", 422);
+    extra.consentimientos = consent;
+    await db.usuario.update({ where: { id: uidM }, data: { extra } });
+    await registrarActividad(ctx, "preferencias-comunicaciones", { objeto_tipo: "miembro", objeto_id: uidM, detalle: `${origen} · ${cambios.join(", ")}` });
+    return { correo: aceptaNovedades({ ...extra, id: uidM }), whatsapp: aceptaWhatsapp({ ...extra, id: uidM }) };
   },
 
   async baja_correo(ctx) {
