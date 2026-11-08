@@ -395,27 +395,27 @@
     if (document.getElementById("redcafe-empleos-style")) return;
     var s = el("style", { id: "redcafe-empleos-style" });
     s.textContent = [
-      ".redcafe-empleo-seccion{border-top:1px solid rgba(59, 26, 12,.12);padding:28px 0;background:#fffdf8;color:#25221f}",
+      ".redcafe-empleo-seccion{border-top:1px solid rgba(162, 14, 0,.12);padding:28px 0;background:#fffdf8;color:#25221f}",
       ".redcafe-empleo-wrap{max-width:1120px;margin:0 auto;padding:0 16px}",
       ".redcafe-empleo-head{display:flex;justify-content:space-between;gap:16px;align-items:end;margin-bottom:18px}",
-      ".redcafe-empleo-head h3{margin:0;font-size:24px;line-height:1.2;color:#3b1a0c}",
+      ".redcafe-empleo-head h3{margin:0;font-size:24px;line-height:1.2;color:#a20e00}",
       ".redcafe-empleo-head p,.redcafe-empleo-nota,.redcafe-empleo-vacio{color:#6f625a;font-size:14px;line-height:1.5}",
       ".redcafe-empleo-grid{display:grid;grid-template-columns:minmax(0,1.1fr) minmax(0,.9fr);gap:18px}",
-      ".redcafe-empleo-panel{border:1px solid rgba(59, 26, 12,.14);border-radius:8px;padding:16px;background:#fff}",
-      ".redcafe-empleo-panel h4{margin:0 0 12px;font-size:18px;color:#3b1a0c}",
+      ".redcafe-empleo-panel{border:1px solid rgba(162, 14, 0,.14);border-radius:8px;padding:16px;background:#fff}",
+      ".redcafe-empleo-panel h4{margin:0 0 12px;font-size:18px;color:#a20e00}",
       ".redcafe-empleo-form{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}",
-      ".redcafe-empleo-campo{display:flex;flex-direction:column;gap:5px;font-size:13px;font-weight:700;color:#3b1a0c}",
-      ".redcafe-empleo-campo input,.redcafe-empleo-campo select,.redcafe-empleo-campo textarea,.redcafe-empleo-postulante select{min-height:42px;border:1px solid rgba(59, 26, 12,.25);border-radius:6px;padding:9px 10px;background:#fff;color:#25221f;outline:none}",
+      ".redcafe-empleo-campo{display:flex;flex-direction:column;gap:5px;font-size:13px;font-weight:700;color:#a20e00}",
+      ".redcafe-empleo-campo input,.redcafe-empleo-campo select,.redcafe-empleo-campo textarea,.redcafe-empleo-postulante select{min-height:42px;border:1px solid rgba(162, 14, 0,.25);border-radius:6px;padding:9px 10px;background:#fff;color:#25221f;outline:none}",
       ".redcafe-empleo-campo textarea{grid-column:1/-1;resize:vertical}",
       ".redcafe-empleo-campo input:focus,.redcafe-empleo-campo select:focus,.redcafe-empleo-campo textarea:focus,.redcafe-empleo-btn:focus,.redcafe-empleo-postulante select:focus{box-shadow:0 0 0 3px rgba(176,76,42,.28);border-color:#b04c2a}",
-      ".redcafe-empleo-check{grid-column:1/-1;display:flex;align-items:center;gap:8px;font-size:14px;color:#3b1a0c}",
+      ".redcafe-empleo-check{grid-column:1/-1;display:flex;align-items:center;gap:8px;font-size:14px;color:#a20e00}",
       ".redcafe-empleo-btn{min-height:44px;border:0;border-radius:6px;background:#8f2f1f;color:#fff;font-weight:800;padding:0 16px;cursor:pointer}",
-      ".redcafe-empleo-btn-suave{min-height:44px;border:1px solid rgba(59, 26, 12,.22);border-radius:6px;background:#fff;color:#3b1a0c;font-weight:700;padding:0 14px;margin-top:8px;cursor:pointer}",
+      ".redcafe-empleo-btn-suave{min-height:44px;border:1px solid rgba(162, 14, 0,.22);border-radius:6px;background:#fff;color:#a20e00;font-weight:700;padding:0 14px;margin-top:8px;cursor:pointer}",
       ".redcafe-empleo-msg{min-height:22px;margin:8px 0 0;font-size:14px}.redcafe-empleo-msg.ok{color:#176b3a}.redcafe-empleo-msg.error{color:#9b1c1c}",
-      ".redcafe-empleo-card{border-top:1px solid rgba(59, 26, 12,.12);padding:14px 0}.redcafe-empleo-card:first-child{border-top:0;padding-top:0}",
-      ".redcafe-empleo-card h5{margin:0 0 6px;font-size:16px;color:#3b1a0c}.redcafe-empleo-card p{margin:6px 0;font-size:14px;line-height:1.45}",
+      ".redcafe-empleo-card{border-top:1px solid rgba(162, 14, 0,.12);padding:14px 0}.redcafe-empleo-card:first-child{border-top:0;padding-top:0}",
+      ".redcafe-empleo-card h5{margin:0 0 6px;font-size:16px;color:#a20e00}.redcafe-empleo-card p{margin:6px 0;font-size:14px;line-height:1.45}",
       ".redcafe-empleo-meta,.redcafe-empleo-contacto{color:#6f625a;font-size:13px}",
-      ".redcafe-empleo-postulante{border:1px solid rgba(59, 26, 12,.12);border-radius:8px;padding:12px;margin-top:10px;background:#fffdf8}",
+      ".redcafe-empleo-postulante{border:1px solid rgba(162, 14, 0,.12);border-radius:8px;padding:12px;margin-top:10px;background:#fffdf8}",
       "@media (max-width:860px){.redcafe-empleo-grid,.redcafe-empleo-form{grid-template-columns:1fr}.redcafe-empleo-head{display:block}}"
     ].join("\n");
     document.head.appendChild(s);
