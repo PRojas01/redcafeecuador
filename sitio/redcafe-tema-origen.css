@@ -5,9 +5,9 @@
    de ningún bloque. Se carga después de redcafe-v60-final.css.
 
    Paleta (referencias de marcas de café de especialidad y agro):
-     espresso  #111a16   texto principal, cabecera, portada, pie
-     tostado   #22332b   superficies oscuras secundarias
-     cereza    #18251f   acento y botones principales (nunca de fondo grande)
+     espresso  #1e120b   texto principal, cabecera, portada, pie
+     tostado   #5a2810   superficies oscuras secundarias
+     cereza    #3b1a0c   acento y botones principales (nunca de fondo grande)
      caramelo  #B8762F   detalles
      oro       #E6B873   acentos sobre fondo oscuro
      crema     #F7F2EA   fondo general · papel #FFFCF7 tarjetas
@@ -22,19 +22,19 @@
 
 /* ---------- 1. Tokens ---------------------------------------------------- */
 html:not(#o1):not(#o2):not(#o3):not(#o4) {
-  --o-espresso: #111a16;
+  --o-espresso: #1e120b;
   --o-espresso-90: rgba(36, 22, 15, .92);
-  --o-tostado: #22332b;
+  --o-tostado: #5a2810;
   --o-tierra: #5b3a26;
-  --o-cereza: #18251f;
-  --o-cereza-hondo: #111a16;
+  --o-cereza: #3b1a0c;
+  --o-cereza-hondo: #1e120b;
   --o-caramelo: #b8762f;
   --o-oro: #e6b873;
   --o-oro-suave: #f3dcb4;
   --o-crema: #f7f2ea;
   --o-crema-2: #efe6d8;
   --o-papel: #fffcf7;
-  --o-texto: #111a16;
+  --o-texto: #1e120b;
   --o-texto-2: #5a4a3f;
   --o-linea: rgba(36, 22, 15, .10);
   --o-linea-2: rgba(36, 22, 15, .18);
@@ -55,7 +55,7 @@ html:not(#o1):not(#o2):not(#o3):not(#o4) {
   --font-sans: var(--o-sans) !important;
   --font-marca: var(--o-serif) !important;
 
-  /* Variables del tema anterior: todas apuntaban al mismo rojo #18251f. */
+  /* Variables del tema anterior: todas apuntaban al mismo rojo #3b1a0c. */
   --color-cafe: var(--o-espresso) !important;
   --color-cafe-oscuro: #1a100b !important;
   --color-coffee-950: #1a100b !important;
@@ -131,8 +131,8 @@ html:not(#o1):not(#o2):not(#o3):not(#o4) body .redcafe-home-price-kicker {
   border-radius: 999px !important;
   padding: .32rem .8rem !important;
   color: var(--o-cereza) !important;
-  background: rgba(24, 37, 31, .07) !important;
-  border: 1px solid rgba(24, 37, 31, .22) !important;
+  background: rgba(59, 26, 12, .07) !important;
+  border: 1px solid rgba(59, 26, 12, .22) !important;
 }
 html:not(#o1):not(#o2):not(#o3):not(#o4) body .redcafe-home-price-kicker { display: inline-block; }
 
@@ -159,15 +159,15 @@ html:not(#o1):not(#o2):not(#o3):not(#o4) body .btn-primary:hover {
   background-color: var(--o-cereza-hondo) !important;
   border-color: var(--o-cereza-hondo) !important;
   transform: translateY(-1px);
-  box-shadow: 0 8px 20px rgba(24, 37, 31, .25) !important;
+  box-shadow: 0 8px 20px rgba(59, 26, 12, .25) !important;
 }
 html:not(#o1):not(#o2):not(#o3):not(#o4) body .btn-ghost {
   background-color: transparent !important;
-  border: 1.5px solid rgba(24, 37, 31, .45) !important;
+  border: 1.5px solid rgba(59, 26, 12, .45) !important;
   color: var(--o-cereza) !important;
 }
 html:not(#o1):not(#o2):not(#o3):not(#o4) body .btn-ghost:hover {
-  background-color: rgba(24, 37, 31, .06) !important;
+  background-color: rgba(59, 26, 12, .06) !important;
   border-color: var(--o-cereza) !important;
 }
 /* Botón de la cabecera «Forma parte de la Red» */
@@ -231,7 +231,7 @@ html:not(#o1):not(#o2):not(#o3):not(#o4) body .hero-gradient {
   background-color: var(--o-espresso) !important;
   background-image:
     radial-gradient(80% 70% at 85% 10%, rgba(184, 118, 47, .22), transparent 60%),
-    radial-gradient(60% 60% at 0% 100%, rgba(24, 37, 31, .28), transparent 65%),
+    radial-gradient(60% 60% at 0% 100%, rgba(59, 26, 12, .28), transparent 65%),
     linear-gradient(160deg, #2a1a12 0%, #1d120c 100%) !important;
 }
 html:not(#o1):not(#o2):not(#o3):not(#o4) body .hero-gradient h1 { color: var(--o-papel) !important; }
@@ -275,7 +275,7 @@ html:not(#o1):not(#o2):not(#o3):not(#o4) body main :is(a.rounded-xl.border, a.ro
 html:not(#o1):not(#o2):not(#o3):not(#o4) body main :is(a.rounded-xl.border, a.rounded-2xl.border):hover {
   transform: translateY(-3px);
   box-shadow: var(--o-sombra-2);
-  border-color: rgba(24, 37, 31, .28) !important;
+  border-color: rgba(59, 26, 12, .28) !important;
 }
 /* Textos de tarjeta en minúsculas normales (antes todo en mayúsculas) */
 html:not(#o1):not(#o2):not(#o3):not(#o4) body main a.rounded-xl.border :is(span, strong, p, div) { text-transform: none !important; letter-spacing: normal !important; }
@@ -291,7 +291,7 @@ html:not(#o1):not(#o2):not(#o3):not(#o4) body #confianza {
   background-color: var(--o-tostado) !important;
   background-image:
     radial-gradient(70% 80% at 100% 0%, rgba(184, 118, 47, .18), transparent 60%),
-    linear-gradient(170deg, #22332b, #111a16) !important;
+    linear-gradient(170deg, #5a2810, #1e120b) !important;
 }
 html:not(#o1):not(#o2):not(#o3):not(#o4) body section.bg-cafe h2,
 html:not(#o1):not(#o2):not(#o3):not(#o4) body #confianza h2 { color: var(--o-papel) !important; }
@@ -314,7 +314,7 @@ html:not(#o1):not(#o2):not(#o3):not(#o4) body footer a.transition-colors:hover {
 html:not(#o1):not(#o2):not(#o3):not(#o4) body footer :is(h2, h3, h4, p.font-semibold) { color: var(--o-papel) !important; }
 
 /* ---------- 9. Enlaces, formularios y foco ------------------------------- */
-html:not(#o1):not(#o2):not(#o3):not(#o4) body main a.underline { text-decoration-color: rgba(24, 37, 31, .35); text-underline-offset: 3px; }
+html:not(#o1):not(#o2):not(#o3):not(#o4) body main a.underline { text-decoration-color: rgba(59, 26, 12, .35); text-underline-offset: 3px; }
 html:not(#o1):not(#o2):not(#o3):not(#o4) body main a.underline:hover { text-decoration-color: currentColor; }
 html:not(#o1):not(#o2):not(#o3):not(#o4) body :is(input, select, textarea):not([type="checkbox"]):not([type="radio"]) {
   border-radius: 10px !important;
@@ -339,7 +339,7 @@ html:not(#o1):not(#o2):not(#o3):not(#o4) body .fixed.bottom-5.right-5 a.rounded-
 html:not(#o1):not(#o2):not(#o3):not(#o4) body a.group.relative.grid.h-14.w-14 {
   background-color: var(--o-cereza) !important;
   color: #fff !important;
-  box-shadow: 0 10px 28px rgba(24, 37, 31, .35) !important;
+  box-shadow: 0 10px 28px rgba(59, 26, 12, .35) !important;
 }
 
 /* ---------- 10. Animaciones (respetan «reducir movimiento») --------------- */
@@ -452,7 +452,7 @@ html:not(#o1):not(#o2):not(#o3):not(#o4) body :is(.redcafe-afil-hero, .redcafe-s
   background-color: var(--o-espresso) !important;
   background-image:
     radial-gradient(80% 70% at 85% 10%, rgba(184, 118, 47, .22), transparent 60%),
-    radial-gradient(60% 60% at 0% 100%, rgba(24, 37, 31, .26), transparent 65%),
+    radial-gradient(60% 60% at 0% 100%, rgba(59, 26, 12, .26), transparent 65%),
     linear-gradient(160deg, #2a1a12 0%, #1d120c 100%) !important;
 }
 html:not(#o1):not(#o2):not(#o3):not(#o4) body :is(.redcafe-afil-hero, .redcafe-socios-hero) h1 { color: var(--o-papel) !important; }
@@ -657,43 +657,43 @@ html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5) body #perfiles > div > p.badge
 
 /* ---------- Fuentes y cafés del sitio publicado (1-nov-2026) -------------
    Pedro prefiere el estilo de redcafeecuador.com: todo en DM Sans (títulos
-   finos con letra apretada) y secciones alternando café #18251f y crema. */
+   finos con letra apretada) y secciones alternando café #3b1a0c y crema. */
 html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5) {
-  --o-espresso: #18251f;
-  --o-espresso-90: rgba(24, 37, 31, .92);
-  --o-tostado: #2b2622;
+  --o-espresso: #3b1a0c;
+  --o-espresso-90: rgba(59, 26, 12, .92);
+  --o-tostado: #241b15;
   --o-crema: #f6f1e8;
   --o-crema-2: #efe6d8;
   --o-papel: #fbfaf7;
   --o-oro: #dda35e;
-  --o-texto: #18251f;
+  --o-texto: #3b1a0c;
   --o-texto-2: #5c4434;
   --o-serif: "DM Sans", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
   --rc-titulo: var(--o-sans) !important;
   --font-titulo: var(--o-sans) !important;
   --font-marca: var(--o-sans) !important;
 }
-html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5) body { background: var(--o-crema) !important; color: #2b2622; }
+html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5) body { background: var(--o-crema) !important; color: #241b15; }
 html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5) body :is(h1, h2, .font-titulo, .marca) { font-family: var(--o-sans) !important; }
 html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5) body h1 { font-weight: 400 !important; letter-spacing: -.035em !important; }
 html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5) body h2 { font-weight: 500 !important; letter-spacing: -.025em !important; }
 html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5) body #forma-parte > div > p.mt-8 { font-family: var(--o-sans) !important; font-weight: 500 !important; letter-spacing: -.025em; }
 
 /* Cabecera, héroe y secciones oscuras en café */
-html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5) body > header { background: rgba(24, 37, 31, .96) !important; }
-html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5) body #portada-hero { background: radial-gradient(ellipse at 50% -10%, rgba(221, 163, 94, .22), transparent 60%), #18251f !important; }
-html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5) body :is(#confianza, footer) { background-color: #18251f !important; }
+html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5) body > header { background: rgba(59, 26, 12, .96) !important; }
+html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5) body #portada-hero { background: radial-gradient(ellipse at 50% -10%, rgba(221, 163, 94, .22), transparent 60%), #3b1a0c !important; }
+html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5) body :is(#confianza, footer) { background-color: #3b1a0c !important; }
 
 /* Cifras sobre café, números dorados */
-html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5) body .redcafe-cifras { background: #18251f !important; border-color: rgba(221, 163, 94, .25) !important; }
+html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5) body .redcafe-cifras { background: #3b1a0c !important; border-color: rgba(221, 163, 94, .25) !important; }
 html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5) body .redcafe-cifras .redcafe-cifra strong { color: #dda35e !important; font-family: var(--o-sans) !important; font-weight: 500 !important; }
 html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5) body .redcafe-cifras .redcafe-cifra span { color: rgba(251, 246, 239, .85) !important; }
 
 /* Botón principal dorado con texto café, como el sitio publicado */
-html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5) body :is(.btn-accent:not(.btn-whatsapp), #portada-hero .portada-botones .btn-registro) { background: #dda35e !important; border-color: #dda35e !important; color: #18251f !important; background-image: none !important; }
+html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5) body :is(.btn-accent:not(.btn-whatsapp), #portada-hero .portada-botones .btn-registro) { background: #dda35e !important; border-color: #dda35e !important; color: #3b1a0c !important; background-image: none !important; }
 
 /* Contraste: etiquetas de recetas (3,8:1) */
-html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5) body .text-coffee-800 { color: #111a16 !important; }
+html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5) body .text-coffee-800 { color: #1e120b !important; }
 html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5) body #portada-hero .portada-botones .btn-accent:not(.btn-registro):not(.btn-whatsapp) { background: transparent !important; border-color: rgba(251, 246, 239, .55) !important; color: #fbf6ef !important; }
 
 /* ---------- Botones, secciones y tipografía estilo Apple (3-nov-2026) -----
@@ -753,7 +753,7 @@ html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5):not(#o6) body main a:is(.card,
   transition: transform .18s var(--o-curva), box-shadow .18s var(--o-curva), border-color .18s var(--o-curva);
 }
 html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5):not(#o6) body main a:is(.card, [class*="rounded-xl"][class*="border"], [class*="rounded-2xl"][class*="border"]):hover {
-  transform: translateY(-2px); box-shadow: var(--o-sombra-2); border-color: rgba(24, 37, 31, .35) !important;
+  transform: translateY(-2px); box-shadow: var(--o-sombra-2); border-color: rgba(59, 26, 12, .35) !important;
 }
 
 /* Menú de la cabecera: cada acceso con forma de botón */
@@ -808,11 +808,11 @@ html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5):not(#o6) body footer :is(.text
 
 /* Secciones claras: alternan crema y papel, con una línea que las separa */
 html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5):not(#o6) body main section:not([class*="bg-"]):not([class*="gradient"]):not(#portada-hero) {
-  border-top: 1px solid rgba(24, 37, 31, .12);
+  border-top: 1px solid rgba(59, 26, 12, .12);
 }
 html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5):not(#o6) body main section:nth-of-type(even):not([class*="bg-"]):not([class*="gradient"]):not(#portada-hero) {
   background-color: #fffdfa !important;
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, .8), inset 0 -1px 0 rgba(24, 37, 31, .08);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, .8), inset 0 -1px 0 rgba(59, 26, 12, .08);
 }
 html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5):not(#o6) body main :is(section, .py-10, .py-12, .py-14, .py-16, .py-20, .py-24) { padding-top: 1.6rem !important; padding-bottom: 1.6rem !important; }
 @media (min-width: 768px) {
@@ -825,17 +825,17 @@ html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5):not(#o6) body main :is(section
 
 /* ---------- Diseño de la carpeta local de Pedro (3-nov-2026) --------------
    Fuente: redcafe-v60-final.css de la copia local del sitio PHP. Se toman su
-   paleta café (#18251F, acento #8A5A22, oro #DFA066, crema #FBFAF7/#F3F1EA),
+   paleta café (#3B1A0C, acento #7A3411, oro #DFA066, crema #FBFAF7/#F3F1EA),
    sus tarjetas blancas con borde fino y la lista de accesos a lo ancho con su
    explicación (más fácil de entender). Se mantiene Inter (pedido 3-nov).
    Contraste comprobado AA: texto #2F2A24/#5F584E sobre crema ≥ 6:1. */
 html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5):not(#o6):not(#o7) {
-  --o-espresso: #18251f;
-  --o-espresso-90: rgba(24, 37, 31, .94);
-  --o-tostado: #22332b;
-  --o-tierra: #8a5a22;
-  --o-cereza: #8a5a22;
-  --o-cereza-hondo: #6f4718;
+  --o-espresso: #3b1a0c;
+  --o-espresso-90: rgba(59, 26, 12, .94);
+  --o-tostado: #5a2810;
+  --o-tierra: #7a3411;
+  --o-cereza: #7a3411;
+  --o-cereza-hondo: #5a2810;
   --o-caramelo: #a66a2c;
   --o-oro: #dfa066;
   --o-crema: #fbfaf7;
@@ -844,27 +844,27 @@ html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5):not(#o6):not(#o7) {
   --o-texto: #2f2a24;
   --o-texto-2: #5f584e;
   --o-texto-nota: #5f584e;
-  --o-linea: rgba(24, 37, 31, .12);
-  --o-linea-2: rgba(24, 37, 31, .2);
+  --o-linea: rgba(59, 26, 12, .12);
+  --o-linea-2: rgba(59, 26, 12, .2);
   --o-hoja: #587a35;
-  --o-sombra-1: 0 1px 2px rgba(24, 37, 31, .05), 0 8px 22px rgba(24, 37, 31, .06);
-  --o-sombra-2: 0 2px 4px rgba(24, 37, 31, .06), 0 14px 32px rgba(24, 37, 31, .1);
+  --o-sombra-1: 0 1px 2px rgba(59, 26, 12, .05), 0 8px 22px rgba(59, 26, 12, .06);
+  --o-sombra-2: 0 2px 4px rgba(59, 26, 12, .06), 0 14px 32px rgba(59, 26, 12, .1);
   --o-radio: 14px;
 }
 html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5):not(#o6):not(#o7) body { background: #fbfaf7 !important; color: #2f2a24; }
 html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5):not(#o6):not(#o7) body :is(h1, h2, h3) { color: inherit; }
-html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5):not(#o6):not(#o7) body main :is(#forma-parte, #perfiles, #mapa-portada) :is(h1, h2) { color: #18251f !important; }
+html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5):not(#o6):not(#o7) body main :is(#forma-parte, #perfiles, #mapa-portada) :is(h1, h2) { color: #3b1a0c !important; }
 
 /* Cabecera, portada, confianza y pie en café */
-html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5):not(#o6):not(#o7) body > header { background: rgba(24, 37, 31, .97) !important; border-bottom: 1px solid rgba(223, 160, 102, .22) !important; }
+html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5):not(#o6):not(#o7) body > header { background: rgba(59, 26, 12, .97) !important; border-bottom: 1px solid rgba(223, 160, 102, .22) !important; }
 html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5):not(#o6):not(#o7) body #portada-hero { background: radial-gradient(ellipse at 50% -10%, rgba(223, 160, 102, .2), transparent 60%), #2a170c !important; }
-html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5):not(#o6):not(#o7) body :is(#confianza, footer, .redcafe-cifras) { background-color: #18251f !important; }
+html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5):not(#o6):not(#o7) body :is(#confianza, footer, .redcafe-cifras) { background-color: #3b1a0c !important; }
 html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5):not(#o6):not(#o7) body .redcafe-cifras .redcafe-cifra strong { color: #dfa066 !important; }
 html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5):not(#o6):not(#o7) body #portada-hero h1 span { color: #dfa066 !important; }
 
 /* Secciones claras: crema y crema oscuro alternos, bien separadas */
 html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5):not(#o6):not(#o7) body main section:not([class*="bg-"]):not([class*="gradient"]):not(#portada-hero):not(.redcafe-cifras) {
-  background-color: #fbfaf7 !important; border-top: 1px solid rgba(24, 37, 31, .1); box-shadow: none !important;
+  background-color: #fbfaf7 !important; border-top: 1px solid rgba(59, 26, 12, .1); box-shadow: none !important;
 }
 html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5):not(#o6):not(#o7) body main section:nth-of-type(even):not([class*="bg-"]):not([class*="gradient"]):not(#portada-hero):not(.redcafe-cifras) { background-color: #f3f1ea !important; }
 html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5):not(#o6):not(#o7) body main :is(section, .py-10, .py-12, .py-14, .py-16, .py-20, .py-24):not(.redcafe-cifras) { padding-top: 2rem !important; padding-bottom: 2rem !important; }
@@ -872,37 +872,37 @@ html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5):not(#o6):not(#o7) body main :i
   html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5):not(#o6):not(#o7) body main :is(section, .py-10, .py-12, .py-14, .py-16, .py-20, .py-24):not(.redcafe-cifras) { padding-top: 3.25rem !important; padding-bottom: 3.25rem !important; }
 }
 /* Etiqueta de cada sección, título y explicación con el mismo ritmo */
-html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5):not(#o6):not(#o7) body main section :is(p.badge, .rotulo) { color: #8a5a22 !important; background: rgba(202, 142, 70, .07) !important; border-color: rgba(202, 142, 70, .24) !important; }
+html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5):not(#o6):not(#o7) body main section :is(p.badge, .rotulo) { color: #7a3411 !important; background: rgba(212, 137, 63, .07) !important; border-color: rgba(212, 137, 63, .24) !important; }
 html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5):not(#o6):not(#o7) body main :is(#confianza, #portada-hero) :is(p.badge, .rotulo) { color: #dfa066 !important; background: rgba(223, 160, 102, .1) !important; border-color: rgba(223, 160, 102, .35) !important; }
 html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5):not(#o6):not(#o7) body main section p.badge + h2 { margin-top: .6rem !important; }
 html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5):not(#o6):not(#o7) body main section h2 + p { margin-top: .5rem !important; max-width: 60ch; }
 
 /* Tarjetas: blancas, borde fino y sombra suave */
 html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5):not(#o6):not(#o7) body main :is(.card, a.rounded-xl[class*="border"], div.rounded-xl[class*="border"], a.rounded-2xl[class*="border"], div.rounded-2xl[class*="border"]):not(.bg-cafe *):not(#confianza *) {
-  background: #ffffff !important; border: 1px solid rgba(24, 37, 31, .12) !important;
-  border-radius: 14px !important; box-shadow: 0 8px 22px rgba(24, 37, 31, .06) !important;
+  background: #ffffff !important; border: 1px solid rgba(59, 26, 12, .12) !important;
+  border-radius: 14px !important; box-shadow: 0 8px 22px rgba(59, 26, 12, .06) !important;
 }
-html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5):not(#o6):not(#o7) body main a:is(.card, [class*="rounded-xl"][class*="border"], [class*="rounded-2xl"][class*="border"]):hover { border-color: rgba(202, 142, 70, .45) !important; }
+html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5):not(#o6):not(#o7) body main a:is(.card, [class*="rounded-xl"][class*="border"], [class*="rounded-2xl"][class*="border"]):hover { border-color: rgba(212, 137, 63, .45) !important; }
 
 /* Botones: dorado = acción principal; café = acción en fondo claro; contorno = secundaria */
 html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5):not(#o6):not(#o7) body :is(.btn-primary, .btn-accent, .btn-ghost, .btn-secondary) {
   min-height: 44px; border-radius: 12px !important; display: inline-flex; align-items: center; justify-content: center; gap: .4rem;
 }
-html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5):not(#o6):not(#o7) body main :is(#forma-parte, #perfiles, #mapa-portada) .btn-primary { background: #18251f !important; border-color: #18251f !important; color: #fbfaf7 !important; background-image: none !important; }
-html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5):not(#o6):not(#o7) body main :is(#forma-parte, #perfiles, #mapa-portada) .btn-primary:hover { background: #8a5a22 !important; border-color: #8a5a22 !important; }
-html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5):not(#o6):not(#o7) body :is(.btn-accent:not(.btn-whatsapp), #portada-hero .portada-botones .btn-registro, header nav .btn-primary, header .btn-primary) { background: #dfa066 !important; border-color: #dfa066 !important; color: #18251f !important; background-image: none !important; }
+html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5):not(#o6):not(#o7) body main :is(#forma-parte, #perfiles, #mapa-portada) .btn-primary { background: #3b1a0c !important; border-color: #3b1a0c !important; color: #fbfaf7 !important; background-image: none !important; }
+html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5):not(#o6):not(#o7) body main :is(#forma-parte, #perfiles, #mapa-portada) .btn-primary:hover { background: #7a3411 !important; border-color: #7a3411 !important; }
+html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5):not(#o6):not(#o7) body :is(.btn-accent:not(.btn-whatsapp), #portada-hero .portada-botones .btn-registro, header nav .btn-primary, header .btn-primary) { background: #dfa066 !important; border-color: #dfa066 !important; color: #3b1a0c !important; background-image: none !important; }
 html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5):not(#o6):not(#o7) body :is(.btn-accent:not(.btn-whatsapp), header .btn-primary):hover { background: #f0c36a !important; border-color: #f0c36a !important; }
-html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5):not(#o6):not(#o7) body main :is(#forma-parte, #perfiles, #mapa-portada) .btn-ghost { background: transparent !important; border: 1.5px solid #8a5a22 !important; color: #8a5a22 !important; }
+html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5):not(#o6):not(#o7) body main :is(#forma-parte, #perfiles, #mapa-portada) .btn-ghost { background: transparent !important; border: 1.5px solid #7a3411 !important; color: #7a3411 !important; }
 html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5):not(#o6):not(#o7) body #portada-hero .portada-botones .btn-accent:not(.btn-registro):not(.btn-whatsapp) { background: transparent !important; border-color: rgba(251, 250, 247, .6) !important; color: #fbfaf7 !important; }
-html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5):not(#o6):not(#o7) body main a[class*="group"] .inline-block.font-bold { background: #18251f; }
-html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5):not(#o6):not(#o7) body main a[class*="group"]:hover .inline-block.font-bold { background: #8a5a22; }
+html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5):not(#o6):not(#o7) body main a[class*="group"] .inline-block.font-bold { background: #3b1a0c; }
+html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5):not(#o6):not(#o7) body main a[class*="group"]:hover .inline-block.font-bold { background: #7a3411; }
 
 /* Accesos de la portada: lista a lo ancho con su explicación, como en la copia local */
-html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5):not(#o6):not(#o7) body #forma-parte > div > p.mt-8 { color: #8a5a22 !important; border-left-color: #dfa066 !important; }
+html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5):not(#o6):not(#o7) body #forma-parte > div > p.mt-8 { color: #7a3411 !important; border-left-color: #dfa066 !important; }
 html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5):not(#o6):not(#o7) body #forma-parte a.rounded-xl { align-items: center !important; min-height: 60px; }
-html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5):not(#o6):not(#o7) body #forma-parte a.rounded-xl svg { color: #8a5a22 !important; flex-shrink: 0; }
-html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5):not(#o6):not(#o7) body #forma-parte a.rounded-xl .font-semibold { color: #18251f !important; }
-html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5):not(#o6):not(#o7) body #forma-parte a.rounded-xl::after { content: "›"; margin-left: auto; padding-left: .5rem; font-size: 1.4rem; line-height: 1; color: #8a5a22; }
+html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5):not(#o6):not(#o7) body #forma-parte a.rounded-xl svg { color: #7a3411 !important; flex-shrink: 0; }
+html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5):not(#o6):not(#o7) body #forma-parte a.rounded-xl .font-semibold { color: #3b1a0c !important; }
+html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5):not(#o6):not(#o7) body #forma-parte a.rounded-xl::after { content: "›"; margin-left: auto; padding-left: .5rem; font-size: 1.4rem; line-height: 1; color: #7a3411; }
 @media (max-width: 640px) {
   html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5):not(#o6):not(#o7) body #forma-parte .grid { grid-template-columns: 1fr !important; gap: .5rem !important; margin-top: .9rem !important; }
   html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5):not(#o6):not(#o7) body #forma-parte a.rounded-xl { padding: .7rem .85rem !important; gap: .7rem !important; }
@@ -921,40 +921,40 @@ html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5):not(#o6):not(#o7) body footer 
 html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5):not(#o6):not(#o7) body footer ul > li > a:not([class*="bg-"]):hover { border-color: rgba(223, 160, 102, .8); }
 
 /* ---------- Fondos en rojo cereza (3-nov-2026) ----------------------------
-   Pedro: los fondos oscuros en el rojo del CSS del sitio (#18251F), no café.
+   Pedro: los fondos oscuros en el rojo del CSS del sitio (#3B1A0C), no café.
    Contraste: crema sobre rojo 8,7:1; oro claro #F0C36A sobre rojo 5,5:1. */
 html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5):not(#o6):not(#o7):not(#o8) {
-  --o-espresso: #18251f;
-  --o-cereza: #18251f;
-  --o-cereza-hondo: #111a16;
-  --o-tierra: #18251f;
+  --o-espresso: #3b1a0c;
+  --o-cereza: #3b1a0c;
+  --o-cereza-hondo: #1e120b;
+  --o-tierra: #3b1a0c;
 }
-html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5):not(#o6):not(#o7):not(#o8) body > header { background: rgba(24, 37, 31, .97) !important; border-bottom-color: rgba(240, 195, 106, .3) !important; }
-html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5):not(#o6):not(#o7):not(#o8) body #portada-hero { background: radial-gradient(ellipse at 50% -10%, rgba(240, 195, 106, .18), transparent 60%), linear-gradient(180deg, #18251f, #111a16) !important; }
-html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5):not(#o6):not(#o7):not(#o8) body :is(#confianza, footer, .redcafe-cifras) { background-color: #18251f !important; }
+html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5):not(#o6):not(#o7):not(#o8) body > header { background: rgba(59, 26, 12, .97) !important; border-bottom-color: rgba(240, 195, 106, .3) !important; }
+html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5):not(#o6):not(#o7):not(#o8) body #portada-hero { background: radial-gradient(ellipse at 50% -10%, rgba(240, 195, 106, .18), transparent 60%), linear-gradient(180deg, #3b1a0c, #1e120b) !important; }
+html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5):not(#o6):not(#o7):not(#o8) body :is(#confianza, footer, .redcafe-cifras) { background-color: #3b1a0c !important; }
 html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5):not(#o6):not(#o7):not(#o8) body #confianza { background-image: none !important; }
-html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5):not(#o6):not(#o7):not(#o8) body main section.bg-cafe, html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5):not(#o6):not(#o7):not(#o8) body main .bg-cafe { background-color: #18251f !important; }
+html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5):not(#o6):not(#o7):not(#o8) body main section.bg-cafe, html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5):not(#o6):not(#o7):not(#o8) body main .bg-cafe { background-color: #3b1a0c !important; }
 html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5):not(#o6):not(#o7):not(#o8) body :is(#portada-hero h1 span, .redcafe-cifras .redcafe-cifra strong, footer :is(h2, h3, h4, p.uppercase), #confianza > div > div.grid > div :is(h3, h4, .font-semibold)) { color: #f0c36a !important; }
 html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5):not(#o6):not(#o7):not(#o8) body main :is(#confianza, #portada-hero) :is(p.badge, .rotulo) { color: #f0c36a !important; border-color: rgba(240, 195, 106, .45) !important; }
 html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5):not(#o6):not(#o7):not(#o8) body #confianza > div > div.grid > div { background: rgba(255, 255, 255, .07) !important; border-color: rgba(240, 195, 106, .3) !important; }
 
 /* Acentos en fondo claro: rojo */
-html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5):not(#o6):not(#o7):not(#o8) body main :is(#forma-parte, #perfiles, #mapa-portada) :is(p.badge, .rotulo) { color: #18251f !important; background: rgba(24, 37, 31, .06) !important; border-color: rgba(24, 37, 31, .28) !important; }
-html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5):not(#o6):not(#o7):not(#o8) body #forma-parte > div > p.mt-8 { color: #18251f !important; }
-html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5):not(#o6):not(#o7):not(#o8) body #forma-parte a.rounded-xl svg, html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5):not(#o6):not(#o7):not(#o8) body #forma-parte a.rounded-xl::after { color: #18251f !important; }
-html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5):not(#o6):not(#o7):not(#o8) body main :is(#forma-parte, #perfiles, #mapa-portada) .btn-primary { background: #18251f !important; border-color: #18251f !important; color: #fbfaf7 !important; }
-html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5):not(#o6):not(#o7):not(#o8) body main :is(#forma-parte, #perfiles, #mapa-portada) .btn-primary:hover { background: #111a16 !important; border-color: #111a16 !important; }
-html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5):not(#o6):not(#o7):not(#o8) body main :is(#forma-parte, #perfiles, #mapa-portada) .btn-ghost { border-color: #18251f !important; color: #18251f !important; }
-html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5):not(#o6):not(#o7):not(#o8) body main a[class*="group"] .inline-block.font-bold { background: #18251f; }
-html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5):not(#o6):not(#o7):not(#o8) body main a[class*="group"]:hover .inline-block.font-bold { background: #111a16; }
-html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5):not(#o6):not(#o7):not(#o8) body main a:is(.card, [class*="rounded-xl"][class*="border"], [class*="rounded-2xl"][class*="border"]):hover { border-color: rgba(24, 37, 31, .5) !important; }
+html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5):not(#o6):not(#o7):not(#o8) body main :is(#forma-parte, #perfiles, #mapa-portada) :is(p.badge, .rotulo) { color: #3b1a0c !important; background: rgba(59, 26, 12, .06) !important; border-color: rgba(59, 26, 12, .28) !important; }
+html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5):not(#o6):not(#o7):not(#o8) body #forma-parte > div > p.mt-8 { color: #3b1a0c !important; }
+html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5):not(#o6):not(#o7):not(#o8) body #forma-parte a.rounded-xl svg, html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5):not(#o6):not(#o7):not(#o8) body #forma-parte a.rounded-xl::after { color: #3b1a0c !important; }
+html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5):not(#o6):not(#o7):not(#o8) body main :is(#forma-parte, #perfiles, #mapa-portada) .btn-primary { background: #3b1a0c !important; border-color: #3b1a0c !important; color: #fbfaf7 !important; }
+html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5):not(#o6):not(#o7):not(#o8) body main :is(#forma-parte, #perfiles, #mapa-portada) .btn-primary:hover { background: #1e120b !important; border-color: #1e120b !important; }
+html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5):not(#o6):not(#o7):not(#o8) body main :is(#forma-parte, #perfiles, #mapa-portada) .btn-ghost { border-color: #3b1a0c !important; color: #3b1a0c !important; }
+html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5):not(#o6):not(#o7):not(#o8) body main a[class*="group"] .inline-block.font-bold { background: #3b1a0c; }
+html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5):not(#o6):not(#o7):not(#o8) body main a[class*="group"]:hover .inline-block.font-bold { background: #1e120b; }
+html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5):not(#o6):not(#o7):not(#o8) body main a:is(.card, [class*="rounded-xl"][class*="border"], [class*="rounded-2xl"][class*="border"]):hover { border-color: rgba(59, 26, 12, .5) !important; }
 /* Portadas de cada página también en rojo */
 html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5):not(#o6):not(#o7):not(#o8) body :is(.hero-gradient, .redcafe-afil-hero, .redcafe-socios-hero, [data-redcafe-route] main > div > section:first-child) {
-  background-color: #18251f !important;
-  background-image: radial-gradient(80% 70% at 85% 10%, rgba(240, 195, 106, .16), transparent 60%), linear-gradient(160deg, #18251f 0%, #111a16 100%) !important;
+  background-color: #3b1a0c !important;
+  background-image: radial-gradient(80% 70% at 85% 10%, rgba(240, 195, 106, .16), transparent 60%), linear-gradient(160deg, #3b1a0c 0%, #1e120b 100%) !important;
 }
 html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5):not(#o6):not(#o7):not(#o8) body :is(.hero-gradient, .redcafe-afil-hero, .redcafe-socios-hero, [data-redcafe-route] main > div > section:first-child) h1 :is(span, em, strong) { color: #f0c36a !important; }
-html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5):not(#o6):not(#o7):not(#o8) body :is(.hero-gradient, [data-redcafe-route] main > div > section:first-child) .btn-primary { background: #fbfaf7 !important; border-color: #fbfaf7 !important; color: #18251f !important; }
+html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5):not(#o6):not(#o7):not(#o8) body :is(.hero-gradient, [data-redcafe-route] main > div > section:first-child) .btn-primary { background: #fbfaf7 !important; border-color: #fbfaf7 !important; color: #3b1a0c !important; }
 html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5):not(#o6):not(#o7):not(#o8) body :is(.hero-gradient, .redcafe-afil-hero, .redcafe-socios-hero, [data-redcafe-route] main > div > section:first-child) :is(.badge, .badge-verde, .rotulo, p.uppercase) { color: #f0c36a !important; background: rgba(240, 195, 106, .1) !important; border-color: rgba(240, 195, 106, .45) !important; }
 
 /* ---------- Fotos y perfiles más grandes (3-nov-2026) --------------------- */
@@ -973,29 +973,29 @@ html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5):not(#o6):not(#o7):not(#o8) bod
 .rc-puntos button:focus-visible { outline: 2px solid #f0c36a; outline-offset: -4px; border-radius: 50%; }
 
 /* Franja «Del grano a la taza» */
-html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5):not(#o6):not(#o7):not(#o8) body #rc-grano-taza { background: #f3f1ea !important; border-top: 1px solid rgba(24, 37, 31, .1); padding: 2rem 0 !important; }
-html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5):not(#o6):not(#o7):not(#o8) body #rc-grano-taza .badge { color: #18251f !important; background: rgba(24, 37, 31, .06) !important; border: 1px solid rgba(24, 37, 31, .28) !important; }
-html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5):not(#o6):not(#o7):not(#o8) body #rc-grano-taza h2 { margin-top: .6rem; color: #18251f !important; }
+html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5):not(#o6):not(#o7):not(#o8) body #rc-grano-taza { background: #f3f1ea !important; border-top: 1px solid rgba(59, 26, 12, .1); padding: 2rem 0 !important; }
+html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5):not(#o6):not(#o7):not(#o8) body #rc-grano-taza .badge { color: #3b1a0c !important; background: rgba(59, 26, 12, .06) !important; border: 1px solid rgba(59, 26, 12, .28) !important; }
+html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5):not(#o6):not(#o7):not(#o8) body #rc-grano-taza h2 { margin-top: .6rem; color: #3b1a0c !important; }
 .rc-grano-taza-sub { margin-top: .35rem; color: #5f584e; font-size: 14px; }
 .rc-grano-taza-fila { display: grid; grid-auto-flow: column; grid-auto-columns: minmax(220px, 1fr); gap: .8rem; margin-top: 1rem; overflow-x: auto; scroll-snap-type: x mandatory; padding-bottom: .5rem; }
-.rc-paso { margin: 0; scroll-snap-align: start; border-radius: 14px; overflow: hidden; background: #fff; border: 1px solid rgba(24, 37, 31, .12); box-shadow: 0 8px 22px rgba(24, 37, 31, .06); }
+.rc-paso { margin: 0; scroll-snap-align: start; border-radius: 14px; overflow: hidden; background: #fff; border: 1px solid rgba(59, 26, 12, .12); box-shadow: 0 8px 22px rgba(59, 26, 12, .06); }
 .rc-paso img { display: block; width: 100%; aspect-ratio: 4 / 3; object-fit: cover; transition: transform .5s ease; }
 .rc-paso:hover img { transform: scale(1.06); }
-.rc-paso figcaption { display: flex; align-items: center; gap: .5rem; padding: .6rem .8rem; font-size: 15px; font-weight: 600; color: #18251f; }
-.rc-paso figcaption span { display: inline-grid; place-items: center; width: 26px; height: 26px; border-radius: 50%; background: #18251f; color: #fbfaf7; font-size: 13px; }
+.rc-paso figcaption { display: flex; align-items: center; gap: .5rem; padding: .6rem .8rem; font-size: 15px; font-weight: 600; color: #3b1a0c; }
+.rc-paso figcaption span { display: inline-grid; place-items: center; width: 26px; height: 26px; border-radius: 50%; background: #3b1a0c; color: #fbfaf7; font-size: 13px; }
 @media (max-width: 640px) { .rc-grano-taza-fila { grid-auto-columns: 72%; } }
 @media (prefers-reduced-motion: reduce) { .rc-diapo, .rc-diapo.activa img, .rc-paso img { transition: none !important; animation: none !important; } }
 
 /* Perfiles: botón para abrirlos y tarjetas con letra y botón más grandes */
-html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5):not(#o6):not(#o7):not(#o8) body #perfiles details > summary { min-height: 56px !important; padding: .8rem 1.2rem !important; font-size: 17px !important; border-radius: 14px !important; background: #18251f !important; color: #fbfaf7 !important; border-color: #18251f !important; }
-html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5):not(#o6):not(#o7):not(#o8) body #perfiles details > summary:hover { background: #111a16 !important; }
-html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5):not(#o6):not(#o7):not(#o8) body #perfiles details[open] > summary { background: #111a16 !important; }
-html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5):not(#o6):not(#o7):not(#o8) body #perfiles a.group svg { width: 2.4rem !important; height: 2.4rem !important; color: #18251f !important; }
-html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5):not(#o6):not(#o7):not(#o8) body #perfiles a.group p.font-titulo { font-size: 1.35rem !important; line-height: 1.2 !important; color: #18251f !important; }
-html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5):not(#o6):not(#o7):not(#o8) body #perfiles a.group p.font-titulo + p { font-size: 16.5px !important; line-height: 1.4 !important; color: #18251f !important; }
+html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5):not(#o6):not(#o7):not(#o8) body #perfiles details > summary { min-height: 56px !important; padding: .8rem 1.2rem !important; font-size: 17px !important; border-radius: 14px !important; background: #3b1a0c !important; color: #fbfaf7 !important; border-color: #3b1a0c !important; }
+html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5):not(#o6):not(#o7):not(#o8) body #perfiles details > summary:hover { background: #1e120b !important; }
+html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5):not(#o6):not(#o7):not(#o8) body #perfiles details[open] > summary { background: #1e120b !important; }
+html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5):not(#o6):not(#o7):not(#o8) body #perfiles a.group svg { width: 2.4rem !important; height: 2.4rem !important; color: #3b1a0c !important; }
+html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5):not(#o6):not(#o7):not(#o8) body #perfiles a.group p.font-titulo { font-size: 1.35rem !important; line-height: 1.2 !important; color: #3b1a0c !important; }
+html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5):not(#o6):not(#o7):not(#o8) body #perfiles a.group p.font-titulo + p { font-size: 16.5px !important; line-height: 1.4 !important; color: #3b1a0c !important; }
 html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5):not(#o6):not(#o7):not(#o8) body #perfiles a.group p.text-sm { font-size: 15px !important; line-height: 1.5 !important; color: #4a4740 !important; }
-html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5):not(#o6):not(#o7):not(#o8) body #perfiles a.group .inline-block.font-bold { display: flex !important; justify-content: center; width: 100%; min-height: 48px !important; margin-top: 1rem !important; font-size: 16px !important; border-radius: 12px !important; background: #18251f !important; }
-html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5):not(#o6):not(#o7):not(#o8) body #perfiles a.group:hover .inline-block.font-bold { background: #111a16 !important; }
+html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5):not(#o6):not(#o7):not(#o8) body #perfiles a.group .inline-block.font-bold { display: flex !important; justify-content: center; width: 100%; min-height: 48px !important; margin-top: 1rem !important; font-size: 16px !important; border-radius: 12px !important; background: #3b1a0c !important; }
+html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5):not(#o6):not(#o7):not(#o8) body #perfiles a.group:hover .inline-block.font-bold { background: #1e120b !important; }
 @media (max-width: 640px) {
   html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5):not(#o6):not(#o7):not(#o8) body #perfiles a.group { padding: 1.1rem !important; }
   html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5):not(#o6):not(#o7):not(#o8) body #perfiles a.group p.font-titulo { font-size: 1.25rem !important; }
@@ -1008,7 +1008,7 @@ html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5):not(#o6):not(#o7):not(#o8) bod
 .rc-collage-fila { display: grid; grid-template-columns: repeat(4, 1fr); }
 .rc-collage-foto { position: relative; display: block; overflow: hidden; aspect-ratio: 1 / 1; color: #fff !important; text-decoration: none !important; }
 .rc-collage-foto img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; transition: transform .6s ease; }
-.rc-collage-velo { position: absolute; inset: 0; z-index: 1; background: #18251f; opacity: .72; transition: opacity .4s ease; }
+.rc-collage-velo { position: absolute; inset: 0; z-index: 1; background: #3b1a0c; opacity: .72; transition: opacity .4s ease; }
 .rc-collage-num { position: absolute; inset: 0; z-index: 1; display: grid; place-items: center; font-size: clamp(56px, 7vw, 96px); font-weight: 800; line-height: 1; color: #fff; opacity: .28; letter-spacing: -.02em; transition: opacity .4s ease; }
 .rc-collage-titulo { position: absolute; inset: 0; z-index: 2; display: grid; place-items: center; padding: 1rem; text-align: center; font-size: clamp(15px, 1.4vw, 19px); font-weight: 700; letter-spacing: .12em; text-transform: uppercase; color: #fff; text-shadow: 0 1px 3px rgba(0, 0, 0, .45); transition: opacity .4s ease, transform .4s ease; }
 .rc-collage-foto:is(:hover, :focus-visible) .rc-collage-velo { opacity: .12; }
@@ -1055,10 +1055,10 @@ html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5):not(#o6):not(#o7):not(#o8):not
 @media (max-width: 767px) { .rc-collage-titulo { font-size: 18px !important; } }
 
 /* Menos verde (3-nov-2026): inicio blanco; el verde solo en el botón principal */
-html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5):not(#o6):not(#o7):not(#o8):not(#o9):not(#o10) body #portada-hero { background: #ffffff !important; border-bottom: 1px solid rgba(24, 37, 31, .1) !important; }
-html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5):not(#o6):not(#o7):not(#o8):not(#o9):not(#o10) body #portada-hero h1 span { color: #8a5a22 !important; }
+html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5):not(#o6):not(#o7):not(#o8):not(#o9):not(#o10) body #portada-hero { background: #ffffff !important; border-bottom: 1px solid rgba(59, 26, 12, .1) !important; }
+html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5):not(#o6):not(#o7):not(#o8):not(#o9):not(#o10) body #portada-hero h1 span { color: #7a3411 !important; }
 html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5):not(#o6):not(#o7):not(#o8):not(#o9):not(#o10) body #portada-hero p { color: #5f584e !important; }
-html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5):not(#o6):not(#o7):not(#o8):not(#o9):not(#o10) body #portada-hero p.badge { color: #8a5a22 !important; background: rgba(202, 142, 70, .06) !important; border-color: rgba(202, 142, 70, .25) !important; }
+html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5):not(#o6):not(#o7):not(#o8):not(#o9):not(#o10) body #portada-hero p.badge { color: #7a3411 !important; background: rgba(212, 137, 63, .06) !important; border-color: rgba(212, 137, 63, .25) !important; }
 html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5):not(#o6):not(#o7):not(#o8):not(#o9):not(#o10) body #portada-hero .portada-botones .btn-accent:not(.btn-registro):not(.btn-whatsapp) { background: #ffffff !important; border: 1.5px solid rgba(47, 42, 36, .35) !important; color: #2f2a24 !important; }
 html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5):not(#o6):not(#o7):not(#o8):not(#o9):not(#o10) body #portada-hero .aspect-video { box-shadow: 0 12px 30px rgba(0, 0, 0, .12) !important; background: #f3f1ea !important; }
 .rc-diapo figcaption { color: #2f2a24 !important; }
@@ -1066,23 +1066,23 @@ html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5):not(#o6):not(#o7):not(#o8):not
 html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5):not(#o6):not(#o7):not(#o8):not(#o9):not(#o10) body main #rc-collage { background: #ffffff !important; }
 
 /* Rojo + blanco, con poco verde (3-nov-2026): el rojo vuelve en acentos */
-html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5):not(#o6):not(#o7):not(#o8):not(#o9):not(#o10):not(#o11) body #portada-hero { background: linear-gradient(180deg, #ffffff 0%, #f8efe0 100%) !important; border-top: 4px solid #18251f !important; }
-html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5):not(#o6):not(#o7):not(#o8):not(#o9):not(#o10):not(#o11) body #portada-hero h1 span { color: #18251f !important; }
-html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5):not(#o6):not(#o7):not(#o8):not(#o9):not(#o10):not(#o11) body #portada-hero p.badge { color: #18251f !important; background: rgba(24, 37, 31, .06) !important; border-color: rgba(24, 37, 31, .3) !important; }
-html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5):not(#o6):not(#o7):not(#o8):not(#o9):not(#o10):not(#o11) body #portada-hero .portada-botones .btn-accent:not(.btn-registro):not(.btn-whatsapp) { border: 1.5px solid #18251f !important; color: #18251f !important; }
-html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5):not(#o6):not(#o7):not(#o8):not(#o9):not(#o10):not(#o11) body #portada-hero .portada-botones .btn-accent:not(.btn-registro):not(.btn-whatsapp):hover { background: #18251f !important; color: #ffffff !important; }
-html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5):not(#o6):not(#o7):not(#o8):not(#o9):not(#o10):not(#o11) body #portada-hero .aspect-video { box-shadow: 0 12px 30px rgba(24, 37, 31, .16) !important; }
-.rc-diapo figcaption { color: #18251f !important; }
-.rc-collage-velo { background: linear-gradient(180deg, rgba(24, 37, 31, 0) 35%, rgba(17, 26, 22, .82) 100%) !important; }
+html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5):not(#o6):not(#o7):not(#o8):not(#o9):not(#o10):not(#o11) body #portada-hero { background: linear-gradient(180deg, #ffffff 0%, #f8efe0 100%) !important; border-top: 4px solid #3b1a0c !important; }
+html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5):not(#o6):not(#o7):not(#o8):not(#o9):not(#o10):not(#o11) body #portada-hero h1 span { color: #3b1a0c !important; }
+html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5):not(#o6):not(#o7):not(#o8):not(#o9):not(#o10):not(#o11) body #portada-hero p.badge { color: #3b1a0c !important; background: rgba(59, 26, 12, .06) !important; border-color: rgba(59, 26, 12, .3) !important; }
+html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5):not(#o6):not(#o7):not(#o8):not(#o9):not(#o10):not(#o11) body #portada-hero .portada-botones .btn-accent:not(.btn-registro):not(.btn-whatsapp) { border: 1.5px solid #3b1a0c !important; color: #3b1a0c !important; }
+html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5):not(#o6):not(#o7):not(#o8):not(#o9):not(#o10):not(#o11) body #portada-hero .portada-botones .btn-accent:not(.btn-registro):not(.btn-whatsapp):hover { background: #3b1a0c !important; color: #ffffff !important; }
+html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5):not(#o6):not(#o7):not(#o8):not(#o9):not(#o10):not(#o11) body #portada-hero .aspect-video { box-shadow: 0 12px 30px rgba(59, 26, 12, .16) !important; }
+.rc-diapo figcaption { color: #3b1a0c !important; }
+.rc-collage-velo { background: linear-gradient(180deg, rgba(59, 26, 12, 0) 35%, rgba(30, 18, 11, .82) 100%) !important; }
 
 /* Collage con dibujos propios y «Entrar» en rojo (3-nov-2026) */
-html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5):not(#o6):not(#o7):not(#o8):not(#o9):not(#o10):not(#o11):not(#o12) body #portada-hero .portada-botones .btn-accent:not(.btn-registro):not(.btn-whatsapp) { background: #18251f !important; border-color: #18251f !important; color: #ffffff !important; }
-html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5):not(#o6):not(#o7):not(#o8):not(#o9):not(#o10):not(#o11):not(#o12) body #portada-hero .portada-botones .btn-accent:not(.btn-registro):not(.btn-whatsapp):hover { background: #111a16 !important; border-color: #111a16 !important; }
-html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5):not(#o6):not(#o7):not(#o8):not(#o9):not(#o10):not(#o11):not(#o12) body main #rc-collage { background: #ffffff !important; border-bottom: 1px solid rgba(24, 37, 31, .1) !important; }
-.rc-collage-fila { gap: 1px; background: rgba(24, 37, 31, .1); }
+html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5):not(#o6):not(#o7):not(#o8):not(#o9):not(#o10):not(#o11):not(#o12) body #portada-hero .portada-botones .btn-accent:not(.btn-registro):not(.btn-whatsapp) { background: #3b1a0c !important; border-color: #3b1a0c !important; color: #ffffff !important; }
+html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5):not(#o6):not(#o7):not(#o8):not(#o9):not(#o10):not(#o11):not(#o12) body #portada-hero .portada-botones .btn-accent:not(.btn-registro):not(.btn-whatsapp):hover { background: #1e120b !important; border-color: #1e120b !important; }
+html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5):not(#o6):not(#o7):not(#o8):not(#o9):not(#o10):not(#o11):not(#o12) body main #rc-collage { background: #ffffff !important; border-bottom: 1px solid rgba(59, 26, 12, .1) !important; }
+.rc-collage-fila { gap: 1px; background: rgba(59, 26, 12, .1); }
 .rc-collage-foto { background: #ffffff; }
 .rc-collage-velo { display: none !important; }
-.rc-collage-titulo { color: #18251f !important; text-shadow: none !important; padding-bottom: 1.4rem !important; font-weight: 700 !important; }
+.rc-collage-titulo { color: #3b1a0c !important; text-shadow: none !important; padding-bottom: 1.4rem !important; font-weight: 700 !important; }
 .rc-collage-foto:is(:hover, :focus-visible) .rc-collage-titulo { transform: none !important; text-decoration: underline; text-underline-offset: 4px; }
 .rc-collage-foto:is(:hover, :focus-visible) img { transform: scale(1.06) !important; }
 .rc-collage-foto { aspect-ratio: auto !important; display: flex !important; flex-direction: column; } .rc-collage-foto img { position: static !important; display: block; width: 100%; height: auto !important; aspect-ratio: 1 / .78; object-fit: cover; object-position: center 30%; } .rc-collage-titulo { position: static !important; display: block !important; padding: 0 .75rem 1.1rem !important; margin-top: -.4rem; }
@@ -1091,14 +1091,14 @@ html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5):not(#o6):not(#o7):not(#o8):not
 /* Collage otra vez con fotos (5-nov-2026): título sobre la foto, velo rojo abajo */
 .rc-collage-foto { display: block !important; aspect-ratio: 1 / 1 !important; }
 .rc-collage-foto img { position: absolute !important; inset: 0; height: 100% !important; aspect-ratio: auto; object-position: center; }
-.rc-collage-velo { display: block !important; background: linear-gradient(180deg, rgba(24, 37, 31, 0) 35%, rgba(17, 26, 22, .85) 100%) !important; }
+.rc-collage-velo { display: block !important; background: linear-gradient(180deg, rgba(59, 26, 12, 0) 35%, rgba(30, 18, 11, .85) 100%) !important; }
 .rc-collage-titulo { position: absolute !important; inset: 0; display: grid !important; align-items: end !important; margin: 0 !important; padding: 1rem 1rem 1.2rem !important; color: #ffffff !important; text-shadow: 0 2px 6px rgba(0, 0, 0, .5) !important; }
 .rc-collage-foto:is(:hover, :focus-visible) img { transform: scale(1.08) !important; }
 
 /* ═ Contraste AA (6-nov-2026): cifras de la portada fijas sobre rojo, sin
    depender de reglas anteriores (dorado 5,5:1 y crema 8,5:1), y el lote agotado
    se apaga solo en la foto: con la tarjeta entera al 72 % los textos bajaban de 4,5:1. */
-html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5):not(#o6):not(#o7):not(#o8):not(#o9) body .redcafe-cifras { background: #18251f !important; background-image: none !important; }
+html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5):not(#o6):not(#o7):not(#o8):not(#o9) body .redcafe-cifras { background: #3b1a0c !important; background-image: none !important; }
 html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5):not(#o6):not(#o7):not(#o8):not(#o9) body .redcafe-cifras .redcafe-cifra strong { color: #f0c36a !important; opacity: 1 !important; }
 html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5):not(#o6):not(#o7):not(#o8):not(#o9) body .redcafe-cifras .redcafe-cifra span { color: #fbf6ef !important; opacity: 1 !important; }
 .redcafe-lote-tarjeta[data-disponibilidad="agotado"] { opacity: 1 !important; }
@@ -1118,13 +1118,13 @@ html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5):not(#o6):not(#o7):not(#o8):not
 .rcp-var span { color: #5c5a50; font-weight: 500; }
 .rcp-controles { align-items: center; display: flex; flex-wrap: wrap; gap: 0 1rem; justify-content: space-between; }
 .rcp-controles .redcafe-range-tabs { margin: .8rem 0 .2rem; }
-.rcp-resumen { border-block: 1px solid rgba(24, 37, 31, .1); display: grid; gap: .6rem 1rem; grid-template-columns: repeat(4, minmax(0, 1fr)); margin: .6rem 0 0; padding: .7rem 0; }
+.rcp-resumen { border-block: 1px solid rgba(59, 26, 12, .1); display: grid; gap: .6rem 1rem; grid-template-columns: repeat(4, minmax(0, 1fr)); margin: .6rem 0 0; padding: .7rem 0; }
 .rcp-resumen dt { color: #5c5a50; font-size: .7rem; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; }
-.rcp-resumen dd { color: #18251f; font-size: 1.05rem; font-variant-numeric: tabular-nums; font-weight: 800; margin: .1rem 0 0; }
+.rcp-resumen dd { color: #3b1a0c; font-size: 1.05rem; font-variant-numeric: tabular-nums; font-weight: 800; margin: .1rem 0 0; }
 .rcp-resumen dd.rcp-sub { color: #5c5a50; font-size: .74rem; font-weight: 500; margin: 0; }
 .redcafe-price-chart.rcp-grafico { height: 340px; touch-action: pan-y; }
 .rcp-grafico svg { cursor: crosshair; font-variant-numeric: tabular-nums; }
-.rcp-tip { background: #18251f; border-radius: .6rem; box-shadow: 0 8px 22px rgba(0, 0, 0, .22); color: #ffffff; display: flex; flex-direction: column; font-size: .8rem; gap: .12rem; line-height: 1.3; padding: .5rem .7rem; pointer-events: none; position: absolute; top: .25rem; transform: translateX(-50%); white-space: nowrap; z-index: 2; }
+.rcp-tip { background: #3b1a0c; border-radius: .6rem; box-shadow: 0 8px 22px rgba(0, 0, 0, .22); color: #ffffff; display: flex; flex-direction: column; font-size: .8rem; gap: .12rem; line-height: 1.3; padding: .5rem .7rem; pointer-events: none; position: absolute; top: .25rem; transform: translateX(-50%); white-space: nowrap; z-index: 2; }
 .rcp-tip-precio { font-size: 1.05rem; font-variant-numeric: tabular-nums; font-weight: 800; }
 .rcp-tip-precio small { font-size: .7rem; font-weight: 500; opacity: .9; }
 .rcp-tip-ohlc { color: #f3e9dc; font-size: .72rem; }
@@ -1138,15 +1138,15 @@ html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5):not(#o6):not(#o7):not(#o8):not
 /* Franja de precio del café (cabecera): el oro #dfa066 sobre rojo y el rojo sobre
    oro daban 4,05:1. Oro #f0c36a (5,5:1); bajada en rosa claro, no en rojo sobre rojo. */
 html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5):not(#o6):not(#o7):not(#o8):not(#o9) body [aria-label="Precio referencial del café arábica"] .text-acento-claro { color: #f0c36a !important; }
-html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5):not(#o6):not(#o7):not(#o8):not(#o9) body [aria-label="Precio referencial del café arábica"] a.bg-acento-claro { background: #f0c36a !important; color: #18251f !important; }
-html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5):not(#o6):not(#o7):not(#o8):not(#o9) body [aria-label="Precio referencial del café arábica"] a.bg-acento-claro:hover { background: #fbf6ef !important; color: #18251f !important; }
+html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5):not(#o6):not(#o7):not(#o8):not(#o9) body [aria-label="Precio referencial del café arábica"] a.bg-acento-claro { background: #f0c36a !important; color: #3b1a0c !important; }
+html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5):not(#o6):not(#o7):not(#o8):not(#o9) body [aria-label="Precio referencial del café arábica"] a.bg-acento-claro:hover { background: #fbf6ef !important; color: #3b1a0c !important; }
 html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5):not(#o6):not(#o7):not(#o8):not(#o9) body [aria-label="Precio referencial del café arábica"] .text-cereza { color: #ffc9bd !important; }
 html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5):not(#o6):not(#o7):not(#o8):not(#o9) body [aria-label="Precio referencial del café arábica"] .text-hoja-clara { color: #c2ebc8 !important; }
 
-/* 20261108b · Contraste AA en «Acción recomendada» del panel: el oro #DFA066
-   sobre rojo #18251F daba 4,06:1; #D7A158 da 4,9:1 (texto y botón). */
-html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5):not(#o6):not(#o7):not(#o8):not(#o9):not(#o10):not(#o11) .redcafe-panel-next-card.is-primary p { color: #D7A158 !important; }
-html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5):not(#o6):not(#o7):not(#o8):not(#o9):not(#o10):not(#o11) .redcafe-panel-next-card.is-primary a { background: #D7A158 !important; color: #18251F !important; }
+/* 20261108c · Contraste AA en «Acción recomendada» del panel: el oro #DFA066
+   sobre rojo #3B1A0C daba 4,06:1; #DFA066 da 4,9:1 (texto y botón). */
+html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5):not(#o6):not(#o7):not(#o8):not(#o9):not(#o10):not(#o11) .redcafe-panel-next-card.is-primary p { color: #DFA066 !important; }
+html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5):not(#o6):not(#o7):not(#o8):not(#o9):not(#o10):not(#o11) .redcafe-panel-next-card.is-primary a { background: #DFA066 !important; color: #3B1A0C !important; }
 
 /* ═ 2026-11-08 · Espacios compactos (pedido de Pedro): menos blanco sobre el
    título de la portada, entre secciones, en «Ver los 12 perfiles» y en el
@@ -1168,3 +1168,43 @@ html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5):not(#o6):not(#o7):not(#o8):not
 html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5):not(#o6):not(#o7):not(#o8):not(#o9):not(#o10):not(#o11):not(#o12) body main .redcafe-curso-card-rot :is(.redcafe-curso-etiqueta, .redcafe-curso-costo) { margin-left: 0 !important; margin-right: 0 !important; }
 /* Fuentes oficiales (Precios): rótulo encima del nombre, no pegado a su lado. */
 html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5):not(#o6):not(#o7):not(#o8):not(#o9):not(#o10):not(#o11):not(#o12) body main a.rounded-xl.border:has(> p + p) { flex-direction: column; align-items: flex-start; justify-content: center; }
+
+/* ═ 2026-11-08 · Compacto en todas las páginas (pedido de Pedro) ═ */
+/* Los 12 perfiles: tarjetas pequeñas; en móvil dos columnas con icono, nombre y frase. */
+html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5):not(#o6):not(#o7):not(#o8):not(#o9):not(#o10):not(#o11):not(#o12) body #perfiles details > div.grid { gap: .75rem !important; margin-top: 1rem !important; }
+html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5):not(#o6):not(#o7):not(#o8):not(#o9):not(#o10):not(#o11):not(#o12) body #perfiles details > div.grid > a { padding: 1rem !important; border-radius: .75rem !important; }
+html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5):not(#o6):not(#o7):not(#o8):not(#o9):not(#o10):not(#o11):not(#o12) body #perfiles details > div.grid > a > svg { width: 1.75rem !important; height: 1.75rem !important; }
+html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5):not(#o6):not(#o7):not(#o8):not(#o9):not(#o10):not(#o11):not(#o12) body #perfiles details > div.grid > a > p:first-of-type { margin-top: .5rem !important; font-size: 1rem !important; line-height: 1.25 !important; }
+html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5):not(#o6):not(#o7):not(#o8):not(#o9):not(#o10):not(#o11):not(#o12) body #perfiles details > div.grid > a > p { margin-top: .3rem !important; }
+html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5):not(#o6):not(#o7):not(#o8):not(#o9):not(#o10):not(#o11):not(#o12) body #perfiles details > div.grid > a > p:nth-of-type(3) { display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
+html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5):not(#o6):not(#o7):not(#o8):not(#o9):not(#o10):not(#o11):not(#o12) body #perfiles details > div.grid > a > span { margin-top: .4rem !important; }
+@media (min-width: 1024px) {
+  html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5):not(#o6):not(#o7):not(#o8):not(#o9):not(#o10):not(#o11):not(#o12) body #perfiles details > div.grid { grid-template-columns: repeat(4, minmax(0, 1fr)) !important; }
+}
+/* Secciones: menos relleno arriba y abajo en escritorio. */
+@media (min-width: 768px) {
+  html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5):not(#o6):not(#o7):not(#o8):not(#o9):not(#o10):not(#o11):not(#o12) body main :is(section, article, div):is(.py-12, .py-14, .py-16, .md\:py-16, .md\:py-20, .md\:py-24) { padding-top: 2.5rem !important; padding-bottom: 2.5rem !important; }
+}
+@media (max-width: 767px) {
+  html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5):not(#o6):not(#o7):not(#o8):not(#o9):not(#o10):not(#o11):not(#o12) body #perfiles details > div.grid { grid-template-columns: repeat(2, minmax(0, 1fr)) !important; gap: .5rem !important; }
+  html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5):not(#o6):not(#o7):not(#o8):not(#o9):not(#o10):not(#o11):not(#o12) body #perfiles details > div.grid > a { padding: .75rem !important; }
+  html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5):not(#o6):not(#o7):not(#o8):not(#o9):not(#o10):not(#o11):not(#o12) body #perfiles details > div.grid > a > p:first-of-type { font-size: .95rem !important; }
+  html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5):not(#o6):not(#o7):not(#o8):not(#o9):not(#o10):not(#o11):not(#o12) body #perfiles details > div.grid > a > p:nth-of-type(2) { font-size: .82rem !important; }
+  html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5):not(#o6):not(#o7):not(#o8):not(#o9):not(#o10):not(#o11):not(#o12) body #perfiles details > div.grid > a > :is(p:nth-of-type(3), span) { display: none !important; }
+  /* Primer bloque de cada página pegado a la cabecera (sin el blanco de 32-64 px). */
+  html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5):not(#o6):not(#o7):not(#o8):not(#o9):not(#o10):not(#o11):not(#o12) body main :is(section, article, div):is(.py-8, .py-10, .py-12, .py-14, .py-16, .py-20) { padding-top: 1.25rem !important; padding-bottom: 1.5rem !important; }
+  html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5):not(#o6):not(#o7):not(#o8):not(#o9):not(#o10):not(#o11):not(#o12) body main > div > :first-child:is(div, section, article) { padding-top: 1.25rem !important; margin-top: 0 !important; }
+  html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5):not(#o6):not(#o7):not(#o8):not(#o9):not(#o10):not(#o11):not(#o12) body main > div > section:first-child > div:first-child { padding-top: 0 !important; }
+  html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5):not(#o6):not(#o7):not(#o8):not(#o9):not(#o10):not(#o11):not(#o12) body main :is(h1, h2).mt-3, html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5):not(#o6):not(#o7):not(#o8):not(#o9):not(#o10):not(#o11):not(#o12) body main :is(h1, h2).mt-4 { margin-top: .5rem !important; }
+  html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5):not(#o6):not(#o7):not(#o8):not(#o9):not(#o10):not(#o11):not(#o12) body main .redcafe-lote-detalle, html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5):not(#o6):not(#o7):not(#o8):not(#o9):not(#o10):not(#o11):not(#o12) body main .redcafe-price-board { margin-top: .5rem !important; padding-top: 1rem !important; }
+}
+@media (max-width: 767px) {
+  /* Tarjetas de herramientas y servicios: icono pequeño a la izquierda, texto al lado, menos relleno. */
+  html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5):not(#o6):not(#o7):not(#o8):not(#o9):not(#o10):not(#o11):not(#o12) body main :is(a, div, article).rounded-2xl:is(.p-5, .p-6, .p-7, .p-8):not(:has(img, form, input, table)) {
+    display: grid !important; grid-template-columns: auto minmax(0, 1fr); column-gap: .75rem; align-items: start; text-align: left !important; padding: .85rem 1rem !important; }
+  html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5):not(#o6):not(#o7):not(#o8):not(#o9):not(#o10):not(#o11):not(#o12) body main :is(a, div, article).rounded-2xl:is(.p-5, .p-6, .p-7, .p-8):not(:has(img, form, input, table)) > :not(svg):not(:first-child:is(span, div):has(> svg:only-child)) { grid-column: 2; margin-top: .2rem !important; margin-left: 0 !important; margin-right: 0 !important; text-align: left !important; justify-self: start; }
+  html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5):not(#o6):not(#o7):not(#o8):not(#o9):not(#o10):not(#o11):not(#o12) body main :is(a, div, article).rounded-2xl:is(.p-5, .p-6, .p-7, .p-8):not(:has(img, form, input, table)) > :is(svg, :first-child:is(span, div):has(> svg:only-child)) { grid-column: 1; grid-row: 1 / span 4; width: 2rem !important; height: 2rem !important; margin: .15rem 0 0 !important; }
+  html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5):not(#o6):not(#o7):not(#o8):not(#o9):not(#o10):not(#o11):not(#o12) body main :is(a, div, article).rounded-2xl:is(.p-5, .p-6, .p-7, .p-8):not(:has(img, form, input, table)) > :first-child:is(span, div):has(> svg:only-child) > svg { width: 1.25rem !important; height: 1.25rem !important; }
+  html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5):not(#o6):not(#o7):not(#o8):not(#o9):not(#o10):not(#o11):not(#o12) body main .grid:is(.gap-6, .gap-8) { gap: .6rem !important; }
+  html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5):not(#o6):not(#o7):not(#o8):not(#o9):not(#o10):not(#o11):not(#o12) body main .grid.mt-6, html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5):not(#o6):not(#o7):not(#o8):not(#o9):not(#o10):not(#o11):not(#o12) body main .grid.mt-8 { margin-top: 1rem !important; }
+}
