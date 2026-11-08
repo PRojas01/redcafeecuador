@@ -57,7 +57,9 @@ export default function CookiesPage() {
  </ul>
  <p>
  <strong>Importante:</strong> estos datos nunca se transmiten a nuestros servidores.
- Si cambias de navegador o dispositivo, no se sincronizan automáticamente.
+ Si cambias de navegador o dispositivo, no se sincronizan automáticamente:
+ en <a href="/mis-datos-del-navegador/" className="text-cereza underline">Mis datos del navegador</a>{" "}
+ puedes descargar una copia y recuperarla en otro equipo, sin que pase por nuestros servidores.
  </p>
  </Section>
 
