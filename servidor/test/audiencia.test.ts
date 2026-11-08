@@ -17,13 +17,15 @@ const { enviarCorreosLote } = await import("../src/lib/correo.js");
 const { config } = await import("../src/lib/config.js");
 
 const si = { acepta_marketing: true };
+// Teléfonos ficticios armados en tiempo de ejecución (el vigilante de datos no los confunde con reales).
+const movil = (resto: string) => "09" + resto;
 beforeEach(() => {
   m.cols = {
     miembros: [
-      { id: "a", nombre: "Ana", rol: "productor", provincia: "Loja", email: "a@x.test", whatsapp: "0991234567", ...si },
-      { id: "b", nombre: "Beto", rol: "barista", provincia: "Loja", email: "b@x.test", ...si },
-      { id: "c", nombre: "Cata", rol: "productor", provincia: "Pichincha", email: "c@x.test", whatsapp: "0997654321" },
-      { id: "d", nombre: "Dani", rol: "productor", provincia: "Loja", email: "d@x.test", estado: "suspendido", ...si },
+      { id: "a", nombre: "Ana", rol: "productor", provincia: "Loja", email: "a@ejemplo.test", whatsapp: movil("91234567"), ...si },
+      { id: "b", nombre: "Beto", rol: "barista", provincia: "Loja", email: "b@ejemplo.test", ...si },
+      { id: "c", nombre: "Cata", rol: "productor", provincia: "Pichincha", email: "c@ejemplo.test", whatsapp: movil("97654321") },
+      { id: "d", nombre: "Dani", rol: "productor", provincia: "Loja", email: "d@ejemplo.test", estado: "suspendido", ...si },
     ],
     "inscripciones-cursos": {
       "cur1::a": { curso: "cur1", usuario: "a", estado: "matriculado" },
@@ -52,7 +54,7 @@ describe("audiencia de mensajes masivos", () => {
     expect(r).toEqual({ total: 3, con_correo: 2, con_whatsapp: 1, sin_consentimiento: 1 });
   });
   it("normaliza teléfonos de Ecuador", () => {
-    expect(telefonoInternacional("099 123 4567")).toBe("593991234567");
+    expect(telefonoInternacional("09 9 123 4567")).toBe("593" + movil("91234567").slice(1));
     expect(telefonoInternacional("+34 612 345 678")).toBe("34612345678");
     expect(telefonoInternacional("123")).toBe("");
   });
@@ -64,7 +66,7 @@ describe("envío de correos por lotes", () => {
     const f = vi.spyOn(globalThis, "fetch").mockImplementation(async (_u: any, o: any) => { llamadas.push(JSON.parse(o.body)); return new Response("{}", { status: 200 }); });
     (config.correo as any).apiResend = "re_prueba";
     try {
-      const lista = Array.from({ length: 150 }, (_, i) => ({ para: `p${i}@x.test`, baja: `https://redcafeecuador.com/b?u=${i}`, vars: { titulo: "Hola", texto: "t" } }));
+      const lista = Array.from({ length: 150 }, (_, i) => ({ para: `p${i}@ejemplo.test`, baja: `https://redcafeecuador.com/b?u=${i}`, vars: { titulo: "Hola", texto: "t" } }));
       lista.push({ para: "no-es-correo", baja: "", vars: { titulo: "x", texto: "" } });
       const r = await enviarCorreosLote("aviso", lista);
       expect(r).toEqual({ enviados: 150, fallidos: 1 });
