@@ -102,7 +102,7 @@ export function TarjetaLote({ lote, sesion, admin = false }: { lote: LoteApi; se
   return (
     <article className="border border-border-soft bg-white p-5 shadow-sm redcafe-lote-tarjeta" data-disponibilidad={disp} data-redcafe-api-lote={id}>
       <a className="block" href={href} aria-label={`Ver café ${titulo} de ${finca}`}>
-        <img className="redcafe-lote-foto" src={loteImagen(lote)} alt={`Café ${titulo} de ${finca}`} loading="lazy" decoding="async" />
+        <img className="redcafe-lote-foto" src={loteImagen(lote)} onError={(e) => { const g = e.currentTarget; if (!g.dataset.r) { g.dataset.r = "1"; g.src = "/img/proceso/verde.webp"; } }} alt={`Café ${titulo} de ${finca}`} loading="lazy" decoding="async" />
         <p className="mt-3 text-xs font-bold uppercase tracking-widest text-green-700">
           {provincia}
           {lote.ubicacion_aproximada === true && <span className="redcafe-etiqueta-aprox">Ubicación aproximada</span>}
