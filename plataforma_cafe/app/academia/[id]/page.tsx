@@ -153,7 +153,7 @@ function CursoLocal() {
 				{portadasLegacy[curso.id]
 					? <img src={portadasLegacy[curso.id]} alt={`Portada de ${curso.titulo}`} className="h-full w-full object-cover" />
 					: curso.id === idCursoLibre
-						? <img src="/uploads/user-content/redcafe-curso-calidad.jpg" alt={`Portada de ${curso.titulo}`} className="h-full w-full object-cover" />
+						? <img src="/img/academia/cursos/cafe-de-especialidad-de-la-finca-a-la-taza.webp" alt={`Portada de ${curso.titulo}`} className="h-full w-full object-cover" />
 						: laminaPorCategoria[curso.categoria] ?? laminaPorCategoria.produccion}
 			</div>
 

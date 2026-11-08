@@ -166,7 +166,7 @@ function Ficha({ lote, sesion }: { lote: LoteApi; sesion: boolean }) {
   const galeria = propias.length ? (
     <div className="redcafe-lote-galeria">
       {propias.map((u, i) => (
-        <img key={u} src={u} alt={`Foto ${i + 1} del lote ${lote.finca || ""}`} loading="lazy" decoding="async" />
+        <img key={u} src={u} onError={(e) => { const g = e.currentTarget; if (!g.dataset.r) { g.dataset.r = "1"; g.src = "/img/proceso/verde.webp"; } }} alt={`Foto ${i + 1} del lote ${lote.finca || ""}`} loading="lazy" decoding="async" />
       ))}
     </div>
   ) : (

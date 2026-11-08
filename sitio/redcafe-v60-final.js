@@ -13,7 +13,7 @@ window.__redcafeReactListo = window.__redcafeReactListo || function () {
 (function () {
   "use strict";
 
-  var VERSION = "20261108a";
+  var VERSION = "20261108b";
   var WAPP = "593968641376";
   var path = normalizePath(location.pathname);
   var homeAuthChecking = false;
@@ -501,15 +501,15 @@ window.__redcafeReactListo = window.__redcafeReactListo || function () {
     st.id = P + "-style";
     st.textContent =
       "." + P + "-mosaico{display:grid;grid-template-columns:repeat(2,1fr);gap:.75rem}@media(min-width:640px){." + P + "-mosaico{grid-template-columns:repeat(3,1fr);gap:1rem}}@media(min-width:1024px){." + P + "-mosaico{grid-template-columns:repeat(4,1fr)}}" +
-      "." + P + "-item{display:flex;flex-direction:column;align-items:flex-start;gap:.2rem;border:1px solid rgba(140,30,14,.10);border-radius:1rem;background:#fff;padding:1rem 1.1rem;transition:border-color .15s,box-shadow .15s}" +
+      "." + P + "-item{display:flex;flex-direction:column;align-items:flex-start;gap:.2rem;border:1px solid rgba(24, 37, 31,.10);border-radius:1rem;background:#fff;padding:1rem 1.1rem;transition:border-color .15s,box-shadow .15s}" +
       "." + P + "-item:hover{border-color:rgba(169,78,23,.45);box-shadow:0 10px 24px rgba(20,31,26,.08)}" +
       "." + P + "-item ." + P + "-icono{font-size:1.5rem;line-height:1}" +
-      "." + P + "-item strong{font-family:var(--rc-titulo);font-size:1rem;font-weight:700;color:#561008}" +
+      "." + P + "-item strong{font-family:var(--rc-titulo);font-size:1rem;font-weight:700;color:#111a16}" +
       "." + P + "-item ." + P + "-sub{font-size:.78rem;line-height:1.35;color:#6d5a49}" +
-      "." + P + "-item ." + P + "-cta{font-size:.78rem;font-weight:700;letter-spacing:.02em;color:#8c1e0e;text-decoration:underline;text-underline-offset:3px;opacity:0;transform:translateY(2px);transition:opacity .15s}" +
+      "." + P + "-item ." + P + "-cta{font-size:.78rem;font-weight:700;letter-spacing:.02em;color:#18251f;text-decoration:underline;text-underline-offset:3px;opacity:0;transform:translateY(2px);transition:opacity .15s}" +
       "." + P + "-item:hover ." + P + "-cta{opacity:1;transform:none}" +
       "." + P + "-resumen{white-space:normal}" +
-      "." + P + "-mas{background:none;border:0;padding:0;margin-left:.35rem;color:#8c1e0e;font-weight:700;cursor:pointer;text-underline-offset:3px;text-decoration:underline}" +
+      "." + P + "-mas{background:none;border:0;padding:0;margin-left:.35rem;color:#18251f;font-weight:700;cursor:pointer;text-underline-offset:3px;text-decoration:underline}" +
       "@media(max-width:480px){." + P + "-mosaico{grid-template-columns:repeat(2,1fr)}}" +
       "@media(max-width:375px){." + P + "-item{padding:.85rem .9rem}." + P + "-item strong{font-size:.92rem}}";
     document.head.appendChild(st);
