@@ -160,7 +160,7 @@ export default function AdminPage() {
   { id: "ordenes", label: "Órdenes" },
   { id: "cotizaciones", label: "Cotizaciones" },
   { id: "miembros", label: "Miembros" },
-  { id: "avisos", label: "Avisos" },
+  { id: "avisos", label: "Mensajes" },
   { id: "reportes", label: "Reportes" },
   { id: "moderacion", label: "Moderación" },
   { id: "cuentas", label: "Cuentas" },
@@ -1704,7 +1704,7 @@ const visualInicial: VisualConfig = {
 };
 
 const visualTokenDefaults: Record<string, string> = {
- "--color-cafe": "#3B1A0C",
+ "--color-cafe": "#8C3604",
  "--color-cereza": "#8B1E1E",
  "--color-latte": "#C58A3A",
  "--color-crema": "#FFF8E7",
@@ -1851,8 +1851,8 @@ function VisualAdminTab() {
   <label key={token} className="text-xs font-semibold text-pizarra/60">
   {token}
   <div className="mt-1 flex gap-2">
-  <input type="color" value={(config.tokens && config.tokens[token]) || visualTokenDefaults[token] || "#3B1A0C"} onChange={(e) => setToken(token, e.target.value)} className="h-10 w-12 rounded border border-cafe/20 bg-white" />
-  <input value={(config.tokens && config.tokens[token]) || ""} onChange={(e) => setToken(token, e.target.value)} placeholder="#3B1A0C" className="w-full rounded-lg border border-cafe/20 px-3 py-2 text-sm" />
+  <input type="color" value={(config.tokens && config.tokens[token]) || visualTokenDefaults[token] || "#8C3604"} onChange={(e) => setToken(token, e.target.value)} className="h-10 w-12 rounded border border-cafe/20 bg-white" />
+  <input value={(config.tokens && config.tokens[token]) || ""} onChange={(e) => setToken(token, e.target.value)} placeholder="#8C3604" className="w-full rounded-lg border border-cafe/20 px-3 py-2 text-sm" />
   </div>
   </label>
   ))}

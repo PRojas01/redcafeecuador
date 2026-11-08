@@ -156,7 +156,7 @@ const RANGOS_PIZARRA = [
 ];
 const DIAS_SEMANA = ["dom", "lun", "mar", "mié", "jue", "vie", "sáb"];
 const SUBE = "#2f6b45";
-const BAJA = "#8c1e0e";
+const BAJA = "#8C3604";
 const TEXTO_EJE = "#5c5a50";
 
 type Cierre = { fecha: string; precio: number; apertura?: number; maximo?: number; minimo?: number };
@@ -452,8 +452,8 @@ function PizarraDiaria({ cierres, stale }: { cierres: Cierre[]; stale?: boolean 
 
        {sel !== null && selFila && (
         <>
-         <line x1={xDe(sel)} x2={xDe(sel)} y1={M.top} y2={M.top + altoUtil} stroke="#3b1a0c" strokeDasharray="4 4" strokeWidth="1" />
-         <line x1={M.left} x2={M.left + anchoUtil} y1={yDe(selFila.precio)} y2={yDe(selFila.precio)} stroke="#3b1a0c" strokeDasharray="4 4" strokeWidth="1" strokeOpacity=".5" />
+         <line x1={xDe(sel)} x2={xDe(sel)} y1={M.top} y2={M.top + altoUtil} stroke="#8C3604" strokeDasharray="4 4" strokeWidth="1" />
+         <line x1={M.left} x2={M.left + anchoUtil} y1={yDe(selFila.precio)} y2={yDe(selFila.precio)} stroke="#8C3604" strokeDasharray="4 4" strokeWidth="1" strokeOpacity=".5" />
          <circle cx={xDe(sel)} cy={yDe(selFila.precio)} r="5" fill={colorRango} stroke="#ffffff" strokeWidth="2" />
         </>
        )}
@@ -642,7 +642,7 @@ function GraficoMensual({ rows }: { rows: HistoricoRow[] }) {
      <line x1={selected.x} y1="52" x2={selected.x} y2="212" stroke="#6B5D52" strokeDasharray="4 5" strokeWidth="1.5" />
      <circle cx={selected.x} cy={selected.y} r="7" fill="#A94E17" stroke="#FBFAF7" strokeWidth="4" />
      <g>
-      <rect x={Math.min(460, Math.max(62, selected.x - 70))} y="18" width="132" height="42" rx="10" fill="#3B1A0C" />
+      <rect x={Math.min(460, Math.max(62, selected.x - 70))} y="18" width="132" height="42" rx="10" fill="#8C3604" />
       <text x={Math.min(526, Math.max(128, selected.x - 4))} y="36" textAnchor="middle" fontSize="12" fontWeight="800" fill="#FBFAF7">
        {fmtPunto(selected)}
       </text>

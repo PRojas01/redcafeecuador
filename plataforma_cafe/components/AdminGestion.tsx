@@ -5,11 +5,12 @@ import { CONFIG } from "@/lib/config";
 import { Modal } from "@/components/Modal";
 import { Toast, useToast } from "@/components/Toast";
 import { FichaMiembro } from "@/components/AdminCuentas";
+import { PROVINCIAS_EC } from "@/lib/paises";
 
 /*
  Gestión de la administración que tenía API pero no pantalla:
- · AvisosTab: avisos internos (campana + push) a todos, por perfil o a
-   miembros concretos, con copia opcional por correo a quien aceptó novedades.
+ · AvisosTab: mensajes a todos, a un grupo (perfil, provincia, curso,
+   segmento) o a miembros concretos por campana, correo y WhatsApp (wa.me).
  · ReportesTab: problemas que reportan los miembros; responder y cerrar.
  · ModeracionTab: lo que publican los miembros fuera de lotes y cursos
    (servicios, requerimientos, empleos, búsquedas de empleo, comunidad).
@@ -45,61 +46,97 @@ const PERFILES: [string, string][] = [
 ];
 
 type Miembro = { id: string; nombre?: string; email?: string; rol?: string; roles?: string[]; activo?: boolean; estado?: string; acepta_marketing?: boolean; consentimientos?: { marketing?: { aceptado?: boolean } } };
-const rolesDe = (m: Miembro) => (m.roles && m.roles.length ? m.roles : m.rol ? [m.rol] : []);
-const aceptaCorreo = (m: Miembro) =>
-  m.activo !== false && !["bloqueado", "suspendido", "eliminado"].includes(txt(m.estado)) &&
-  (!!m.acepta_marketing || !!m.consentimientos?.marketing?.aceptado);
-
 /* ─────────────────────────── Avisos ─────────────────────────── */
 // Textos listos para los anuncios del momento (el admin los revisa antes de enviar).
 // Se borran cuando pasan (la clase gratis del 8 de octubre ya pasó).
 const PLANTILLAS: { nombre: string; titulo: string; texto: string; enlace: string }[] = [];
+type Destinatario = { id: string; nombre?: string; telefono: string };
+type Campana = { id: string; mensaje: string; enlace?: string; destinatarios: Destinatario[]; enviados?: Record<string, string> };
+type Recuento = { total: number; con_correo: number; con_whatsapp: number; sin_consentimiento: number };
+const SEGMENTOS: [string, string][] = [["todos", "Todos"], ["productores_sin_lote", "Productores sin lote publicado"], ["nuevos_30_dias", "Nuevos en los últimos 30 días"]];
+const chip = (on: boolean) => `flex min-h-11 cursor-pointer items-center gap-2 rounded-full border px-4 text-sm ${on ? "border-cafe bg-cafe text-crema" : "border-cafe/20 bg-white text-cafe"}`;
+const textoWhatsapp = (titulo: string, texto: string, enlace: string) =>
+  [titulo.trim() ? `*${titulo.trim()}*` : "", texto.trim(), enlace.trim() ? `https://redcafeecuador.com${enlace.trim()}` : ""].filter(Boolean).join("\n\n");
+
 export function AvisosTab() {
   const { toast, mostrar, cerrar } = useToast();
   const [miembros, setMiembros] = useState<Miembro[]>([]);
-  const [destino, setDestino] = useState<"todos" | "rol" | "miembros">("todos");
-  const [rol, setRol] = useState("productor");
+  const [cursos, setCursos] = useState<{ id: string; titulo: string }[]>([]);
+  const [destino, setDestino] = useState<"todos" | "filtro" | "miembros">("todos");
+  const [roles, setRoles] = useState<string[]>([]);
+  const [provincia, setProvincia] = useState("");
+  const [curso, setCurso] = useState("");
+  const [segmento, setSegmento] = useState("todos");
   const [buscar, setBuscar] = useState("");
   const [elegidos, setElegidos] = useState<string[]>([]);
   const [titulo, setTitulo] = useState("");
   const [texto, setTexto] = useState("");
   const [enlace, setEnlace] = useState("");
+  const [campana, setCampana] = useState(true);
   const [correo, setCorreo] = useState(false);
+  const [recuento, setRecuento] = useState<Recuento | null>(null);
   const [confirmar, setConfirmar] = useState(false);
   const [enviando, setEnviando] = useState(false);
   const [resultado, setResultado] = useState<string>("");
+  const [wa, setWa] = useState<Campana | null>(null);
 
   useEffect(() => {
     pedir("/api/members.php?action=all").then((r) => setMiembros(((r.data?.members as Miembro[]) || []).filter((m) => m && m.id)));
+    pedir("/api/cursos.php?action=list").then((r) => setCursos(((r.data?.cursos as Json[]) || []).map((c) => ({ id: txt(c.id), titulo: txt(c.titulo) })).filter((c) => c.id)));
   }, []);
 
-  const alcance = useMemo(() => {
-    if (destino === "todos") return miembros;
-    if (destino === "rol") return miembros.filter((m) => rolesDe(m).includes(rol));
-    return miembros.filter((m) => elegidos.includes(m.id));
-  }, [destino, rol, elegidos, miembros]);
-  const conCorreo = alcance.filter(aceptaCorreo).length;
+  const cuerpoDestino = useMemo((): Json => {
+    if (destino === "todos") return { destino: "todos" };
+    if (destino === "miembros") return { destino: "filtro", filtros: { ids: elegidos } };
+    return { destino: "filtro", filtros: { roles, provincia, curso, segmento } };
+  }, [destino, roles, provincia, curso, segmento, elegidos]);
+  const filtrosWa = (cuerpoDestino.filtros as Json) || {};
+
+  useEffect(() => {
+    if (destino === "miembros" && !elegidos.length) { setRecuento({ total: 0, con_correo: 0, con_whatsapp: 0, sin_consentimiento: 0 }); return; }
+    let vivo = true;
+    const t = setTimeout(() => {
+      pedir("/api/notificaciones.php?action=audiencia", cuerpoDestino).then((r) => { if (vivo && r.ok) setRecuento(r.data as unknown as Recuento); });
+    }, 250);
+    return () => { vivo = false; clearTimeout(t); };
+  }, [cuerpoDestino, destino, elegidos.length]);
+
+  const total = recuento?.total ?? 0;
   const encontrados = buscar.trim().length >= 2
     ? miembros.filter((m) => `${m.nombre} ${m.email}`.toLowerCase().includes(buscar.trim().toLowerCase())).slice(0, 8)
     : [];
   const enlaceValido = enlace === "" || (enlace.startsWith("/") && !enlace.startsWith("//"));
-  const listo = titulo.trim().length >= 3 && alcance.length > 0 && enlaceValido && !enviando;
+  const listo = titulo.trim().length >= 3 && total > 0 && enlaceValido && !enviando && (campana || correo);
+  const mensajeWa = textoWhatsapp(titulo, texto, enlace);
 
   const enviar = async () => {
     setConfirmar(false);
     setEnviando(true);
     const r = await pedir("/api/notificaciones.php?action=enviar", {
-      destino, rol, ids: elegidos, titulo: titulo.trim(), texto: texto.trim(), enlace: enlace.trim(), tipo: "sistema", correo,
+      ...cuerpoDestino, titulo: titulo.trim(), texto: texto.trim(), enlace: enlace.trim(), tipo: "sistema", campana, correo,
     });
     setEnviando(false);
     if (!r.ok) { mostrar("error", r.error || "No se pudo enviar el aviso."); return; }
     const c = r.data?.correo as Json | null;
-    const linea = `Aviso enviado a ${r.data?.enviados} miembro(s) en la Red` +
-      (c ? ` · ${c.enviados} por correo${Number(c.fuera_de_tope) ? ` (${c.fuera_de_tope} quedaron fuera por el tope de 250)` : ""}${Number(c.fallidos) ? ` · ${c.fallidos} fallidos` : ""}` : "");
+    const partes = [campana ? `${r.data?.enviados} en la campana de la Red` : ""];
+    if (c) partes.push(`${c.enviados} por correo${Number(c.fuera_de_tope) ? ` (${c.fuera_de_tope} quedaron fuera por el tope)` : ""}${Number(c.fallidos) ? ` · ${c.fallidos} fallidos` : ""}`);
+    const linea = "Enviado: " + partes.filter(Boolean).join(" · ") + ".";
     setResultado(linea);
     mostrar("success", linea);
-    setTitulo(""); setTexto(""); setEnlace(""); setCorreo(false);
   };
+
+  const prepararWhatsapp = async () => {
+    if (mensajeWa.length > 1000) { mostrar("error", "Para WhatsApp el mensaje no puede pasar de 1000 caracteres."); return; }
+    const r = await pedir("/api/difusion.php?action=guardar", { titulo: titulo.trim(), mensaje: [titulo.trim() ? `*${titulo.trim()}*` : "", texto.trim()].filter(Boolean).join("\n\n"), enlace: enlace.trim(), filtros: { ...filtrosWa, solo_consentimiento: true } });
+    if (!r.ok) { mostrar("error", r.error || "No se pudo preparar la lista de WhatsApp."); return; }
+    setWa(r.data?.campaign as unknown as Campana);
+  };
+  const marcar = async (uidM: string) => {
+    if (!wa) return;
+    const r = await pedir("/api/difusion.php?action=marcar", { id: wa.id, uid: uidM, enviado: true });
+    if (r.ok) setWa(r.data?.campaign as unknown as Campana);
+  };
+  const enlaceWa = (tel: string) => `https://wa.me/${tel}?text=${encodeURIComponent([wa?.mensaje || "", wa?.enlace || ""].filter(Boolean).join("\n\n"))}`;
 
   return (
     <div className="max-w-2xl">
@@ -108,16 +145,16 @@ export function AvisosTab() {
         abierto={confirmar}
         onCerrar={() => setConfirmar(false)}
         titulo="Confirmar envío"
-        descripcion={`«${titulo.trim()}» llegará a ${alcance.length} miembro(s) en la campana de la Red${correo ? ` y a ${Math.min(conCorreo, 250)} por correo` : ""}. No se puede deshacer.`}
+        descripcion={`«${titulo.trim()}» llegará${campana ? ` a ${total} miembro(s) en la campana de la Red` : ""}${campana && correo ? " y" : ""}${correo ? ` a ${recuento?.con_correo ?? 0} por correo` : ""}. No se puede deshacer.`}
         pie={<>
           <button className="btn-ghost" onClick={() => setConfirmar(false)}>Cancelar</button>
-          <button className="btn-primary" onClick={enviar}>Enviar aviso</button>
+          <button className="btn-primary" onClick={enviar}>Enviar</button>
         </>}
       />
-      <h2 className="font-titulo text-xl font-semibold text-cafe">Avisos a los miembros</h2>
+      <h2 className="font-titulo text-xl font-semibold text-cafe">Mensajes a los miembros</h2>
       <p className="mt-1 text-sm text-pizarra/70">
-        Llega a la campana de cada miembro y, si activó las notificaciones del navegador, también como notificación push.
-        Para WhatsApp usa «Avisos por WhatsApp» en el Dashboard.
+        Un mensaje, tres canales: la campana de la Red (y notificación push), el correo y WhatsApp.
+        Por correo solo llega a quien aceptó novedades y por WhatsApp a quien aceptó WhatsApp (cada miembro lo cambia en «Mi cuenta»). Cada correo lleva su enlace de baja y cada WhatsApp la indicación «responde BAJA»; si alguien la pide, usa «Dar de baja de novedades» en su ficha.
       </p>
 
       {PLANTILLAS.length > 0 && <div className="mt-4 rounded-xl border border-cafe/10 bg-white p-3">
@@ -136,21 +173,51 @@ export function AvisosTab() {
         <fieldset>
           <legend className={rotulo}>¿A quién?</legend>
           <div className="flex flex-wrap gap-2">
-            {([["todos", "Todos los miembros"], ["rol", "Un perfil"], ["miembros", "Miembros concretos"]] as const).map(([v, l]) => (
-              <label key={v} className={`flex min-h-11 cursor-pointer items-center gap-2 rounded-full border px-4 text-sm ${destino === v ? "border-cafe bg-cafe text-crema" : "border-cafe/20 bg-white text-cafe"}`}>
-                <input type="radio" name="aviso-destino" value={v} checked={destino === v} onChange={() => setDestino(v)} className="sr-only" />
+            {([["todos", "Todos los miembros"], ["filtro", "Un grupo (perfil, provincia, curso)"], ["miembros", "Miembros concretos"]] as const).map(([v, l]) => (
+              <label key={v} className={chip(destino === v)}>
+                <input type="radio" name="aviso-destino" value={v} checked={destino === v} onChange={() => { setDestino(v); setWa(null); }} className="sr-only" />
                 {l}
               </label>
             ))}
           </div>
         </fieldset>
 
-        {destino === "rol" && (
-          <div>
-            <label htmlFor="aviso-rol" className={rotulo}>Perfil</label>
-            <select id="aviso-rol" value={rol} onChange={(e) => setRol(e.target.value)} className={campo}>
-              {PERFILES.map(([v, l]) => <option key={v} value={v}>{l}</option>)}
-            </select>
+        {destino === "filtro" && (
+          <div className="space-y-3 rounded-xl border border-cafe/10 bg-white p-3">
+            <fieldset>
+              <legend className={rotulo}>Perfiles (ninguno = todos)</legend>
+              <div className="flex flex-wrap gap-2">
+                {PERFILES.map(([v, l]) => (
+                  <label key={v} className={chip(roles.includes(v))}>
+                    <input type="checkbox" className="sr-only" checked={roles.includes(v)}
+                      onChange={() => setRoles((r) => (r.includes(v) ? r.filter((x) => x !== v) : [...r, v]))} />
+                    {l}
+                  </label>
+                ))}
+              </div>
+            </fieldset>
+            <div className="grid gap-3 sm:grid-cols-3">
+              <div>
+                <label htmlFor="aviso-provincia" className={rotulo}>Provincia</label>
+                <select id="aviso-provincia" value={provincia} onChange={(e) => setProvincia(e.target.value)} className={campo}>
+                  <option value="">Todas</option>
+                  {PROVINCIAS_EC.map((p) => <option key={p} value={p}>{p}</option>)}
+                </select>
+              </div>
+              <div>
+                <label htmlFor="aviso-curso" className={rotulo}>Curso</label>
+                <select id="aviso-curso" value={curso} onChange={(e) => setCurso(e.target.value)} className={campo}>
+                  <option value="">Cualquiera</option>
+                  {cursos.map((c) => <option key={c.id} value={c.id}>{c.titulo || c.id}</option>)}
+                </select>
+              </div>
+              <div>
+                <label htmlFor="aviso-segmento" className={rotulo}>Segmento</label>
+                <select id="aviso-segmento" value={segmento} onChange={(e) => setSegmento(e.target.value)} className={campo}>
+                  {SEGMENTOS.map(([v, l]) => <option key={v} value={v}>{l}</option>)}
+                </select>
+              </div>
+            </div>
           </div>
         )}
 
@@ -187,38 +254,85 @@ export function AvisosTab() {
           </div>
         )}
 
+        <p className="rounded-xl bg-crema p-3 text-sm text-cafe" role="status">
+          {recuento
+            ? <>Alcance: <strong>{recuento.total}</strong> miembro(s) · con correo y permiso: <strong>{recuento.con_correo}</strong> · con WhatsApp y permiso: <strong>{recuento.con_whatsapp}</strong>{recuento.sin_consentimiento ? ` · ${recuento.sin_consentimiento} no aceptaron novedades` : ""}</>
+            : "Calculando el alcance…"}
+        </p>
+
         <div>
-          <label htmlFor="aviso-titulo" className={rotulo}>Título *</label>
+          <label htmlFor="aviso-titulo" className={rotulo}>Título o asunto *</label>
           <input id="aviso-titulo" value={titulo} maxLength={140} onChange={(e) => setTitulo(e.target.value)} className={campo}
             placeholder="Ej.: Charla gratuita este sábado" required />
         </div>
         <div>
           <label htmlFor="aviso-texto" className={rotulo}>Mensaje</label>
-          <textarea id="aviso-texto" value={texto} maxLength={400} rows={4} onChange={(e) => setTexto(e.target.value)} className={campo} />
-          <p className="mt-1 text-xs text-pizarra/60">{texto.length}/400</p>
+          <textarea id="aviso-texto" value={texto} maxLength={2000} rows={5} onChange={(e) => setTexto(e.target.value)} className={campo} />
+          <p className="mt-1 text-xs text-pizarra/60">{texto.length}/2000 · la campana muestra los primeros 400; WhatsApp admite hasta 1000.</p>
         </div>
         <div>
           <label htmlFor="aviso-enlace" className={rotulo}>Enlace dentro de la Red (opcional)</label>
           <input id="aviso-enlace" value={enlace} onChange={(e) => setEnlace(e.target.value)} className={campo} placeholder="/comunidad/" />
           {!enlaceValido && <p className="mt-1 text-sm text-cereza">Usa una ruta de la Red que empiece por «/», por ejemplo /academia/.</p>}
         </div>
-        <label className="flex min-h-11 items-start gap-3 rounded-xl bg-crema p-3 text-sm text-cafe">
-          <input type="checkbox" checked={correo} onChange={(e) => setCorreo(e.target.checked)} className="mt-0.5 h-5 w-5" />
-          <span>
-            Enviar también por correo
-            <span className="block text-pizarra/70">
-              Solo a quienes aceptaron recibir novedades: {conCorreo} de {alcance.length}. Cada correo lleva su enlace de baja. Máximo 250 por envío.
-            </span>
-          </span>
-        </label>
+
+        <fieldset className="space-y-2">
+          <legend className={rotulo}>Canales</legend>
+          <label className="flex min-h-11 items-start gap-3 rounded-xl bg-crema p-3 text-sm text-cafe">
+            <input type="checkbox" checked={campana} onChange={(e) => setCampana(e.target.checked)} className="mt-0.5 h-5 w-5" />
+            <span>Campana de la Red<span className="block text-pizarra/70">A todo el alcance: {total}. Incluye notificación push si la activaron.</span></span>
+          </label>
+          <label className="flex min-h-11 items-start gap-3 rounded-xl bg-crema p-3 text-sm text-cafe">
+            <input type="checkbox" checked={correo} onChange={(e) => setCorreo(e.target.checked)} className="mt-0.5 h-5 w-5" />
+            <span>Correo<span className="block text-pizarra/70">Solo a quien aceptó novedades: {recuento?.con_correo ?? 0}. Se envía por tandas con enlace de baja.</span></span>
+          </label>
+        </fieldset>
 
         <div className="flex flex-wrap items-center gap-3">
           <button type="submit" disabled={!listo} className="btn-primary min-h-11 disabled:opacity-50">
-            {enviando ? "Enviando…" : `Enviar a ${alcance.length} miembro(s)`}
+            {enviando ? "Enviando…" : "Enviar por campana / correo"}
           </button>
           {resultado && <p className="text-sm text-hoja" role="status">{resultado}</p>}
         </div>
       </form>
+
+      <section className="mt-6 rounded-xl border border-cafe/10 bg-white p-4" aria-labelledby="wa-titulo">
+        <h3 id="wa-titulo" className="font-titulo text-lg font-semibold text-cafe">WhatsApp</h3>
+        <p className="mt-1 text-sm text-pizarra/70">
+          Sin coste: WhatsApp se abre con el mensaje ya escrito y tú pulsas enviar. A un grupo: elige el grupo al abrirse.
+          A cada miembro: prepara la lista y ve marcando los enviados.
+        </p>
+        <div className="mt-3 flex flex-wrap gap-2">
+          <a className={`btn-ghost min-h-11 px-4 ${titulo.trim().length < 3 ? "pointer-events-none opacity-50" : ""}`} aria-disabled={titulo.trim().length < 3}
+            href={`https://wa.me/?text=${encodeURIComponent(mensajeWa)}`} target="_blank" rel="noreferrer">
+            Enviar a un grupo o contacto
+          </a>
+          <button type="button" className="btn-ghost min-h-11 px-4 disabled:opacity-50" disabled={titulo.trim().length < 3 || !recuento?.con_whatsapp}
+            onClick={prepararWhatsapp}>
+            Preparar lista uno a uno ({recuento?.con_whatsapp ?? 0})
+          </button>
+        </div>
+        {wa && (
+          <div className="mt-3">
+            <p className="text-sm text-cafe" role="status">
+              Enviados {Object.keys(wa.enviados || {}).length} de {wa.destinatarios.length}. La lista queda guardada en «Avisos por WhatsApp» del Dashboard.
+            </p>
+            <ul className="mt-2 max-h-96 divide-y divide-cafe/10 overflow-y-auto rounded-lg border border-cafe/10">
+              {wa.destinatarios.map((d) => {
+                const hecho = !!wa.enviados?.[d.id];
+                return (
+                  <li key={d.id} className="flex min-h-11 flex-wrap items-center justify-between gap-2 px-3 py-2 text-sm">
+                    <span className="font-semibold text-cafe">{d.nombre || d.id}{hecho && <span className="ml-2 font-normal text-hoja">✓ enviado</span>}</span>
+                    <a className="btn-primary !px-4 !py-2 text-sm" href={enlaceWa(d.telefono)} target="_blank" rel="noreferrer" onClick={() => marcar(d.id)}>
+                      Abrir WhatsApp
+                    </a>
+                  </li>
+                );
+              })}
+            </ul>
+          </div>
+        )}
+      </section>
     </div>
   );
 }

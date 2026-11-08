@@ -111,6 +111,8 @@ export function FichaMiembro({ uid, onCerrar, reporteId }: { uid: string; onCerr
   }, "Mensaje enviado por el chat interno.");
   const correo = () => enviar(() => api("/api/moderacion.php?action=contactar_correo", { uid, asunto: asunto.trim(), mensaje: mensaje.trim() }), "Correo enviado.");
   const aviso = () => enviar(() => api("/api/notificaciones.php?action=enviar", { destino: "miembros", ids: [uid], titulo: asunto.trim(), texto: mensaje.trim(), tipo: "sistema" }), "Aviso enviado a su campana.");
+  // Cuando la persona pide la baja (p. ej. responde BAJA por WhatsApp): deja de recibir novedades por correo y WhatsApp.
+  const quitarNovedades = () => enviar(() => api("/api/notificaciones.php?action=preferencias", { uid, correo: false, whatsapp: false }), "Ya no recibirá novedades por correo ni por WhatsApp.");
   const restablecer = () => enviar(() => api("/api/auth.php?action=password_reset_request", { email: txt(m.email) }), "Se envió a su correo el enlace para crear una contraseña nueva.");
   const guardarValidacion = () => enviar(() => api("/api/members.php?action=set_estado", { id: uid, estado: validacion, motivo: motivoValidacion.trim() }), "Estado de validación guardado.").then((okk) => okk && setMotivoValidacion(""));
   const guardarNota = () => enviar(() => api("/api/moderacion.php?action=nota", { uid, texto: nota.trim() }), "Nota guardada (el miembro no la ve).").then((okk) => okk && setNota(""));
@@ -226,6 +228,7 @@ export function FichaMiembro({ uid, onCerrar, reporteId }: { uid: string; onCerr
           <button type="button" className={boton} onClick={() => setPanel(panel === "correo" ? "" : "correo")}>Correo</button>
           {wa && <a className={`${boton} inline-flex items-center`} href={wa} target="_blank" rel="noopener noreferrer">WhatsApp ↗</a>}
           {txt(m.email) && <button type="button" className={boton} onClick={restablecer}>Enviar enlace de contraseña</button>}
+          <button type="button" className={boton} onClick={quitarNovedades}>Dar de baja de novedades</button>
         </div>
         {(panel === "chat" || panel === "correo" || panel === "aviso") && (
           <form className="mt-3 grid gap-2" onSubmit={(e) => { e.preventDefault(); (panel === "chat" ? chat : panel === "correo" ? correo : aviso)(); }}>

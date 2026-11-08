@@ -164,4 +164,47 @@ export async function enviarCorreo(plantilla: string, para: string, vars: Vars =
   }
 }
 
+/**
+ * Envío masivo: Resend acepta hasta 100 correos por llamada (/emails/batch) y
+ * limita las llamadas por segundo, así que va por tandas con una pausa. Cada
+ * correo lleva su propio enlace de baja también en la cabecera
+ * List-Unsubscribe (Gmail y Yahoo lo exigen para envíos masivos).
+ */
+export type CorreoLote = { para: string; vars: Vars; baja?: string };
+const TANDA = 100;
+const pausa = (ms: number) => new Promise((r) => setTimeout(r, ms));
+
+export async function enviarCorreosLote(plantilla: string, lista: CorreoLote[]): Promise<{ enviados: number; fallidos: number }> {
+  const r = { enviados: 0, fallidos: 0 };
+  const validos: { para: string; asunto: string; html: string; baja?: string; vars: Vars }[] = [];
+  for (const x of lista) {
+    const c = emailValido(x.para) ? componer(plantilla, x.vars) : null;
+    if (c) validos.push({ para: x.para, ...c, baja: x.baja, vars: x.vars }); else r.fallidos++;
+  }
+  if (!config.correo.apiResend) {
+    for (const v of validos) r[(await enviarCorreo(plantilla, v.para, v.vars)) ? "enviados" : "fallidos"]++;
+    return r;
+  }
+  for (let i = 0; i < validos.length; i += TANDA) {
+    const tanda = validos.slice(i, i + TANDA);
+    if (i) await pausa(700);
+    try {
+      const resp = await fetch("https://api.resend.com/emails/batch", {
+        method: "POST",
+        headers: { Authorization: `Bearer ${config.correo.apiResend}`, "Content-Type": "application/json" },
+        body: JSON.stringify(tanda.map((v) => ({
+          from: config.correo.remitente, to: [v.para], subject: v.asunto, html: v.html, reply_to: "no-reply@redcafeecuador.com",
+          ...(v.baja ? { headers: { "List-Unsubscribe": `<${v.baja}>`, "List-Unsubscribe-Post": "List-Unsubscribe=One-Click" } } : {}),
+        }))),
+      });
+      if (!resp.ok) console.error("[correo] lote: el proveedor respondió", resp.status);
+      r[resp.ok ? "enviados" : "fallidos"] += tanda.length;
+    } catch (e) {
+      console.error("[correo] lote: fallo de envío", e);
+      r.fallidos += tanda.length;
+    }
+  }
+  return r;
+}
+
 export { componer as _componerParaPruebas };
