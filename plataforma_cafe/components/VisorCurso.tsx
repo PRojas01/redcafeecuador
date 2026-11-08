@@ -30,6 +30,24 @@ type Datos = {
 };
 type Estado = { texto: string; tipo: "" | "is-ok" | "is-error" };
 
+/* Portada propia de cada curso (las mismas de redcafeecuador.com), servidas desde
+   /img/academia/cursos/; si un curso nuevo no tiene, se usa la de su categoría. */
+const PORTADAS_POR_CURSO: Record<string, string> = {
+  "buenas-practicas": "/img/academia/cursos/buenas-practicas.webp",
+  "cafe-de-especialidad-de-la-finca-a-la-taza": "/img/academia/cursos/cafe-de-especialidad-de-la-finca-a-la-taza.webp",
+  "cafe-especial": "/img/academia/cursos/cafe-especial.webp",
+  "exportacion": "/img/academia/cursos/exportacion.webp",
+  "formalizacion": "/img/academia/cursos/formalizacion.webp",
+  "legacy-barismo-profesional": "/img/academia/cursos/legacy-barismo-profesional.webp",
+  "legacy-barista-avanzado": "/img/academia/cursos/legacy-barista-avanzado.webp",
+  "legacy-barista-en-casa": "/img/academia/cursos/legacy-barista-en-casa.webp",
+  "manejo-plagas": "/img/academia/cursos/manejo-plagas.webp",
+  "postcosecha": "/img/academia/cursos/postcosecha.webp",
+  "trazabilidad": "/img/academia/cursos/trazabilidad.webp",
+  "tueste": "/img/academia/cursos/tueste.webp",
+  "ventas-comercial": "/img/academia/cursos/ventas-comercial.webp",
+};
+
 const PORTADAS: Record<string, string> = {
   produccion: "/img/academia/produccion.webp",
   postcosecha: "/img/academia/postcosecha.webp",
@@ -235,7 +253,7 @@ export function VisorCurso({ id: idFijo, inicial, respaldo }: { id: string | nul
   const total = datos?.total ?? 0;
   const puedeCompletar = !!datos && datos.acceso_concedido !== false && !!(datos.matriculado || datos.puede_editar);
   const precio = PRECIOS[c.id];
-  const portada = PORTADAS[c.categoria || "general"] || PORTADAS.general;
+  const portada = PORTADAS_POR_CURSO[c.id] || PORTADAS[c.categoria || "general"] || PORTADAS.general;
 
   const completar = async (mi: number, li: number, hecho: boolean) => {
     // Se marca al momento y se deshace si el servidor no lo guarda.
