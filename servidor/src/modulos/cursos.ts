@@ -259,8 +259,21 @@ function estudiantes(c: Doc, ins: Doc, prog: Doc, miembros: Map<string, Doc>) {
   est.sort((a, b) => str(b.fecha).localeCompare(str(a.fecha)));
   return { estudiantes: est, totales, avance_medio: enrolados ? Math.round(suma / enrolados) : 0, matriculados: (totales.matriculado ?? 0) + (totales.aprobado ?? 0), pendientes: totales.pendiente ?? 0 };
 }
+/** Cursos cuyos estudiantes puede ver quien pregunta. En el panel del miembro
+ *  son solo los suyos (autor o asociado), aunque además sea administrador:
+ *  las matrículas de los demás se revisan desde /admin/, que pide todos=1. */
+function propioDe(c: Doc, u: Doc | null): boolean {
+  const id = str(u?.id);
+  return !!id && id !== "admin" && (str(c.autor_id) === id || asociadosIds(c.asociados).includes(id));
+}
+function vistaAdmin(ctx: Ctx, u: Doc | null): boolean {
+  const q = str(ctx.query.todos ?? ctx.in?.todos);
+  return (q === "1" || q === "true") && esAdmin(ctx, u);
+}
+const delAmbito = (ctx: Ctx, c: Doc, u: Doc | null) => vistaAdmin(ctx, u) || propioDe(c, u);
+
 async function cursosDelAutor(ctx: Ctx, u: Doc, filtro = ""): Promise<Doc[]> {
-  const mios = (await todos()).filter((c) => autorOAsociado(ctx, c, u));
+  const mios = (await todos()).filter((c) => delAmbito(ctx, c, u));
   if (!filtro) return mios;
   const c = mios.find((x) => str(x.id) === filtro);
   if (!c) fail("No autorizado: ese curso no es tuyo.", 403);
@@ -437,7 +450,7 @@ const acciones: Modulo["acciones"] = {
 
   async solicitudes(ctx) {
     const u = await requiereUsuario(ctx);
-    const mios = new Map((await todos()).filter((c) => autorOAsociado(ctx, c, u)).map((c) => [str(c.id), c.titulo ?? ""]));
+    const mios = new Map((await todos()).filter((c) => delAmbito(ctx, c, u)).map((c) => [str(c.id), c.titulo ?? ""]));
     const out = Object.entries(await inscripciones()).filter(([, i]) => i && typeof i === "object" && mios.has(str(i.curso)))
       .map(([k, i]) => ({ ...i, curso_titulo: mios.get(str(i.curso)), clave: k })).sort((a, b) => str(b.solicitado).localeCompare(str(a.solicitado)));
     return { solicitudes: out, pendientes: out.filter((i) => i.estado === "pendiente").length };
