@@ -56,9 +56,9 @@ function popupHtml(l: LoteApi) {
  (ejemplo ? `<span style="display:inline-block;margin-bottom:4px;padding:2px 7px;background:#F3F1EA;color:#5C5A50;font-size:11px;letter-spacing:.06em;text-transform:uppercase;">Ejemplo · no es una finca real</span><br>` : "") +
  `<strong style="font-size:14px;color:#14140F;">${esc(x.finca || x.nombre || "Lote de café")}</strong>` +
  (detalle ? `<br><span style="font-size:12px;color:#5C5A50;">${detalle}</span>` : "") +
- (precio ? `<br><span style="font-size:13px;font-weight:700;color:#8C1E0E;">${precio}</span>` : "") +
+ (precio ? `<br><span style="font-size:13px;font-weight:700;color:#8C3604;">${precio}</span>` : "") +
  (x.ubicacion_aproximada ? `<br><span style="font-size:11px;color:#5C5A50;">Ubicación aproximada (centro de la provincia)</span>` : "") +
- (x.id ? `<br><a href="/marketplace/${encodeURIComponent(String(x.id))}/" style="display:inline-block;margin-top:6px;font-size:13px;font-weight:600;color:#8C1E0E;">Ver ficha del lote</a>` : "")
+ (x.id ? `<br><a href="/marketplace/${encodeURIComponent(String(x.id))}/" style="display:inline-block;margin-top:6px;font-size:13px;font-weight:600;color:#8C3604;">Ver ficha del lote</a>` : "")
  );
 }
 

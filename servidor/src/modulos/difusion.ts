@@ -2,12 +2,12 @@
 // a mano (enlaces wa.me). Solo guarda la lista congelada y lo ya enviado.
 import { fail, type Ctx, type Modulo } from "../lib/http.js";
 import { listar, mutar, type Doc } from "../lib/docs.js";
-import { ROLES_MIEMBRO, miembroRoles, tieneRol, todosLosMiembros, usuarioActual } from "../lib/usuarios.js";
+import { miembroRoles, tieneRol, usuarioActual } from "../lib/usuarios.js";
+import { aceptaNovedades, filtrarMiembros, leerFiltros, siNo, telefonoInternacional, whatsappDe } from "../lib/audiencia.js";
 import { registrarActividad } from "../lib/avisos.js";
 import { largo, nowIso, str, uid } from "../lib/util.js";
 
 const MAX_CAMPANAS = 50;
-const SEGMENTOS = ["todos", "productores_sin_lote", "nuevos_30_dias"];
 const SITIO = "https://redcafeecuador.com";
 
 async function soloAdmin(ctx: Ctx) {
@@ -16,44 +16,20 @@ async function soloAdmin(ctx: Ctx) {
   if (!u || !tieneRol(ctx, u, "admin")) fail("Solo administradores.", 403);
 }
 
-export function telefonoInternacional(raw: unknown): string {
-  let d = str(raw).replace(/\D+/g, "");
-  if (!d) return "";
-  if (d.startsWith("00")) d = d.slice(2);
-  if (d.length === 10 && d[0] === "0") d = "593" + d.slice(1);
-  else if (d.length === 9 && d[0] === "9") d = "593" + d;
-  return d.length < 11 || d.length > 15 ? "" : d;
-}
-const marketing = (m: Doc) => !!m.acepta_marketing || !!m.consentimientos?.marketing?.aceptado;
-const estadoOk = (m: Doc) => !("activo" in m && !m.activo) && !["bloqueado", "suspendido", "eliminado"].includes(str(m.estado));
-const siNo = (v: unknown, def: boolean) => (v === undefined || v === null ? def : v === true || ["1", "true", "on", "yes"].includes(str(v).toLowerCase()));
+export { telefonoInternacional };
 
 function filtros(i: Doc) {
-  let crudo = i.roles ?? [];
-  if (!Array.isArray(crudo)) crudo = crudo === "" || crudo === null ? [] : [crudo];
-  const roles = [...new Set((crudo as unknown[]).map(str).filter((r) => ROLES_MIEMBRO.includes(r)))];
-  const segmento = SEGMENTOS.includes(str(i.segmento)) ? str(i.segmento) : "todos";
-  return { roles, provincia: str(i.provincia).trim(), segmento, solo_consentimiento: siNo(i.solo_consentimiento, true) };
+  return { ...leerFiltros(i), solo_consentimiento: siNo(i.solo_consentimiento, true) };
 }
 
 async function calcular(f: ReturnType<typeof filtros>) {
-  const conLote = new Set<string>();
-  if (f.segmento === "productores_sin_lote") for (const l of await listar("lotes")) conLote.add(str(l.productor_id ?? l.published_by));
-  const hoy = new Date(); hoy.setUTCHours(0, 0, 0, 0);
-  const limite = hoy.getTime() - 30 * 86400_000;
   const destinatarios: Doc[] = [];
   let sinConsentimiento = 0, sinTelefono = 0;
-  for (const m of await todosLosMiembros()) {
-    if (!estadoOk(m)) continue;
-    const roles = miembroRoles(m);
-    if (f.roles.length && !f.roles.some((r) => roles.includes(r))) continue;
-    if (f.provincia && str(m.provincia) !== f.provincia) continue;
-    if (f.segmento === "productores_sin_lote" && (!roles.includes("productor") || conLote.has(str(m.id)))) continue;
-    if (f.segmento === "nuevos_30_dias" && (Date.parse(str(m.created_at)) || 0) < limite) continue;
-    if (f.solo_consentimiento && !marketing(m)) { sinConsentimiento++; continue; }
-    const tel = telefonoInternacional(m.telefono) || telefonoInternacional(m.whatsapp);
+  for (const m of await filtrarMiembros(f)) {
+    if (f.solo_consentimiento && !aceptaNovedades(m)) { sinConsentimiento++; continue; }
+    const tel = whatsappDe(m);
     if (!tel) { sinTelefono++; continue; }
-    destinatarios.push({ id: str(m.id), nombre: str(m.nombre), telefono: tel, roles, provincia: str(m.provincia) });
+    destinatarios.push({ id: str(m.id), nombre: str(m.nombre), telefono: tel, roles: miembroRoles(m), provincia: str(m.provincia) });
   }
   return { destinatarios, sinConsentimiento, sinTelefono };
 }
