@@ -14,7 +14,7 @@ const raiz = path.dirname(path.dirname(fileURLToPath(import.meta.url)));
 const rutas = fs.readFileSync(path.join(raiz, "plataforma_cafe/herramientas/rutas.txt"), "utf8")
   .split(/\r?\n/).map((r) => r.trim()).filter(Boolean).map((r) => (r === "/./" ? "/" : r));
 const B = process.argv[2] ?? "http://127.0.0.1:8172";
-const ancho = Number(process.argv[4] ?? 390);
+const ancho = Number(process.argv[4] ?? 390) || 390;
 const b = await chromium.launch();
 const out = [];
 for (const r of rutas) {
