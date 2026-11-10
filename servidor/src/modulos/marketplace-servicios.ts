@@ -4,7 +4,7 @@ import { fail, type Ctx, type Modulo } from "../lib/http.js";
 import { listar, mutar, type Doc } from "../lib/docs.js";
 import { cupo } from "../lib/seguridad.js";
 import { filtroVisible, miembroRoles, requiereUsuario, tieneRol, usuarioActual } from "../lib/usuarios.js";
-import { notificarAdmins, publicarAvisoComunidad, registrarActividad } from "../lib/avisos.js";
+import { notificarAdmins, publicarAvisoComunidad, registrarActividad, retirarAvisosComunidad } from "../lib/avisos.js";
 import { bool, cortar, esNumerico, fechaMs, largo, num, nowIso, str, textoEntrada, uid, whatsappDigitos, whatsappDisplay } from "../lib/util.js";
 import { imagenesValidas } from "./lotes.js";
 
@@ -189,6 +189,7 @@ const acciones: Modulo["acciones"] = {
     if (!obj) fail("Servicio no encontrado.", 404);
     if (ownerId(obj) !== u.id && !ctx.ses.d.admin) fail("No autorizado.", 403);
     await mutar("servicios-terceros", (items) => items.filter((s) => s.id !== id));
+    await retirarAvisosComunidad([id]);
     return null;
   },
 

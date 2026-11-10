@@ -165,6 +165,25 @@ function redactar(tipo: string, d: Doc): { titulo: string; text: string; enlace:
   return { titulo: "Nueva oferta de empleo: " + texto160(d.titulo ?? "Oferta de empleo"), text: ps.join(" · ") + (ps.length ? "." : ""), enlace: "/marketplace/?ver=empleos" };
 }
 
+/** Quita del muro los avisos automáticos («Nuevo lote publicado…», «Nuevo miembro…»)
+ *  de objetos que ya no existen: si no, quedan enlaces rotos y, en una baja,
+ *  el nombre de quien se fue. */
+export async function retirarAvisosComunidad(ids: Iterable<string>): Promise<number> {
+  const quitar = new Set([...ids].map((x) => str(x).trim()).filter(Boolean));
+  if (!quitar.size) return 0;
+  let n = 0;
+  try {
+    await mutar("posts", (posts) => {
+      const quedan = posts.filter((p) => !(p.tipo === "aviso" && quitar.has(str(p.objeto_id))));
+      n = posts.length - quedan.length;
+      return n ? quedan : posts;
+    });
+  } catch (e) {
+    console.error("[avisos] retirarAvisosComunidad", e);
+  }
+  return n;
+}
+
 /** publicar_aviso_comunidad() */
 export async function publicarAvisoComunidad(tipo: string, datos: Doc) {
   if (!TIPOS_AVISO.includes(tipo)) return;

@@ -4,7 +4,7 @@ import { fail, type Ctx, type Modulo } from "../lib/http.js";
 import { listar, mutar, type Doc } from "../lib/docs.js";
 import { cupo } from "../lib/seguridad.js";
 import { miembroRoles, requiereUsuario, tieneRol, usuarioActual } from "../lib/usuarios.js";
-import { notificar, notificarAdmins, publicarAvisoComunidad, registrarActividad } from "../lib/avisos.js";
+import { notificar, notificarAdmins, publicarAvisoComunidad, registrarActividad, retirarAvisosComunidad } from "../lib/avisos.js";
 import { nowIso, str, uid, whatsappDisplay } from "../lib/util.js";
 import { enumerado, fechaCierre, imagenes, numero, siNo, texto, vencido } from "../lib/validar.js";
 
@@ -159,6 +159,7 @@ const acciones: Modulo["acciones"] = {
     }));
     if (!hecho) fail("Requerimiento no encontrado.", 404);
     await mutar("ofertas-requerimiento", (l) => l.filter((o) => str(o.requerimiento_id) !== id));
+    await retirarAvisosComunidad([id]);
     return { borrado: true };
   },
 
