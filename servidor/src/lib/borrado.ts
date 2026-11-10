@@ -19,6 +19,7 @@ import { carpetaIdentidad } from "./privado.js";
 import { borrarSubida, nombresEnBase } from "./archivos.js";
 import { descifrar } from "./pii.js";
 import { nowIso, str } from "./util.js";
+import { retirarAvisosComunidad } from "./avisos.js";
 
 export const ANONIMO = "Miembro que dejó la Red";
 
@@ -145,6 +146,11 @@ export async function borrarMiembro(id: string): Promise<ResumenBorrado> {
     });
     if (n) resumen[col] = (resumen[col] ?? 0) + n;
   }
+
+  // Avisos automáticos del muro que lo nombraban a él o a lo que publicó.
+  const conAviso = ["lotes", "servicios-terceros", "servicios", "requerimientos", "empleos", "cursos", "contenido-cursos"];
+  const avisos = await retirarAvisosComunidad([id, ...conAviso.flatMap((c) => (borrados[c] ?? []).map((x) => str(x.id)))]);
+  if (avisos) resumen["avisos-muro"] = avisos;
 
   // Comentarios en publicaciones ajenas y pedidos con terceros: anonimizados.
   await mutar("posts", (ps) => ps.map((p) => (Array.isArray(p.comments) && p.comments.some((c: Doc) => str(c.autor_id) === id)
