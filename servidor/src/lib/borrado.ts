@@ -16,6 +16,7 @@ import { db } from "./db.js";
 import { listar, mapa, mutar, mutarMapa, type Doc } from "./docs.js";
 import { config } from "./config.js";
 import { carpetaIdentidad } from "./privado.js";
+import { borrarSubida, nombresEnBase } from "./archivos.js";
 import { descifrar } from "./pii.js";
 import { nowIso, str } from "./util.js";
 
@@ -102,12 +103,13 @@ export async function borrarMiembro(id: string): Promise<ResumenBorrado> {
   const dirSubidas = path.join(config.uploads, "user-content");
   const nombres = new Set(urlsSubidas(Object.values(previos).flat()));
   const slug = id.replace(/[^A-Za-z0-9_-]/g, "");
-  if (slug && fs.existsSync(dirSubidas)) {
-    // Nombres de uploads.ts: <contexto>-<id>-<12 hex>.jpg|pdf
+  if (slug) {
+    // Nombres de uploads.ts: <contexto>-<id>-<12 hex>.jpg|pdf (en el disco o solo en la base)
     const suyo = new RegExp(`^(comunidad|marketplace|lote|curso|doc)-${slug}-[0-9a-f]{12}\\.(jpg|pdf)$`);
-    for (const n of fs.readdirSync(dirSubidas)) if (suyo.test(n)) nombres.add(n);
+    const enDisco = fs.existsSync(dirSubidas) ? fs.readdirSync(dirSubidas) : [];
+    for (const n of [...enDisco, ...(await nombresEnBase("user-content"))]) if (suyo.test(n)) nombres.add(n);
   }
-  for (const n of nombres) if (borrarArchivo(dirSubidas, n)) archivos++;
+  for (const n of nombres) if (path.basename(n) === n && (await borrarSubida(path.join(dirSubidas, n)))) archivos++;
   const idents = (previos["verificacion-identidad"] ?? []).flatMap((s) => Object.values(s.archivos ?? {}).map(str));
   if (idents.length) {
     const dir = carpetaIdentidad();
