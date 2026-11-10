@@ -52,7 +52,8 @@ export async function crear(motivo: string) {
     nota: "Copia lógica de las tablas listadas (JSON). No contiene sesiones, OTP, cupos ni secretos. La restauración completa se hace con la copia de la base (cPanel).",
     tablas: { usuarios, documentos, consentimientos, codigosRespaldo: codigos, administradores },
   };
-  const gz = gzipSync(Buffer.from(JSON.stringify(bulto)), { level: 6 });
+  const gz = gzipSync(Buffer.from(JSON.stringify(bulto, (_k, v) => (typeof v === "bigint" ? v.toString() : v))), { level: 6 });
+  // («orden» de Documento es BigInt: JSON.stringify no lo admite y la copia fallaba.)
   const sello = new Date().toISOString().replace(/[-:]/g, "").replace("T", "-").slice(0, 15);
   const nombre = `respaldo-${sello}.json.gz`;
   const ruta = path.join(carpeta(), nombre);
