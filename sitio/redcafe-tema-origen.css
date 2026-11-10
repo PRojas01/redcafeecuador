@@ -1254,7 +1254,7 @@ html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5):not(#o6):not(#o7):not(#o8):not
 html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5):not(#o6):not(#o7):not(#o8):not(#o9):not(#o10):not(#o11):not(#o12):not(#o13):not(#o14) body :is(.btn-primary, button.bg-cereza, button[class*="bg-cafe"]):disabled, html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5):not(#o6):not(#o7):not(#o8):not(#o9):not(#o10):not(#o11):not(#o12):not(#o13):not(#o14) body main .btn-primary:disabled { opacity: 1 !important; background-color: #e6d3c4 !important; background-image: none !important; color: #5e2402 !important; border-color: #d4b9a5 !important; box-shadow: none !important; }
 html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5):not(#o6):not(#o7):not(#o8):not(#o9):not(#o10):not(#o11):not(#o12):not(#o13):not(#o14) body :is([data-redcafe-route] main > div > section:first-child):is([data-redcafe-propio], [id^="redcafe-"], [class*="redcafe-"]):not([class*="hero"]) :is(h1, h2, h3, h4) { color: #2f2a24 !important; }
 
-/* ===== v20261110a · Fondo «crema tostada» y tarjetas compactas en móvil =====
+/* ===== v20261110b · Fondo «crema tostada» y tarjetas compactas en móvil =====
    Fondo: neutros teñidos con el tono del café (OKLCH h≈70, croma bajo) en vez del
    gris verdoso #f3f1ea. Jerarquía de superficies: página #fbf6f0 < sección alterna
    #f6ece1 < tarjeta blanca. Contraste medido (WCAG / APCA Lc):
