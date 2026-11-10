@@ -19,18 +19,18 @@ const PERFILES: Array<{
   texto: string;
   cta?: string;
 }> = [
-  { href: "/afiliate?rol=productor", icono: "productor", titulo: "Productor", bajada: "Vende desde 1 libra hasta tu cosecha.", texto: "Publico mi café con finca, altura y proceso para vender directo y acordar condiciones con el comprador." },
+  { href: "/afiliate?rol=productor", icono: "productor", titulo: "Productor", bajada: "Vende desde 1 libra hasta tu cosecha.", texto: "Publico mi café con los datos de la finca, la altura y el proceso, y negocio directo con el comprador." },
   { href: "/afiliate?rol=vendedor", icono: "tostador", titulo: "Tostador / Comerciante", bajada: "Asegura tu abastecimiento sin depender de un solo proveedor.", texto: "Comparo lotes por finca, altura, proceso y trazabilidad. Coordino compras y capacito a mi equipo desde la Academia." },
-  { href: "/afiliate?rol=comprador", icono: "comprador", titulo: "Comprador", bajada: "Compra directo a quien produce y descubre orígenes.", texto: "Encuentro café ecuatoriano con ficha de lote y contacto directo para comprar con más contexto." },
+  { href: "/afiliate?rol=comprador", icono: "comprador", titulo: "Comprador", bajada: "Compra directo a quien produce y descubre orígenes.", texto: "Encuentro café ecuatoriano con la ficha de cada lote y hablo directo con quien lo produce." },
   { href: "/afiliate?rol=certificador", icono: "laboratorio", titulo: "Verificador / Catador", bajada: "Cobra por cada evaluación y hazte un nombre en el sector.", texto: "Evalúo lotes, audito fincas y emito informes técnicos verificables dentro de la Red." },
   { href: "/afiliate?rol=transportista", icono: "logistica", titulo: "Transportista", bajada: "Llena tus rutas con fletes que llegan de la Red.", texto: "Conecto fincas, tostadores y puertos. Cotizo rutas y construyo historial de entregas." },
-  { href: "/afiliate?rol=pilador", icono: "pilador", titulo: "Pilador / Beneficiadero", bajada: "Mantén la piladora ocupada sin salir a buscar clientes.", texto: "Proceso pergamino a café oro, controlo merma y humedad, y recibo solicitudes de pilado." },
-  { href: "/afiliate?rol=exportador", icono: "exportador", titulo: "Exportador", bajada: "Cierra contenedores con el origen ya documentado.", texto: "Conecto lotes auditados, documentos EUDR, verificadores, catadores y compradores globales." },
-  { href: "/afiliate?rol=proveedor", icono: "proveedor", titulo: "Proveedor de Equipos e Insumos", bajada: "Vende tus equipos a quien está montando su negocio ahora.", texto: "Para quienes venden maquinaria, insumos y materiales a la industria del café." },
-  { href: "/recetas", icono: "amante", titulo: "Amante del Café", bajada: "Toma mejor café en casa, y sabe de qué finca viene.", texto: "Descubre cafés de origen, aprende a catarlos y prepáralos con recetas claras.", cta: "Descubre las recetas" },
+  { href: "/afiliate?rol=pilador", icono: "pilador", titulo: "Pilador / Beneficiadero", bajada: "Mantén la piladora ocupada sin salir a buscar clientes.", texto: "Pilo café pergamino hasta dejarlo en oro, controlo merma y humedad, y recibo pedidos de pilado." },
+  { href: "/afiliate?rol=exportador", icono: "exportador", titulo: "Exportador", bajada: "Cierra contenedores con el origen ya documentado.", texto: "Encuentro lotes verificados, papeles EUDR, catadores y compradores del exterior en un solo lugar." },
+  { href: "/afiliate?rol=proveedor", icono: "proveedor", titulo: "Proveedor de Equipos e Insumos", bajada: "Vende tus equipos a quien está montando su negocio ahora.", texto: "Vendo maquinaria, insumos y materiales para el sector cafetero." },
+  { href: "/recetas", icono: "amante", titulo: "Amante del Café", bajada: "Toma mejor café en casa y conoce de qué finca viene.", texto: "Descubre cafés de origen, aprende a catarlos y prepáralos con recetas claras.", cta: "Descubre las recetas" },
   { href: "/afiliate?rol=asesor", icono: "asesor", titulo: "Asesor Experto", bajada: "Consigue clientes que ya saben que necesitan ayuda.", texto: "Ofrezco asesoría en agronomía, calidad, tueste, gestión o exportación." },
-  { href: "/afiliate?rol=bar", icono: "bar", titulo: "Bar / Cafetería", bajada: "Diferénciate sirviendo café con nombre y finca.", texto: "Muestro mi barra, menú digital, cafés de origen y necesidades de abastecimiento." },
-  { href: "/afiliate?rol=barista", icono: "barista", titulo: "Barista", bajada: "Capacítate y consigue barra donde crecer.", texto: "Me capacito en barra, manejo recetas y me vinculo a oportunidades del café de especialidad." },
+  { href: "/afiliate?rol=bar", icono: "bar", titulo: "Bar / Cafetería", bajada: "Diferénciate sirviendo café con nombre y finca.", texto: "Muestro mi barra, mi menú y mis cafés de origen, y aviso qué café necesito comprar." },
+  { href: "/afiliate?rol=barista", icono: "barista", titulo: "Barista", bajada: "Capacítate y consigue trabajo en una buena barra.", texto: "Me capacito, manejo recetas y encuentro trabajo en cafeterías de especialidad." },
 ];
 
 export default function HomePage() {
@@ -47,10 +47,10 @@ export default function HomePage() {
           <div>
             <p className="badge mb-4 bg-filtrado-800 text-acento-claro">Nueva plataforma · Red Café Ecuador</p>
             <h1 className="max-w-4xl font-titulo text-4xl font-bold leading-[1.08] md:text-6xl">
-              Vende y compra directo el <span className="text-acento-claro">café ecuatoriano</span>
+              Compra y vende <span className="text-acento-claro">café ecuatoriano</span>
             </h1>
             <p className="mt-5 max-w-2xl text-lg leading-relaxed text-crema/85">
-              Sin intermediarios ni comisiones. Encuentra compradores, servicios y cursos en un solo lugar. Tu perfil es gratis y está listo en 2 minutos.
+              Trato directo, sin intermediarios ni comisiones. Aquí encuentras compradores, servicios y cursos. Abre tu perfil gratis en 2 minutos.
             </p>
             {/* Tres botones con la misma forma y un color por función:
                 registrarse (el más llamativo), WhatsApp (verde oficial) y
@@ -127,12 +127,12 @@ export default function HomePage() {
         <div className="relative mx-auto max-w-6xl px-4">
           <p className="badge bg-filtrado-800 text-acento-claro">Cómo garantizamos la confianza</p>
           <h2 className="mt-3 max-w-2xl font-titulo text-3xl font-bold text-crema md:text-4xl">Una Red basada en personas reales</h2>
-          <p className="mt-3 max-w-2xl text-crema/80">La confianza comienza sabiendo con quién estás conectando.</p>
+          <p className="mt-3 max-w-2xl text-crema/80">La confianza empieza por saber con quién estás tratando.</p>
           <div className="mt-10 grid gap-6 md:grid-cols-3 md:gap-8">
             {[
-              { titulo: "Perfil", texto: "Cada actor presenta claramente quién es y qué actividad realiza." },
-              { titulo: "Información", texto: "Los perfiles pueden incorporar datos de finca, empresa, productos y servicios." },
-              { titulo: "Contacto", texto: "La Red facilita conexiones directas entre sus miembros." },
+              { titulo: "Perfil", texto: "Cada miembro dice claramente quién es y a qué se dedica." },
+              { titulo: "Información", texto: "Cada perfil puede mostrar su finca, empresa, productos y servicios." },
+              { titulo: "Contacto", texto: "Los miembros se contactan directo, sin intermediarios." },
             ].map((item) => (
               <div key={item.titulo} className="rounded-2xl border border-crema/20 bg-cafe/70 p-7 backdrop-blur">
                 <Icono nombre={item.titulo === "Perfil" ? "productor" : item.titulo === "Información" ? "precio" : "comunidad"} className="h-7 w-7 text-latte" />
@@ -147,16 +147,16 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* 10. Concepto territorial — FincaTerrazas */}
+      {/* 10. Por provincia — FincaTerrazas */}
       <section id="mapa-portada" className="py-16 md:py-24">
         <div className="mx-auto grid max-w-6xl items-center gap-10 px-4 lg:grid-cols-[3fr_2fr]">
           <div>
-            <p className="badge badge-verde">Concepto territorial</p>
+            <p className="badge badge-verde">Por provincia</p>
             <h2 className="titulo-subrayado mt-3 max-w-xl font-titulo text-3xl font-bold text-cafe md:text-4xl">
               Encuentra café de cada provincia
             </h2>
             <p className="mt-3 max-w-2xl text-pizarra-suave">
-              Explora productores, fincas, cafés y actores de diferentes provincias del Ecuador.
+              Mira productores, fincas y cafés de todas las provincias del Ecuador.
             </p>
             {/* Provincias reales con lotes y miembros (antes seis provincias de muestra que la capa sustituía) */}
             <ProvinciasReales />
