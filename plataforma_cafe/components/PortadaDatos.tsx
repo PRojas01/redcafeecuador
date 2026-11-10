@@ -104,8 +104,8 @@ export function FranjaPrecio() {
       <div className="redcafe-home-price-inner">
         <div className="redcafe-home-price-copy">
           <p className="redcafe-home-price-kicker">Precio de mercado</p>
-          <h2>Referencia mensual para negociar café</h2>
-          <p>Consulta el panel con fuente, histórico y lectura para Ecuador antes de publicar, comprar o negociar café.</p>
+          <h2>Precio del mes para negociar tu café</h2>
+          <p>Revisa el precio, de dónde sale y cómo ha variado antes de vender o comprar café.</p>
         </div>
         <div className="redcafe-home-price-metric" aria-live="polite">
           <span>ICE Coffee C</span>
