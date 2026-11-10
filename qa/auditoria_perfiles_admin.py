@@ -138,8 +138,8 @@ st, _, r = A("/api/verificaciones.php?action=set", {"tipo": "servicio", "id": se
 # Cursos
 st, _, r = A("/api/cursos.php?action=update", {"id": curso, "titulo": "Curso editado " + S}); caso("Academia", "admin", "editar curso de un asesor", ok_(st, r), err(st, r))
 st, _, r = A("/api/verificaciones.php?action=set", {"tipo": "curso", "id": curso, "verificado": True}); caso("Academia", "admin", "verificar curso", ok_(st, r), err(st, r))
-st, _, r = A(f"/api/cursos.php?action=matriculados&curso={curso}"); caso("Academia", "admin", "ver matriculados", ok_(st, r) and idC in r.decode("utf8", "replace"), err(st, r))
-st, _, r = A(f"/api/cursos.php?action=exportar&curso={curso}"); caso("Academia", "admin", "exportar matriculados (CSV)", st == 200 and len(r) > 20, err(st, r))
+st, _, r = A(f"/api/cursos.php?action=matriculados&curso={curso}&todos=1"); caso("Academia", "admin", "ver matriculados", ok_(st, r) and idC in r.decode("utf8", "replace"), err(st, r))
+st, _, r = A(f"/api/cursos.php?action=exportar&curso={curso}&todos=1"); caso("Academia", "admin", "exportar matriculados (CSV)", st == 200 and len(r) > 20, err(st, r))
 
 # Comunidad
 st, _, r = A("/api/comunidad.php?action=update", {"id": post, "titulo": "Editado por admin", "text": "Texto moderado."}); caso("Comunidad", "admin", "editar publicación de un miembro", ok_(st, r), err(st, r))
