@@ -9,6 +9,7 @@ import { cupo } from "../lib/seguridad.js";
 import { requiereUsuario } from "../lib/usuarios.js";
 import { enMarco, formatoReal } from "../lib/imagen.js";
 import { config } from "../lib/config.js";
+import { guardarSubida } from "../lib/archivos.js";
 import { largo, nowIso, str, uid } from "../lib/util.js";
 
 const URL_BASE = "/uploads/user-content";
@@ -44,7 +45,7 @@ const acciones: Modulo["acciones"] = {
     const { formato } = await formatoReal(buf);
     if (!formato || formato === "pdf") fail("Solo se permiten imágenes JPG, PNG o WebP.", 422);
     const nombre = `${contexto}-${slugUid(u.id)}-${uid()}.jpg`;
-    fs.writeFileSync(path.join(carpeta(), nombre), await enMarco(buf), { mode: 0o644 });
+    await guardarSubida(path.join(carpeta(), nombre), await enMarco(buf));
     await agregar("contenido-subido", { id, uid: u.id, contexto, url: `${URL_BASE}/${nombre}`, ...derechos });
     return { ...derechos, url: `${URL_BASE}/${nombre}` };
   },
@@ -64,7 +65,7 @@ const acciones: Modulo["acciones"] = {
     if (!formato || formato === "webp") fail("Solo se permiten documentos PDF, JPG o PNG.", 422);
     const pdf = formato === "pdf";
     const nombre = `doc-${slugUid(u.id)}-${uid()}.${pdf ? "pdf" : "jpg"}`;
-    fs.writeFileSync(path.join(carpeta(), nombre), pdf ? buf : await enMarco(buf), { mode: 0o644 });
+    await guardarSubida(path.join(carpeta(), nombre), pdf ? buf : await enMarco(buf));
     await agregar("contenido-subido", { id, uid: u.id, contexto: "documento", tipo, titulo, url: `${URL_BASE}/${nombre}`, ...derechos });
     return { documento: { ...derechos, tipo, titulo: titulo || DOC_TIPOS[tipo], url: `${URL_BASE}/${nombre}`, formato: pdf ? "pdf" : "imagen", subido_at: nowIso() } };
   },

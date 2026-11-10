@@ -24,6 +24,7 @@ import { db } from "../lib/db.js";
 import { cupo } from "../lib/seguridad.js";
 import { registrarActividad } from "../lib/avisos.js";
 import { config } from "../lib/config.js";
+import { guardarSubida } from "../lib/archivos.js";
 import { str } from "../lib/util.js";
 import { importar, type Fuente } from "../legacy/importador.js";
 
@@ -84,15 +85,16 @@ export function separar(p: Paquete): { fuente: Fuente; subidas: Map<string, Buff
   return { fuente, subidas };
 }
 
-function guardarSubidas(subidas: Map<string, Buffer>, aplicar: boolean) {
+async function guardarSubidas(subidas: Map<string, Buffer>, aplicar: boolean) {
   const dir = path.join(config.uploads, "user-content");
   let nuevas = 0, ya = 0;
   if (aplicar) fs.mkdirSync(dir, { recursive: true });
   for (const [nombre, datos] of subidas) {
     const destino = path.join(dir, path.basename(nombre));
-    if (fs.existsSync(destino)) { ya++; continue; }
-    nuevas++;
-    if (aplicar) fs.writeFileSync(destino, datos, { mode: 0o644 });
+    // Se reescribe aunque ya esté en el disco: así queda también en la base.
+    if (fs.existsSync(destino)) ya++;
+    else nuevas++;
+    if (aplicar) await guardarSubida(destino, datos);
   }
   return { archivo: "uploads/", destino: "carpeta de subidas", filas: nuevas, accion: `${nuevas} nuevas · ${ya} ya estaban` };
 }
@@ -109,7 +111,7 @@ async function ejecutar(ctx: Ctx, aplicar: boolean) {
   const { fuente, subidas } = separar(paquete);
   const modo = str(ctx.in.modo) === "sincronizar" ? "sincronizar" : "inicial";
   const r = await importar(fuente, { aplicar, modo });
-  r.informe.push(guardarSubidas(subidas, aplicar));
+  r.informe.push(await guardarSubidas(subidas, aplicar));
   await registrarActividad(ctx, "importacion", {
     detalle: (aplicar ? "Importación aplicada" : "Simulación de importación") + (modo === "sincronizar" ? " · sincronizar" : "") + ` (paquete del ${str(paquete.generado).slice(0, 10) || "?"})`,
     objeto_tipo: "importacion",

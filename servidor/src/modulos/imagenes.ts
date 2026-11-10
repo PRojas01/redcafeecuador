@@ -12,6 +12,7 @@ import { aDoc, tieneRol, usuarioActual, requiereAdmin } from "../lib/usuarios.js
 import { formatoReal, paraHueco } from "../lib/imagen.js";
 import { listar } from "../lib/docs.js";
 import { config } from "../lib/config.js";
+import { borrarSubida, guardarSubida } from "../lib/archivos.js";
 import { nowIso, str, uid } from "../lib/util.js";
 
 const MAX_BYTES = 2 * 1024 * 1024, MAX_POR_MIEMBRO = 30, PESO_MAX_KB = 2048;
@@ -71,7 +72,7 @@ async function permiso(ctx: Ctx, slot: Doc, recurso: string | null) {
 const borrarArchivo = (nombre: unknown) => {
   if (typeof nombre !== "string" || !nombre) return;
   const p = path.join(config.uploads, path.basename(nombre));
-  try { fs.unlinkSync(p); } catch { /* ya no estaba */ }
+  void borrarSubida(p);
 };
 
 const acciones: Modulo["acciones"] = {
@@ -108,9 +109,8 @@ const acciones: Modulo["acciones"] = {
     if (!formato) fail("El archivo no es una imagen válida.", 422);
     if (formato === "pdf") fail("Formato no permitido (JPG, PNG o WebP).", 422);
     const { datos, ancho, alto } = await paraHueco(buf, slot.ancho_max, slot.proporcion);
-    fs.mkdirSync(config.uploads, { recursive: true });
     const nombre = uid() + ".jpg";
-    fs.writeFileSync(path.join(config.uploads, nombre), datos, { mode: 0o644 });
+    await guardarSubida(path.join(config.uploads, nombre), datos);
     let viejo: unknown = null;
     await mutarMapa("imagenes", (m) => {
       m.items = m.items && typeof m.items === "object" && !Array.isArray(m.items) ? m.items : {};

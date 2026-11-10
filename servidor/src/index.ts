@@ -3,6 +3,7 @@ import "./entorno.js";
 import { serve } from "@hono/node-server";
 import { crearApp } from "./app.js";
 import { asegurarEsquema } from "./lib/esquema.js";
+import { respaldarSubidasEnBase } from "./lib/archivos.js";
 import { config } from "./lib/config.js";
 import { purgarSesiones } from "./lib/sesion.js";
 import { purgarIntentos } from "./lib/seguridad.js";
@@ -19,7 +20,9 @@ for (const v of ["DATABASE_URL", "REDCAFE_CLAVE_DATOS"]) {
 
 // La primera vez, crea las tablas. En segundo plano: el servidor empieza a
 // escuchar enseguida aunque la base tarde o falle (la API avisará).
-void asegurarEsquema().then(() => restablecerPassAdminDesdeEntorno()).catch((e) => console.error("[esquema] No se pudieron crear las tablas:", e?.message ?? e));
+void asegurarEsquema()
+  .then(() => restablecerPassAdminDesdeEntorno())
+  .then(() => respaldarSubidasEnBase().then((n) => n && console.log(`[archivos] ${n} fotos/documentos copiados a la base.`), (e) => console.error("[archivos] Respaldo en la base:", e?.message ?? e))).catch((e) => console.error("[esquema] No se pudieron crear las tablas:", e?.message ?? e));
 
 serve({ fetch: app.fetch, port: config.puerto, // Si la plataforma fija PORT (GoDaddy, Render…), hay que escuchar en todas las interfaces.
   hostname: process.env.PORT ? "0.0.0.0" : process.env.HOST || "127.0.0.1" }, (info) => {

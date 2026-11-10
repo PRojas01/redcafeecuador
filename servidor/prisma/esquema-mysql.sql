@@ -191,6 +191,15 @@ CREATE TABLE `Candado` (
     PRIMARY KEY (`nombre`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_bin;
 
+-- CreateTable
+CREATE TABLE `Archivo` (
+    `nombre` VARCHAR(191) NOT NULL,
+    `datos` LONGBLOB NOT NULL,
+    `creado` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
+
+    PRIMARY KEY (`nombre`)
+) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_bin;
+
 -- AddForeignKey
 ALTER TABLE `Sesion` ADD CONSTRAINT `Sesion_usuarioId_fkey` FOREIGN KEY (`usuarioId`) REFERENCES `Usuario`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
