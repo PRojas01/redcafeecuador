@@ -183,3 +183,11 @@ model Candado {
   // dentro de la transacción; el bloqueo se suelta solo al confirmar.
   nombre  String @id @db.VarChar(191)
 }
+
+model Archivo {
+  // Copia en la base de cada foto o documento de /uploads/ (la carpeta del
+  // hosting se vacía al redesplegar). Se restaura sola al pedir el archivo.
+  nombre  String   @id @db.VarChar(191) // ruta relativa a la carpeta de subidas
+  datos   Bytes    @db.LongBlob
+  creado  DateTime @default(now())
+}

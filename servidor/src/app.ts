@@ -8,6 +8,7 @@ import { Cruda, ErrorApi, leerEntrada, limitarCuerpo, type Ctx, type Modulo } fr
 import { EstadoSesion, COOKIE_SESION } from "./lib/sesion.js";
 import { protegerOrigen } from "./lib/seguridad.js";
 import { cabecerasSeguridad, servirEstatico, rutaCanonica } from "./lib/estatico.js";
+import { restaurarSubida } from "./lib/archivos.js";
 import { modulos } from "./modulos/index.js";
 import { RUTA_PREACUERDO, paginaPreacuerdo } from "./modulos/socios.js";
 import { db } from "./lib/db.js";
@@ -200,6 +201,8 @@ export function crearApp(opciones: { ipDe?: (c: any) => string } = {}) {
     if (ruta.endsWith("/") && fs.existsSync(phpIndex) && !fs.existsSync(path.join(config.sitio, ruta, "index.html"))) {
       return new Response("Página aún no disponible en la nueva plataforma.", { status: 501 });
     }
+    // Fotos que el redespliegue borró del disco: se recuperan de la base.
+    await restaurarSubida(ruta);
     return servirEstatico(cruda, esProduccion(), {
       consulta: new URL(c.req.url).search,
       aceptaCodificacion: c.req.header("accept-encoding") ?? "",

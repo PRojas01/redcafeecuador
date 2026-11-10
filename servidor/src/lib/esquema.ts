@@ -6,12 +6,23 @@ import path from "node:path";
 import { db } from "./db.js";
 import { config } from "./config.js";
 
+const TABLA_ARCHIVO = `CREATE TABLE IF NOT EXISTS \`Archivo\` (
+    \`nombre\` VARCHAR(191) NOT NULL,
+    \`datos\` LONGBLOB NOT NULL,
+    \`creado\` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
+    PRIMARY KEY (\`nombre\`)
+) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_bin`;
+
 export async function asegurarEsquema(): Promise<void> {
   if (!process.env.DATABASE_URL) return;
   const hay = await db.$queryRawUnsafe<{ n: bigint }[]>(
     "SELECT COUNT(*) AS n FROM information_schema.tables WHERE table_schema = DATABASE() AND table_name = 'Usuario'",
   );
-  if (Number(hay[0]?.n ?? 0) > 0) return;
+  if (Number(hay[0]?.n ?? 0) > 0) {
+    // Tablas añadidas después de crear la base (sin Terminal en GoDaddy).
+    await db.$executeRawUnsafe(TABLA_ARCHIVO);
+    return;
+  }
   const sql = fs.readFileSync(path.join(config.raiz, "prisma", "esquema-mysql.sql"), "utf8");
   const sentencias = sql
     .split(/;\s*\n/)
