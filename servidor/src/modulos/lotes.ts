@@ -5,7 +5,7 @@ import { fail, type Ctx, type Modulo } from "../lib/http.js";
 import { listar, mutar, type Doc } from "../lib/docs.js";
 import { cupo } from "../lib/seguridad.js";
 import { esAdmin, filtroVisible, requiereUsuario, tieneRol, todosLosMiembros, usuarioActual } from "../lib/usuarios.js";
-import { notificar, notificarAdmins, publicarAvisoComunidad, registrarActividad } from "../lib/avisos.js";
+import { notificar, notificarAdmins, publicarAvisoComunidad, registrarActividad, retirarAvisosComunidad } from "../lib/avisos.js";
 import { bool, cortar, esNumerico, fechaMs, int, largo, num, nowIso, str, textoEntrada, uid, whatsappDigitos, whatsappDisplay } from "../lib/util.js";
 import { datosJson } from "../lib/json.js";
 const semilla = datosJson<any[]>("semilla-lotes.json");
@@ -521,6 +521,7 @@ const acciones: Modulo["acciones"] = {
     if (!objetivo) fail("Lote no encontrado.", 404);
     if (ownerId(objetivo) !== actorId && !admin) fail("No autorizado: solo el productor dueño o un administrador puede borrar.", 403);
     await mutar("lotes", (items) => items.filter((l) => l.id !== id));
+    await retirarAvisosComunidad([id]);
     return null;
   },
 };
