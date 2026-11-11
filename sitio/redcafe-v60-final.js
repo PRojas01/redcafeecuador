@@ -13,7 +13,7 @@ window.__redcafeReactListo = window.__redcafeReactListo || function () {
 (function () {
   "use strict";
 
-  var VERSION = "20261111s";
+  var VERSION = "20261111t";
   var WAPP = "593968641376";
   var path = normalizePath(location.pathname);
   var homeAuthChecking = false;
@@ -540,3 +540,149 @@ window.__redcafeReactListo = window.__redcafeReactListo || function () {
 })();
 
 /* Fotos de la portada: ahora en React (components/PortadaFotos.tsx). */
+
+/* Sellos de Red Café sobre el fondo de saco (2026-11-11): como la tinta de los sacos de café.
+   Solo se ponen en huecos sin texto, fotos, botones ni tarjetas; se recolocan si la página cambia
+   de tamaño. Decorativos (aria-hidden, sin eventos). No tocan el DOM de React: van en una capa
+   propia al final de <body>, después de hidratar. */
+(function () {
+  if (typeof window === "undefined" || !window.ResizeObserver) return;
+  var URL_SELLO = "/img/sello-redcafe.svg?v=20261111t";
+  var capa = null, temporizador = 0, ultimaFirma = "";
+  var BANDA = 120;
+
+  function transparente(c) { return !c || c === "transparent" || /rgba\([^)]*,\s*0\)$/.test(c); }
+
+  function ocupadas(main) {
+    var cajas = [], els = main.querySelectorAll("*"), i, el, cs, r;
+    for (i = 0; i < els.length; i++) {
+      el = els[i];
+      if (el.closest(".redcafe-sellos")) continue;
+      r = el.getBoundingClientRect();
+      if (r.width < 1 || r.height < 1) continue;
+      cs = getComputedStyle(el);
+      if (cs.visibility === "hidden" || cs.display === "none") continue;
+      var saco = (cs.backgroundImage || "").indexOf("textura-saco") >= 0;
+      var oscuro = false, rgb = (cs.backgroundColor.match(/\d+(\.\d+)?/g) || []).map(Number);
+      if (saco && rgb.length >= 3 && (rgb.length < 4 || rgb[3] > .5) && rgb[0] + rgb[1] + rgb[2] < 540) { saco = false; oscuro = true; }
+      var antes = getComputedStyle(el, "::before"), despues = getComputedStyle(el, "::after");
+      var pseudo = [antes, despues].some(function (p) { return p.content !== "none" && p.content !== "normal" && ((p.backgroundImage !== "none" && p.backgroundImage.indexOf("textura-saco") < 0) || !transparente(p.backgroundColor)) && p.opacity > .2; });
+      var marca = el.id === "portada-hero" || pseudo || oscuro || /(^|\s)(hero|hero-gradient|bg-cafe)(\s|$)/.test(el.className && el.className.baseVal === undefined ? el.className : "") || /^(IMG|SVG|svg|BUTTON|INPUT|SELECT|TEXTAREA|IFRAME|VIDEO|CANVAS|PICTURE|LABEL)$/.test(el.tagName) ||
+        el.classList.contains("leaflet-container") ||
+        (!transparente(cs.backgroundColor) && (cs.backgroundImage || "").indexOf("textura-saco") < 0) ||
+        (cs.backgroundImage !== "none" && (cs.backgroundImage || "").indexOf("textura-saco") < 0) ||
+        (!saco && cs.boxShadow !== "none");
+      var bt = parseFloat(cs.borderTopWidth) || 0, bb = parseFloat(cs.borderBottomWidth) || 0, bl = parseFloat(cs.borderLeftWidth) || 0, bd = parseFloat(cs.borderRightWidth) || 0;
+      if (!saco && !marca && bt && bb && bl && bd) marca = true;
+      if (marca) { cajas.push(r); continue; }
+      // Una línea separadora (borde de un solo lado) ocupa solo esa línea.
+      if (!saco) {
+        if (bt) cajas.push({ left: r.left, right: r.right, top: r.top, bottom: r.top + bt });
+        if (bb) cajas.push({ left: r.left, right: r.right, top: r.bottom - bb, bottom: r.bottom });
+        if (bl) cajas.push({ left: r.left, right: r.left + bl, top: r.top, bottom: r.bottom });
+        if (bd) cajas.push({ left: r.right - bd, right: r.right, top: r.top, bottom: r.bottom });
+      }
+      for (var n = el.firstChild; n; n = n.nextSibling) {
+        if (n.nodeType === 3 && n.nodeValue.trim()) {
+          var rg = document.createRange(); rg.selectNodeContents(n);
+          var lista = rg.getClientRects();
+          for (var k = 0; k < lista.length; k++) cajas.push(lista[k]);
+        }
+      }
+    }
+    return cajas;
+  }
+
+  function colocar() {
+    temporizador = 0;
+    var main = document.querySelector("main");
+    if (!main) return;
+    var mr = main.getBoundingClientRect();
+    var firma = Math.round(mr.width) + "x" + Math.round(mr.height) + ":" + main.querySelectorAll("*").length;
+    if (firma === ultimaFirma && capa && capa.isConnected) return;
+    ultimaFirma = firma;
+    var movil = window.innerWidth < 768, M = movil ? 8 : 10;
+    var sx = window.scrollX || 0, sy = window.scrollY || 0;
+    var cajas = ocupadas(main), bandas = {};
+    cajas.forEach(function (r) {
+      for (var b = Math.floor((r.top - M) / BANDA); b <= Math.floor((r.bottom + M) / BANDA); b++) (bandas[b] = bandas[b] || []).push(r);
+    });
+    function libre(x, y, S) {
+      var b0 = Math.floor(y / BANDA), b1 = Math.floor((y + S) / BANDA);
+      for (var b = b0; b <= b1; b++) {
+        var l = bandas[b]; if (!l) continue;
+        for (var i = 0; i < l.length; i++) {
+          var r = l[i];
+          if (x < r.right + M && x + S > r.left - M && y < r.bottom + M && y + S > r.top - M) return false;
+        }
+      }
+      return true;
+    }
+    // Cada hueco recibe un solo sello, del mayor tamaño que quepa (proporcional al espacio).
+    var MAX = movil ? 132 : 190, MIN = movil ? 50 : 66, PASO_T = movil ? 8 : 10, paso = movil ? 12 : 20;
+    var borde = movil ? 10 : 24, izq = Math.max(mr.left, 0) + borde, derecha = Math.min(mr.right, document.documentElement.clientWidth) - borde;
+    var alto = mr.bottom - mr.top, maximo = Math.max(4, Math.min(movil ? 8 : 10, Math.round(alto / (movil ? 420 : 500))));
+    function cabe(x, y) {
+      for (var t = MAX; t >= MIN; t -= PASO_T) {
+        if (x + t <= derecha && y + t <= mr.bottom - 8 && libre(x, y, t)) return t;
+      }
+      return 0;
+    }
+    var cand = [];
+    for (var y = mr.top + 8; y < mr.bottom - MIN; y += paso)
+      for (var x = izq; x <= derecha - MIN; x += paso) { var t = cabe(x, y); if (t) cand.push({ x: x, y: y, t: t }); }
+    cand.sort(function (a, b) { return b.t - a.t || a.y - b.y; });
+    var puestos = [];
+    function choca(x, y, t) {
+      for (var i = 0; i < puestos.length; i++) {
+        var p = puestos[i], e = Math.max(40, Math.max(p.s, t) * .5);
+        if (x < p.x + p.s + e && x + t > p.x - e && y < p.y + p.s + e && y + t > p.y - e) return true;
+        // Un solo sello por franja horizontal: nada de filas de sellos.
+        if (y < p.y + p.s + 10 && y + t > p.y - 10) return true;
+      }
+      return false;
+    }
+    for (var c = 0; c < cand.length && puestos.length < maximo; c++) {
+      var k = cand[c], t2 = k.t;
+      while (t2 >= MIN && choca(k.x, k.y, t2)) t2 -= PASO_T;
+      if (t2 < MIN) continue;
+      if (puestos.length >= 4 && t2 < (movil ? 64 : 84)) continue;
+      var s2 = Math.round(t2 * .88), m2 = Math.round((t2 - s2) / 2);
+      puestos.push({ x: k.x + m2, y: k.y + m2, s: s2 });
+    }
+    puestos.sort(function (a, b) { return a.y - b.y; });
+    if (!capa || !capa.isConnected) {
+      capa = document.createElement("div");
+      capa.className = "redcafe-sellos";
+      capa.setAttribute("aria-hidden", "true");
+      capa.style.cssText = "position:absolute;left:0;top:0;width:0;height:0;pointer-events:none;";
+      document.body.appendChild(capa);
+    }
+    var br = document.body.getBoundingClientRect(), bx = br.left + sx, by = br.top + sy;
+    capa.innerHTML = "";
+    puestos.forEach(function (p, i) {
+      var d = document.createElement("span");
+      d.style.cssText = "position:absolute;width:" + p.s + "px;height:" + p.s + "px;left:" + Math.round(p.x + sx - bx) + "px;top:" + Math.round(p.y + sy - by) +
+        "px;background:url(" + URL_SELLO + ") center/contain no-repeat;transform:rotate(" + [-6, 9, -12, 4][i % 4] + "deg);mix-blend-mode:multiply;pointer-events:none;";
+      capa.appendChild(d);
+    });
+  }
+
+  function programar() { if (temporizador) clearTimeout(temporizador); temporizador = setTimeout(colocar, 350); }
+
+  function iniciar() {
+    var main = document.querySelector("main");
+    if (!main) return;
+    new ResizeObserver(programar).observe(main);
+    if (window.MutationObserver) new MutationObserver(programar).observe(main, { childList: true, subtree: true });
+    window.addEventListener("resize", programar);
+    if (document.fonts && document.fonts.ready) document.fonts.ready.then(programar);
+    programar();
+  }
+
+  var intentos = 0;
+  (function esperar() {
+    if ((window.__redcafeReactListo && window.__redcafeReactListo()) || intentos > 60) { iniciar(); return; }
+    intentos++; setTimeout(esperar, 200);
+  })();
+})();
