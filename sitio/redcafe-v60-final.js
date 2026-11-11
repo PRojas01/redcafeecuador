@@ -13,7 +13,7 @@ window.__redcafeReactListo = window.__redcafeReactListo || function () {
 (function () {
   "use strict";
 
-  var VERSION = "20261111k";
+  var VERSION = "20261111l";
   var WAPP = "593968641376";
   var path = normalizePath(location.pathname);
   var homeAuthChecking = false;
@@ -547,7 +547,7 @@ window.__redcafeReactListo = window.__redcafeReactListo || function () {
    propia al final de <body>, después de hidratar. */
 (function () {
   if (typeof window === "undefined" || !window.ResizeObserver) return;
-  var URL_SELLO = "/img/sello-redcafe.svg?v=20261111k";
+  var URL_SELLO = "/img/sello-redcafe.svg?v=20261111l";
   var capa = null, temporizador = 0, ultimaFirma = "";
   var BANDA = 120;
 
@@ -563,7 +563,11 @@ window.__redcafeReactListo = window.__redcafeReactListo || function () {
       cs = getComputedStyle(el);
       if (cs.visibility === "hidden" || cs.display === "none") continue;
       var saco = (cs.backgroundImage || "").indexOf("textura-saco") >= 0;
-      var marca = el.id === "portada-hero" || /^(IMG|SVG|svg|BUTTON|INPUT|SELECT|TEXTAREA|IFRAME|VIDEO|CANVAS|PICTURE|LABEL)$/.test(el.tagName) ||
+      var oscuro = false, rgb = (cs.backgroundColor.match(/\d+(\.\d+)?/g) || []).map(Number);
+      if (saco && rgb.length >= 3 && (rgb.length < 4 || rgb[3] > .5) && rgb[0] + rgb[1] + rgb[2] < 540) { saco = false; oscuro = true; }
+      var antes = getComputedStyle(el, "::before"), despues = getComputedStyle(el, "::after");
+      var pseudo = [antes, despues].some(function (p) { return p.content !== "none" && p.content !== "normal" && ((p.backgroundImage !== "none" && p.backgroundImage.indexOf("textura-saco") < 0) || !transparente(p.backgroundColor)) && p.opacity > .2; });
+      var marca = el.id === "portada-hero" || pseudo || oscuro || /(^|\s)(hero|hero-gradient|bg-cafe)(\s|$)/.test(el.className && el.className.baseVal === undefined ? el.className : "") || /^(IMG|SVG|svg|BUTTON|INPUT|SELECT|TEXTAREA|IFRAME|VIDEO|CANVAS|PICTURE|LABEL)$/.test(el.tagName) ||
         el.classList.contains("leaflet-container") ||
         (!transparente(cs.backgroundColor) && (cs.backgroundImage || "").indexOf("textura-saco") < 0) ||
         (cs.backgroundImage !== "none" && (cs.backgroundImage || "").indexOf("textura-saco") < 0) ||
@@ -588,13 +592,13 @@ window.__redcafeReactListo = window.__redcafeReactListo || function () {
     var firma = Math.round(mr.width) + "x" + Math.round(mr.height) + ":" + main.querySelectorAll("*").length;
     if (firma === ultimaFirma && capa && capa.isConnected) return;
     ultimaFirma = firma;
-    var movil = window.innerWidth < 768, S = movil ? 78 : 112, M = movil ? 10 : 18;
+    var movil = window.innerWidth < 768, TAM = movil ? [84, 60, 104, 70] : [128, 86, 160, 104], S = 0, M = movil ? 10 : 18;
     var sx = window.scrollX || 0, sy = window.scrollY || 0;
     var cajas = ocupadas(main), bandas = {};
     cajas.forEach(function (r) {
       for (var b = Math.floor((r.top - M) / BANDA); b <= Math.floor((r.bottom + M) / BANDA); b++) (bandas[b] = bandas[b] || []).push(r);
     });
-    function libre(x, y) {
+    function libre(x, y, S) {
       var b0 = Math.floor(y / BANDA), b1 = Math.floor((y + S) / BANDA);
       for (var b = b0; b <= b1; b++) {
         var l = bandas[b]; if (!l) continue;
@@ -605,14 +609,36 @@ window.__redcafeReactListo = window.__redcafeReactListo || function () {
       }
       return true;
     }
-    var puestos = [], paso = movil ? 16 : 24, separacion = movil ? 520 : 600, maximo = 6;
-    var borde = movil ? 14 : 34, izq = Math.max(mr.left, 0) + borde, der = Math.min(mr.right, document.documentElement.clientWidth) - S - borde;
-    for (var y = mr.top + 8; y + S < mr.bottom - 8 && puestos.length < maximo; y += paso) {
-      if (puestos.length && y - puestos[puestos.length - 1].y < separacion) continue;
-      for (var x = der; x >= izq; x -= paso) {
-        if (libre(x, y)) { puestos.push({ x: x, y: y }); break; }
+    var puestos = [], paso = movil ? 12 : 20, maximo = movil ? 7 : 8, minimo = 4;
+    var borde = movil ? 12 : 30, izq = Math.max(mr.left, 0) + borde, derecha = Math.min(mr.right, document.documentElement.clientWidth) - borde;
+    var PEQ = movil ? [48, 40] : [64, 50];
+    function ocupar(p) {
+      var e = p.s * 1.6, r = { left: p.x - e, right: p.x + p.s + e, top: p.y - e, bottom: p.y + p.s + e };
+      for (var b = Math.floor((r.top - M) / BANDA); b <= Math.floor((r.bottom + M) / BANDA); b++) (bandas[b] = bandas[b] || []).push(r);
+    }
+    function pasada(separacion, tamanos) {
+      var ultimo = -1e9;
+      for (var y = mr.top + 8; y < mr.bottom - 8 && puestos.length < maximo; y += paso) {
+        if (y - ultimo < separacion) continue;
+        var pref = tamanos[puestos.length % tamanos.length], orden = [pref].concat(tamanos.filter(function (t) { return t < pref; }).sort(function (a, b) { return b - a; }));
+        for (var t = 0; t < orden.length; t++) {
+          var S = orden[t], hecho = false;
+          if (y + S >= mr.bottom - 8) continue;
+          var alReves = puestos.length % 2 === 1;
+          for (var k = 0, x; ; k++) {
+            x = alReves ? izq + k * paso : derecha - S - k * paso;
+            if (x < izq || x > derecha - S) break;
+            if (libre(x, y, S)) { var p = { x: x, y: y, s: S }; puestos.push(p); ocupar(p); ultimo = y; hecho = true; break; }
+          }
+          if (hecho) break;
+        }
       }
     }
+    var alto = mr.bottom - mr.top;
+    pasada(Math.min(movil ? 520 : 600, alto / 4.5), TAM);
+    if (puestos.length < minimo) pasada(Math.min(260, alto / 8), TAM.concat(PEQ));
+    if (puestos.length < minimo) { M = movil ? 6 : 8; izq = Math.max(mr.left, 0) + 6; derecha = Math.min(mr.right, document.documentElement.clientWidth) - 6; pasada(90, PEQ); }
+    puestos.sort(function (a, b) { return a.y - b.y; });
     if (!capa || !capa.isConnected) {
       capa = document.createElement("div");
       capa.className = "redcafe-sellos";
@@ -624,8 +650,8 @@ window.__redcafeReactListo = window.__redcafeReactListo || function () {
     capa.innerHTML = "";
     puestos.forEach(function (p, i) {
       var d = document.createElement("span");
-      d.style.cssText = "position:absolute;width:" + S + "px;height:" + S + "px;left:" + Math.round(p.x + sx - bx) + "px;top:" + Math.round(p.y + sy - by) +
-        "px;background:url(" + URL_SELLO + ") center/contain no-repeat;transform:rotate(" + (i % 2 ? 9 : -6) + "deg);mix-blend-mode:multiply;pointer-events:none;";
+      d.style.cssText = "position:absolute;width:" + p.s + "px;height:" + p.s + "px;left:" + Math.round(p.x + sx - bx) + "px;top:" + Math.round(p.y + sy - by) +
+        "px;background:url(" + URL_SELLO + ") center/contain no-repeat;transform:rotate(" + [-6, 9, -12, 4][i % 4] + "deg);mix-blend-mode:multiply;pointer-events:none;";
       capa.appendChild(d);
     });
   }
