@@ -13,7 +13,7 @@ window.__redcafeReactListo = window.__redcafeReactListo || function () {
 (function () {
   "use strict";
 
-  var VERSION = "20261111j";
+  var VERSION = "20261111k";
   var WAPP = "593968641376";
   var path = normalizePath(location.pathname);
   var homeAuthChecking = false;
@@ -540,3 +540,111 @@ window.__redcafeReactListo = window.__redcafeReactListo || function () {
 })();
 
 /* Fotos de la portada: ahora en React (components/PortadaFotos.tsx). */
+
+/* Sellos de Red Café sobre el fondo de saco (2026-11-11): como la tinta de los sacos de café.
+   Solo se ponen en huecos sin texto, fotos, botones ni tarjetas; se recolocan si la página cambia
+   de tamaño. Decorativos (aria-hidden, sin eventos). No tocan el DOM de React: van en una capa
+   propia al final de <body>, después de hidratar. */
+(function () {
+  if (typeof window === "undefined" || !window.ResizeObserver) return;
+  var URL_SELLO = "/img/sello-redcafe.svg?v=20261111k";
+  var capa = null, temporizador = 0, ultimaFirma = "";
+  var BANDA = 120;
+
+  function transparente(c) { return !c || c === "transparent" || /rgba\([^)]*,\s*0\)$/.test(c); }
+
+  function ocupadas(main) {
+    var cajas = [], els = main.querySelectorAll("*"), i, el, cs, r;
+    for (i = 0; i < els.length; i++) {
+      el = els[i];
+      if (el.closest(".redcafe-sellos")) continue;
+      r = el.getBoundingClientRect();
+      if (r.width < 1 || r.height < 1) continue;
+      cs = getComputedStyle(el);
+      if (cs.visibility === "hidden" || cs.display === "none") continue;
+      var saco = (cs.backgroundImage || "").indexOf("textura-saco") >= 0;
+      var marca = el.id === "portada-hero" || /^(IMG|SVG|svg|BUTTON|INPUT|SELECT|TEXTAREA|IFRAME|VIDEO|CANVAS|PICTURE|LABEL)$/.test(el.tagName) ||
+        el.classList.contains("leaflet-container") ||
+        (!transparente(cs.backgroundColor) && (cs.backgroundImage || "").indexOf("textura-saco") < 0) ||
+        (cs.backgroundImage !== "none" && (cs.backgroundImage || "").indexOf("textura-saco") < 0) ||
+        (!saco && (parseFloat(cs.borderTopWidth) + parseFloat(cs.borderLeftWidth) > 0 || cs.boxShadow !== "none"));
+      if (marca) { cajas.push(r); continue; }
+      for (var n = el.firstChild; n; n = n.nextSibling) {
+        if (n.nodeType === 3 && n.nodeValue.trim()) {
+          var rg = document.createRange(); rg.selectNodeContents(n);
+          var lista = rg.getClientRects();
+          for (var k = 0; k < lista.length; k++) cajas.push(lista[k]);
+        }
+      }
+    }
+    return cajas;
+  }
+
+  function colocar() {
+    temporizador = 0;
+    var main = document.querySelector("main");
+    if (!main) return;
+    var mr = main.getBoundingClientRect();
+    var firma = Math.round(mr.width) + "x" + Math.round(mr.height) + ":" + main.querySelectorAll("*").length;
+    if (firma === ultimaFirma && capa && capa.isConnected) return;
+    ultimaFirma = firma;
+    var movil = window.innerWidth < 768, S = movil ? 78 : 112, M = movil ? 10 : 18;
+    var sx = window.scrollX || 0, sy = window.scrollY || 0;
+    var cajas = ocupadas(main), bandas = {};
+    cajas.forEach(function (r) {
+      for (var b = Math.floor((r.top - M) / BANDA); b <= Math.floor((r.bottom + M) / BANDA); b++) (bandas[b] = bandas[b] || []).push(r);
+    });
+    function libre(x, y) {
+      var b0 = Math.floor(y / BANDA), b1 = Math.floor((y + S) / BANDA);
+      for (var b = b0; b <= b1; b++) {
+        var l = bandas[b]; if (!l) continue;
+        for (var i = 0; i < l.length; i++) {
+          var r = l[i];
+          if (x < r.right + M && x + S > r.left - M && y < r.bottom + M && y + S > r.top - M) return false;
+        }
+      }
+      return true;
+    }
+    var puestos = [], paso = movil ? 16 : 24, separacion = movil ? 520 : 600, maximo = 6;
+    var borde = movil ? 14 : 34, izq = Math.max(mr.left, 0) + borde, der = Math.min(mr.right, document.documentElement.clientWidth) - S - borde;
+    for (var y = mr.top + 8; y + S < mr.bottom - 8 && puestos.length < maximo; y += paso) {
+      if (puestos.length && y - puestos[puestos.length - 1].y < separacion) continue;
+      for (var x = der; x >= izq; x -= paso) {
+        if (libre(x, y)) { puestos.push({ x: x, y: y }); break; }
+      }
+    }
+    if (!capa || !capa.isConnected) {
+      capa = document.createElement("div");
+      capa.className = "redcafe-sellos";
+      capa.setAttribute("aria-hidden", "true");
+      capa.style.cssText = "position:absolute;left:0;top:0;width:0;height:0;pointer-events:none;";
+      document.body.appendChild(capa);
+    }
+    var br = document.body.getBoundingClientRect(), bx = br.left + sx, by = br.top + sy;
+    capa.innerHTML = "";
+    puestos.forEach(function (p, i) {
+      var d = document.createElement("span");
+      d.style.cssText = "position:absolute;width:" + S + "px;height:" + S + "px;left:" + Math.round(p.x + sx - bx) + "px;top:" + Math.round(p.y + sy - by) +
+        "px;background:url(" + URL_SELLO + ") center/contain no-repeat;transform:rotate(" + (i % 2 ? 9 : -6) + "deg);mix-blend-mode:multiply;pointer-events:none;";
+      capa.appendChild(d);
+    });
+  }
+
+  function programar() { if (temporizador) clearTimeout(temporizador); temporizador = setTimeout(colocar, 350); }
+
+  function iniciar() {
+    var main = document.querySelector("main");
+    if (!main) return;
+    new ResizeObserver(programar).observe(main);
+    if (window.MutationObserver) new MutationObserver(programar).observe(main, { childList: true, subtree: true });
+    window.addEventListener("resize", programar);
+    if (document.fonts && document.fonts.ready) document.fonts.ready.then(programar);
+    programar();
+  }
+
+  var intentos = 0;
+  (function esperar() {
+    if ((window.__redcafeReactListo && window.__redcafeReactListo()) || intentos > 60) { iniciar(); return; }
+    intentos++; setTimeout(esperar, 200);
+  })();
+})();

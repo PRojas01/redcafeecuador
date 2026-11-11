@@ -9,7 +9,7 @@
     <path id="arr" d="M110 110 m-74 0 a74 74 0 1 1 148 0"/>
     <path id="abj" d="M110 110 m-80 0 a80 80 0 0 0 160 0"/>
   </defs>
-  <g filter="url(#t)" opacity=".34" fill="#8C3604" stroke="#8C3604" transform="rotate(-12 110 110)">
+  <g filter="url(#t)" opacity=".5" fill="#8C3604" stroke="#8C3604" transform="rotate(-12 110 110)">
     <circle cx="110" cy="110" r="104" fill="none" stroke-width="5"/>
     <circle cx="110" cy="110" r="96" fill="none" stroke-width="1.6"/>
     <circle cx="110" cy="110" r="58" fill="none" stroke-width="2"/>
