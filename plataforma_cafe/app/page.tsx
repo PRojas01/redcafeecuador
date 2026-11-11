@@ -52,11 +52,23 @@ export default function HomePage() {
             <p className="mt-5 max-w-2xl text-lg leading-relaxed text-crema/85">
               Oportunidades, servicios y cursos para productores, compradores, tostadores, comerciantes, amantes del café y otros. Abre tu perfil gratis en 2 minutos.
             </p>
-            {/* Tres botones con la misma forma y un color por función:
-                registrarse (el más llamativo), WhatsApp (verde oficial) y
-                acceder (el cobre que antes llevaba «Unirme a la Red»). */}
+            {/* Registrarse (el más llamativo) y acceder; en el móvil van en
+                una sola línea. WhatsApp va debajo de la galería. */}
             <div className="portada-botones mt-8 flex flex-wrap gap-3">
               <Link href="/afiliate" className="btn-accent btn-registro min-h-11">Crear cuenta gratis</Link>
+              <Link href="/login" className="btn-accent min-h-11">Entrar</Link>
+            </div>
+          </div>
+
+          {/* El video de la transformación (antes la capa lo sacaba del bloque
+              «Forma parte» y lo traía aquí). La tarjeta «Perfiles de entrada»
+              se borró: repetía los perfiles de «Elige tu perfil». */}
+          <div>
+            <div className="overflow-hidden rounded-2xl border border-crema/20 shadow-lg">
+              <CarruselPortada />
+            </div>
+            {/* WhatsApp debajo de la galería (Pedro, 2026-11-11). */}
+            <div className="portada-botones portada-whatsapp mt-3 flex flex-wrap gap-3">
               <a
                 href={waLink("Hola, quiero conocer Red Café Ecuador y crear mi perfil.")}
                 target="_blank"
@@ -69,15 +81,7 @@ export default function HomePage() {
                 </svg>
                 WhatsApp
               </a>
-              <Link href="/login" className="btn-accent min-h-11">Entrar</Link>
             </div>
-          </div>
-
-          {/* El video de la transformación (antes la capa lo sacaba del bloque
-              «Forma parte» y lo traía aquí). La tarjeta «Perfiles de entrada»
-              se borró: repetía los perfiles de «Elige tu perfil». */}
-          <div className="overflow-hidden rounded-2xl border border-crema/20 shadow-lg">
-            <CarruselPortada />
           </div>
         </div>
       </section>
