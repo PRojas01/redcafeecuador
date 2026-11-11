@@ -407,10 +407,12 @@ const acciones: Modulo["acciones"] = {
     await registrarActividad(ctx, "curso-matricula", { objeto_tipo: "curso", objeto_id: cid, detalle: titulo });
     if (moderado) {
       await notificar(str(c.autor_id), "curso-acceso", `${u.nombre ?? "Un miembro"} quiere matricularse en «${titulo}»`, "Resuélvelo desde la academia.", enlaceCurso(cid));
+      await notificarAdmins("curso", `Solicitud de matrícula en «${titulo}»`, `${u.nombre ?? "Un miembro"} espera la respuesta del autor.`, "/admin/", [str(c.autor_id), uid]);
       return { estado: "pendiente", mensaje: "Este curso lo modera su autor. Te avisaremos cuando responda." };
     }
     await notificar(uid, "curso", `Te matriculaste en «${titulo}»`, "Ya puedes estudiarlo y tu avance queda registrado.", enlaceCurso(cid) + "#continuar");
     if (str(c.autor_id)) await notificar(str(c.autor_id), "curso", `${u.nombre ?? "Un miembro"} se matriculó en «${titulo}»`, "Ya puedes ver su avance y sus datos de contacto desde el panel.", "/panel/");
+    await notificarAdmins("curso", `Nueva matrícula en «${titulo}»`, `${u.nombre ?? "Un miembro"} se matriculó.`, "/admin/", [str(c.autor_id), uid]);
     return { estado: "matriculado", mensaje: "Matrícula hecha. Ya puedes empezar." };
   },
 
