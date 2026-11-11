@@ -571,8 +571,17 @@ window.__redcafeReactListo = window.__redcafeReactListo || function () {
         el.classList.contains("leaflet-container") ||
         (!transparente(cs.backgroundColor) && (cs.backgroundImage || "").indexOf("textura-saco") < 0) ||
         (cs.backgroundImage !== "none" && (cs.backgroundImage || "").indexOf("textura-saco") < 0) ||
-        (!saco && (parseFloat(cs.borderTopWidth) + parseFloat(cs.borderLeftWidth) > 0 || cs.boxShadow !== "none"));
+        (!saco && cs.boxShadow !== "none");
+      var bt = parseFloat(cs.borderTopWidth) || 0, bb = parseFloat(cs.borderBottomWidth) || 0, bl = parseFloat(cs.borderLeftWidth) || 0, bd = parseFloat(cs.borderRightWidth) || 0;
+      if (!saco && !marca && bt && bb && bl && bd) marca = true;
       if (marca) { cajas.push(r); continue; }
+      // Una línea separadora (borde de un solo lado) ocupa solo esa línea.
+      if (!saco) {
+        if (bt) cajas.push({ left: r.left, right: r.right, top: r.top, bottom: r.top + bt });
+        if (bb) cajas.push({ left: r.left, right: r.right, top: r.bottom - bb, bottom: r.bottom });
+        if (bl) cajas.push({ left: r.left, right: r.left + bl, top: r.top, bottom: r.bottom });
+        if (bd) cajas.push({ left: r.right - bd, right: r.right, top: r.top, bottom: r.bottom });
+      }
       for (var n = el.firstChild; n; n = n.nextSibling) {
         if (n.nodeType === 3 && n.nodeValue.trim()) {
           var rg = document.createRange(); rg.selectNodeContents(n);
@@ -592,7 +601,7 @@ window.__redcafeReactListo = window.__redcafeReactListo || function () {
     var firma = Math.round(mr.width) + "x" + Math.round(mr.height) + ":" + main.querySelectorAll("*").length;
     if (firma === ultimaFirma && capa && capa.isConnected) return;
     ultimaFirma = firma;
-    var movil = window.innerWidth < 768, TAM = movil ? [84, 60, 104, 70] : [128, 86, 160, 104], S = 0, M = movil ? 10 : 18;
+    var movil = window.innerWidth < 768, M = movil ? 8 : 10;
     var sx = window.scrollX || 0, sy = window.scrollY || 0;
     var cajas = ocupadas(main), bandas = {};
     cajas.forEach(function (r) {
@@ -609,35 +618,38 @@ window.__redcafeReactListo = window.__redcafeReactListo || function () {
       }
       return true;
     }
-    var puestos = [], paso = movil ? 12 : 20, maximo = movil ? 7 : 8, minimo = 4;
-    var borde = movil ? 12 : 30, izq = Math.max(mr.left, 0) + borde, derecha = Math.min(mr.right, document.documentElement.clientWidth) - borde;
-    var PEQ = movil ? [48, 40] : [64, 50];
-    function ocupar(p) {
-      var e = p.s * 1.6, r = { left: p.x - e, right: p.x + p.s + e, top: p.y - e, bottom: p.y + p.s + e };
-      for (var b = Math.floor((r.top - M) / BANDA); b <= Math.floor((r.bottom + M) / BANDA); b++) (bandas[b] = bandas[b] || []).push(r);
-    }
-    function pasada(separacion, tamanos) {
-      var ultimo = -1e9;
-      for (var y = mr.top + 8; y < mr.bottom - 8 && puestos.length < maximo; y += paso) {
-        if (y - ultimo < separacion) continue;
-        var pref = tamanos[puestos.length % tamanos.length], orden = [pref].concat(tamanos.filter(function (t) { return t < pref; }).sort(function (a, b) { return b - a; }));
-        for (var t = 0; t < orden.length; t++) {
-          var S = orden[t], hecho = false;
-          if (y + S >= mr.bottom - 8) continue;
-          var alReves = puestos.length % 2 === 1;
-          for (var k = 0, x; ; k++) {
-            x = alReves ? izq + k * paso : derecha - S - k * paso;
-            if (x < izq || x > derecha - S) break;
-            if (libre(x, y, S)) { var p = { x: x, y: y, s: S }; puestos.push(p); ocupar(p); ultimo = y; hecho = true; break; }
-          }
-          if (hecho) break;
-        }
+    // Cada hueco recibe un solo sello, del mayor tamaño que quepa (proporcional al espacio).
+    var MAX = movil ? 132 : 190, MIN = movil ? 50 : 66, PASO_T = movil ? 8 : 10, paso = movil ? 12 : 20;
+    var borde = movil ? 10 : 24, izq = Math.max(mr.left, 0) + borde, derecha = Math.min(mr.right, document.documentElement.clientWidth) - borde;
+    var alto = mr.bottom - mr.top, maximo = Math.max(4, Math.min(movil ? 8 : 10, Math.round(alto / (movil ? 420 : 500))));
+    function cabe(x, y) {
+      for (var t = MAX; t >= MIN; t -= PASO_T) {
+        if (x + t <= derecha && y + t <= mr.bottom - 8 && libre(x, y, t)) return t;
       }
+      return 0;
     }
-    var alto = mr.bottom - mr.top;
-    pasada(Math.min(movil ? 520 : 600, alto / 4.5), TAM);
-    if (puestos.length < minimo) pasada(Math.min(260, alto / 8), TAM.concat(PEQ));
-    if (puestos.length < minimo) { M = movil ? 6 : 8; izq = Math.max(mr.left, 0) + 6; derecha = Math.min(mr.right, document.documentElement.clientWidth) - 6; pasada(90, PEQ); }
+    var cand = [];
+    for (var y = mr.top + 8; y < mr.bottom - MIN; y += paso)
+      for (var x = izq; x <= derecha - MIN; x += paso) { var t = cabe(x, y); if (t) cand.push({ x: x, y: y, t: t }); }
+    cand.sort(function (a, b) { return b.t - a.t || a.y - b.y; });
+    var puestos = [];
+    function choca(x, y, t) {
+      for (var i = 0; i < puestos.length; i++) {
+        var p = puestos[i], e = Math.max(40, Math.max(p.s, t) * .5);
+        if (x < p.x + p.s + e && x + t > p.x - e && y < p.y + p.s + e && y + t > p.y - e) return true;
+        // Un solo sello por franja horizontal: nada de filas de sellos.
+        if (y < p.y + p.s + 10 && y + t > p.y - 10) return true;
+      }
+      return false;
+    }
+    for (var c = 0; c < cand.length && puestos.length < maximo; c++) {
+      var k = cand[c], t2 = k.t;
+      while (t2 >= MIN && choca(k.x, k.y, t2)) t2 -= PASO_T;
+      if (t2 < MIN) continue;
+      if (puestos.length >= 4 && t2 < (movil ? 64 : 84)) continue;
+      var s2 = Math.round(t2 * .88), m2 = Math.round((t2 - s2) / 2);
+      puestos.push({ x: k.x + m2, y: k.y + m2, s: s2 });
+    }
     puestos.sort(function (a, b) { return a.y - b.y; });
     if (!capa || !capa.isConnected) {
       capa = document.createElement("div");
