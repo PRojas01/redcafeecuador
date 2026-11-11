@@ -49,11 +49,12 @@ async function podarAvisos() {
 }
 
 /** notificar_admins(): el mismo aviso para toda la administración. */
-export async function notificarAdmins(tipo: string, titulo: string, texto = "", enlace = "") {
+export async function notificarAdmins(tipo: string, titulo: string, texto = "", enlace = "", excluir: string[] = []) {
   try {
     await notificar(AVISOS_ADMIN_UID, tipo, titulo, texto, enlace);
     const admins = await db.usuario.findMany({ where: { OR: [{ admin: true }, { rol: "admin" }, { roles: { array_contains: "admin" } }] }, select: { id: true } });
-    for (const a of admins) if (a.id !== AVISOS_ADMIN_UID) await notificar(a.id, tipo, titulo, texto, enlace);
+    // excluir: quien ya recibió su propio aviso de lo mismo (p. ej. el autor del curso).
+    for (const a of admins) if (a.id !== AVISOS_ADMIN_UID && !excluir.includes(a.id)) await notificar(a.id, tipo, titulo, texto, enlace);
   } catch (e) {
     console.error("[avisos] notificarAdmins", e);
   }

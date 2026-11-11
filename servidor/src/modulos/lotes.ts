@@ -380,7 +380,9 @@ const acciones: Modulo["acciones"] = {
     await notificarAdmins("lote",
       (cat === "terminado" ? "Nuevo café tostado publicado: " : "Nuevo lote publicado: ") + lote.finca,
       cat === "terminado" ? `${lote.variedad} · ${lote.provincia} · $${precio(num(lote.precioUnidad))} la unidad.` : `${lote.variedad} · ${lote.provincia} · $${precio(num(lote.precioSaco))} el saco.`,
-      "/marketplace/");
+      "/marketplace/", [u.id]);
+    await notificar(u.id, "lote", (cat === "terminado" ? "Tu café ya está publicado: " : "Tu lote ya está publicado: ") + lote.finca,
+      "Ya aparece en el Marketplace. Te avisaremos aquí cuando alguien pregunte por él o lo pida.", "/marketplace/");
     return { lote };
   },
 

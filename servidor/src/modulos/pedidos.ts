@@ -89,6 +89,9 @@ const acciones: Modulo["acciones"] = {
 
     await notificar(productorId, "pedido", `Nuevo pedido #${p.nro} de ${u.nombre}`,
       `${sacos}${porUnidad ? " unidad(es)" : " saco(s)"} de ${finca}${total > 0 ? " por $" + plata(total) : " (precio a convenir)"}. Revísalo en tu panel.`, "/panel/");
+    const resumen = `${sacos}${porUnidad ? " unidad(es)" : " saco(s)"} de ${finca}${total > 0 ? " por $" + plata(total) : " (precio a convenir)"}`;
+    await notificar(u.id, "pedido", `Tu pedido #${p.nro} quedó enviado`, `${resumen}. El vendedor lo revisará; sigue su estado en tu panel.`, "/panel/");
+    await notificarAdmins("pedido", `Nueva compra de lote #${p.nro}`, `${u.nombre} pidió ${resumen}.`, "/admin/", [u.id, productorId]);
     await registrarActividad(ctx, "pedido-creado", {
       objeto_tipo: "pedido", objeto_id: String(p.nro), ref: "#" + p.nro, detalle: `${sacos} saco(s) de ${finca}`, monto: total,
       contraparte: productor || (await nombreMiembro(productorId)),
