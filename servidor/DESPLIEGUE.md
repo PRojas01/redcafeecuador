@@ -40,7 +40,7 @@ Variables de entorno que hay que poner en el panel de GoDaddy (no van en el repo
 pero la API responde 503 «falta configurar la base de datos».
 La primera vez, crear las tablas: importar `servidor/prisma/esquema-mysql.sql` en phpMyAdmin (base vacía → Importar), o `npm run db:push` desde una consola con acceso a la base.
 
-> Guía detallada de la migración con datos reales: [`MIGRACION-PRODUCCION.md`](MIGRACION-PRODUCCION.md).
+> Datos reales: [`IMPORTAR-DATOS-SEGURO.md`](IMPORTAR-DATOS-SEGURO.md).
 
 ## Pasos comunes
 
