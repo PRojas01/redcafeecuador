@@ -32,6 +32,10 @@ export const metadata = {
  "academia cafetera",
  "trazabilidad café",
  "precio del café Ecuador",
+ "café del Ecuador",
+ "cafeespecialidad",
+ "amantes del café",
+ "cafedelEcuador",
  ],
   // Sin canonical aquí: lo heredaban todas las páginas que no ponían el suyo
   // (noticias, recetas, cursos, legales…) y Google las tomaba por copias de la portada.

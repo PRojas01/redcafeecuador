@@ -50,7 +50,7 @@ export default function HomePage() {
               Todo el <span className="text-acento-claro">café ecuatoriano</span>, conectado
             </h1>
             <p className="mt-5 max-w-2xl text-lg leading-relaxed text-crema/85">
-              Oportunidades y servicios para productores, tostadores, comerciantes, amantes del café y más. #cafédelEcuador #cafeespecialidad #amantesdelcafe
+              Oportunidades y servicios para productores, tostadores, comerciantes, amantes del café y otros.
             </p>
             {/* Tres botones con la misma forma y un color por función:
                 registrarse (el más llamativo), WhatsApp (verde oficial) y
