@@ -37,3 +37,4 @@ respaldo-*.json.gz
 /paridad
 /redcafe-respaldos/
 /redcafe-privado/
+__pycache__/
