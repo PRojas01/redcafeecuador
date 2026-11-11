@@ -1254,7 +1254,7 @@ html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5):not(#o6):not(#o7):not(#o8):not
 html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5):not(#o6):not(#o7):not(#o8):not(#o9):not(#o10):not(#o11):not(#o12):not(#o13):not(#o14) body :is(.btn-primary, button.bg-cereza, button[class*="bg-cafe"]):disabled, html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5):not(#o6):not(#o7):not(#o8):not(#o9):not(#o10):not(#o11):not(#o12):not(#o13):not(#o14) body main .btn-primary:disabled { opacity: 1 !important; background-color: #e6d3c4 !important; background-image: none !important; color: #5e2402 !important; border-color: #d4b9a5 !important; box-shadow: none !important; }
 html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5):not(#o6):not(#o7):not(#o8):not(#o9):not(#o10):not(#o11):not(#o12):not(#o13):not(#o14) body :is([data-redcafe-route] main > div > section:first-child):is([data-redcafe-propio], [id^="redcafe-"], [class*="redcafe-"]):not([class*="hero"]) :is(h1, h2, h3, h4) { color: #2f2a24 !important; }
 
-/* ===== v20261111q · Fondo «crema tostada» y tarjetas compactas en móvil =====
+/* ===== v20261111r · Fondo «crema tostada» y tarjetas compactas en móvil =====
    Fondo: neutros teñidos con el tono del café (OKLCH h≈70, croma bajo) en vez del
    gris verdoso #f3f1ea. Jerarquía de superficies: página #fbf6f0 < sección alterna
    #f6ece1 < tarjeta blanca. Contraste medido (WCAG / APCA Lc):
@@ -1307,7 +1307,7 @@ html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5):not(#o6):not(#o7):not(#o8):not
 html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5):not(#o6):not(#o7):not(#o8):not(#o9):not(#o10):not(#o11):not(#o12):not(#o13):not(#o14):not(#o15):not(#o16):not(#o17) body :is([data-redcafe-route] main > div > section:first-child):is([data-redcafe-propio], [id^="redcafe-"], [class*="redcafe-"]):not([class*="hero"]),
 html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5):not(#o6):not(#o7):not(#o8):not(#o9):not(#o10):not(#o11):not(#o12):not(#o13):not(#o14):not(#o15):not(#o16):not(#o17) body main section:is(.bg-crema-oscuro, .bg-cream-50, .bg-cream-100, .bg-cream-200),
 html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5):not(#o6):not(#o7):not(#o8):not(#o9):not(#o10):not(#o11):not(#o12):not(#o13):not(#o14):not(#o15):not(#o16):not(#o17) body #redcafe-afil-guia,
-html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5):not(#o6):not(#o7):not(#o8):not(#o9):not(#o10):not(#o11):not(#o12):not(#o13):not(#o14):not(#o15):not(#o16):not(#o17) body :is(#forma-parte, #redcafe-home-price-strip) { background-image: url("/img/textura-saco.webp?v=20261111q") !important; background-size: 240px 240px !important; background-repeat: repeat !important; }
+html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5):not(#o6):not(#o7):not(#o8):not(#o9):not(#o10):not(#o11):not(#o12):not(#o13):not(#o14):not(#o15):not(#o16):not(#o17) body :is(#forma-parte, #redcafe-home-price-strip) { background-image: url("/img/textura-saco.webp?v=20261111r") !important; background-size: 240px 240px !important; background-repeat: repeat !important; }
 /* Marketplace (2026-11-11): filtros arriba y mapa debajo (orden en React); aviso de dos dedos en el mapa táctil. */
 html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5):not(#o6):not(#o7):not(#o8):not(#o9):not(#o10):not(#o11):not(#o12):not(#o13):not(#o14):not(#o15):not(#o16):not(#o17) body .redcafe-mapa-aviso { margin: 8px 8px 0 0 !important; padding: 4px 9px; border-radius: 6px; background: rgba(255, 255, 255, .94); color: #3b1a0c; font: 600 12px/1.3 Inter, system-ui, sans-serif; box-shadow: 0 1px 4px rgba(59, 26, 12, .18); pointer-events: none; }
 html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5):not(#o6):not(#o7):not(#o8):not(#o9):not(#o10):not(#o11):not(#o12):not(#o13):not(#o14):not(#o15):not(#o16):not(#o17) body [data-redcafe-pestanas]:first-child { margin-top: 0 !important; }
@@ -1317,15 +1317,15 @@ html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5):not(#o6):not(#o7):not(#o8):not
   html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5):not(#o6):not(#o7):not(#o8):not(#o9):not(#o10):not(#o11):not(#o12):not(#o13):not(#o14):not(#o15):not(#o16):not(#o17) body .redcafe-market-publicar > * { width: 100% !important; min-width: 0 !important; padding-left: .4rem !important; padding-right: .4rem !important; white-space: nowrap; font-size: clamp(.8rem, 3.6vw, .95rem) !important; justify-content: center; text-align: center; }
 }
 /* Portada: la zona del título y subtítulo lleva la textura de saco y el sello de Red Café (tinta al 34 %), solo en huecos sin texto. */
-html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5):not(#o6):not(#o7):not(#o8):not(#o9):not(#o10):not(#o11):not(#o12):not(#o13):not(#o14):not(#o15):not(#o16):not(#o17) body #portada-hero { background-image: url("/img/textura-saco.webp?v=20261111q"), linear-gradient(180deg, #ffffff 0%, #f8efe0 100%) !important; background-size: 240px 240px, auto !important; background-repeat: repeat, no-repeat !important; }
+html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5):not(#o6):not(#o7):not(#o8):not(#o9):not(#o10):not(#o11):not(#o12):not(#o13):not(#o14):not(#o15):not(#o16):not(#o17) body #portada-hero { background-image: url("/img/textura-saco.webp?v=20261111r"), linear-gradient(180deg, #ffffff 0%, #f8efe0 100%) !important; background-size: 240px 240px, auto !important; background-repeat: repeat, no-repeat !important; }
 @media (max-width: 767px) {
-  html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5):not(#o6):not(#o7):not(#o8):not(#o9):not(#o10):not(#o11):not(#o12):not(#o13):not(#o14):not(#o15):not(#o16):not(#o17) body #portada-hero { background-image: url("/img/sello-redcafe.svg?v=20261111q"), url("/img/textura-saco.webp?v=20261111q"), linear-gradient(180deg, #ffffff 0%, #f8efe0 100%) !important; background-size: 80px 80px, 240px 240px, auto !important; background-repeat: no-repeat, repeat, no-repeat !important; background-position: right 10px top 6px, 0 0, 0 0 !important; }
+  html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5):not(#o6):not(#o7):not(#o8):not(#o9):not(#o10):not(#o11):not(#o12):not(#o13):not(#o14):not(#o15):not(#o16):not(#o17) body #portada-hero { background-image: url("/img/sello-redcafe.svg?v=20261111r"), url("/img/textura-saco.webp?v=20261111r"), linear-gradient(180deg, #ffffff 0%, #f8efe0 100%) !important; background-size: 80px 80px, 240px 240px, auto !important; background-repeat: no-repeat, repeat, no-repeat !important; background-position: right 10px top 6px, 0 0, 0 0 !important; }
 }
 @media (min-width: 768px) {
-  html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5):not(#o6):not(#o7):not(#o8):not(#o9):not(#o10):not(#o11):not(#o12):not(#o13):not(#o14):not(#o15):not(#o16):not(#o17) body #portada-hero { background-image: url("/img/sello-redcafe.svg?v=20261111q"), url("/img/sello-redcafe.svg?v=20261111q"), url("/img/textura-saco.webp?v=20261111q"), linear-gradient(180deg, #ffffff 0%, #f8efe0 100%) !important; background-size: 140px 140px, 100px 100px, 240px 240px, auto !important; background-repeat: no-repeat, no-repeat, repeat, no-repeat !important; background-position: calc(50% - 110px) calc(100% - 14px), calc(50% + 60px) 22px, 0 0, 0 0 !important; }
+  html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5):not(#o6):not(#o7):not(#o8):not(#o9):not(#o10):not(#o11):not(#o12):not(#o13):not(#o14):not(#o15):not(#o16):not(#o17) body #portada-hero { background-image: url("/img/sello-redcafe.svg?v=20261111r"), url("/img/sello-redcafe.svg?v=20261111r"), url("/img/textura-saco.webp?v=20261111r"), linear-gradient(180deg, #ffffff 0%, #f8efe0 100%) !important; background-size: 140px 140px, 100px 100px, 240px 240px, auto !important; background-repeat: no-repeat, no-repeat, repeat, no-repeat !important; background-position: calc(50% - 110px) calc(100% - 14px), calc(50% + 60px) 22px, 0 0, 0 0 !important; }
 }
 
-/* ---------- Efectos de entrada y movimiento (11-nov-2026, v20261111q) -----
+/* ---------- Efectos de entrada y movimiento (11-nov-2026, v20261111r) -----
    Solo CSS: no toca el DOM ni la hidratación de React. Todo dentro de
    «prefers-reduced-motion: no-preference». La aparición al bajar usa
    animation-timeline (navegadores que no la soportan muestran todo quieto)
@@ -1381,4 +1381,33 @@ html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5):not(#o6):not(#o7):not(#o8):not
 
   /* 6. Respuesta al tocar en el móvil: tarjetas y fotos se hunden un poco */
   html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5):not(#o6):not(#o7):not(#o8):not(#o9):not(#o10):not(#o11):not(#o12):not(#o13):not(#o14):not(#o15):not(#o16):not(#o17):not(#o18) body main :is(.rc-collage-foto, #perfiles a.group, #forma-parte a.rounded-xl, a.rounded-2xl, a.rounded-xl):active { transform: scale(.98) !important; transition: transform .12s ease !important; }
+}
+
+/* ---------- Botones que invitan a tocarlos (11-nov-2026, v20261111r) ------
+   Halo que late en los botones principales, destello al pasar el ratón y
+   elevación con sombra. Solo CSS y solo sin «reducir movimiento». */
+@keyframes rc-ef-halo { 0% { outline: 0 solid rgba(247, 208, 138, .0); outline-offset: 0; } 6% { outline: 3px solid rgba(247, 208, 138, .9); outline-offset: 0; } 40%, 100% { outline: 3px solid rgba(247, 208, 138, 0); outline-offset: 6px; } }
+@keyframes rc-ef-halo-verde { 0% { outline: 0 solid rgba(47, 107, 69, 0); outline-offset: 0; } 6% { outline: 3px solid rgba(47, 107, 69, .7); outline-offset: 0; } 40%, 100% { outline: 3px solid rgba(47, 107, 69, 0); outline-offset: 6px; } }
+@keyframes rc-ef-latido { 0%, 30%, 100% { transform: scale(1); } 8% { transform: scale(1.045); } 16% { transform: scale(.99); } 23% { transform: scale(1.02); } }
+@media (prefers-reduced-motion: no-preference) {
+  /* Todos los botones: suben un poco y ganan sombra al pasar el ratón */
+  html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5):not(#o6):not(#o7):not(#o8):not(#o9):not(#o10):not(#o11):not(#o12):not(#o13):not(#o14):not(#o15):not(#o16):not(#o17):not(#o18):not(#o19) body :is(.btn-primary, .btn-accent, .btn-ghost) { transition: transform .2s cubic-bezier(.2, .7, .2, 1), filter .2s ease, background-color .2s ease !important; }
+  @media (hover: hover) {
+    html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5):not(#o6):not(#o7):not(#o8):not(#o9):not(#o10):not(#o11):not(#o12):not(#o13):not(#o14):not(#o15):not(#o16):not(#o17):not(#o18):not(#o19) body :is(.btn-primary, .btn-accent, .btn-ghost):hover { transform: translateY(-2px) !important; filter: drop-shadow(0 6px 10px rgba(60, 22, 2, .28)) brightness(1.04); }
+  }
+  /* Destello de luz que cruza el botón al pasar el ratón */
+  html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5):not(#o6):not(#o7):not(#o8):not(#o9):not(#o10):not(#o11):not(#o12):not(#o13):not(#o14):not(#o15):not(#o16):not(#o17):not(#o18):not(#o19) body :is(.btn-primary, .btn-accent):not(.btn-registro) { position: relative; overflow: hidden; isolation: isolate; }
+  html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5):not(#o6):not(#o7):not(#o8):not(#o9):not(#o10):not(#o11):not(#o12):not(#o13):not(#o14):not(#o15):not(#o16):not(#o17):not(#o18):not(#o19) body :is(.btn-primary, .btn-accent):not(.btn-registro)::after {
+    content: ""; position: absolute; inset: 0 auto 0 0; width: 45%; pointer-events: none; z-index: -1;
+    background: linear-gradient(90deg, rgba(255, 255, 255, 0), rgba(255, 255, 255, .35), rgba(255, 255, 255, 0));
+    transform: translateX(-120%) skewX(-20deg);
+  }
+  @media (hover: hover) {
+    html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5):not(#o6):not(#o7):not(#o8):not(#o9):not(#o10):not(#o11):not(#o12):not(#o13):not(#o14):not(#o15):not(#o16):not(#o17):not(#o18):not(#o19) body :is(.btn-primary, .btn-accent):not(.btn-registro):hover::after { animation: rc-ef-brillo .8s ease-in-out; }
+  }
+  /* «Crear cuenta gratis»: late con un halo verde cada pocos segundos */
+  html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5):not(#o6):not(#o7):not(#o8):not(#o9):not(#o10):not(#o11):not(#o12):not(#o13):not(#o14):not(#o15):not(#o16):not(#o17):not(#o18):not(#o19) body #portada-hero .portada-botones a.btn-registro { animation: rc-ef-halo-verde 4s 1.6s ease-out infinite, rc-ef-latido 4s 1.6s ease-in-out infinite; }
+  html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5):not(#o6):not(#o7):not(#o8):not(#o9):not(#o10):not(#o11):not(#o12):not(#o13):not(#o14):not(#o15):not(#o16):not(#o17):not(#o18):not(#o19) body #portada-hero .portada-botones a.btn-registro:hover { animation-play-state: paused; }
+  /* Botones principales de cada sección: halo dorado tres veces al aparecer */
+  html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5):not(#o6):not(#o7):not(#o8):not(#o9):not(#o10):not(#o11):not(#o12):not(#o13):not(#o14):not(#o15):not(#o16):not(#o17):not(#o18):not(#o19) body main :is(#forma-parte .btn-primary, #perfiles .btn-primary, #perfiles a.rounded-2xl.bg-cafe, #confianza .btn-accent, #mapa-portada .btn-primary) { animation: rc-ef-halo 4s .4s ease-out infinite; }
 }
