@@ -11,15 +11,9 @@ a Node.js + MySQL, despliegue en GoDaddy y nuevo diseño). Punto de partida para
 
 | Documento | Contenido |
 |---|---|
-| `docs/entregables/INFORME-AUDITORIA.md` | Auditoría del paquete 20261024a: fallos confirmados y corregidos |
-| `docs/entregables/LISTA-MEJORAS.md` | Lista de mejoras basada en pruebas y auditoría |
-| `docs/entregables/PLAN-PROPUESTA-MEJORA.md` | Plan de migración: arquitectura, decisiones, riesgos, fases |
-| (fuera del repo) `redcafe-actualizacion-20261024a-corregido.zip` | Paquete PHP corregido, SHA-256 `c9d5696b…`; el vigilante de datos no admite .zip. Se reconstruye con `cambios.diff` |
-| `docs/entregables/cambios.diff` | Diferencias de las correcciones PHP |
 | `servidor/GUIA-GODADDY-NODEJS.md` | Paso a paso: base, variables, despliegue en GoDaddy Node.js Hosting |
 | `servidor/MIGRACION-PRODUCCION.md` | Migración con datos reales, ensayo y vuelta atrás |
 | `servidor/DESPLIEGUE.md` | Despliegue general (VPS, cPanel, GitHub) |
-| `DISENO-TEMA-ORIGEN.md` | Guía de estilo del tema «Origen» |
 | `servidor/prisma/tablas-para-pegar.sql` | Las 12 tablas para «Importar/Pegar» en la base |
 | `servidor/herramientas/convertir-datos-a-sql.sh` | Convierte data/*.json del PHP en un .sql con datos |
 
@@ -118,7 +112,7 @@ datos, `.zip`, `.sql` no permitidos o `.env`.
 
 ## Pendiente
 
-Auditoría técnica del 8-nov (rendimiento, seguridad, SEO): `docs/AUDITORIA-TECNICA-2026-11-08.md`.
+Los informes de auditoría y diseño antiguos se quitaron del repo el 11-nov (siguen en el historial de git).
 
 1. **Desplegar en GoDaddy** (lo hace el propietario): variables, tablas, Deploy. Confirmar en
    el panel los nombres de las variables de la base y la **carpeta persistente** para fotos
