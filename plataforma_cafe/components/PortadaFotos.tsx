@@ -10,7 +10,7 @@ import Link from "next/link";
 import { useCallback, useEffect, useRef, useState } from "react";
 
 const FOTOS: [string, string][] = [
-  ["cereza", "Cereza madura"], ["secado", "Secado al sol"], ["pergamino", "Café pergamino"],
+  ["cereza", "Cereza madura"], ["secado", "Secado al sol"], ["pergamino-2", "Café pergamino"],
   ["verde", "Café verde"], ["tostado", "Tostado"], ["molido", "Molido"], ["taza", "En la taza"],
 ];
 
