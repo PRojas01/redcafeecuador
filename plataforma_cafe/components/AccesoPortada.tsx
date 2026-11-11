@@ -12,7 +12,7 @@ import { CONFIG, waLink } from "@/lib/config";
 */
 
 const BENEFICIOS: { icono: IconoNombre; titulo: string; detalle: string; href: string }[] = [
-  { icono: "productor", titulo: "Comprar y vender café", detalle: "Publica tu lote o encuentra café de todo el país", href: "/afiliate/?rol=productor" },
+  { icono: "productor", titulo: "Vender café", detalle: "Publica tu lote y llega a compradores de todo el país", href: "/afiliate/?rol=productor" },
   { icono: "comprador", titulo: "Comprar café", detalle: "Elige por provincia, variedad y finca", href: "/marketplace/" },
   { icono: "precio", titulo: "Saber el precio", detalle: "Negocia con el precio del mes y su fuente", href: "/servicios/precios/" },
   { icono: "academia", titulo: "Aprender", detalle: "Cursos paso a paso, a tu ritmo", href: "/academia/" },
