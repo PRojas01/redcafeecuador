@@ -1,0 +1,24 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 220 220">
+  <!-- Sello de Red Café Ecuador estilo tinta de saco (decorativo). -->
+  <defs>
+    <filter id="t" x="-5%" y="-5%" width="110%" height="110%">
+      <feTurbulence type="fractalNoise" baseFrequency=".9" numOctaves="2" seed="4" result="r"/>
+      <feColorMatrix in="r" type="matrix" values="0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 -2.2 1.55" result="m"/>
+      <feComposite in="SourceGraphic" in2="m" operator="in"/>
+    </filter>
+    <path id="arr" d="M110 110 m-74 0 a74 74 0 1 1 148 0"/>
+    <path id="abj" d="M110 110 m-80 0 a80 80 0 0 0 160 0"/>
+  </defs>
+  <g filter="url(#t)" opacity=".34" fill="#8C3604" stroke="#8C3604" transform="rotate(-12 110 110)">
+    <circle cx="110" cy="110" r="104" fill="none" stroke-width="5"/>
+    <circle cx="110" cy="110" r="96" fill="none" stroke-width="1.6"/>
+    <circle cx="110" cy="110" r="58" fill="none" stroke-width="2"/>
+    <text font-family="Inter, Arial, sans-serif" font-weight="800" font-size="17" letter-spacing="2" stroke="none" text-anchor="middle"><textPath href="#arr" startOffset="50%">RED CAFÉ ECUADOR</textPath></text>
+    <text font-family="Inter, Arial, sans-serif" font-weight="700" font-size="14" letter-spacing="2.5" stroke="none" text-anchor="middle"><textPath href="#abj" startOffset="50%">★ CAFÉ DE ORIGEN ★</textPath></text>
+    <g transform="translate(62 62)" fill="none" stroke-width="5" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M18 32a35 35 0 0 1 54-6"/><path d="M60 21l12 5-4 12"/><path d="M78 64a35 35 0 0 1-54 6"/><path d="M36 75l-12-5 4-12"/>
+      <ellipse cx="48" cy="50" rx="12" ry="17" fill="#8C3604" stroke="none"/>
+      <path d="M48 34c-3.6 5.6 3.6 11.2 0 16.8s-3.6 11.2 0 16.8" stroke="#fbf6f0" stroke-width="3"/>
+    </g>
+  </g>
+</svg>
