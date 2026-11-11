@@ -15,7 +15,8 @@ import { CONFIG } from "@/lib/config";
    (miembros, lotes, servicios, cursos, empleos, requerimientos);
  · siempre «N cursos gratis»;
  · y el enlace a la Comunidad.
- El número de la burbuja cuenta miembros y lotes nuevos, como antes; al abrir
+ El número de la burbuja cuenta miembros y lotes nuevos, más 1 fijo por los
+ cursos gratis; al abrir
  la tarjeta o entrar a /comunidad/ se da por visto. En la primera visita no se
  inventa un número. Se cierra con «×», Escape, un enlace o la misma burbuja.
 */
@@ -218,9 +219,9 @@ export function HubFlotante() {
     setAbierta(!abierta);
   };
 
-  const etiqueta = nuevas
-    ? `Novedades de la Red: ${nuevas} ${nuevas === 1 ? "nueva" : "nuevas"}`
-    : "Novedades de la Red";
+  // El número de la burbuja: miembros y lotes nuevos + 1 fijo por los cursos gratis.
+  const alerta = nuevas + 1;
+  const etiqueta = `Novedades de la Red: ${alerta} ${alerta === 1 ? "aviso" : "avisos"}`;
   const enlaceCss = "inline-flex min-h-9 items-center text-[0.8125rem] font-semibold text-white underline underline-offset-4";
 
   return (
@@ -269,9 +270,9 @@ export function HubFlotante() {
         className="group relative grid h-16 w-16 place-items-center transition hover:opacity-90"
       >
         <CerezaAmarilla animar={animar} />
-        {nuevas > 0 && (
+        {alerta > 0 && (
           <span className="absolute -right-1 -top-1 grid h-5 min-w-5 place-items-center rounded-full bg-cafe px-1 text-[10px] font-bold text-white">
-            {nuevas > 9 ? "9+" : nuevas}
+            {alerta > 9 ? "9+" : alerta}
           </span>
         )}
         <span className="absolute right-full mr-2 hidden whitespace-nowrap rounded-full bg-cafe px-3 py-1 text-xs text-crema group-hover:block">
