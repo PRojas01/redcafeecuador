@@ -6,8 +6,8 @@ import { usePathname } from "next/navigation";
 import { CONFIG } from "@/lib/config";
 
 /*
- Botón flotante de la Comunidad: una cereza de café amarilla (dibujo SVG con
- volumen y brillo) que resalta sobre el fondo crema y los tonos café de la
+ Botón flotante de la Comunidad: una cereza de café (dibujo SVG con volumen y
+ brillo) que madura en bucle de verde a amarilla y a roja, que resalta sobre el fondo crema y los tonos café de la
  página. Al tocarla abre UNA tarjeta
  pequeña; nunca se abre sola:
  · lo nuevo desde la última vez que esta persona abrió la tarjeta o entró a
@@ -23,16 +23,35 @@ const CLAVE_VISTO = "redcafe_comunidad_visto";
 
 /* Cereza de café amarilla: cuerpo con degradado radial, brillo, la corona
    (cicatriz de la flor) arriba y un pedúnculo con hoja. Decorativa. */
-function CerezaAmarilla() {
+// Maduración: verde → amarilla → roja → verde (cada color por stop del degradado).
+const MADURACION = [
+  ["#D9F2A0", "#FFF0A0", "#FFC2AE"],
+  ["#9CCB4A", "#FFD233", "#E8442E"],
+  ["#5E9A2A", "#EFA20C", "#B81E12"],
+  ["#3D6E1C", "#B86F04", "#7E0F08"],
+  ["#2A4F12", "#8A4F03", "#5A0804"],
+];
+const ESTATICO = 1; // sin animación (o con «reducir movimiento»): amarilla
+
+function CerezaAmarilla({ animar }: { animar: boolean }) {
+  const parada = (offset: string, i: number) => (
+    <stop offset={offset} stopColor={MADURACION[i][ESTATICO]}>
+      {animar && (
+        <animate attributeName="stop-color" dur="9s" repeatCount="indefinite"
+          values={[0, 0, 1, 1, 2, 2, 0].map((k) => MADURACION[i][k]).join(";")}
+          keyTimes="0;0.2;0.33;0.53;0.66;0.86;1" />
+      )}
+    </stop>
+  );
   return (
     <svg viewBox="0 0 64 70" className="h-16 w-16" style={{ filter: "drop-shadow(0 6px 8px rgba(60,30,0,.4))" }} aria-hidden="true">
       <defs>
         <radialGradient id="rc-cereza-cuerpo" cx="36%" cy="32%" r="78%">
-          <stop offset="0%" stopColor="#FFF0A0" />
-          <stop offset="22%" stopColor="#FFD233" />
-          <stop offset="58%" stopColor="#EFA20C" />
-          <stop offset="88%" stopColor="#B86F04" />
-          <stop offset="100%" stopColor="#8A4F03" />
+          {parada("0%", 0)}
+          {parada("22%", 1)}
+          {parada("58%", 2)}
+          {parada("88%", 3)}
+          {parada("100%", 4)}
         </radialGradient>
         <radialGradient id="rc-cereza-brillo" cx="50%" cy="50%" r="50%">
           <stop offset="0%" stopColor="#FFFFFF" stopOpacity=".95" />
@@ -58,7 +77,6 @@ function CerezaAmarilla() {
       <path d="M33 16 C29 30 29 50 32 64" stroke="#A86A06" strokeWidth="1.2" fill="none" opacity=".35" />
       {/* Brillo */}
       <ellipse cx="22" cy="28" rx="7.5" ry="5" fill="url(#rc-cereza-brillo)" transform="rotate(-28 22 28)" />
-      <ellipse cx="44" cy="54" rx="5" ry="2.2" fill="#FFE27A" opacity=".35" transform="rotate(-35 44 54)" />
       {/* Corona: la cicatriz de la flor, abajo */}
       <ellipse cx="32" cy="62.5" rx="4.2" ry="3.2" fill="url(#rc-cereza-corona)" />
       <circle cx="32" cy="62.3" r="1.4" fill="#3A250A" />
@@ -132,6 +150,12 @@ export function HubFlotante() {
   const [gratis, setGratis] = useState(0); // número de cursos gratis (los de Legacy son de pago)
   const [novedad, setNovedad] = useState<Anuncio | null>(null);
   const [masNuevo, setMasNuevo] = useState("");
+  // La animación se activa tras hidratar (el HTML estático la trae quieta) y
+  // nunca si la persona pidió reducir el movimiento.
+  const [animar, setAnimar] = useState(false);
+  useEffect(() => {
+    try { setAnimar(!window.matchMedia("(prefers-reduced-motion: reduce)").matches); } catch { setAnimar(true); }
+  }, []);
 
   const enlaces = [
     ...(novedad ? novedad.enlaces : []),
@@ -244,7 +268,7 @@ export function HubFlotante() {
         aria-expanded={abierta}
         className="group relative grid h-16 w-16 place-items-center transition hover:opacity-90"
       >
-        <CerezaAmarilla />
+        <CerezaAmarilla animar={animar} />
         {nuevas > 0 && (
           <span className="absolute -right-1 -top-1 grid h-5 min-w-5 place-items-center rounded-full bg-cafe px-1 text-[10px] font-bold text-white">
             {nuevas > 9 ? "9+" : nuevas}
