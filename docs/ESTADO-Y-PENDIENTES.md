@@ -12,7 +12,7 @@ a Node.js + MySQL, despliegue en GoDaddy y nuevo diseño). Punto de partida para
 | Documento | Contenido |
 |---|---|
 | `servidor/GUIA-GODADDY-NODEJS.md` | Paso a paso: base, variables, despliegue en GoDaddy Node.js Hosting |
-| `servidor/MIGRACION-PRODUCCION.md` | Migración con datos reales, ensayo y vuelta atrás |
+| `servidor/IMPORTAR-DATOS-SEGURO.md` | Importar datos reales sin exponerlos (paquete cifrado) |
 | `servidor/DESPLIEGUE.md` | Despliegue general (VPS, cPanel, GitHub) |
 | `servidor/prisma/tablas-para-pegar.sql` | Las 12 tablas para «Importar/Pegar» en la base |
 | `servidor/herramientas/convertir-datos-a-sql.sh` | Convierte data/*.json del PHP en un .sql con datos |
