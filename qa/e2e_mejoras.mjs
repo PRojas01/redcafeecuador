@@ -33,10 +33,15 @@ await paso(p, "Clase del 8 de octubre: ni aviso ni enlaces (contenido vencido bo
   }
   return "portada, academia y curso libre limpios";
 });
-await paso(p, "El botón flotante conserva su función: va a la Comunidad", async () => {
-  const bt = p.getByRole("link", { name: /Ir a la comunidad de la Red/ });
-  if (!(await bt.count())) throw new Error("el botón ya no es el acceso a la comunidad");
-  await bt.click(); await p.waitForTimeout(2500);
+await paso(p, "Burbuja de novedades: la tarjeta solo abre al tocarla y lleva a la Comunidad", async () => {
+  if (await p.locator("#redcafe-mensaje-temporal").count()) throw new Error("la tarjeta salió sola");
+  const bt = p.getByRole("button", { name: /Novedades de la Red/ });
+  if (!(await bt.count())) throw new Error("no está la burbuja de novedades");
+  await bt.click(); await p.waitForTimeout(500);
+  const tarjeta = p.locator("#redcafe-mensaje-temporal");
+  if (!(await tarjeta.count())) throw new Error("la tarjeta no abrió al tocar la burbuja");
+  if (!/cursos gratis/i.test(await tarjeta.innerText())) throw new Error("falta el enlace a los cursos gratis");
+  await tarjeta.getByRole("link", { name: "Ir a la Comunidad" }).click(); await p.waitForTimeout(2500);
   if (!/\/comunidad/.test(p.url())) throw new Error("no llevó a la comunidad: " + p.url());
 });
 
