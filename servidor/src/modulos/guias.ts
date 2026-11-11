@@ -7,9 +7,16 @@ import { miembroRoles, requiereUsuario } from "../lib/usuarios.js";
 import { notificar } from "../lib/avisos.js";
 import { bool, cortar, esNumerico, fechaMs, num, nowIso, str, today, uid } from "../lib/util.js";
 
-const GUIAS = ["finca", "negocio"], TIPOS = ["cosecha", "fermentacion", "secado", "costos"];
+const GUIAS = ["finca", "negocio"], TIPOS = ["terreno", "suelo", "cosecha", "fermentacion", "secado", "costos"];
 const MAX_FILAS = 500, MAX_NOTA = 500;
 const CAMPOS: Record<string, Record<string, string>> = {
+  terreno: {
+    fecha: "fecha", lote: "texto", provincia: "texto", canton: "texto", altitud_m: "numero", hectareas: "numero",
+    pendiente: "texto", orientacion: "texto", textura: "texto", color_suelo: "texto", profundidad_cm: "numero",
+    drenaje: "texto", vegetacion: "texto", agua: "texto", temperatura: "numero", lluvia_mm: "numero",
+    meses_secos: "texto", observacion: "texto",
+  },
+  suelo: { fecha: "fecha", lote: "texto", laboratorio: "texto", ph: "numero", materia_organica_pct: "porcentaje", observacion: "texto" },
   cosecha: { fecha: "fecha", lote: "texto", kg_cereza: "numero", jornales: "numero", observacion: "texto" },
   fermentacion: { fecha: "fecha", lote: "texto", hora_inicio: "hora", hora_fin: "hora", temperatura: "numero", observacion: "texto" },
   secado: { fecha: "fecha", lote: "texto", humedad_pct: "porcentaje", dia: "numero", observacion: "texto" },

@@ -3656,9 +3656,37 @@ input[type="password"] { padding-right: 3.2rem; }
 #redcafe-guias .redcafe-guia-vacio { color: #6a645b; font-size: .8rem; }
 #redcafe-guias .redcafe-guia-academia { margin-top: .6rem; }
 #redcafe-guias .redcafe-guia-academia a { color: var(--rce-hoja, #3f6b4a); font-size: .82rem; font-weight: 700; text-decoration: none; }
+/* 20261111h guía: detalles, variedades por zona, «Siguiente» y «Llevar a la IA» */
+#redcafe-guias .redcafe-guia-detalles { color: #3f3b34; font-size: .82rem; line-height: 1.5; margin: .4rem 0 0; padding-left: 1.1rem; }
+#redcafe-guias .redcafe-guia-detalles li { margin: .2rem 0; }
+#redcafe-guias .redcafe-guia-zonas { background: rgba(63,107,74,.06); border-radius: .5rem; margin-top: .55rem; padding: .55rem .7rem; }
+#redcafe-guias .redcafe-guia-zonas-titulo { color: #2f5a3b; font-size: .8rem; font-weight: 700; }
+#redcafe-guias .redcafe-guia-zonas ul { list-style: none; margin: .3rem 0 0; padding: 0; }
+#redcafe-guias .redcafe-guia-zonas li { border-top: 1px dashed rgba(63,107,74,.25); font-size: .8rem; line-height: 1.45; padding: .35rem 0; }
+#redcafe-guias .redcafe-guia-zonas li:first-child { border-top: 0; }
+#redcafe-guias .redcafe-guia-zonas strong { color: #3f3b34; }
+#redcafe-guias .redcafe-guia-zona-tipo { background: #fff; border: 1px solid rgba(63,107,74,.35); border-radius: 999px; color: #2f5a3b; display: inline-block; font-size: .68rem; font-weight: 700; margin-left: .2rem; padding: 0 .45rem; }
+#redcafe-guias .redcafe-guia-zona-var { color: #4a4740; display: block; }
+#redcafe-guias .redcafe-guia-registro-campos select { background: #fff; border: 1px solid rgba(140, 54, 4,.2); border-radius: .4rem; font: inherit; font-size: .85rem; min-height: 2.5rem; padding: .35rem .5rem; width: 100%; }
+#redcafe-guias .redcafe-guia-nav { display: flex; justify-content: flex-end; margin-top: .7rem; }
+#redcafe-guias .redcafe-guia-siguiente { background: var(--rce-cafe, #8c3604); border: 0; border-radius: 999px; color: #fff; cursor: pointer; font-size: .82rem; font-weight: 700; min-height: 2.75rem; padding: .45rem 1.2rem; }
+#redcafe-guias .redcafe-guia-acciones { display: flex; flex-wrap: wrap; gap: .45rem; margin-left: auto; }
+#redcafe-guias .redcafe-guia-acciones .redcafe-guia-ficha { margin-left: 0; }
+#redcafe-guias .redcafe-guia-ia-abrir { background: #fff; border: 1.5px solid var(--rce-hoja, #3f6b4a); border-radius: 999px; color: #2f5a3b; cursor: pointer; font-size: .8rem; font-weight: 700; min-height: 2.5rem; padding: .45rem 1.1rem; }
+#redcafe-guias .redcafe-guia-ia { background: #fff; border: 1px solid rgba(63,107,74,.35); border-radius: .6rem; margin: -.4rem 0 1rem; padding: .75rem .85rem; }
+#redcafe-guias .redcafe-guia-ia-titulo { color: #2f5a3b; font-size: .9rem; font-weight: 700; }
+#redcafe-guias .redcafe-guia-ia-nota { color: #5f594f; font-size: .76rem; line-height: 1.45; margin: .3rem 0; }
+#redcafe-guias .redcafe-guia-ia-texto { border: 1px solid rgba(140, 54, 4,.2); border-radius: .45rem; font: inherit; font-size: .8rem; line-height: 1.45; margin-top: .35rem; padding: .5rem .6rem; width: 100%; }
+#redcafe-guias .redcafe-guia-ia-acciones { align-items: center; display: flex; flex-wrap: wrap; gap: .45rem; margin-top: .45rem; }
+#redcafe-guias .redcafe-guia-ia-copiar { background: var(--rce-hoja, #3f6b4a); border: 0; border-radius: 999px; color: #fff; cursor: pointer; font-size: .8rem; font-weight: 700; min-height: 2.5rem; padding: .4rem 1rem; }
+#redcafe-guias .redcafe-guia-ia-acciones a { border: 1px solid rgba(140, 54, 4,.25); border-radius: 999px; color: #8c3604; font-size: .78rem; font-weight: 700; min-height: 2.5rem; display: inline-flex; align-items: center; padding: .3rem .85rem; text-decoration: none; }
+#redcafe-guias .redcafe-guia-ia-estado { color: #2f5a3b; font-size: .76rem; }
 @media (max-width: 480px) {
   #redcafe-guias .redcafe-guia-registro-campos { grid-template-columns: 1fr; }
   #redcafe-guias .redcafe-guia-ficha { margin-left: 0; width: 100%; }
+  #redcafe-guias .redcafe-guia-acciones { margin-left: 0; width: 100%; }
+  #redcafe-guias .redcafe-guia-ia-abrir { width: 100%; }
+  #redcafe-guias .redcafe-guia-siguiente { width: 100%; }
 }
 
 /* 20260923 cursos: material adjunto y enlaces */
@@ -6170,7 +6198,7 @@ html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5):not(#o6):not(#o7):not(#o8):not
 html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5):not(#o6):not(#o7):not(#o8):not(#o9):not(#o10):not(#o11):not(#o12):not(#o13):not(#o14) body :is(.btn-primary, button.bg-cereza, button[class*="bg-cafe"]):disabled, html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5):not(#o6):not(#o7):not(#o8):not(#o9):not(#o10):not(#o11):not(#o12):not(#o13):not(#o14) body main .btn-primary:disabled { opacity: 1 !important; background-color: #e6d3c4 !important; background-image: none !important; color: #5e2402 !important; border-color: #d4b9a5 !important; box-shadow: none !important; }
 html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5):not(#o6):not(#o7):not(#o8):not(#o9):not(#o10):not(#o11):not(#o12):not(#o13):not(#o14) body :is([data-redcafe-route] main > div > section:first-child):is([data-redcafe-propio], [id^="redcafe-"], [class*="redcafe-"]):not([class*="hero"]) :is(h1, h2, h3, h4) { color: #2f2a24 !important; }
 
-/* ===== v20261111g · Fondo «crema tostada» y tarjetas compactas en móvil =====
+/* ===== v20261111h · Fondo «crema tostada» y tarjetas compactas en móvil =====
    Fondo: neutros teñidos con el tono del café (OKLCH h≈70, croma bajo) en vez del
    gris verdoso #f3f1ea. Jerarquía de superficies: página #fbf6f0 < sección alterna
    #f6ece1 < tarjeta blanca. Contraste medido (WCAG / APCA Lc):
