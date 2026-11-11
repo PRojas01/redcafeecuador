@@ -14,6 +14,54 @@
   window.__redcafeGuias = true;
 
   var REGISTROS = {
+    terreno: {
+      titulo: "Ficha del terreno",
+      campos: [
+        { k: "fecha", etiqueta: "Fecha", tipo: "date" },
+        { k: "lote", etiqueta: "Nombre del lote", tipo: "text", ph: "Ej. Lote de la loma" },
+        { k: "provincia", etiqueta: "Provincia", tipo: "text" },
+        { k: "canton", etiqueta: "Cantón o parroquia", tipo: "text" },
+        { k: "altitud_m", etiqueta: "Altura (msnm)", tipo: "number" },
+        { k: "hectareas", etiqueta: "Superficie (ha)", tipo: "number" },
+        { k: "pendiente", etiqueta: "Pendiente", tipo: "select",
+          opciones: ["Plana a suave (0–12 %)", "Ondulada (12–25 %)", "Inclinada (25–50 %)", "Muy inclinada (más de 50 %)"] },
+        { k: "orientacion", etiqueta: "La ladera mira hacia", tipo: "select",
+          opciones: ["Norte", "Sur", "Este (sol de mañana)", "Oeste (sol de tarde)", "Plano", "No sé"] },
+        { k: "textura", etiqueta: "Textura del suelo", tipo: "select",
+          opciones: ["Franco (forma bola que se desmorona)", "Arcilloso (pegajoso)", "Arenoso (raspa, no forma bola)", "Pedregoso", "No sé"] },
+        { k: "color_suelo", etiqueta: "Color de la capa de arriba", tipo: "select",
+          opciones: ["Negro u oscuro", "Café", "Rojizo o amarillo", "Gris o con manchas"] },
+        { k: "profundidad_cm", etiqueta: "Profundidad útil (cm)", tipo: "number" },
+        { k: "drenaje", etiqueta: "Drenaje", tipo: "select",
+          opciones: ["Bueno", "Se encharca", "Seca muy rápido"] },
+        { k: "vegetacion", etiqueta: "Vegetación actual", tipo: "text", ph: "Bosque, rastrojo, potrero…" },
+        { k: "agua", etiqueta: "Fuentes de agua", tipo: "text", ph: "Vertiente a 200 m, quebrada…" },
+        { k: "temperatura", etiqueta: "Temperatura media (°C)", tipo: "number" },
+        { k: "lluvia_mm", etiqueta: "Lluvia al año (mm)", tipo: "number" },
+        { k: "meses_secos", etiqueta: "Meses secos", tipo: "text", ph: "Ej. julio a octubre" },
+        { k: "observacion", etiqueta: "Observación", tipo: "text" }
+      ],
+      resumen: function (f) {
+        return [f.fecha, f.lote, [f.canton, f.provincia].filter(Boolean).join(", "),
+                f.altitud_m ? f.altitud_m + " msnm" : "", f.pendiente, f.textura].filter(Boolean).join(" · ");
+      }
+    },
+    suelo: {
+      titulo: "Anota el resultado del análisis",
+      campos: [
+        { k: "fecha", etiqueta: "Fecha", tipo: "date" },
+        { k: "lote", etiqueta: "Lote", tipo: "text" },
+        { k: "laboratorio", etiqueta: "Laboratorio", tipo: "text" },
+        { k: "ph", etiqueta: "pH", tipo: "number" },
+        { k: "materia_organica_pct", etiqueta: "Materia orgánica (%)", tipo: "number" },
+        { k: "observacion", etiqueta: "Recomendación o nota", tipo: "text" }
+      ],
+      resumen: function (f) {
+        return [f.fecha, f.lote, f.laboratorio, f.ph !== null && f.ph !== undefined ? "pH " + f.ph : "",
+                f.materia_organica_pct !== null && f.materia_organica_pct !== undefined ? "MO " + f.materia_organica_pct + " %" : ""]
+          .filter(Boolean).join(" · ");
+      }
+    },
     cosecha: {
       titulo: "Anota la cosecha del día",
       campos: [
@@ -73,7 +121,7 @@
     }
   };
 
-  var estado = { avance: {}, registros: {}, guia: "finca", montado: false };
+  var estado = { avance: {}, registros: {}, guia: "finca", abierta: {}, montado: false };
   var intentos = 0;
 
   function esc(v) {
@@ -142,8 +190,15 @@
       '<div class="redcafe-guia-registro-campos">' +
         def.campos.map(function (c) {
           var valor = c.tipo === "date" ? ' value="' + hoy + '"' : '';
+          if (c.tipo === "select") {
+            return '<label><span>' + esc(c.etiqueta) + '</span>' +
+              '<select data-campo="' + esc(c.k) + '"><option value="">Elegir…</option>' +
+              c.opciones.map(function (o) { return '<option>' + esc(o) + '</option>'; }).join("") +
+              '</select></label>';
+          }
           return '<label><span>' + esc(c.etiqueta) + '</span>' +
             '<input type="' + c.tipo + '" data-campo="' + esc(c.k) + '"' + valor +
+            (c.tipo === "number" ? ' step="any" inputmode="decimal"' : '') +
             (c.ph ? ' placeholder="' + esc(c.ph) + '"' : '') + '></label>';
         }).join("") +
       '</div>' +
@@ -167,6 +222,16 @@
       '</label>' +
       (paso.revisar ? '<span class="redcafe-guia-revisar">Pendiente de revisión técnica</span>' : '') +
       '<p class="redcafe-guia-hacer">' + esc(paso.hacer) + '</p>' +
+      (paso.zonas && paso.zonas.length
+        ? '<div class="redcafe-guia-zonas"><p class="redcafe-guia-zonas-titulo">Variedades por zona</p><ul>' +
+            paso.zonas.map(function (z) {
+              return '<li><strong>' + esc(z.zona) + '</strong> <span class="redcafe-guia-zona-tipo">' + esc(z.tipo) + '</span>' +
+                '<span class="redcafe-guia-zona-var">' + esc(z.variedades) + '</span></li>';
+            }).join("") + '</ul></div>'
+        : '') +
+      (paso.detalles && paso.detalles.length
+        ? '<ul class="redcafe-guia-detalles">' + paso.detalles.map(function (d) { return '<li>' + esc(d) + '</li>'; }).join("") + '</ul>'
+        : '') +
       (paso.fijarse ? '<p class="redcafe-guia-fijarse"><strong>En qué fijarte:</strong> ' + esc(paso.fijarse) + '</p>' : '') +
       (paso.error ? '<p class="redcafe-guia-error"><strong>Error frecuente:</strong> ' + esc(paso.error) + '</p>' : '') +
       (paso.fuente ? '<p class="redcafe-guia-fuente">Fuente: ' + esc(paso.fuente) + '</p>' : '') +
@@ -177,9 +242,9 @@
     '</li>';
   }
 
-  function etapaHtml(guiaId, etapa, abierta) {
+  function etapaHtml(guiaId, etapa, abierta, i, siguiente) {
     var a = avanceEtapa(guiaId, etapa);
-    return '<details class="redcafe-guia-etapa"' + (abierta ? " open" : "") + '>' +
+    return '<details class="redcafe-guia-etapa" data-etapa="' + i + '"' + (abierta ? " open" : "") + '>' +
       '<summary>' +
         '<span class="redcafe-guia-etapa-titulo">' + esc(etapa.titulo) + '</span>' +
         '<span class="redcafe-guia-etapa-avance">' + a.hechos + '/' + a.total + '</span>' +
@@ -188,6 +253,11 @@
       (etapa.intro ? '<p class="redcafe-guia-intro">' + esc(etapa.intro) + '</p>' : '') +
       '<ul class="redcafe-guia-pasos">' + etapa.pasos.map(function (p) { return pasoHtml(guiaId, p); }).join("") + '</ul>' +
       '<p class="redcafe-guia-academia"><a href="/academia/">Aprender más en la Academia →</a></p>' +
+      '<div class="redcafe-guia-nav">' +
+        (siguiente
+          ? '<button type="button" class="redcafe-guia-siguiente" data-ir="' + (i + 1) + '">Siguiente: ' + esc(siguiente.titulo) + ' →</button>'
+          : '<button type="button" class="redcafe-guia-siguiente" data-ir="fin">Terminar: exportar o llevar a la IA ↑</button>') +
+      '</div>' +
     '</details>';
   }
 
@@ -222,9 +292,15 @@
       avisoResponsabilidad() +
       '<div class="redcafe-guia-avance-general">' +
         '<strong>' + av.pct + ' %</strong><span>' + av.hechos + ' de ' + av.total + ' pasos</span>' + barra(av.pct) +
-        '<button type="button" class="redcafe-guia-ficha">Descargar mi ficha de finca</button>' +
+        '<span class="redcafe-guia-acciones">' +
+          '<button type="button" class="redcafe-guia-ficha">Descargar mi ficha de finca</button>' +
+          '<button type="button" class="redcafe-guia-ia-abrir" aria-expanded="false">Llevar a la IA</button>' +
+        '</span>' +
       '</div>' +
-      guia.etapas.map(function (e, i) { return etapaHtml(guia.id, e, i === 0); }).join("");
+      '<div class="redcafe-guia-ia" hidden></div>' +
+      guia.etapas.map(function (e, i) {
+        return etapaHtml(guia.id, e, i === (estado.abierta[guia.id] || 0), i, guia.etapas[i + 1]);
+      }).join("");
   }
 
   function pintar(seccion) {
@@ -242,7 +318,7 @@
   }
 
   function fichaImprimible(d) {
-    var etiquetas = { cosecha: "Última cosecha", fermentacion: "Última fermentación", secado: "Último secado", costos: "Último costo" };
+    var etiquetas = { terreno: "Terreno", suelo: "Análisis de suelo", cosecha: "Última cosecha", fermentacion: "Última fermentación", secado: "Último secado", costos: "Último costo" };
     var filas = Object.keys(etiquetas).map(function (t) {
       var f = d.ultimos && d.ultimos[t];
       if (!f) return "";
@@ -272,8 +348,149 @@
     vent.print();
   }
 
+  /* «Llevar a la IA»: arma un texto con lo que el miembro anotó para que lo
+     pegue en el asistente que prefiera. No se envía nada a nadie: el texto se
+     muestra, se puede editar y solo sale si la persona lo copia. No incluye
+     nombre, cédula ni contacto. */
+  function textoParaIA() {
+    var guia = guiaPorId(estado.guia);
+    if (!guia) return "";
+    var l = [];
+    l.push("Actúa como técnico agrónomo especializado en café en Ecuador. Te comparto los datos de mi " +
+      (guia.id === "finca" ? "finca" : "negocio de café") + " registrados en la guía «" + guia.titulo + "» de Red Café Ecuador.");
+    l.push("");
+    var fichas = (estado.registros.terreno || []).slice(0, 3);
+    if (guia.id === "finca" && fichas.length) {
+      l.push("## Terreno");
+      fichas.forEach(function (f) {
+        REGISTROS.terreno.campos.forEach(function (c) {
+          var v = f[c.k];
+          if (v === null || v === undefined || v === "" || c.k === "fecha") return;
+          l.push("- " + c.etiqueta + ": " + v);
+        });
+        l.push("");
+      });
+    }
+    var av = avanceGuia(guia);
+    l.push("## Avance: " + av.hechos + " de " + av.total + " pasos");
+    guia.etapas.forEach(function (e) {
+      var filas = [];
+      e.pasos.forEach(function (p) {
+        var st = estadoPaso(guia.id, p.id);
+        if (!st.hecho && !st.nota) return;
+        filas.push("- " + p.titulo + (st.hecho ? " (hecho)" : " (pendiente)") + (st.nota ? ": " + st.nota : ""));
+      });
+      if (filas.length) { l.push("### " + e.titulo); l = l.concat(filas); }
+    });
+    var hayReg = false;
+    Object.keys(REGISTROS).forEach(function (t) {
+      if (t === "terreno") return;
+      var filas = (estado.registros[t] || []).slice(0, 5);
+      if (!filas.length) return;
+      if (!hayReg) { l.push(""); l.push("## Registros recientes"); hayReg = true; }
+      l.push("### " + REGISTROS[t].titulo.replace(/^Anota (el |la |un )?/, ""));
+      filas.forEach(function (f) { l.push("- " + REGISTROS[t].resumen(f) + (f.observacion ? " · " + f.observacion : "")); });
+    });
+    var siguiente = null;
+    guia.etapas.some(function (e) {
+      return e.pasos.some(function (p) {
+        if (!estadoPaso(guia.id, p.id).hecho) { siguiente = e.titulo + " → " + p.titulo; return true; }
+        return false;
+      });
+    });
+    l.push("");
+    l.push("## Lo que necesito");
+    l.push("1. Revisa si mis datos tienen algún problema o riesgo (altura, pendiente, suelo, agua, clima o registros).");
+    l.push("2. Dime qué variedades de café me convienen y por qué, según mi zona y altura.");
+    l.push("3. Dame los próximos pasos concretos" + (siguiente ? ", empezando por: " + siguiente : "") + ".");
+    l.push("4. Si falta un dato importante, pregúntamelo antes de recomendar.");
+    l.push("Responde en español sencillo. Recuerda que tu respuesta es orientativa y la confirmaré con un técnico del MAG o del INIAP.");
+    return l.join("\n");
+  }
+
+  function pintarIA(seccion) {
+    var caja = seccion.querySelector(".redcafe-guia-ia");
+    if (!caja) return;
+    caja.innerHTML =
+      '<p class="redcafe-guia-ia-titulo">Lleva tus datos a un asistente de IA</p>' +
+      '<p class="redcafe-guia-ia-nota">Este texto se arma con lo que anotaste. Revísalo y borra lo que no quieras compartir: ' +
+        'solo sale de Red Café si tú lo copias y lo pegas. No incluye tu nombre ni tus datos de contacto.</p>' +
+      '<textarea class="redcafe-guia-ia-texto" rows="10" aria-label="Texto para el asistente de IA">' + esc(textoParaIA()) + '</textarea>' +
+      '<div class="redcafe-guia-ia-acciones">' +
+        '<button type="button" class="redcafe-guia-ia-copiar">Copiar texto</button>' +
+        '<a href="https://chatgpt.com/" target="_blank" rel="noopener noreferrer">ChatGPT</a>' +
+        '<a href="https://gemini.google.com/app" target="_blank" rel="noopener noreferrer">Gemini</a>' +
+        '<a href="https://claude.ai/new" target="_blank" rel="noopener noreferrer">Claude</a>' +
+        '<span class="redcafe-guia-ia-estado" role="status" aria-live="polite"></span>' +
+      '</div>' +
+      '<p class="redcafe-guia-ia-nota">Copia el texto, abre el asistente y pégalo. La IA puede equivocarse: confirma con un técnico antes de aplicar.</p>';
+  }
+
+  function copiar(texto) {
+    if (navigator.clipboard && window.isSecureContext) return navigator.clipboard.writeText(texto);
+    return new Promise(function (ok, mal) {
+      var t = document.createElement("textarea");
+      t.value = texto; t.setAttribute("readonly", ""); t.style.position = "fixed"; t.style.opacity = "0";
+      document.body.appendChild(t); t.select();
+      try { document.execCommand("copy") ? ok() : mal(); } catch (e) { mal(e); }
+      document.body.removeChild(t);
+    });
+  }
+
   function conectar(seccion) {
+    // Recordar qué etapa está abierta para no cerrarla al repintar.
+    seccion.addEventListener("toggle", function (ev) {
+      var d = ev.target;
+      if (!d.matches || !d.matches(".redcafe-guia-etapa") || !d.open) return;
+      estado.abierta[estado.guia] = Number(d.getAttribute("data-etapa")) || 0;
+    }, true);
+
     seccion.addEventListener("click", function (ev) {
+      var sig = ev.target.closest(".redcafe-guia-siguiente");
+      if (sig) {
+        var ir = sig.getAttribute("data-ir");
+        var actual = sig.closest(".redcafe-guia-etapa");
+        if (ir === "fin") {
+          if (actual) actual.open = false;
+          var arriba = seccion.querySelector(".redcafe-guia-avance-general");
+          if (arriba) arriba.scrollIntoView({ behavior: "smooth", block: "start" });
+          return;
+        }
+        var prox = seccion.querySelector('.redcafe-guia-etapa[data-etapa="' + ir + '"]');
+        if (!prox) return;
+        if (actual) actual.open = false;
+        prox.open = true;
+        estado.abierta[estado.guia] = Number(ir);
+        prox.scrollIntoView({ behavior: "smooth", block: "start" });
+        var s = prox.querySelector("summary");
+        if (s) s.focus({ preventScroll: true });
+        return;
+      }
+
+      var iaBtn = ev.target.closest(".redcafe-guia-ia-abrir");
+      if (iaBtn) {
+        var caja = seccion.querySelector(".redcafe-guia-ia");
+        var abrir = caja.hidden;
+        if (abrir) pintarIA(seccion);
+        caja.hidden = !abrir;
+        iaBtn.setAttribute("aria-expanded", abrir ? "true" : "false");
+        if (abrir) caja.scrollIntoView({ behavior: "smooth", block: "nearest" });
+        return;
+      }
+
+      var cop = ev.target.closest(".redcafe-guia-ia-copiar");
+      if (cop) {
+        var txt = seccion.querySelector(".redcafe-guia-ia-texto");
+        var est = seccion.querySelector(".redcafe-guia-ia-estado");
+        copiar(txt ? txt.value : "").then(function () {
+          if (est) est.textContent = "Copiado. Ahora ábrelo en tu asistente y pégalo.";
+        }, function () {
+          if (txt) txt.select();
+          if (est) est.textContent = "Selecciona el texto y cópialo a mano.";
+        });
+        return;
+      }
+
       var tab = ev.target.closest(".redcafe-guia-tab");
       if (tab) { estado.guia = tab.getAttribute("data-guia"); pintar(seccion); return; }
 
