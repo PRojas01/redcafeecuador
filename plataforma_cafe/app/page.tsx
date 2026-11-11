@@ -47,10 +47,10 @@ export default function HomePage() {
           <div>
             <p className="badge mb-4 bg-filtrado-800 text-acento-claro">Nueva plataforma · Red Café Ecuador</p>
             <h1 className="max-w-4xl font-titulo text-4xl font-bold leading-[1.08] md:text-6xl">
-              Compra y vende <span className="text-acento-claro">café ecuatoriano</span>
+              Compra y vende buen <span className="text-acento-claro">café del Ecuador</span>
             </h1>
             <p className="mt-5 max-w-2xl text-lg leading-relaxed text-crema/85">
-              Trato directo, sin intermediarios ni comisiones. Aquí encuentras compradores, servicios y cursos. Abre tu perfil gratis en 2 minutos.
+              Conectamos a productores de café ecuatoriano con tostadores, compradores y cafeterías. #cafédelEcuador #cafeespecialidad #amantesdelcafe
             </p>
             {/* Tres botones con la misma forma y un color por función:
                 registrarse (el más llamativo), WhatsApp (verde oficial) y
