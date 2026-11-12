@@ -13,9 +13,9 @@ const lum = (rgb) => {
 };
 const contraste = (a, b) => { const [x, y] = [lum(a), lum(b)].sort((p, q) => q - p); return (x + 0.05) / (y + 0.05); };
 const ESPERADO = [
-  // Tema «Origen» (oct-2026): registro en oro, acceder como contorno claro sobre la portada espresso.
-  { texto: "Crear cuenta gratis", href: /^\/afiliate\/?$/, fondo: "rgb(47, 107, 69)" },
-  { texto: "WhatsApp", href: /^https:\/\/wa\.me\/593/, fondo: "rgb(37, 211, 102)" },
+  // v20261112a: mismos botones que el Marketplace («Publicar un lote» / «Publicar un servicio»):
+  // principal en papel crema con letra café, secundario translúcido con contorno café.
+  { texto: "Crear cuenta gratis", href: /^\/afiliate\/?$/, fondo: "rgb(251, 250, 247)" },
   { texto: "Entrar", href: /^\/login\/?$/, fondo: "rgb(140, 54, 4)" },
 ];
 
@@ -30,18 +30,18 @@ for (const [nombre, vp] of [["móvil", { width: 390, height: 844 }], ["escritori
     return { texto: a.textContent.trim(), href: a.getAttribute("href"), fondo: s.backgroundColor, color: s.color, x: r.x, y: r.y, w: r.width, h: r.height, radio: s.borderRadius, letra: s.fontSize };
   }));
   const ok = (a, c, d = "") => R.push([`${nombre}: ${a}`, !!c, d]);
-  ok("hay exactamente tres botones, en el orden pedido", bs.length === 3 && bs.every((x, i) => x.texto === ESPERADO[i].texto), bs.map((x) => x.texto).join(" | "));
+  ok("hay exactamente dos botones, en el orden pedido", bs.length === ESPERADO.length && bs.every((x, i) => x.texto === ESPERADO[i].texto), bs.map((x) => x.texto).join(" | "));
   bs.forEach((x, i) => {
     const e = ESPERADO[i]; if (!e) return;
     ok(`«${e.texto}» lleva a su sitio`, e.href.test(x.href || ""), x.href);
     ok(`«${e.texto}» tiene su color`, x.fondo === e.fondo, x.fondo);
-    const k = contraste(x.fondo, x.color);
+    const k = contraste(e.sobre || x.fondo, x.color);
     ok(`«${e.texto}» se lee bien (contraste ≥ 4,5)`, k >= 4.5, k.toFixed(1));
   });
-  ok("misma forma: misma altura, esquinas y letra", bs.length === 3 && new Set(bs.map((x) => Math.round(x.h))).size === 1 && new Set(bs.map((x) => x.radio)).size === 1 && new Set(bs.map((x) => x.letra)).size === 1, bs.map((x) => `${Math.round(x.h)}px ${x.radio} ${x.letra}`).join(" | "));
+  ok("misma forma: misma altura, esquinas y letra", bs.length === 2 && new Set(bs.map((x) => Math.round(x.h))).size === 1 && new Set(bs.map((x) => x.radio)).size === 1 && new Set(bs.map((x) => x.letra)).size === 1, bs.map((x) => `${Math.round(x.h)}px ${x.radio} ${x.letra}`).join(" | "));
   ok("altura táctil ≥ 44 px", bs.every((x) => x.h >= 44), bs.map((x) => Math.round(x.h)).join(","));
-  if (nombre === "móvil") ok("en el teléfono van uno debajo del otro, a lo ancho", bs.length === 3 && bs[0].y < bs[1].y && bs[1].y < bs[2].y && new Set(bs.map((x) => Math.round(x.w))).size === 1, bs.map((x) => Math.round(x.w)).join(","));
-  else ok("en escritorio van en una fila", bs.length === 3 && new Set(bs.map((x) => Math.round(x.y))).size === 1);
+  if (nombre === "móvil") ok("en el teléfono van en una línea, del mismo ancho", bs.length === 2 && Math.round(bs[0].y) === Math.round(bs[1].y) && Math.abs(bs[0].w - bs[1].w) < 2, bs.map((x) => Math.round(x.w)).join(","));
+  else ok("en escritorio van en una fila", bs.length === 2 && new Set(bs.map((x) => Math.round(x.y))).size === 1);
   ok("no queda el «Acceder a mi perfil» que copiaba la capa", !(await p.locator("text=Acceder a mi perfil").count()));
   ok("la franja de cifras sigue en la portada (se oculta sin datos)", (await p.locator("#redcafe-cifras-red").count()) <= 1);
   await p.locator("#portada-hero").screenshot({ path: `${OUT}/portada-${nombre}.png` });
