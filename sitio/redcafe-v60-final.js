@@ -13,7 +13,7 @@ window.__redcafeReactListo = window.__redcafeReactListo || function () {
 (function () {
   "use strict";
 
-  var VERSION = "20261112f";
+  var VERSION = "20261112g";
   var WAPP = "593968641376";
   var path = normalizePath(location.pathname);
   var homeAuthChecking = false;
@@ -547,7 +547,7 @@ window.__redcafeReactListo = window.__redcafeReactListo || function () {
    propia al final de <body>, después de hidratar. */
 (function () {
   if (typeof window === "undefined" || !window.ResizeObserver) return;
-  var URL_SELLO = "/img/sello-redcafe.svg?v=20261112f";
+  var URL_SELLO = "/img/sello-redcafe.svg?v=20261112g";
   var capa = null, temporizador = 0, ultimaFirma = "";
   var BANDA = 120;
 
@@ -825,33 +825,35 @@ window.__redcafeReactListo = window.__redcafeReactListo || function () {
     ocultar();
   }
 
-  /* Barra de pestañas abajo (móvil), con iconos propios: muestra en qué
+  /* Barra de pestañas abajo (móvil), semitransparente y solo con iconos
+     propios (el nombre queda para lectores de pantalla): muestra en qué
      sección estás, se puede tocar y avisa de que se puede deslizar. Solo
      aparece en las siete páginas principales y por debajo de 1024 px. La
      burbuja de cursos y la barra fija del registro suben por encima. */
   function crearBarra() {
     var actual = indice();
-    if (actual < 0 || document.getElementById("rc-pestanas")) return;
+    // En el registro manda su propio botón flotante («Continuar con N perfiles»): ahí no va la barra.
+    if (actual < 0 || PAGINAS[actual][0] === "/afiliate/" || document.getElementById("rc-pestanas")) return;
     var est = document.createElement("style");
     est.textContent =
       "#rc-pestanas{position:fixed;left:0;right:0;bottom:0;z-index:9996;display:flex;justify-content:space-around;align-items:stretch;" +
-      "padding:0 4px env(safe-area-inset-bottom);background:rgba(255,253,249,.97);-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);" +
-      "border-top:1px solid rgba(59,26,12,.14);box-shadow:0 -4px 14px rgba(59,26,12,.10)}" +
+      "padding:0 4px env(safe-area-inset-bottom);background:rgba(255,253,249,.6);-webkit-backdrop-filter:blur(12px) saturate(1.4);backdrop-filter:blur(12px) saturate(1.4);" +
+      "border-top:1px solid rgba(255,255,255,.5);box-shadow:0 -2px 10px rgba(59,26,12,.08)}" +
       "#rc-pestanas a{position:relative;flex:1 1 0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;" +
-      "min-height:56px;padding:6px 2px 5px;color:#5c3d2e;text-decoration:none;white-space:nowrap;letter-spacing:-.01em;font:500 10.5px/1.1 Figtree,Inter,system-ui,sans-serif;" +
+      "min-height:48px;padding:0 2px;color:#3b1a0c;text-decoration:none;white-space:nowrap;letter-spacing:-.01em;font:500 10.5px/1.1 Figtree,Inter,system-ui,sans-serif;" +
       "border-radius:0 !important;transform:none !important;filter:none !important;-webkit-tap-highlight-color:transparent}" +
+      "#rc-pestanas a span{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}" +
       "#rc-pestanas svg{width:25px;height:25px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}" +
       "#rc-pestanas a[aria-current=page]{color:#8C3604;font-weight:700}" +
       "#rc-pestanas a[aria-current=page] svg{stroke-width:2.2}" +
-      "#rc-pestanas a[aria-current=page]::before{content:'';position:absolute;top:0;left:18%;right:18%;height:3px;background:#8C3604;border-radius:0 0 3px 3px}" +
+      "#rc-pestanas a[aria-current=page]::after{content:'';position:absolute;bottom:5px;left:50%;width:5px;height:5px;margin-left:-2.5px;background:#8C3604;border-radius:50%}" +
       "#rc-pestanas a:active{background:rgba(140,54,4,.07)}" +
       "#rc-pestanas.rc-vaiven svg{animation:rc-vaiven .9s ease-in-out .9s 1}" +
       "@keyframes rc-vaiven{0%,100%{transform:none}30%{transform:translateX(-5px)}60%{transform:translateX(4px)}}" +
-      "html.rc-con-pestanas body{padding-bottom:calc(57px + env(safe-area-inset-bottom))}" +
-      "html.rc-con-pestanas body .redcafe-hub.fixed.bottom-5{bottom:calc(72px + env(safe-area-inset-bottom)) !important}" +
-      "@media (max-width:399px){#rc-pestanas a{font-size:9.5px;letter-spacing:-.02em}}@media (max-width:349px){#rc-pestanas a{font-size:8.5px}#rc-pestanas svg{width:22px;height:22px}}" +
-      // En el registro ya hay una barra fija con el botón de crear la cuenta: esa manda.
-      "html.redcafe-con-boton-fijo #rc-pestanas{display:none}html.redcafe-con-boton-fijo.rc-con-pestanas body{padding-bottom:5.5rem}" +
+      "html.rc-con-pestanas body{padding-bottom:calc(48px + env(safe-area-inset-bottom))}" +
+      "html.rc-con-pestanas body .redcafe-hub.fixed.bottom-5{bottom:calc(60px + env(safe-area-inset-bottom)) !important}" +
+            // En el registro ya hay una barra fija con el botón de crear la cuenta: esa manda.
+      "html.redcafe-con-boton-fijo #rc-pestanas,html:has([data-redcafe-fijo]) #rc-pestanas{display:none}html.redcafe-con-boton-fijo.rc-con-pestanas body{padding-bottom:5.5rem}" +
       "html.redcafe-con-boton-fijo.rc-con-pestanas body .redcafe-hub.fixed.bottom-5{bottom:calc(5.5rem + env(safe-area-inset-bottom)) !important}" +
       "@media (prefers-reduced-motion:reduce){#rc-pestanas.rc-vaiven svg{animation:none}}" +
       "@media print,(min-width:1024px){#rc-pestanas{display:none}html.rc-con-pestanas body{padding-bottom:0}html.rc-con-pestanas body .redcafe-hub.fixed.bottom-5{bottom:calc(1rem + env(safe-area-inset-bottom)) !important}}";
