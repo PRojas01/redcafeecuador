@@ -13,7 +13,7 @@ window.__redcafeReactListo = window.__redcafeReactListo || function () {
 (function () {
   "use strict";
 
-  var VERSION = "20261112c";
+  var VERSION = "20261112d";
   var WAPP = "593968641376";
   var path = normalizePath(location.pathname);
   var homeAuthChecking = false;
@@ -547,7 +547,7 @@ window.__redcafeReactListo = window.__redcafeReactListo || function () {
    propia al final de <body>, después de hidratar. */
 (function () {
   if (typeof window === "undefined" || !window.ResizeObserver) return;
-  var URL_SELLO = "/img/sello-redcafe.svg?v=20261112c";
+  var URL_SELLO = "/img/sello-redcafe.svg?v=20261112d";
   var capa = null, temporizador = 0, ultimaFirma = "";
   var BANDA = 120;
 
@@ -690,8 +690,10 @@ window.__redcafeReactListo = window.__redcafeReactListo || function () {
 /* Deslizar para cambiar de página (móvil)
    ------------------------------------------------------------------
    En pantallas táctiles, deslizar el dedo hacia la izquierda abre la página
-   siguiente del menú y hacia la derecha la anterior, en ciclo: después de la
-   última vuelve a la primera y al revés. Solo actúa en las páginas del menú.
+   principal siguiente y hacia la derecha la anterior, en ciclo: después de la
+   última vuelve a la primera y al revés. Solo actúa en las cinco páginas
+   principales (Inicio, Marketplace, Servicios, Precios, Academia, Comunidad y
+   Crear perfil).
    No interfiere con lo que ya se desliza de lado: mapas, galerías, tablas o
    listas con desplazamiento horizontal, campos de texto, menús abiertos ni
    con el gesto «atrás» del navegador (se ignoran los toques en los bordes).
@@ -702,21 +704,15 @@ window.__redcafeReactListo = window.__redcafeReactListo || function () {
   if (window.__redcafeDeslizar) return;
   window.__redcafeDeslizar = true;
 
+  // Solo las páginas principales, en el orden de la barra de abajo.
   var PAGINAS = [
-    ["/", "Inicio"],
-    ["/marketplace/", "Marketplace"],
-    ["/servicios/", "Servicios"],
-    ["/servicios/precios/", "Precios"],
-    ["/academia/", "Academia"],
-    ["/comunidad/", "Comunidad"],
-    ["/quienes-somos/", "Quiénes somos"],
-    ["/noticias/", "Noticias"],
-    ["/recetas/", "Recetas"],
-    ["/bar/", "Bar / Cafeterías"],
-    ["/laboratorio/", "Laboratorio"],
-    ["/servicios/calculadora/", "Calculadora"],
-    ["/servicios/eudr/", "Trazabilidad / EUDR"],
-    ["/servicios/factura/", "Facturación"]
+    ["/", "Inicio", '<path d="M3 11.5 12 4l9 7.5"/><path d="M5.5 10v10h4.5v-6h4v6h4.5V10"/>'],
+    ["/marketplace/", "Marketplace", '<path d="M5 8.5h14l-1.2 11.5H6.2z"/><path d="M9 8.5V7a3 3 0 0 1 6 0v1.5"/><path d="M9.5 13.5c1.5 1.3 3.5 1.3 5 0"/>'],
+    ["/servicios/", "Servicios", '<rect x="3" y="7.5" width="18" height="12" rx="1.5"/><path d="M9 7.5V5h6v2.5"/><path d="M3 12.5h18"/><path d="M11 12.5h2v2h-2z"/>'],
+    ["/servicios/precios/", "Precios", '<path d="M3.5 20h17"/><path d="M5 15.5l4-4.5 3.5 3 6.5-7.5"/><path d="M15.5 6.5H19V10"/>'],
+    ["/academia/", "Academia", '<path d="M2.5 9.5 12 5l9.5 4.5L12 14z"/><path d="M6.5 11.5v4.5c0 1.4 2.5 3 5.5 3s5.5-1.6 5.5-3v-4.5"/><path d="M21.5 9.5v5"/>'],
+    ["/comunidad/", "Comunidad", '<circle cx="9" cy="8.5" r="3.2"/><path d="M3 19.5c0-3.3 2.7-6 6-6s6 2.7 6 6"/><circle cx="17" cy="9.5" r="2.5"/><path d="M16.5 13.6c2.6.3 4.5 2.6 4.5 5.4"/>'],
+    ["/afiliate/", "Crear perfil", '<circle cx="10" cy="8" r="3.5"/><path d="M3.5 20c0-3.6 2.9-6.5 6.5-6.5 1.3 0 2.5.4 3.5 1"/><path d="M18 13.5v6.5"/><path d="M14.8 16.75h6.4"/>']
   ];
   var UMBRAL = 90;      // px de recorrido horizontal para cambiar de página
   var BORDE = 24;       // px desde el borde que se dejan al gesto del navegador
@@ -829,47 +825,58 @@ window.__redcafeReactListo = window.__redcafeReactListo || function () {
     ocultar();
   }
 
-  /* Puntos flotantes abajo: uno por página del menú, el actual alargado.
-     Avisan de que se puede deslizar sin tapar nada: van centrados (la
-     burbuja de cursos está a la derecha), no reciben toques y suben por
-     encima de la barra fija del registro cuando existe. La primera vez que
-     se ven en la sesión dan un pequeño vaivén lateral. */
-  function crearPuntos() {
+  /* Barra de pestañas abajo (móvil), con iconos propios: muestra en qué
+     sección estás, se puede tocar y avisa de que se puede deslizar. Solo
+     aparece en las siete páginas principales y por debajo de 1024 px. La
+     burbuja de cursos y la barra fija del registro suben por encima. */
+  function crearBarra() {
     var actual = indice();
-    if (actual < 0 || document.getElementById("rc-deslizar-puntos")) return;
+    if (actual < 0 || document.getElementById("rc-pestanas")) return;
     var est = document.createElement("style");
     est.textContent =
-      "#rc-deslizar-puntos{position:fixed;left:50%;bottom:calc(12px + env(safe-area-inset-bottom));z-index:9997;" +
-      "transform:translateX(-50%);display:flex;align-items:center;gap:4px;padding:7px 9px;border-radius:999px;" +
-      "background:rgba(59,26,12,.62);-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px);pointer-events:none;" +
-      "box-shadow:0 4px 12px rgba(59,26,12,.25);transition:opacity .3s ease}" +
-      "#rc-deslizar-puntos i{display:block;width:5px;height:5px;border-radius:999px;background:#fbf6f0;opacity:.45}" +
-      "#rc-deslizar-puntos i.rc-actual{width:16px;opacity:1;background:#f7d08a}" +
-      "html.redcafe-con-boton-fijo #rc-deslizar-puntos{bottom:calc(5.9rem + env(safe-area-inset-bottom))}" +
-      "#rc-deslizar-puntos.rc-vaiven{animation:rc-vaiven 1.1s ease-in-out .8s 1}" +
-      "@keyframes rc-vaiven{0%,100%{transform:translateX(-50%)}30%{transform:translateX(calc(-50% - 14px))}60%{transform:translateX(calc(-50% + 10px))}}" +
-      "@media (prefers-reduced-motion:reduce){#rc-deslizar-puntos.rc-vaiven{animation:none}}" +
-      "@media print,(min-width:1024px) and (hover:hover){#rc-deslizar-puntos{display:none}}";
+      "#rc-pestanas{position:fixed;left:0;right:0;bottom:0;z-index:9996;display:flex;justify-content:space-around;align-items:stretch;" +
+      "padding:0 4px env(safe-area-inset-bottom);background:rgba(255,253,249,.97);-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);" +
+      "border-top:1px solid rgba(59,26,12,.14);box-shadow:0 -4px 14px rgba(59,26,12,.10)}" +
+      "#rc-pestanas a{position:relative;flex:1 1 0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;" +
+      "min-height:56px;padding:6px 2px 5px;color:#5c3d2e;text-decoration:none;white-space:nowrap;letter-spacing:-.01em;font:500 10.5px/1.1 Figtree,Inter,system-ui,sans-serif;" +
+      "border-radius:0 !important;transform:none !important;filter:none !important;-webkit-tap-highlight-color:transparent}" +
+      "#rc-pestanas svg{width:25px;height:25px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}" +
+      "#rc-pestanas a[aria-current=page]{color:#8C3604;font-weight:700}" +
+      "#rc-pestanas a[aria-current=page] svg{stroke-width:2.2}" +
+      "#rc-pestanas a[aria-current=page]::before{content:'';position:absolute;top:0;left:18%;right:18%;height:3px;background:#8C3604;border-radius:0 0 3px 3px}" +
+      "#rc-pestanas a:active{background:rgba(140,54,4,.07)}" +
+      "#rc-pestanas.rc-vaiven svg{animation:rc-vaiven .9s ease-in-out .9s 1}" +
+      "@keyframes rc-vaiven{0%,100%{transform:none}30%{transform:translateX(-5px)}60%{transform:translateX(4px)}}" +
+      "html.rc-con-pestanas body{padding-bottom:calc(57px + env(safe-area-inset-bottom))}" +
+      "html.rc-con-pestanas body .redcafe-hub.fixed.bottom-5{bottom:calc(72px + env(safe-area-inset-bottom)) !important}" +
+      "@media (max-width:399px){#rc-pestanas a{font-size:9.5px;letter-spacing:-.02em}}@media (max-width:349px){#rc-pestanas a{font-size:8.5px}#rc-pestanas svg{width:22px;height:22px}}" +
+      // En el registro ya hay una barra fija con el botón de crear la cuenta: esa manda.
+      "html.redcafe-con-boton-fijo #rc-pestanas{display:none}html.redcafe-con-boton-fijo.rc-con-pestanas body{padding-bottom:5.5rem}" +
+      "html.redcafe-con-boton-fijo.rc-con-pestanas body .redcafe-hub.fixed.bottom-5{bottom:calc(5.5rem + env(safe-area-inset-bottom)) !important}" +
+      "@media (prefers-reduced-motion:reduce){#rc-pestanas.rc-vaiven svg{animation:none}}" +
+      "@media print,(min-width:1024px){#rc-pestanas{display:none}html.rc-con-pestanas body{padding-bottom:0}html.rc-con-pestanas body .redcafe-hub.fixed.bottom-5{bottom:calc(1rem + env(safe-area-inset-bottom)) !important}}";
     document.head.appendChild(est);
-    var caja = document.createElement("div");
-    caja.id = "rc-deslizar-puntos";
-    caja.className = "fixed"; // el tema pone position:relative a los div sueltos del body que no la llevan
-    caja.setAttribute("aria-hidden", "true");
-    caja.title = "Desliza a los lados para cambiar de página";
+    var barra = document.createElement("nav");
+    barra.id = "rc-pestanas";
+    barra.className = "fixed"; // el tema pone position:relative a lo suelto del body que no la lleva
+    barra.setAttribute("aria-label", "Secciones principales");
+    barra.title = "Toca una sección o desliza a los lados";
+    var html = "";
     for (var i = 0; i < PAGINAS.length; i++) {
-      var p = document.createElement("i");
-      if (i === actual) p.className = "rc-actual";
-      caja.appendChild(p);
+      html += '<a href="' + PAGINAS[i][0] + '"' + (i === actual ? ' aria-current="page"' : "") + '>' +
+        '<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">' + PAGINAS[i][2] + "</svg><span>" + PAGINAS[i][1] + "</span></a>";
     }
+    barra.innerHTML = html;
     try {
-      if (!sessionStorage.getItem("rc-deslizar-visto")) { caja.classList.add("rc-vaiven"); sessionStorage.setItem("rc-deslizar-visto", "1"); }
+      if (!sessionStorage.getItem("rc-deslizar-visto")) { barra.classList.add("rc-vaiven"); sessionStorage.setItem("rc-deslizar-visto", "1"); }
     } catch (e) {}
-    document.body.appendChild(caja);
+    document.body.appendChild(barra);
+    document.documentElement.classList.add("rc-con-pestanas");
   }
 
   function iniciar() {
+    crearBarra();
     if (!("ontouchstart" in window) && !(navigator.maxTouchPoints > 0)) return;
-    crearPuntos();
     document.addEventListener("touchstart", alTocar, { passive: true });
     document.addEventListener("touchmove", alMover, { passive: true });
     document.addEventListener("touchend", alSoltar, { passive: true });
