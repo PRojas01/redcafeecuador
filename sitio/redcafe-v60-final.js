@@ -832,7 +832,8 @@ window.__redcafeReactListo = window.__redcafeReactListo || function () {
      burbuja de cursos y la barra fija del registro suben por encima. */
   function crearBarra() {
     var actual = indice();
-    if (actual < 0 || document.getElementById("rc-pestanas")) return;
+    // En el registro manda su propio botón flotante («Continuar con N perfiles»): ahí no va la barra.
+    if (actual < 0 || PAGINAS[actual][0] === "/afiliate/" || document.getElementById("rc-pestanas")) return;
     var est = document.createElement("style");
     est.textContent =
       "#rc-pestanas{position:fixed;left:0;right:0;bottom:0;z-index:9996;display:flex;justify-content:space-around;align-items:stretch;" +
@@ -852,7 +853,7 @@ window.__redcafeReactListo = window.__redcafeReactListo || function () {
       "html.rc-con-pestanas body{padding-bottom:calc(48px + env(safe-area-inset-bottom))}" +
       "html.rc-con-pestanas body .redcafe-hub.fixed.bottom-5{bottom:calc(60px + env(safe-area-inset-bottom)) !important}" +
             // En el registro ya hay una barra fija con el botón de crear la cuenta: esa manda.
-      "html.redcafe-con-boton-fijo #rc-pestanas{display:none}html.redcafe-con-boton-fijo.rc-con-pestanas body{padding-bottom:5.5rem}" +
+      "html.redcafe-con-boton-fijo #rc-pestanas,html:has([data-redcafe-fijo]) #rc-pestanas{display:none}html.redcafe-con-boton-fijo.rc-con-pestanas body{padding-bottom:5.5rem}" +
       "html.redcafe-con-boton-fijo.rc-con-pestanas body .redcafe-hub.fixed.bottom-5{bottom:calc(5.5rem + env(safe-area-inset-bottom)) !important}" +
       "@media (prefers-reduced-motion:reduce){#rc-pestanas.rc-vaiven svg{animation:none}}" +
       "@media print,(min-width:1024px){#rc-pestanas{display:none}html.rc-con-pestanas body{padding-bottom:0}html.rc-con-pestanas body .redcafe-hub.fixed.bottom-5{bottom:calc(1rem + env(safe-area-inset-bottom)) !important}}";
