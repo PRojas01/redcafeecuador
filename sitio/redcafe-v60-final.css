@@ -3656,7 +3656,7 @@ input[type="password"] { padding-right: 3.2rem; }
 #redcafe-guias .redcafe-guia-vacio { color: #6a645b; font-size: .8rem; }
 #redcafe-guias .redcafe-guia-academia { margin-top: .6rem; }
 #redcafe-guias .redcafe-guia-academia a { color: var(--rce-hoja, #3f6b4a); font-size: .82rem; font-weight: 700; text-decoration: none; }
-/* 20261111t guía: detalles, variedades por zona, «Siguiente» y «Llevar a la IA» */
+/* 20261112a guía: detalles, variedades por zona, «Siguiente» y «Llevar a la IA» */
 #redcafe-guias .redcafe-guia-detalles { color: #3f3b34; font-size: .82rem; line-height: 1.5; margin: .4rem 0 0; padding-left: 1.1rem; }
 #redcafe-guias .redcafe-guia-detalles li { margin: .2rem 0; }
 #redcafe-guias .redcafe-guia-zonas { background: rgba(63,107,74,.06); border-radius: .5rem; margin-top: .55rem; padding: .55rem .7rem; }
@@ -6198,7 +6198,7 @@ html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5):not(#o6):not(#o7):not(#o8):not
 html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5):not(#o6):not(#o7):not(#o8):not(#o9):not(#o10):not(#o11):not(#o12):not(#o13):not(#o14) body :is(.btn-primary, button.bg-cereza, button[class*="bg-cafe"]):disabled, html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5):not(#o6):not(#o7):not(#o8):not(#o9):not(#o10):not(#o11):not(#o12):not(#o13):not(#o14) body main .btn-primary:disabled { opacity: 1 !important; background-color: #e6d3c4 !important; background-image: none !important; color: #5e2402 !important; border-color: #d4b9a5 !important; box-shadow: none !important; }
 html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5):not(#o6):not(#o7):not(#o8):not(#o9):not(#o10):not(#o11):not(#o12):not(#o13):not(#o14) body :is([data-redcafe-route] main > div > section:first-child):is([data-redcafe-propio], [id^="redcafe-"], [class*="redcafe-"]):not([class*="hero"]) :is(h1, h2, h3, h4) { color: #2f2a24 !important; }
 
-/* ===== v20261111t · Fondo «crema tostada» y tarjetas compactas en móvil =====
+/* ===== v20261112a · Fondo «crema tostada» y tarjetas compactas en móvil =====
    Fondo: neutros teñidos con el tono del café (OKLCH h≈70, croma bajo) en vez del
    gris verdoso #f3f1ea. Jerarquía de superficies: página #fbf6f0 < sección alterna
    #f6ece1 < tarjeta blanca. Contraste medido (WCAG / APCA Lc):
@@ -6251,7 +6251,7 @@ html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5):not(#o6):not(#o7):not(#o8):not
 html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5):not(#o6):not(#o7):not(#o8):not(#o9):not(#o10):not(#o11):not(#o12):not(#o13):not(#o14):not(#o15):not(#o16):not(#o17) body :is([data-redcafe-route] main > div > section:first-child):is([data-redcafe-propio], [id^="redcafe-"], [class*="redcafe-"]):not([class*="hero"]),
 html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5):not(#o6):not(#o7):not(#o8):not(#o9):not(#o10):not(#o11):not(#o12):not(#o13):not(#o14):not(#o15):not(#o16):not(#o17) body main section.bg-crema-oscuro,
 html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5):not(#o6):not(#o7):not(#o8):not(#o9):not(#o10):not(#o11):not(#o12):not(#o13):not(#o14):not(#o15):not(#o16):not(#o17) body #redcafe-afil-guia,
-html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5):not(#o6):not(#o7):not(#o8):not(#o9):not(#o10):not(#o11):not(#o12):not(#o13):not(#o14):not(#o15):not(#o16):not(#o17) body :is(#forma-parte, #redcafe-home-price-strip) { background-image: url("/img/textura-saco.webp?v=20261111t") !important; background-size: 240px 240px !important; background-repeat: repeat !important; }
+html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5):not(#o6):not(#o7):not(#o8):not(#o9):not(#o10):not(#o11):not(#o12):not(#o13):not(#o14):not(#o15):not(#o16):not(#o17) body :is(#forma-parte, #redcafe-home-price-strip) { background-image: url("/img/textura-saco.webp?v=20261112a") !important; background-size: 240px 240px !important; background-repeat: repeat !important; }
 /* Marketplace (2026-11-11): filtros arriba y mapa debajo (orden en React); aviso de dos dedos en el mapa táctil. */
 html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5):not(#o6):not(#o7):not(#o8):not(#o9):not(#o10):not(#o11):not(#o12):not(#o13):not(#o14):not(#o15):not(#o16):not(#o17) body .redcafe-mapa-aviso { margin: 8px 8px 0 0 !important; padding: 4px 9px; border-radius: 6px; background: rgba(255, 255, 255, .94); color: #3b1a0c; font: 600 12px/1.3 Inter, system-ui, sans-serif; box-shadow: 0 1px 4px rgba(59, 26, 12, .18); pointer-events: none; }
 html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5):not(#o6):not(#o7):not(#o8):not(#o9):not(#o10):not(#o11):not(#o12):not(#o13):not(#o14):not(#o15):not(#o16):not(#o17) body [data-redcafe-pestanas]:first-child { margin-top: 0 !important; }
@@ -6261,15 +6261,15 @@ html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5):not(#o6):not(#o7):not(#o8):not
   html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5):not(#o6):not(#o7):not(#o8):not(#o9):not(#o10):not(#o11):not(#o12):not(#o13):not(#o14):not(#o15):not(#o16):not(#o17) body .redcafe-market-publicar > * { width: 100% !important; min-width: 0 !important; padding-left: .4rem !important; padding-right: .4rem !important; white-space: nowrap; font-size: clamp(.8rem, 3.6vw, .95rem) !important; justify-content: center; text-align: center; }
 }
 /* Portada: la zona del título y subtítulo lleva la textura de saco y el sello de Red Café (tinta al 34 %), solo en huecos sin texto. */
-html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5):not(#o6):not(#o7):not(#o8):not(#o9):not(#o10):not(#o11):not(#o12):not(#o13):not(#o14):not(#o15):not(#o16):not(#o17) body #portada-hero { background-image: url("/img/textura-saco.webp?v=20261111t"), linear-gradient(180deg, #ffffff 0%, #f8efe0 100%) !important; background-size: 240px 240px, auto !important; background-repeat: repeat, no-repeat !important; }
+html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5):not(#o6):not(#o7):not(#o8):not(#o9):not(#o10):not(#o11):not(#o12):not(#o13):not(#o14):not(#o15):not(#o16):not(#o17) body #portada-hero { background-image: url("/img/textura-saco.webp?v=20261112a"), linear-gradient(180deg, #ffffff 0%, #f8efe0 100%) !important; background-size: 240px 240px, auto !important; background-repeat: repeat, no-repeat !important; }
 @media (max-width: 767px) {
-  html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5):not(#o6):not(#o7):not(#o8):not(#o9):not(#o10):not(#o11):not(#o12):not(#o13):not(#o14):not(#o15):not(#o16):not(#o17) body #portada-hero { background-image: url("/img/sello-redcafe.svg?v=20261111t"), url("/img/textura-saco.webp?v=20261111t"), linear-gradient(180deg, #ffffff 0%, #f8efe0 100%) !important; background-size: 80px 80px, 240px 240px, auto !important; background-repeat: no-repeat, repeat, no-repeat !important; background-position: right 10px top 6px, 0 0, 0 0 !important; }
+  html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5):not(#o6):not(#o7):not(#o8):not(#o9):not(#o10):not(#o11):not(#o12):not(#o13):not(#o14):not(#o15):not(#o16):not(#o17) body #portada-hero { background-image: url("/img/sello-redcafe.svg?v=20261112a"), url("/img/textura-saco.webp?v=20261112a"), linear-gradient(180deg, #ffffff 0%, #f8efe0 100%) !important; background-size: 80px 80px, 240px 240px, auto !important; background-repeat: no-repeat, repeat, no-repeat !important; background-position: right 10px top 6px, 0 0, 0 0 !important; }
 }
 @media (min-width: 768px) {
-  html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5):not(#o6):not(#o7):not(#o8):not(#o9):not(#o10):not(#o11):not(#o12):not(#o13):not(#o14):not(#o15):not(#o16):not(#o17) body #portada-hero { background-image: url("/img/sello-redcafe.svg?v=20261111t"), url("/img/sello-redcafe.svg?v=20261111t"), url("/img/textura-saco.webp?v=20261111t"), linear-gradient(180deg, #ffffff 0%, #f8efe0 100%) !important; background-size: 140px 140px, 100px 100px, 240px 240px, auto !important; background-repeat: no-repeat, no-repeat, repeat, no-repeat !important; background-position: calc(50% - 110px) calc(100% - 14px), calc(50% + 60px) 22px, 0 0, 0 0 !important; }
+  html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5):not(#o6):not(#o7):not(#o8):not(#o9):not(#o10):not(#o11):not(#o12):not(#o13):not(#o14):not(#o15):not(#o16):not(#o17) body #portada-hero { background-image: url("/img/sello-redcafe.svg?v=20261112a"), url("/img/sello-redcafe.svg?v=20261112a"), url("/img/textura-saco.webp?v=20261112a"), linear-gradient(180deg, #ffffff 0%, #f8efe0 100%) !important; background-size: 140px 140px, 100px 100px, 240px 240px, auto !important; background-repeat: no-repeat, no-repeat, repeat, no-repeat !important; background-position: calc(50% - 110px) calc(100% - 14px), calc(50% + 60px) 22px, 0 0, 0 0 !important; }
 }
 
-/* ---------- Efectos de entrada y movimiento (11-nov-2026, v20261111t) -----
+/* ---------- Efectos de entrada y movimiento (11-nov-2026, v20261112a) -----
    Solo CSS: no toca el DOM ni la hidratación de React. Todo dentro de
    «prefers-reduced-motion: no-preference». La aparición al bajar usa
    animation-timeline (navegadores que no la soportan muestran todo quieto)
@@ -6327,7 +6327,7 @@ html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5):not(#o6):not(#o7):not(#o8):not
   html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5):not(#o6):not(#o7):not(#o8):not(#o9):not(#o10):not(#o11):not(#o12):not(#o13):not(#o14):not(#o15):not(#o16):not(#o17):not(#o18) body main :is(.rc-collage-foto, #perfiles a.group, #forma-parte a.rounded-xl, a.rounded-2xl, a.rounded-xl):active { transform: scale(.98) !important; transition: transform .12s ease !important; }
 }
 
-/* ---------- Botones que invitan a tocarlos (11-nov-2026, v20261111t) ------
+/* ---------- Botones que invitan a tocarlos (11-nov-2026, v20261112a) ------
    Halo que late en los botones principales, destello al pasar el ratón y
    elevación con sombra. Solo CSS y solo sin «reducir movimiento». */
 @keyframes rc-ef-halo { 0% { outline: 0 solid rgba(247, 208, 138, .0); outline-offset: 0; } 6% { outline: 3px solid rgba(247, 208, 138, .9); outline-offset: 0; } 40%, 100% { outline: 3px solid rgba(247, 208, 138, 0); outline-offset: 6px; } }
@@ -6386,4 +6386,111 @@ html:not(#p1):not(#p2):not(#p3):not(#p4):not(#p5):not(#p6):not(#p7):not(#p8):not
   html:not(#p1):not(#p2):not(#p3):not(#p4):not(#p5):not(#p6):not(#p7):not(#p8):not(#p9):not(#p10):not(#p11):not(#p12):not(#p13):not(#p14):not(#p15):not(#p16):not(#p17):not(#p18):not(#p19):not(#p20) body[data-redcafe-route="/panel/"] main p.rounded-2xl > a { display: inline-flex; align-items: center; min-height: 40px; }
   /* Campos y filtros con altura táctil de 44 px. */
   html:not(#p1):not(#p2):not(#p3):not(#p4):not(#p5):not(#p6):not(#p7):not(#p8):not(#p9):not(#p10):not(#p11):not(#p12):not(#p13):not(#p14):not(#p15):not(#p16):not(#p17):not(#p18):not(#p19):not(#p20) body[data-redcafe-route="/panel/"] main :is(select, input:not([type="checkbox"]):not([type="radio"]):not([type="range"]):not([type="file"])) { min-height: 44px; }
+}
+
+/* ==========================================================================
+   v20261112a · Acabado «impreso en papel», botones unificados y movimiento
+   (12-nov-2026). Solo CSS, sin cambiar la paleta ni la estructura.
+   1. Títulos con Figtree (OFL; alternativa libre a Alibaba Sans, que es
+      propietaria de Alibaba/Monotype).
+   2. Todos los botones: mismo radio mínimo (4px), relieve de papel, brillo
+      superior translúcido y luz de fondo (como la referencia).
+   3. Portada: «Crear cuenta gratis» y «Entrar» con el estilo de «Publicar un
+      lote» / «Publicar un servicio» del Marketplace.
+   4. Grano de papel sobre toda la página y tarjetas como cartulina impresa.
+   5. Aparición al bajar en todas las vistas; collage con movimiento.
+   ========================================================================== */
+@font-face { font-family: "Figtree"; src: url("/fonts/figtree-latin-600.woff2") format("woff2"); font-weight: 500 650; font-style: normal; font-display: swap; }
+@font-face { font-family: "Figtree"; src: url("/fonts/figtree-latin-700.woff2") format("woff2"); font-weight: 651 900; font-style: normal; font-display: swap; }
+:root { --rc-radio-boton: 4px; --rc-titulos: "Figtree", "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, system-ui, sans-serif; }
+
+/* 1. Títulos y subtítulos */
+html:not(#q1):not(#q2):not(#q3):not(#q4):not(#q5):not(#q6):not(#q7):not(#q8):not(#q9):not(#q10):not(#q11):not(#q12):not(#q13):not(#q14):not(#q15):not(#q16):not(#q17):not(#q18):not(#q19):not(#q20) body :is(h1, h2, h3, h4, .font-titulo, .marca, .rc-collage-t) { font-family: var(--rc-titulos) !important; letter-spacing: -.012em; }
+html:not(#q1):not(#q2):not(#q3):not(#q4):not(#q5):not(#q6):not(#q7):not(#q8):not(#q9):not(#q10):not(#q11):not(#q12):not(#q13):not(#q14):not(#q15):not(#q16):not(#q17):not(#q18):not(#q19):not(#q20) body :is(h1, h2) { font-weight: 700 !important; }
+html:not(#q1):not(#q2):not(#q3):not(#q4):not(#q5):not(#q6):not(#q7):not(#q8):not(#q9):not(#q10):not(#q11):not(#q12):not(#q13):not(#q14):not(#q15):not(#q16):not(#q17):not(#q18):not(#q19):not(#q20) body :is(h3, h4) { font-weight: 650; }
+
+/* 2. Botones: un solo radio en toda la plataforma */
+html:not(#q1):not(#q2):not(#q3):not(#q4):not(#q5):not(#q6):not(#q7):not(#q8):not(#q9):not(#q10):not(#q11):not(#q12):not(#q13):not(#q14):not(#q15):not(#q16):not(#q17):not(#q18):not(#q19):not(#q20) body :is(button, [role="button"], input[type="submit"], input[type="button"], input[type="reset"], select, summary, .btn-primary, .btn-accent, .btn-ghost, .boton, .rc-collage-cta, .redcafe-ver-clave, .redcafe-action-row a, .redcafe-muro-filtro, .redcafe-col-boton, .redcafe-afil-vermas, .redcafe-afil-cta, .redcafe-resp-crear, .redcafe-costes-cta, [class*="redcafe-"][class*="-cta"], a.rounded-full, a.rounded-lg, a.rounded-md, a.rounded, a.rounded-xl.inline-flex, a.inline-flex.min-h-11, a.inline-flex.min-h-10, header nav a, footer a[class*="border"], footer li > a):not(.redcafe-hub *):not(.redcafe-hub):not(.rc-collage-foto):not(.group.rounded-2xl):not([class*="h-2 "]):not([class*="h-3 "]):not([class*="w-2 "]):not([class*="w-3 "]) { border-radius: var(--rc-radio-boton) !important; }
+@layer base { html body :is(button, [role="button"], input[type="submit"], input[type="button"], input[type="reset"], select, summary, .btn-primary, .btn-accent, .btn-ghost, .boton, .rc-collage-cta, .redcafe-ver-clave, .redcafe-action-row a, .redcafe-muro-filtro, .redcafe-col-boton, .redcafe-afil-vermas, .redcafe-afil-cta, .redcafe-resp-crear, .redcafe-costes-cta, [class*="redcafe-"][class*="-cta"], a.rounded-full, a.rounded-lg, a.rounded-md, a.rounded, a.rounded-xl.inline-flex, a.inline-flex.min-h-11, a.inline-flex.min-h-10, header nav a, footer a[class*="border"], footer li > a):not(.redcafe-hub *):not(.redcafe-hub):not(.rc-collage-foto):not(.group.rounded-2xl):not([class*="h-2 "]):not([class*="h-3 "]):not([class*="w-2 "]):not([class*="w-3 "]) { border-radius: var(--rc-radio-boton) !important; } }
+/* Relieve de papel con brillo translúcido arriba y luz de fondo cálida */
+html:not(#q1):not(#q2):not(#q3):not(#q4):not(#q5):not(#q6):not(#q7):not(#q8):not(#q9):not(#q10):not(#q11):not(#q12):not(#q13):not(#q14):not(#q15):not(#q16):not(#q17):not(#q18):not(#q19):not(#q20) body :is(.btn-primary, .btn-accent, button[class*="bg-cafe"], button[class*="bg-cereza"], a[class*="bg-cafe"].rounded-full, a[class*="bg-cereza"].rounded-full, button[type="submit"]:not([class*="bg-transparent"]), .redcafe-afil-cta, .redcafe-costes-cta, .redcafe-resp-crear):not(.redcafe-hub *) {
+  background-image: linear-gradient(180deg, rgba(255, 255, 255, .22) 0%, rgba(255, 255, 255, .06) 48%, rgba(0, 0, 0, .06) 100%) !important;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, .55), inset 0 -1px 0 rgba(60, 22, 2, .16), 0 1px 2px rgba(60, 22, 2, .18), 0 8px 22px -6px rgba(247, 176, 90, .55) !important;
+}
+html:not(#q1):not(#q2):not(#q3):not(#q4):not(#q5):not(#q6):not(#q7):not(#q8):not(#q9):not(#q10):not(#q11):not(#q12):not(#q13):not(#q14):not(#q15):not(#q16):not(#q17):not(#q18):not(#q19):not(#q20) body .btn-ghost { -webkit-backdrop-filter: blur(6px) saturate(1.2); backdrop-filter: blur(6px) saturate(1.2); box-shadow: inset 0 1px 0 rgba(255, 255, 255, .28), 0 6px 18px -8px rgba(247, 176, 90, .45) !important; }
+
+/* 3. Portada: mismos botones que el Marketplace («Publicar un lote» / «Publicar un servicio») */
+html:not(#q1):not(#q2):not(#q3):not(#q4):not(#q5):not(#q6):not(#q7):not(#q8):not(#q9):not(#q10):not(#q11):not(#q12):not(#q13):not(#q14):not(#q15):not(#q16):not(#q17):not(#q18):not(#q19):not(#q20) body #portada-hero .portada-botones a.btn-registro {
+  background-color: #fbfaf7 !important; color: #8c3604 !important; border: 1px solid rgba(140, 54, 4, .42) !important;
+  background-image: linear-gradient(180deg, #ffffff 0%, #fbfaf7 55%, #f3ebe0 100%) !important;
+  box-shadow: inset 0 1px 0 #fff, inset 0 -1px 0 rgba(140, 54, 4, .12), 0 1px 2px rgba(60, 22, 2, .16), 0 10px 26px -8px rgba(247, 176, 90, .75) !important;
+}
+html:not(#q1):not(#q2):not(#q3):not(#q4):not(#q5):not(#q6):not(#q7):not(#q8):not(#q9):not(#q10):not(#q11):not(#q12):not(#q13):not(#q14):not(#q15):not(#q16):not(#q17):not(#q18):not(#q19):not(#q20) body #portada-hero .portada-botones a.btn-accent:not(.btn-registro) {
+  background-color: rgba(255, 255, 255, .38) !important; background-image: none !important; color: #8c3604 !important; border: 1.5px solid #8c3604 !important;
+  -webkit-backdrop-filter: blur(6px) saturate(1.2); backdrop-filter: blur(6px) saturate(1.2);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, .7), 0 6px 18px -8px rgba(140, 54, 4, .35) !important;
+}
+
+/* 4. Acabado de papel impreso: grano fino sobre todo (también sobre el texto, como tinta) */
+html:not(#q1):not(#q2):not(#q3):not(#q4):not(#q5):not(#q6):not(#q7):not(#q8):not(#q9):not(#q10):not(#q11):not(#q12):not(#q13):not(#q14):not(#q15):not(#q16):not(#q17):not(#q18):not(#q19):not(#q20) body::after {
+  content: ""; position: fixed; inset: 0; z-index: 2147483000; pointer-events: none;
+  background: url("/img/textura-papel.webp?v=20261112a") 0 0 / 256px 256px repeat; mix-blend-mode: multiply; opacity: .9;
+}
+/* Tarjetas claras como cartulina: borde de papel, canto iluminado y sombra larga y suave */
+html:not(#q1):not(#q2):not(#q3):not(#q4):not(#q5):not(#q6):not(#q7):not(#q8):not(#q9):not(#q10):not(#q11):not(#q12):not(#q13):not(#q14):not(#q15):not(#q16):not(#q17):not(#q18):not(#q19):not(#q20) body main :is(.bg-white, .bg-cream-50, article.rounded-2xl, div.rounded-2xl.border, div.rounded-xl.border, a.group.rounded-2xl, .redcafe-card, .rce-card):not(section):not(#portada-hero):not(#portada-hero *):not(button):not(.btn-primary):not(.btn-accent) {
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, .9), 0 1px 1px rgba(60, 22, 2, .05), 0 3px 6px -2px rgba(60, 22, 2, .07), 0 18px 34px -18px rgba(60, 22, 2, .28) !important;
+  border-color: rgba(140, 54, 4, .1) !important;
+}
+/* Separadores finos color café, como en una tarjeta impresa */
+html:not(#q1):not(#q2):not(#q3):not(#q4):not(#q5):not(#q6):not(#q7):not(#q8):not(#q9):not(#q10):not(#q11):not(#q12):not(#q13):not(#q14):not(#q15):not(#q16):not(#q17):not(#q18):not(#q19):not(#q20) body main hr { border: 0; border-top: 1px solid rgba(140, 54, 4, .22); }
+
+/* Sellos: tinta más oscura «quemada» sobre el fondo (el SVG ya trae el halo chamuscado) */
+html:not(#q1):not(#q2):not(#q3):not(#q4):not(#q5):not(#q6):not(#q7):not(#q8):not(#q9):not(#q10):not(#q11):not(#q12):not(#q13):not(#q14):not(#q15):not(#q16):not(#q17):not(#q18):not(#q19):not(#q20) body .redcafe-sellos > div { opacity: 1 !important; filter: contrast(1.08); }
+
+/* Collage de la portada: texto 2px más pequeño */
+html:not(#q1):not(#q2):not(#q3):not(#q4):not(#q5):not(#q6):not(#q7):not(#q8):not(#q9):not(#q10):not(#q11):not(#q12):not(#q13):not(#q14):not(#q15):not(#q16):not(#q17):not(#q18):not(#q19):not(#q20) body #rc-collage .rc-collage-t { font-size: 14px !important; }
+html:not(#q1):not(#q2):not(#q3):not(#q4):not(#q5):not(#q6):not(#q7):not(#q8):not(#q9):not(#q10):not(#q11):not(#q12):not(#q13):not(#q14):not(#q15):not(#q16):not(#q17):not(#q18):not(#q19):not(#q20) body #rc-collage .rc-collage-sub { font-size: 11px !important; }
+html:not(#q1):not(#q2):not(#q3):not(#q4):not(#q5):not(#q6):not(#q7):not(#q8):not(#q9):not(#q10):not(#q11):not(#q12):not(#q13):not(#q14):not(#q15):not(#q16):not(#q17):not(#q18):not(#q19):not(#q20) body #rc-collage .rc-collage-cta { font-size: 12px !important; }
+@media (min-width: 768px) {
+  html:not(#q1):not(#q2):not(#q3):not(#q4):not(#q5):not(#q6):not(#q7):not(#q8):not(#q9):not(#q10):not(#q11):not(#q12):not(#q13):not(#q14):not(#q15):not(#q16):not(#q17):not(#q18):not(#q19):not(#q20) body #rc-collage .rc-collage-t { font-size: 19.76px !important; }
+  html:not(#q1):not(#q2):not(#q3):not(#q4):not(#q5):not(#q6):not(#q7):not(#q8):not(#q9):not(#q10):not(#q11):not(#q12):not(#q13):not(#q14):not(#q15):not(#q16):not(#q17):not(#q18):not(#q19):not(#q20) body #rc-collage .rc-collage-sub { font-size: 13px !important; }
+  html:not(#q1):not(#q2):not(#q3):not(#q4):not(#q5):not(#q6):not(#q7):not(#q8):not(#q9):not(#q10):not(#q11):not(#q12):not(#q13):not(#q14):not(#q15):not(#q16):not(#q17):not(#q18):not(#q19):not(#q20) body #rc-collage .rc-collage-cta { font-size: 13px !important; }
+}
+
+/* 5. Movimiento en todas las vistas (solo sin «reducir movimiento») */
+@keyframes rc-ef-entrar { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: none; } }
+@keyframes rc-ef-zoom { from { transform: scale(1); } to { transform: scale(1.09); } }
+@keyframes rc-ef-flecha { 0%, 70%, 100% { transform: translateX(0); } 80% { transform: translateX(4px); } 90% { transform: translateX(-1px); } }
+@keyframes rc-ef-halo-cafe { 0% { outline: 0 solid rgba(140, 54, 4, 0); outline-offset: 0; } 6% { outline: 3px solid rgba(140, 54, 4, .55); outline-offset: 0; } 40%, 100% { outline: 3px solid rgba(140, 54, 4, 0); outline-offset: 6px; } }
+@media (prefers-reduced-motion: no-preference) {
+  /* Encabezado de cada página: título, texto y botones entran escalonados al cargar */
+  html:not(#q1):not(#q2):not(#q3):not(#q4):not(#q5):not(#q6):not(#q7):not(#q8):not(#q9):not(#q10):not(#q11):not(#q12):not(#q13):not(#q14):not(#q15):not(#q16):not(#q17):not(#q18):not(#q19):not(#q20) body main > :first-child :is(h1, h1 + p, .portada-botones) ,
+  html:not(#q1):not(#q2):not(#q3):not(#q4):not(#q5):not(#q6):not(#q7):not(#q8):not(#q9):not(#q10):not(#q11):not(#q12):not(#q13):not(#q14):not(#q15):not(#q16):not(#q17):not(#q18):not(#q19):not(#q20) body main > section:first-of-type :is(h1, h1 + p) { animation: rc-ef-entrar .7s cubic-bezier(.2, .7, .2, 1) both; }
+  html:not(#q1):not(#q2):not(#q3):not(#q4):not(#q5):not(#q6):not(#q7):not(#q8):not(#q9):not(#q10):not(#q11):not(#q12):not(#q13):not(#q14):not(#q15):not(#q16):not(#q17):not(#q18):not(#q19):not(#q20) body main :is(h1 + p) { animation-delay: .12s; }
+  html:not(#q1):not(#q2):not(#q3):not(#q4):not(#q5):not(#q6):not(#q7):not(#q8):not(#q9):not(#q10):not(#q11):not(#q12):not(#q13):not(#q14):not(#q15):not(#q16):not(#q17):not(#q18):not(#q19):not(#q20) body main .portada-botones { animation-delay: .24s; }
+  /* Al bajar: secciones, tarjetas, listas y fotos de cualquier página */
+  @supports (animation-timeline: view()) {
+    html:not(#q1):not(#q2):not(#q3):not(#q4):not(#q5):not(#q6):not(#q7):not(#q8):not(#q9):not(#q10):not(#q11):not(#q12):not(#q13):not(#q14):not(#q15):not(#q16):not(#q17):not(#q18):not(#q19):not(#q20) body main :is(
+      section > div > :is(h2, h3, p, .grid, ul, ol, form, img, figure),
+      .grid > :is(a, article, div, li),
+      ul.grid > li, article, figure, .redcafe-card, .rce-card, [class*="redcafe-"][class*="-tarjeta"]
+    ):not(#portada-hero *):not(form *):not(nav *):not(dialog *):not([role="dialog"] *):not(.sticky):not(.fixed):not(.redcafe-hub *):not(#rc-collage .rc-collage-foto *) {
+      animation: rc-ef-subir linear both; animation-timeline: view(); animation-range: entry 0% entry 70%;
+    }
+    html:not(#q1):not(#q2):not(#q3):not(#q4):not(#q5):not(#q6):not(#q7):not(#q8):not(#q9):not(#q10):not(#q11):not(#q12):not(#q13):not(#q14):not(#q15):not(#q16):not(#q17):not(#q18):not(#q19):not(#q20) body footer :is(nav, ul, div > p) { animation: rc-ef-subir linear both; animation-timeline: view(); animation-range: entry 0% entry 80%; }
+  }
+  /* Collage: las fotos se acercan despacio y la flecha invita a tocar */
+  html:not(#q1):not(#q2):not(#q3):not(#q4):not(#q5):not(#q6):not(#q7):not(#q8):not(#q9):not(#q10):not(#q11):not(#q12):not(#q13):not(#q14):not(#q15):not(#q16):not(#q17):not(#q18):not(#q19):not(#q20) body #rc-collage .rc-collage-foto img { animation: rc-ef-zoom 14s ease-in-out infinite alternate; }
+  html:not(#q1):not(#q2):not(#q3):not(#q4):not(#q5):not(#q6):not(#q7):not(#q8):not(#q9):not(#q10):not(#q11):not(#q12):not(#q13):not(#q14):not(#q15):not(#q16):not(#q17):not(#q18):not(#q19):not(#q20) body #rc-collage .rc-collage-foto:nth-child(2) img { animation-delay: -3.5s; }
+  html:not(#q1):not(#q2):not(#q3):not(#q4):not(#q5):not(#q6):not(#q7):not(#q8):not(#q9):not(#q10):not(#q11):not(#q12):not(#q13):not(#q14):not(#q15):not(#q16):not(#q17):not(#q18):not(#q19):not(#q20) body #rc-collage .rc-collage-foto:nth-child(3) img { animation-delay: -7s; }
+  html:not(#q1):not(#q2):not(#q3):not(#q4):not(#q5):not(#q6):not(#q7):not(#q8):not(#q9):not(#q10):not(#q11):not(#q12):not(#q13):not(#q14):not(#q15):not(#q16):not(#q17):not(#q18):not(#q19):not(#q20) body #rc-collage .rc-collage-foto:nth-child(4) img { animation-delay: -10.5s; }
+  html:not(#q1):not(#q2):not(#q3):not(#q4):not(#q5):not(#q6):not(#q7):not(#q8):not(#q9):not(#q10):not(#q11):not(#q12):not(#q13):not(#q14):not(#q15):not(#q16):not(#q17):not(#q18):not(#q19):not(#q20) body #rc-collage .rc-collage-cta { animation: rc-ef-flecha 3s 1s ease-in-out infinite; }
+  @media (hover: hover) { html:not(#q1):not(#q2):not(#q3):not(#q4):not(#q5):not(#q6):not(#q7):not(#q8):not(#q9):not(#q10):not(#q11):not(#q12):not(#q13):not(#q14):not(#q15):not(#q16):not(#q17):not(#q18):not(#q19):not(#q20) body #rc-collage .rc-collage-foto:hover img { animation-play-state: paused; transform: scale(1.12); } }
+  /* Todos los botones (no solo .btn-*) suben un poco al pasar el ratón y se hunden al tocar */
+  html:not(#q1):not(#q2):not(#q3):not(#q4):not(#q5):not(#q6):not(#q7):not(#q8):not(#q9):not(#q10):not(#q11):not(#q12):not(#q13):not(#q14):not(#q15):not(#q16):not(#q17):not(#q18):not(#q19):not(#q20) body :is(button, [role="button"], input[type="submit"], input[type="button"], input[type="reset"], select, summary, .btn-primary, .btn-accent, .btn-ghost, .boton, .rc-collage-cta, .redcafe-ver-clave, .redcafe-action-row a, .redcafe-muro-filtro, .redcafe-col-boton, .redcafe-afil-vermas, .redcafe-afil-cta, .redcafe-resp-crear, .redcafe-costes-cta, [class*="redcafe-"][class*="-cta"], a.rounded-full, a.rounded-lg, a.rounded-md, a.rounded, a.rounded-xl.inline-flex, a.inline-flex.min-h-11, a.inline-flex.min-h-10, header nav a, footer a[class*="border"], footer li > a):not(.redcafe-hub *):not(.redcafe-hub):not(.rc-collage-foto):not(.group.rounded-2xl):not([class*="h-2 "]):not([class*="h-3 "]):not([class*="w-2 "]):not([class*="w-3 "]) { transition: transform .2s cubic-bezier(.2, .7, .2, 1), filter .2s ease, background-color .2s ease, box-shadow .2s ease !important; }
+  @media (hover: hover) { html:not(#q1):not(#q2):not(#q3):not(#q4):not(#q5):not(#q6):not(#q7):not(#q8):not(#q9):not(#q10):not(#q11):not(#q12):not(#q13):not(#q14):not(#q15):not(#q16):not(#q17):not(#q18):not(#q19):not(#q20) body :is(button, [role="button"], input[type="submit"], input[type="button"], input[type="reset"], select, summary, .btn-primary, .btn-accent, .btn-ghost, .boton, .rc-collage-cta, .redcafe-ver-clave, .redcafe-action-row a, .redcafe-muro-filtro, .redcafe-col-boton, .redcafe-afil-vermas, .redcafe-afil-cta, .redcafe-resp-crear, .redcafe-costes-cta, [class*="redcafe-"][class*="-cta"], a.rounded-full, a.rounded-lg, a.rounded-md, a.rounded, a.rounded-xl.inline-flex, a.inline-flex.min-h-11, a.inline-flex.min-h-10, header nav a, footer a[class*="border"], footer li > a):not(.redcafe-hub *):not(.redcafe-hub):not(.rc-collage-foto):not(.group.rounded-2xl):not([class*="h-2 "]):not([class*="h-3 "]):not([class*="w-2 "]):not([class*="w-3 "]):hover { transform: translateY(-2px) !important; filter: brightness(1.04) drop-shadow(0 6px 10px rgba(60, 22, 2, .22)); } }
+  html:not(#q1):not(#q2):not(#q3):not(#q4):not(#q5):not(#q6):not(#q7):not(#q8):not(#q9):not(#q10):not(#q11):not(#q12):not(#q13):not(#q14):not(#q15):not(#q16):not(#q17):not(#q18):not(#q19):not(#q20) body :is(button, [role="button"], input[type="submit"], input[type="button"], input[type="reset"], select, summary, .btn-primary, .btn-accent, .btn-ghost, .boton, .rc-collage-cta, .redcafe-ver-clave, .redcafe-action-row a, .redcafe-muro-filtro, .redcafe-col-boton, .redcafe-afil-vermas, .redcafe-afil-cta, .redcafe-resp-crear, .redcafe-costes-cta, [class*="redcafe-"][class*="-cta"], a.rounded-full, a.rounded-lg, a.rounded-md, a.rounded, a.rounded-xl.inline-flex, a.inline-flex.min-h-11, a.inline-flex.min-h-10, header nav a, footer a[class*="border"], footer li > a):not(.redcafe-hub *):not(.redcafe-hub):not(.rc-collage-foto):not(.group.rounded-2xl):not([class*="h-2 "]):not([class*="h-3 "]):not([class*="w-2 "]):not([class*="w-3 "]):active { transform: translateY(1px) scale(.98) !important; }
+  /* Portada: el botón principal late con halo café (fondo claro); en el Marketplace con halo dorado */
+  html:not(#q1):not(#q2):not(#q3):not(#q4):not(#q5):not(#q6):not(#q7):not(#q8):not(#q9):not(#q10):not(#q11):not(#q12):not(#q13):not(#q14):not(#q15):not(#q16):not(#q17):not(#q18):not(#q19):not(#q20) body #portada-hero .portada-botones a.btn-registro { animation: rc-ef-entrar .7s .24s cubic-bezier(.2, .7, .2, 1) both, rc-ef-halo-cafe 4s 1.6s ease-out infinite, rc-ef-latido 4s 1.6s ease-in-out infinite; }
+  html:not(#q1):not(#q2):not(#q3):not(#q4):not(#q5):not(#q6):not(#q7):not(#q8):not(#q9):not(#q10):not(#q11):not(#q12):not(#q13):not(#q14):not(#q15):not(#q16):not(#q17):not(#q18):not(#q19):not(#q20) body main > :first-child .btn-primary[href*="/afiliate/"] { animation: rc-ef-halo 4s 1.6s ease-out infinite, rc-ef-latido 4s 1.6s ease-in-out infinite; }
 }
