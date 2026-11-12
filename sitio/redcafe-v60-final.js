@@ -13,7 +13,7 @@ window.__redcafeReactListo = window.__redcafeReactListo || function () {
 (function () {
   "use strict";
 
-  var VERSION = "20261112b";
+  var VERSION = "20261112c";
   var WAPP = "593968641376";
   var path = normalizePath(location.pathname);
   var homeAuthChecking = false;
@@ -547,7 +547,7 @@ window.__redcafeReactListo = window.__redcafeReactListo || function () {
    propia al final de <body>, después de hidratar. */
 (function () {
   if (typeof window === "undefined" || !window.ResizeObserver) return;
-  var URL_SELLO = "/img/sello-redcafe.svg?v=20261112b";
+  var URL_SELLO = "/img/sello-redcafe.svg?v=20261112c";
   var capa = null, temporizador = 0, ultimaFirma = "";
   var BANDA = 120;
 
@@ -678,6 +678,204 @@ window.__redcafeReactListo = window.__redcafeReactListo || function () {
     window.addEventListener("resize", programar);
     if (document.fonts && document.fonts.ready) document.fonts.ready.then(programar);
     programar();
+  }
+
+  var intentos = 0;
+  (function esperar() {
+    if ((window.__redcafeReactListo && window.__redcafeReactListo()) || intentos > 60) { iniciar(); return; }
+    intentos++; setTimeout(esperar, 200);
+  })();
+})();
+
+/* Deslizar para cambiar de página (móvil)
+   ------------------------------------------------------------------
+   En pantallas táctiles, deslizar el dedo hacia la izquierda abre la página
+   siguiente del menú y hacia la derecha la anterior, en ciclo: después de la
+   última vuelve a la primera y al revés. Solo actúa en las páginas del menú.
+   No interfiere con lo que ya se desliza de lado: mapas, galerías, tablas o
+   listas con desplazamiento horizontal, campos de texto, menús abiertos ni
+   con el gesto «atrás» del navegador (se ignoran los toques en los bordes).
+   Una pastilla con el nombre de la página acompaña al dedo para que se
+   entienda qué va a pasar; si se suelta antes del umbral, no pasa nada. */
+(function () {
+  "use strict";
+  if (window.__redcafeDeslizar) return;
+  window.__redcafeDeslizar = true;
+
+  var PAGINAS = [
+    ["/", "Inicio"],
+    ["/marketplace/", "Marketplace"],
+    ["/servicios/", "Servicios"],
+    ["/servicios/precios/", "Precios"],
+    ["/academia/", "Academia"],
+    ["/comunidad/", "Comunidad"],
+    ["/quienes-somos/", "Quiénes somos"],
+    ["/noticias/", "Noticias"],
+    ["/recetas/", "Recetas"],
+    ["/bar/", "Bar / Cafeterías"],
+    ["/laboratorio/", "Laboratorio"],
+    ["/servicios/calculadora/", "Calculadora"],
+    ["/servicios/eudr/", "Trazabilidad / EUDR"],
+    ["/servicios/factura/", "Facturación"]
+  ];
+  var UMBRAL = 90;      // px de recorrido horizontal para cambiar de página
+  var BORDE = 24;       // px desde el borde que se dejan al gesto del navegador
+  var NO_DESLIZAR = "input,textarea,select,[contenteditable],iframe,canvas,video," +
+    "header,nav,dialog,[role=dialog],[aria-modal=true],details[open],[data-sin-deslizar]," +
+    ".leaflet-container,.maplibregl-map,.mapboxgl-map,.gm-style," +
+    ".swiper,.splide,.embla,.redcafe-hub";
+
+  function ruta() {
+    var p = location.pathname.replace(/index\.html$/, "");
+    if (p.slice(-1) !== "/") p += "/";
+    return p;
+  }
+  function indice() {
+    var p = ruta();
+    for (var i = 0; i < PAGINAS.length; i++) if (PAGINAS[i][0] === p) return i;
+    return -1;
+  }
+  function vecina(paso) {
+    var i = indice();
+    if (i < 0) return null;
+    return PAGINAS[(i + paso + PAGINAS.length) % PAGINAS.length];
+  }
+
+  // ¿Hay entre el elemento tocado y <body> algo que se desplace de lado?
+  function seDesplazaDeLado(el) {
+    for (var n = el; n && n !== document.body && n.nodeType === 1; n = n.parentElement) {
+      if (n.scrollWidth > n.clientWidth + 4) {
+        var ox = getComputedStyle(n).overflowX;
+        if (ox === "auto" || ox === "scroll") return true;
+      }
+    }
+    return false;
+  }
+  function menuAbierto() {
+    var b = document.querySelector('header button[aria-label="Cerrar menú"], header button[aria-expanded="true"]');
+    return !!b || document.documentElement.style.overflow === "hidden" || document.body.style.overflow === "hidden";
+  }
+
+  var pastilla = null;
+  function crearPastilla() {
+    if (pastilla) return pastilla;
+    pastilla = document.createElement("div");
+    pastilla.className = "fixed";
+    pastilla.setAttribute("aria-hidden", "true");
+    pastilla.style.cssText = "position:fixed;top:50%;z-index:9998;pointer-events:none;display:flex;align-items:center;gap:6px;" +
+      "padding:10px 14px;background:#3b1a0c;color:#fbf6f0;font:600 14px/1.2 Figtree,Inter,system-ui,sans-serif;border-radius:4px;" +
+      "box-shadow:0 6px 18px rgba(59,26,12,.35);opacity:0;transform:translateY(-50%);white-space:nowrap;max-width:70vw;";
+    document.body.appendChild(pastilla);
+    return pastilla;
+  }
+  function mostrar(dx, destino) {
+    var p = crearPastilla();
+    var avance = Math.min(1, Math.abs(dx) / UMBRAL);
+    var listo = avance >= 1;
+    p.textContent = dx < 0 ? destino[1] + " ›" : "‹ " + destino[1];
+    p.style.left = dx > 0 ? "0" : "auto";
+    p.style.right = dx < 0 ? "0" : "auto";
+    var desde = (1 - avance) * 100 * (dx < 0 ? 1 : -1);
+    p.style.transition = "none";
+    p.style.transform = "translate(" + desde + "%,-50%)";
+    p.style.opacity = String(0.35 + 0.65 * avance);
+    p.style.background = listo ? "#8C3604" : "#3b1a0c";
+  }
+  function ocultar() {
+    if (!pastilla) return;
+    pastilla.style.transition = "opacity .2s ease";
+    pastilla.style.opacity = "0";
+  }
+
+  var x0 = 0, y0 = 0, t0 = 0, activo = false, horizontal = null, dxFinal = 0;
+
+  function alTocar(e) {
+    activo = false; horizontal = null; dxFinal = 0;
+    if (e.touches.length !== 1 || indice() < 0) return;
+    if (window.visualViewport && window.visualViewport.scale > 1.05) return; // con zoom, deslizar es mover la vista
+    var t = e.touches[0];
+    if (t.clientX < BORDE || t.clientX > window.innerWidth - BORDE) return;
+    var el = e.target;
+    if (!el || !el.closest || el.closest(NO_DESLIZAR) || seDesplazaDeLado(el) || menuAbierto()) return;
+    var sel = window.getSelection && window.getSelection();
+    if (sel && String(sel).length) return;
+    x0 = t.clientX; y0 = t.clientY; t0 = Date.now(); activo = true;
+  }
+  function alMover(e) {
+    if (!activo) return;
+    if (e.touches.length !== 1) { activo = false; ocultar(); return; }
+    var t = e.touches[0], dx = t.clientX - x0, dy = t.clientY - y0;
+    if (horizontal === null && (Math.abs(dx) > 12 || Math.abs(dy) > 12)) {
+      horizontal = Math.abs(dx) > Math.abs(dy) * 1.8;
+      if (!horizontal) { activo = false; return; }
+    }
+    if (!horizontal) return;
+    dxFinal = dx;
+    var destino = vecina(dx < 0 ? 1 : -1);
+    if (destino) mostrar(dx, destino);
+  }
+  function alSoltar() {
+    if (!activo) return;
+    activo = false;
+    var rapido = Date.now() - t0 < 300 && Math.abs(dxFinal) > UMBRAL * 0.6;
+    if (horizontal && (Math.abs(dxFinal) >= UMBRAL || rapido)) {
+      var destino = vecina(dxFinal < 0 ? 1 : -1);
+      if (destino) {
+        if (pastilla) { pastilla.style.transform = "translate(0,-50%)"; pastilla.style.opacity = "1"; pastilla.style.background = "#8C3604"; }
+        location.assign(destino[0]);
+        return;
+      }
+    }
+    ocultar();
+  }
+
+  /* Puntos flotantes abajo: uno por página del menú, el actual alargado.
+     Avisan de que se puede deslizar sin tapar nada: van centrados (la
+     burbuja de cursos está a la derecha), no reciben toques y suben por
+     encima de la barra fija del registro cuando existe. La primera vez que
+     se ven en la sesión dan un pequeño vaivén lateral. */
+  function crearPuntos() {
+    var actual = indice();
+    if (actual < 0 || document.getElementById("rc-deslizar-puntos")) return;
+    var est = document.createElement("style");
+    est.textContent =
+      "#rc-deslizar-puntos{position:fixed;left:50%;bottom:calc(12px + env(safe-area-inset-bottom));z-index:9997;" +
+      "transform:translateX(-50%);display:flex;align-items:center;gap:4px;padding:7px 9px;border-radius:999px;" +
+      "background:rgba(59,26,12,.62);-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px);pointer-events:none;" +
+      "box-shadow:0 4px 12px rgba(59,26,12,.25);transition:opacity .3s ease}" +
+      "#rc-deslizar-puntos i{display:block;width:5px;height:5px;border-radius:999px;background:#fbf6f0;opacity:.45}" +
+      "#rc-deslizar-puntos i.rc-actual{width:16px;opacity:1;background:#f7d08a}" +
+      "html.redcafe-con-boton-fijo #rc-deslizar-puntos{bottom:calc(5.9rem + env(safe-area-inset-bottom))}" +
+      "#rc-deslizar-puntos.rc-vaiven{animation:rc-vaiven 1.1s ease-in-out .8s 1}" +
+      "@keyframes rc-vaiven{0%,100%{transform:translateX(-50%)}30%{transform:translateX(calc(-50% - 14px))}60%{transform:translateX(calc(-50% + 10px))}}" +
+      "@media (prefers-reduced-motion:reduce){#rc-deslizar-puntos.rc-vaiven{animation:none}}" +
+      "@media print,(min-width:1024px) and (hover:hover){#rc-deslizar-puntos{display:none}}";
+    document.head.appendChild(est);
+    var caja = document.createElement("div");
+    caja.id = "rc-deslizar-puntos";
+    caja.className = "fixed"; // el tema pone position:relative a los div sueltos del body que no la llevan
+    caja.setAttribute("aria-hidden", "true");
+    caja.title = "Desliza a los lados para cambiar de página";
+    for (var i = 0; i < PAGINAS.length; i++) {
+      var p = document.createElement("i");
+      if (i === actual) p.className = "rc-actual";
+      caja.appendChild(p);
+    }
+    try {
+      if (!sessionStorage.getItem("rc-deslizar-visto")) { caja.classList.add("rc-vaiven"); sessionStorage.setItem("rc-deslizar-visto", "1"); }
+    } catch (e) {}
+    document.body.appendChild(caja);
+  }
+
+  function iniciar() {
+    if (!("ontouchstart" in window) && !(navigator.maxTouchPoints > 0)) return;
+    crearPuntos();
+    document.addEventListener("touchstart", alTocar, { passive: true });
+    document.addEventListener("touchmove", alMover, { passive: true });
+    document.addEventListener("touchend", alSoltar, { passive: true });
+    document.addEventListener("touchcancel", function () { activo = false; ocultar(); }, { passive: true });
+    // Al volver con «atrás», el navegador puede restaurar la página con la pastilla visible.
+    window.addEventListener("pageshow", function () { if (pastilla) { pastilla.style.transition = "none"; pastilla.style.opacity = "0"; } });
   }
 
   var intentos = 0;
