@@ -10,4 +10,9 @@ Disallow: /bar/gestion/
 Disallow: /api/
 Disallow: /data/
 
+# Buscadores y asistentes de IA: bienvenidos al contenido público (mismas exclusiones).
+# OAI-SearchBot/ChatGPT-User (ChatGPT), PerplexityBot, Claude-SearchBot/Claude-User,
+# Googlebot (también AI Overviews) y Bingbot (Copilot) leen el sitio con las reglas de arriba.
+# Resumen para modelos de lenguaje: https://redcafeecuador.com/llms.txt
+
 Sitemap: https://redcafeecuador.com/sitemap.xml

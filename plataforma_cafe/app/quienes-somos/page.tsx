@@ -106,6 +106,15 @@ export default function QuienesSomosPage() {
               Conocer SolucionesPro
               <span aria-hidden="true">→</span>
             </a>
+            <a
+              href="https://www.linkedin.com/in/pedro-antonio-rojas/"
+              target="_blank"
+              rel="noreferrer me"
+              className="mt-4 flex w-fit min-h-11 items-center gap-2 rounded-full border border-cafe/30 px-5 py-2.5 font-semibold text-cafe transition hover:bg-cafe/5"
+            >
+              Pedro Rojas en LinkedIn
+              <span aria-hidden="true">→</span>
+            </a>
           </div>
 
           <aside className="rounded-2xl border border-cafe/10 bg-white p-6 shadow-sm">
