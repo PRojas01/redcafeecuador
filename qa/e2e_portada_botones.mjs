@@ -16,7 +16,7 @@ const ESPERADO = [
   // v20261112a: mismos botones que el Marketplace («Publicar un lote» / «Publicar un servicio»):
   // principal en papel crema con letra café, secundario translúcido con contorno café.
   { texto: "Crear cuenta gratis", href: /^\/afiliate\/?$/, fondo: "rgb(251, 250, 247)" },
-  { texto: "Entrar", href: /^\/login\/?$/, fondo: "rgba(255, 255, 255, 0.38)", sobre: "rgb(248, 240, 228)" },
+  { texto: "Entrar", href: /^\/login\/?$/, fondo: "rgb(140, 54, 4)" },
 ];
 
 const b = await chromium.launch();

@@ -32,7 +32,7 @@
   </g>
   </defs>
   <g transform="rotate(-12 110 110)">
-    <g filter="url(#q)" opacity=".55" fill="#5a2306" stroke="#5a2306" color="#5a2306"><use href="#marca"/></g>
-    <g filter="url(#t)" opacity=".94" fill="#24100a" stroke="#24100a" color="#24100a"><use href="#marca"/></g>
+    <g filter="url(#q)" opacity=".45" fill="#5a2306" stroke="#5a2306" color="#5a2306"><use href="#marca"/></g>
+    <g filter="url(#t)" opacity=".88" fill="#2e140a" stroke="#2e140a" color="#2e140a"><use href="#marca"/></g>
   </g>
 </svg>
