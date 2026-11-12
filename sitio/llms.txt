@@ -1,0 +1,38 @@
+# Red Café Ecuador
+
+> Plataforma digital que conecta la cadena de valor del café ecuatoriano: productores, compradores, tostadores, comerciantes, exportadores, cafeterías, baristas y amantes del café. Ofrece un marketplace de lotes de café, servicios para el negocio cafetero, el precio diario del café, cursos gratis, recetas, noticias del sector y una comunidad. Abrir un perfil es gratis.
+
+Red Café Ecuador (redcafeecuador.com) es una iniciativa de Pedro Rojas ([LinkedIn](https://www.linkedin.com/in/pedro-antonio-rojas/)) y [SolucionesPro](https://solucionespro.net/). Trabaja en español y para todo Ecuador: Costa, Sierra, Amazonía y Galápagos. Los datos de contacto de los miembros solo se muestran a usuarios registrados.
+
+## Comprar y vender café
+
+- [Marketplace de café ecuatoriano](https://redcafeecuador.com/marketplace/): lotes de café verde, pergamino y tostado publicados por productores y comerciantes, con provincia, variedad, proceso, altura, puntaje y precio.
+- [Crear cuenta gratis](https://redcafeecuador.com/afiliate/): perfil de productor, comprador, tostador, cafetería, barista, proveedor o asesor.
+
+## Servicios y herramientas
+
+- [Servicios para el sector cafetero](https://redcafeecuador.com/servicios/): asesoría, catación, trazabilidad, formalización y herramientas de precios.
+- [Precio del café hoy](https://redcafeecuador.com/servicios/precios/): precio referencial diario del café arábica (ICE Coffee C) con gráfico histórico.
+- [Calculadora de venta de café](https://redcafeecuador.com/servicios/calculadora/): venta bruta, sacos equivalentes, costos e ingreso neto por lote.
+- [Finanzas para productores](https://redcafeecuador.com/servicios/finanzas/): costo por quintal, margen y rentabilidad.
+- [Dossier de trazabilidad EUDR](https://redcafeecuador.com/servicios/eudr/): expedientes de trazabilidad para lotes que van a la Unión Europea (no es una certificación oficial).
+- [Asesoría](https://redcafeecuador.com/asesoria/): técnica, comercial y de exportación.
+- [Laboratorio de catación](https://redcafeecuador.com/laboratorio/): catación SCA, puntajes y control de calidad.
+
+## Aprender
+
+- [Academia del café](https://redcafeecuador.com/academia/): cursos gratis de producción, buenas prácticas agrícolas, manejo de plagas, postcosecha, café de especialidad, tueste, comercialización, exportación, formalización y trazabilidad EUDR.
+- [Recetas de café](https://redcafeecuador.com/recetas/): V60, prensa francesa, moka, cold brew, AeroPress y espresso casero con ratio, molienda, temperatura y pasos.
+- [Noticias del café ecuatoriano](https://redcafeecuador.com/noticias/): mercado, precios, trazabilidad, técnicas de cultivo y comunidad, con fuente y fecha.
+
+## Comunidad
+
+- [Comunidad](https://redcafeecuador.com/comunidad/): conversación entre productores, tostadores, baristas y compradores.
+- [Bar y cafeterías](https://redcafeecuador.com/bar/): reportajes, catas y cultura del café para barras y cafeterías.
+- [Quiénes somos](https://redcafeecuador.com/quienes-somos/)
+
+## Optional
+
+- [Términos y condiciones](https://redcafeecuador.com/terminos-y-condiciones/)
+- [Política de privacidad](https://redcafeecuador.com/politica-de-privacidad/)
+- [Mapa del sitio](https://redcafeecuador.com/sitemap.xml)

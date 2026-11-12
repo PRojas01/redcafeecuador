@@ -13,6 +13,11 @@ import { modulos } from "./modulos/index.js";
 import { RUTA_PREACUERDO, paginaPreacuerdo } from "./modulos/socios.js";
 import { db } from "./lib/db.js";
 import { sitemapXml } from "./lib/sitemap.js";
+import { loteIndexable, noIndexar, seoPagina } from "./lib/seo.js";
+import { esDemo, lotesTodos } from "./modulos/lotes.js";
+import { restringidas } from "./lib/usuarios.js";
+import type { Doc } from "./lib/docs.js";
+import { str } from "./lib/util.js";
 
 type Vars = { ip: string };
 
@@ -204,6 +209,7 @@ export function crearApp(opciones: { ipDe?: (c: any) => string } = {}) {
     // Fotos que el redespliegue borró del disco: se recuperan de la base.
     await restaurarSubida(ruta);
     return servirEstatico(cruda, esProduccion(), {
+      transformar: await seoDeLote(ruta),
       consulta: new URL(c.req.url).search,
       aceptaCodificacion: c.req.header("accept-encoding") ?? "",
       siNoCoincide: c.req.header("if-none-match") ?? "",
@@ -240,4 +246,27 @@ function ipDe(c: any): string {
     if (xff.length) return xff[xff.length - 1];
   }
   return socket;
+}
+
+/** /marketplace/<id>/ de un lote de miembro se sirve con la ficha genérica:
+ *  aquí se le ponen su título, descripción y datos de producto. */
+async function seoDeLote(ruta: string) {
+  const m = /^\/marketplace\/([A-Za-z0-9_-]+)\/?$/.exec(ruta);
+  if (!m) return undefined;
+  if (m[1] === "ficha") return { firma: "ficha", aplicar: noIndexar };
+  if (fs.existsSync(path.join(config.sitio, "marketplace", m[1], "index.html"))) return undefined;
+  let lote: Doc | null = null;
+  if (process.env.DATABASE_URL) {
+    try {
+      lote = (await lotesTodos()).find((l) => str(l.id) === m[1]) ?? null;
+      // Miembros con la cuenta cerrada o sancionada: sus lotes no se muestran ni se indexan.
+      if (lote) {
+        const r = await restringidas({ cache: new Map() } as unknown as Ctx);
+        if (["published_by", "productor_id"].some((k) => r.has(str(lote![k])))) lote = null;
+      }
+    } catch { lote = null; }
+  }
+  const ok = lote && loteIndexable(lote) && !esDemo(lote) ? lote : null;
+  const firma = ok ? `${ok.id}:${str(ok.updated_at || ok.created_at)}:${str(ok.disponibilidad)}` : "no";
+  return { firma, aplicar: (html: string) => seoPagina(ruta, html, { lote: ok }) };
 }
