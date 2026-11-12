@@ -1,0 +1,182 @@
+{
+ "recetas": {
+  "v60": {
+   "titulo": "Café V60 (goteo manual)",
+   "resumen": "El filtro en cono resalta la acidez y los aromas: método limpio, por infusión, muy usado en cafeterías de especialidad.",
+   "metodo": "V60",
+   "minutos": 4,
+   "porciones": 1,
+   "ingredientes": [
+    "15 g de café",
+    "250 ml de agua filtrada",
+    "1 filtro de papel V60 (#02)"
+   ],
+   "pasos": [
+    "Hierve el agua y espera a que baje a 92 °C.",
+    "Coloca el filtro de papel en el cono y enjuágalo con agua caliente para quitar sabor a papel; desecha el agua.",
+    "Muele el café con molienda media y vierte los 15 g en el cono, nivelándolo suavemente.",
+    "Vierte 45 g de agua en círculos suaves (primer vertido o bloom) y espera 30 segundos para que el café libere gases.",
+    "Continúa vertiendo en espiral, de adentro hacia afuera, hasta llegar a 250 ml en total.",
+    "Realiza un giro suave del cono y deja que el agua termine de drenar. El total debe quedar entre 3:30 y 4:00 minutos.",
+    "Sirve de inmediato y agita la taza suavemente antes de beber para integrar los sabores."
+   ]
+  },
+  "prensa-francesa": {
+   "titulo": "Prensa francesa",
+   "resumen": "El método más sencillo para una taza con cuerpo y redondez. El café queda en contacto con el agua durante toda la infusión.",
+   "metodo": "Prensa francesa",
+   "minutos": 6,
+   "porciones": 2,
+   "ingredientes": [
+    "30 g de café",
+    "450 ml de agua",
+    "1 prensa francesa de 500 ml"
+   ],
+   "pasos": [
+    "Hierve el agua y déjala enfriar hasta 94 °C.",
+    "Muele el café grueso y añádelo a la jarra de la prensa.",
+    "Vierte el agua caliente sobre el café hasta cubrirlo y espera 30 segundos.",
+    "Remueve suavemente el costra con una cuchara para que el café se mezcle.",
+    "Coloca la tapa sin presionar el émbolo y espera 4 minutos más.",
+    "Presiona el émbolo lentamente hasta el fondo y sirve. El café restante sigue extrayendo, por eso sirve todo al momento."
+   ]
+  },
+  "moka-italiana": {
+   "titulo": "Moka italiana",
+   "resumen": "La clásica cafetera de 3 cuerpos produce un café concentrado con cuerpo. Ideal para tazas marcadas o bases de bebidas con leche.",
+   "metodo": "Moka italiana",
+   "minutos": 5,
+   "porciones": 2,
+   "ingredientes": [
+    "18 g de café",
+    "180 ml de agua",
+    "1 moka italiana de 3 tazas"
+   ],
+   "pasos": [
+    "Llena el depósito inferior con agua hasta la válvula de seguridad, sin pasarla.",
+    "Llena la cesta con café de molienda fina-media sin compactarlo ni amontonarlo.",
+    "Enrosca las 3 piezas con firmeza y pon la cafetera sobre fuego medio-bajo.",
+    "Retira la moka en cuanto el café suba y empiece a sonar burbujeando: no dejes que hierva en exceso.",
+    "Remueve el café brevemente en la jarra y sirve. Si lo prefieres con leche, relaja el cuerpo con agua caliente."
+   ]
+  },
+  "cold-brew": {
+   "titulo": "Cold brew",
+   "resumen": "Extracción en frío durante horas: un concentrado dulce, de baja acidez, perfecto para diluir o tomar solo.",
+   "metodo": "Cold brew",
+   "minutos": 1020,
+   "porciones": 4,
+   "ingredientes": [
+    "100 g de café",
+    "800 ml de agua",
+    "1 jarra o frasco con tapa",
+    "1 filtro de tela o papel para colar"
+   ],
+   "pasos": [
+    "Muele el café muy grueso y colócalo en la jarra.",
+    "Vierte los 800 ml de agua fría sobre el café y mezcla bien para mojar todo el café.",
+    "Tapa la jarra y deja reposar entre 16 y 18 horas en el refrigerador (o 12-14 horas a temperatura ambiente).",
+    "Filtra el concentrado con el filtro de tela o papel, descartando el café molido.",
+    "Diluye a tu gusto (suele diluirse 1:1 con agua o leche) y sirve con hielo."
+   ]
+  },
+  "aeropress": {
+   "titulo": "Aeropress",
+   "resumen": "Infusión corta con presión manual: rápido, versátil y de limpieza fácil. Método de culto para tazas limpias en minutos.",
+   "metodo": "Aeropress",
+   "minutos": 3,
+   "porciones": 1,
+   "ingredientes": [
+    "15 g de café",
+    "200 ml de agua",
+    "1 filtro de papel de Aeropress"
+   ],
+   "pasos": [
+    "Calienta el agua a 80 °C. Coloca el filtro en el portafiltros y enjuágalo con un poco de agua caliente.",
+    "Muele el café medio-fino y añádelo a la cámara de la Aeropress, colocada sobre la taza.",
+    "Vierte unos 30 g de agua y espera 30 segundos (bloom).",
+    "Vierte el resto del agua hasta 200 ml y remueve con la cuchara unos 10 segundos.",
+    "Coloca el émbolo y presiona de forma lenta y constante durante unos 30 segundos.",
+    "Sirve y disfruta. La fuerza de la presión queda en la mano: presiona firme pero sin apurar."
+   ]
+  },
+  "espresso-casero": {
+   "titulo": "Espresso casero",
+   "resumen": "30 mililitros concentrados en unos 30 segundos: la base de las bebidas preparadas con máquina espresso y la prueba de fuego de la molienda.",
+   "metodo": "Espresso casero",
+   "minutos": 1,
+   "porciones": 1,
+   "ingredientes": [
+    "18 g de café",
+    "Agua filtrada (unos 60 ml en el depósito)",
+    "Máquina de espresso con portafiltros"
+   ],
+   "pasos": [
+    "Muele el café fino y llena el portafiltros. Distribuye el café con los dedos para evitar espacios.",
+    "Prensa con el tamper en horizontal y firme (15-20 kg), sin inclinar.",
+    "Bloquea el portafiltros en el grupo y coloca la taza bajo el flujo.",
+    "Inicia la extracción. El primer café debe caer a los 5-8 segundos.",
+    "Detén el flujo cuando tengas 36 g de café (el doble de la dosis), entre 25 y 30 segundos en total.",
+    "Sirve de inmediato; la crema debe ser densa y de color avellana."
+   ]
+  }
+ },
+ "noticias": {
+  "calendario-cafe-ecuador-2026": {
+   "titulo": "Calendario del café ecuatoriano: qué queda del 2026",
+   "fecha": "2026-08-24",
+   "resumen": "Dos festivales el mismo fin de semana de octubre, el Día Internacional del Café y una fecha europea que marca el trimestre. Lo que está confirmado y lo que todavía no.",
+   "fuente": "Red Café Ecuador",
+   "fuente_url": "https://ico.org/es/international-coffee-day/",
+   "categoria": "Sector"
+  },
+  "ecuador-reactiva-caficultura": {
+   "titulo": "Ecuador reactiva su caficultura: 135 mil hectáreas tecnificadas",
+   "fecha": "2026-07-20",
+   "resumen": "El proyecto estatal apunta a renovar la caficultura con asistencia técnica, crédito productivo y comercialización asociativa.",
+   "fuente": "MAGAP",
+   "fuente_url": "",
+   "categoria": "Sector"
+  },
+  "trazabilidad-requisito-europa": {
+   "titulo": "Cuenta atrás para el EUDR: qué fecha te toca según a quién le vendes",
+   "fecha": "2026-07-02",
+   "resumen": "El reglamento europeo contra la deforestación no se aplica todavía: empieza el 30 de diciembre de 2026. Según el tamaño de tu comprador, tu plazo real puede ser ese o el 30 de junio de 2027.",
+   "fuente": "Comisión Europea",
+   "fuente_url": "",
+   "categoria": "Regulación"
+  },
+  "cafe-especialidad-asia": {
+   "titulo": "El café de especialidad ecuatoriano gana terreno en Asia",
+   "fecha": "2026-06-15",
+   "resumen": "Microlotes de Geisha y Sidra de Loja y Zamora captan interés de tostadores japoneses y coreanos por perfiles de taza únicos.",
+   "fuente": "ANECAFÉ",
+   "fuente_url": "",
+   "categoria": "Mercado"
+  },
+  "como-fijar-precio-cafe": {
+   "titulo": "Guía: cómo fijar el precio de tu café en Ecuador",
+   "fecha": "2026-08-10",
+   "resumen": "Paso a paso para calcular tu oferta usando el precio de referencia ICE C, el diferencial por calidad y tus costos de producción.",
+   "fuente": "Red Café Ecuador",
+   "fuente_url": "",
+   "categoria": "Guía"
+  },
+  "postcosecha-errores": {
+   "titulo": "Post-cosecha: el error que más cuesta a los pequeños productores",
+   "fecha": "2026-07-28",
+   "resumen": "La fermentación y el secado inadecuados pueden tirar a la basura un café con excelente potencial de taza. Cómo evitarlo con 3 prácticas simples.",
+   "fuente": "Red Café Ecuador",
+   "fuente_url": "",
+   "categoria": "Técnica"
+  },
+  "barismo-cafeterias-red": {
+   "titulo": "Barismo y cafeterías: cómo la Red conecta tu barra con el origen",
+   "fecha": "2026-07-15",
+   "resumen": "El bar y la cafetería de especialidad encuentran en la Red el puente directo con fincas verificadas, muestras de catación y el café del mes.",
+   "fuente": "Red Café Ecuador",
+   "fuente_url": "",
+   "categoria": "Comunidad"
+  }
+ }
+}

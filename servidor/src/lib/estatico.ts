@@ -4,6 +4,7 @@ import path from "node:path";
 import zlib from "node:zlib";
 import { createHash } from "node:crypto";
 import { config } from "./config.js";
+import { seoPagina } from "./seo.js";
 
 const TIPOS: Record<string, string> = {
   ".html": "text/html; charset=utf-8", ".txt": "text/plain; charset=utf-8", ".js": "text/javascript; charset=utf-8",
@@ -82,6 +83,8 @@ export interface PeticionEstatica {
   siNoCoincide?: string;
   rango?: string;
   metodo?: string;
+  /** Reescritura del HTML para esta dirección (p. ej. los textos de un lote). Sin ella, los datos estructurados de siempre. */
+  transformar?: { firma: string; aplicar: (html: string) => string };
 }
 
 // Texto que vale la pena comprimir (el CSS pasa de 343 KB a ~60 KB).
@@ -198,6 +201,7 @@ export function servirEstatico(ruta: string, https: boolean, pet: PeticionEstati
     const texto = e.crudo.toString("utf8").split(plantilla.de).join(plantilla.a);
     e = { firma: e.firma + "-" + sha1(ruta), crudo: Buffer.from(texto, "utf8") };
   }
+  if (estado === 200 && ext === ".html") e = conSeo(e, ruta, pet.transformar);
   const etag = `W/"${e.firma}"`;
   if (estado === 200) {
     h.set("ETag", etag);
@@ -227,6 +231,20 @@ function canonicalDePlantilla(ruta: string, archivo: string): { de: string; a: s
     return { de: `https://redcafeecuador.com${base}`, a: `https://redcafeecuador.com${propio}` };
   }
   return null;
+}
+// HTML con datos estructurados, guardado por huella del archivo + dirección + transformación.
+const cacheSeo = new Map<string, Entrada>();
+function conSeo(e: Entrada, ruta: string, t?: PeticionEstatica["transformar"]): Entrada {
+  const clave = `${e.firma}|${ruta}|${t?.firma ?? ""}`;
+  const hecho = cacheSeo.get(clave);
+  if (hecho) return hecho;
+  const original = e.crudo.toString("utf8");
+  let texto = original;
+  try { texto = t ? t.aplicar(original) : seoPagina(ruta, original); } catch { /* sin cambios */ }
+  const r: Entrada = texto === original ? e : { firma: e.firma + "-s" + sha1(clave), crudo: Buffer.from(texto, "utf8") };
+  if (cacheSeo.size > 400) cacheSeo.clear();
+  cacheSeo.set(clave, r);
+  return r;
 }
 const sha1 = (t: string) => createHash("sha1").update(t).digest("hex").slice(0, 10);
 
