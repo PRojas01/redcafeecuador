@@ -13,7 +13,7 @@ window.__redcafeReactListo = window.__redcafeReactListo || function () {
 (function () {
   "use strict";
 
-  var VERSION = "20261112g";
+  var VERSION = "20261113a";
   var WAPP = "593968641376";
   var path = normalizePath(location.pathname);
   var homeAuthChecking = false;
@@ -547,7 +547,7 @@ window.__redcafeReactListo = window.__redcafeReactListo || function () {
    propia al final de <body>, después de hidratar. */
 (function () {
   if (typeof window === "undefined" || !window.ResizeObserver) return;
-  var URL_SELLO = "/img/sello-redcafe.svg?v=20261112g";
+  var URL_SELLO = "/img/sello-redcafe.svg?v=20261113a";
   var capa = null, temporizador = 0, ultimaFirma = "";
   var BANDA = 120;
 
@@ -892,4 +892,117 @@ window.__redcafeReactListo = window.__redcafeReactListo || function () {
     if ((window.__redcafeReactListo && window.__redcafeReactListo()) || intentos > 60) { iniciar(); return; }
     intentos++; setTimeout(esperar, 200);
   })();
+})();
+
+/* ===== v20261113a · Registro más atractivo =====
+   Cifras de la Red siempre en vivo (/api/metricas.php?action=cifras), nunca escritas a mano:
+   · Portada: línea corta bajo los botones (miembros y provincias) y título sobre las tarjetas.
+   · Comunidad: la franja completa «La Red hoy», bajo el subtítulo.
+   · Crear perfil: «Ya son N miembros en M provincias» en la cabecera.
+   Todo va en contenedores propios (data-redcafe-propio) junto a nodos estáticos de React;
+   el hueco lo reserva el CSS para que la página no salte. */
+(function () {
+  "use strict";
+
+  var promesa = null;
+  function pedirCifras() {
+    if (!promesa) {
+      promesa = fetch("/api/metricas.php?action=cifras", { credentials: "omit" })
+        .then(function (r) { return r.json(); })
+        .then(function (j) { return (j && j.ok && j.data && j.data.miembros > 0) ? j.data : null; })
+        .catch(function () { promesa = null; return null; });
+    }
+    return promesa;
+  }
+  function num(v) { var n = Number(v); return isFinite(n) && n >= 0 ? String(Math.floor(n)) : "0"; }
+  function crear(etiqueta, clase, texto) {
+    var e = document.createElement(etiqueta);
+    if (clase) e.className = clase;
+    if (texto) e.textContent = texto;
+    return e;
+  }
+
+  function portada() {
+    var botones = document.querySelector("#portada-hero .portada-botones");
+    if (!botones || !botones.parentNode) return;
+    var sig = botones.nextElementSibling;
+    if (sig && sig.classList.contains("rc-hero-extra")) return;
+    var caja = crear("div", "rc-hero-extra");
+    caja.setAttribute("data-redcafe-propio", "");
+    var prueba = crear("p", "rc-hero-prueba", "Gratis · 2 minutos · sin tarjeta");
+    caja.appendChild(prueba);
+    botones.parentNode.insertBefore(caja, botones.nextSibling);
+    pedirCifras().then(function (d) {
+      if (!d) return;
+      prueba.textContent = "";
+      var b1 = crear("b", "", num(d.miembros)), b2 = crear("b", "", num(d.provincias));
+      prueba.appendChild(b1); prueba.appendChild(document.createTextNode(" miembros · "));
+      prueba.appendChild(b2); prueba.appendChild(document.createTextNode(" provincias · gratis, 2 minutos"));
+    });
+  }
+
+  // Título sobre las cuatro tarjetas con imagen de la portada, que son los beneficios.
+  function tituloBeneficios() {
+    var collage = document.getElementById("rc-collage");
+    if (!collage || !collage.parentNode || !document.getElementById("portada-hero")) return;
+    var ant = collage.previousElementSibling;
+    if (ant && ant.classList.contains("rc-gana-titulo")) return;
+    var h = crear("h2", "rc-gana-titulo", "Con tu cuenta gratis puedes");
+    h.setAttribute("data-redcafe-propio", "");
+    // Las secciones de la portada se ordenan con «order»: el título lleva el mismo que las tarjetas.
+    h.style.order = getComputedStyle(collage).order;
+    collage.parentNode.insertBefore(h, collage);
+  }
+
+  function comunidad() {
+    var muro = document.getElementById("redcafe-muro");
+    var main = muro && muro.closest("main");
+    var sub = main && main.querySelector("h1 + p");
+    if (!sub || !sub.parentNode) return;
+    var sig = sub.nextElementSibling;
+    if (sig && sig.classList.contains("rc-cifras-com")) return;
+    var sec = crear("section", "redcafe-cifras rc-cifras-com");
+    sec.setAttribute("data-redcafe-propio", "");
+    sec.setAttribute("aria-label", "La Red hoy");
+    sec.setAttribute("aria-busy", "true");
+    var caja = crear("div", "redcafe-cifras-caja");
+    var filas = [
+      ["miembros", "miembros en la Red"], ["productores", "productores"],
+      ["compran_cafe", "compradores, tostadores y exportadores"], ["provincias", "provincias representadas"],
+      ["lotes_reales", "lotes de café publicados"], ["servicios", "servicios disponibles"]
+    ];
+    var fuertes = filas.map(function (f) {
+      var celda = crear("div", "redcafe-cifra"), s = crear("strong", "", "—");
+      celda.appendChild(s); celda.appendChild(crear("span", "", f[1])); caja.appendChild(celda);
+      return s;
+    });
+    sec.appendChild(caja);
+    sub.parentNode.insertBefore(sec, sub.nextSibling);
+    pedirCifras().then(function (d) {
+      sec.setAttribute("aria-busy", "false");
+      if (!d) return;
+      filas.forEach(function (f, i) { fuertes[i].textContent = num(d[f[0]]); });
+    });
+  }
+
+  function registro() {
+    var bajada = document.querySelector(".redcafe-afil-hero .redcafe-afil-bajada");
+    if (!bajada || !bajada.parentNode) return;
+    var sig = bajada.nextElementSibling;
+    if (sig && sig.classList.contains("rc-afil-prueba")) return;
+    var p = crear("p", "rc-afil-prueba");
+    p.setAttribute("data-redcafe-propio", "");
+    bajada.parentNode.insertBefore(p, bajada.nextSibling);
+    pedirCifras().then(function (d) {
+      if (d) p.textContent = "Ya son " + num(d.miembros) + " miembros en " + num(d.provincias) + " provincias";
+    });
+  }
+
+  function pintar() {
+    if (!(window.__redcafeReactListo && window.__redcafeReactListo())) return;
+    try { portada(); tituloBeneficios(); comunidad(); registro(); } catch (e) { /* la página sigue sin estos añadidos */ }
+  }
+  // Next cambia de página sin recargar: se repasa cada poco (tres búsquedas en el DOM, sin coste).
+  pintar();
+  setInterval(pintar, 700);
 })();
