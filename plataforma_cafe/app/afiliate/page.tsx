@@ -958,28 +958,11 @@ function Portada() {
     <section id="redcafe-afiliate-portada" className="redcafe-afil-hero">
       <div className="redcafe-afil-wrap">
         <p className="redcafe-afil-rotulo">Registro gratuito</p>
-        <h1>Encuentra con quién hacer negocio en el café ecuatoriano.</h1>
+        <h1>Crea tu perfil gratis en 2 minutos</h1>
         <p className="redcafe-afil-bajada">
-          Produzcas, compres, tuestes, transportes o asesores: ficha pública, presencia en el mapa nacional cuando
-          publiques café, y contacto directo sin comisión.
+          Te encuentran compradores y aliados del café ecuatoriano. Contacto directo, sin comisión.
         </p>
-        <ol className="redcafe-afil-pasos">
-          {COMO_FUNCIONA.map(([n, t, d]) => (
-            <li key={n}>
-              <span className="redcafe-afil-num" aria-hidden="true">{n}</span>
-              <strong>{t}</strong>
-              <span className="redcafe-afil-paso-txt">{d}</span>
-            </li>
-          ))}
-        </ol>
         <div className="redcafe-afil-acciones">
-          <button
-            type="button"
-            className="redcafe-afil-cta"
-            onClick={() => document.getElementById("profile-selector")?.scrollIntoView({ behavior: "smooth", block: "center" })}
-          >
-            Elegir mi perfil
-          </button>
           <Link className="redcafe-afil-secundario" href="/login/">
             Ya tengo cuenta
           </Link>

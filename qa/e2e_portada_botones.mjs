@@ -43,7 +43,7 @@ for (const [nombre, vp] of [["móvil", { width: 390, height: 844 }], ["escritori
   if (nombre === "móvil") ok("en el teléfono van en una línea, del mismo ancho", bs.length === 2 && Math.round(bs[0].y) === Math.round(bs[1].y) && Math.abs(bs[0].w - bs[1].w) < 2, bs.map((x) => Math.round(x.w)).join(","));
   else ok("en escritorio van en una fila", bs.length === 2 && new Set(bs.map((x) => Math.round(x.y))).size === 1);
   ok("no queda el «Acceder a mi perfil» que copiaba la capa", !(await p.locator("text=Acceder a mi perfil").count()));
-  ok("la franja de cifras sigue en la portada (se oculta sin datos)", (await p.locator("#redcafe-cifras-red").count()) <= 1);
+  ok("la franja de cifras ya no está en la portada (pasó a Comunidad, 2026-11-13)", (await p.locator("#redcafe-cifras-red").count()) === 0);
   await p.locator("#portada-hero").screenshot({ path: `${OUT}/portada-${nombre}.png` });
   await p.close();
 }

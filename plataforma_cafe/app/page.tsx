@@ -3,7 +3,7 @@ import { Icono, type IconoNombre } from "@/components/Icono";
 import { InicioPanelRedirect } from "@/components/InicioPanelRedirect";
 import { CarruselPortada, CollagePortada } from "@/components/PortadaFotos";
 import { AccesoPortada } from "@/components/AccesoPortada";
-import { CifrasRed, FranjaPrecio, ProvinciasReales } from "@/components/PortadaDatos";
+import { FranjaPrecio, ProvinciasReales } from "@/components/PortadaDatos";
 import { CamasSecado, FincaTerrazas } from "@/components/Lamina";
 import { CONFIG, waLink } from "@/lib/config";
 
@@ -50,7 +50,7 @@ export default function HomePage() {
               Todo el <span className="text-acento-claro">café ecuatoriano</span>, conectado
             </h1>
             <p className="mt-5 max-w-2xl text-lg leading-relaxed text-crema/85">
-              Oportunidades, servicios y cursos para productores, compradores, tostadores, comerciantes, amantes del café y otros. Abre tu perfil gratis en 2 minutos.
+              Oportunidades, servicios y cursos para quienes producen, compran, tuestan, venden o disfrutan el café. Abre tu perfil gratis en 2 minutos.
             </p>
             {/* Registrarse (el más llamativo) y acceder; en el móvil van en
                 una sola línea. WhatsApp va debajo de la galería. */}
@@ -86,8 +86,7 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* Cifras reales de la Red y franja del precio (antes las pintaba la capa al cargar) */}
-      <CifrasRed />
+      {/* Franja del precio. Las cifras de la Red se muestran en /comunidad/ (capa propia, en vivo). */}
       <FranjaPrecio />
 
       {/* 2. Forma parte (antes copia de la capa sobre dos secciones ocultas) */}
