@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { CONFIG } from "@/lib/config";
+import { CLASE_DEMO, ENLACE_CLASE_DEMO_CURSO } from "@/lib/claseDemo";
 
 /*
  Botón flotante de la Comunidad: una cereza de café (dibujo SVG con volumen y
@@ -102,25 +103,6 @@ const ANUNCIO: Anuncio | null = {
   enlaces: [
     { texto: "Ver cursos gratis", href: "/academia/", externo: false },
     { texto: "De la finca a la taza", href: "/academia/cafe-de-especialidad-de-la-finca-a-la-taza/", externo: false },
-  ],
-};
-
-/* Clase demostrativa de barismo de Legacy: sale arriba en la tarjeta y suma 1
-   al número de la burbuja. Para quitarla, poner CLASE_DEMO = null. */
-const CLASE_DEMO: { rotulo: string; parrafos: string[]; antesDelBoton: string; boton: string; href: string; despues: string[] } | null = {
-  rotulo: "Academia · Clase demostrativa",
-  parrafos: [
-    "☕ ¡Hola a todos!",
-    "En LEGACY estamos organizando una nueva clase demostrativa de BARISMO y queremos invitarlos a participar.",
-    "Hemos creado un nuevo grupo oficial para compartir toda la información de la clase, novedades y el enlace de acceso.",
-    "📲 Para mantenerse informados y participar, les invitamos a unirse a nuestro nuevo grupo:",
-  ],
-  antesDelBoton: "🔗 Únanse aquí:",
-  boton: "Unirme al grupo de WhatsApp",
-  href: "https://chat.whatsapp.com/Lt5S7VRZbb8D9bANdHAmoA?s=cl&p=i&iam=2",
-  despues: [
-    "¡Será una excelente oportunidad para conocer y aprender más sobre el mundo del barismo!",
-    "¡Los esperamos! ☕",
   ],
 };
 
@@ -289,6 +271,9 @@ export function HubFlotante() {
               {CLASE_DEMO.despues.map((t, i) => (
                 <p key={i} className="mt-1.5 text-[0.8125rem] leading-snug text-white">{t}</p>
               ))}
+              <Link href={ENLACE_CLASE_DEMO_CURSO} onClick={() => setAbierta(false)} className={"mt-1 " + enlaceCss}>
+                Ver en el curso «De la finca a la taza»
+              </Link>
             </div>
           )}
           <p className={`${CLASE_DEMO ? "" : "pr-8 "}text-[0.6875rem] font-bold uppercase tracking-[0.14em]`} style={{ color: "#F7D08A" }}>
