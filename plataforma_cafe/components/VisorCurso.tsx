@@ -11,7 +11,7 @@
 import Link from "next/link";
 import { Fragment, useCallback, useEffect, useState } from "react";
 import { CONFIG } from "@/lib/config";
-import { CLASE_DEMO, type ClaseDemo } from "@/lib/claseDemo";
+import { CLASE_DEMO, proximaClase, type ClaseDemo } from "@/lib/claseDemo";
 
 type Bloque = {
   tipo?: string; titulo?: string; texto?: string; url?: string; alt?: string; pie?: string;
@@ -168,10 +168,14 @@ function BarraAvance({ hechas, total }: { hechas: number; total: number }) {
 }
 
 /* Aviso de la clase demostrativa al inicio del curso; la burbuja enlaza aquí. */
-function ClaseDemoCurso({ clase }: { clase: ClaseDemo }) {
+export function ClaseDemoCurso({ clase }: { clase: ClaseDemo }) {
+  // La fecha se calcula tras hidratar: el HTML estático no la trae (cambia sola).
+  const [fecha, setFecha] = useState("");
+  useEffect(() => { setFecha(proximaClase()); }, []);
   return (
     <aside id="clase-demostrativa" className="redcafe-clase-demo-curso" aria-label="Clase demostrativa de barismo">
       <p className="redcafe-clase-demo-rotulo">{clase.rotulo}</p>
+      {fecha ? <p className="redcafe-clase-demo-fecha">📅 Próxima clase: <strong>{fecha}</strong></p> : null}
       {clase.parrafos.map((t, i) => <p key={i} className={i === 0 ? "es-saludo" : undefined}>{t}</p>)}
       <p>{clase.antesDelBoton}</p>
       <p>
