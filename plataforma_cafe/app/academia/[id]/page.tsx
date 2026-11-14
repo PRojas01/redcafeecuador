@@ -7,7 +7,8 @@ import { notFound, useParams } from "next/navigation";
 import { CURSOS } from "@/lib/data";
 import { guardarBitacora, leerBitacora, leerSesion, type Sesion } from "@/lib/sesion";
 import { CamasSecado, CerezaMadura, FincaTerrazas, SacoExportacion } from "@/components/Lamina";
-import { VisorCurso } from "@/components/VisorCurso";
+import { ClaseDemoCurso, VisorCurso } from "@/components/VisorCurso";
+import { CLASE_DEMO } from "@/lib/claseDemo";
 
 const categoriaNombres: Record<string, string> = {
 	produccion: "Producción",
@@ -170,6 +171,7 @@ function CursoLocal() {
 				{curso.titulo}
 			</h1>
 			<p className="mt-2 text-pizarra-suave">{curso.descripcion}</p>
+			{CLASE_DEMO && curso.id === CLASE_DEMO.curso ? <div id="rc-curso-local"><ClaseDemoCurso clase={CLASE_DEMO} /></div> : null}
 
 			{curso.precios && (
 				<div className="mt-6 rounded-2xl border border-cereza/25 bg-cereza/5 p-5">

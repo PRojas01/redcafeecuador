@@ -16,7 +16,7 @@ export type ClaseDemo = {
 
 export const CLASE_DEMO: ClaseDemo | null = {
   curso: "cafe-de-especialidad-de-la-finca-a-la-taza",
-  corto: "☕ Nueva clase demostrativa de barismo con LEGACY. Únete al grupo para participar.",
+  corto: "☕ Clase demostrativa gratis de barismo con LEGACY",
   rotulo: "Academia · Clase demostrativa",
   parrafos: [
     "☕ ¡Hola a todos!",
@@ -34,3 +34,19 @@ export const CLASE_DEMO: ClaseDemo | null = {
 };
 
 export const ENLACE_CLASE_DEMO_CURSO = CLASE_DEMO ? `/academia/${CLASE_DEMO.curso}/#clase-demostrativa` : "";
+
+/* Fecha de la próxima clase: una cada 14 días, siempre en jueves, a partir del
+   jueves de referencia. El día de la clase todavía se muestra; al día
+   siguiente (hora de Ecuador) pasa sola a la siguiente. */
+const REFERENCIA_CLASE = Date.UTC(2026, 10, 19); // jueves 19 nov 2026
+const CADA_DIAS = 14;
+const DIA_MS = 86400000;
+const MESES = ["enero", "febrero", "marzo", "abril", "mayo", "junio", "julio", "agosto", "septiembre", "octubre", "noviembre", "diciembre"];
+
+export function proximaClase(ahora: number = Date.now()): string {
+  // Día de hoy en Ecuador (UTC−5, sin horario de verano), a medianoche UTC.
+  const hoy = Math.floor((ahora - 5 * 3600000) / DIA_MS) * DIA_MS;
+  const pasados = Math.max(0, Math.ceil((hoy - REFERENCIA_CLASE) / (CADA_DIAS * DIA_MS)));
+  const f = new Date(REFERENCIA_CLASE + pasados * CADA_DIAS * DIA_MS);
+  return `jueves ${f.getUTCDate()} de ${MESES[f.getUTCMonth()]}`;
+}
