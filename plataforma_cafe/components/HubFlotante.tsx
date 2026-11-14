@@ -256,6 +256,7 @@ export function HubFlotante() {
               </p>
               <p className="mt-1 pr-6 text-sm font-semibold leading-snug text-white">{CLASE_DEMO.corto}</p>
               <p className="mt-1 text-[0.8125rem] leading-snug" style={{ color: "#F7D08A" }}>📅 Próxima clase: <strong>{proximaClase()}</strong></p>
+              <p className="mt-1 text-[0.8125rem] leading-snug text-white">{CLASE_DEMO.modalidad}</p>
               <Link href={ENLACE_CLASE_DEMO_CURSO} onClick={() => setAbierta(false)} className={enlaceCss}>
                 Ver más información
               </Link>

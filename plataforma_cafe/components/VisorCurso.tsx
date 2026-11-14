@@ -176,6 +176,7 @@ export function ClaseDemoCurso({ clase }: { clase: ClaseDemo }) {
     <aside id="clase-demostrativa" className="redcafe-clase-demo-curso" aria-label="Clase demostrativa de barismo">
       <p className="redcafe-clase-demo-rotulo">{clase.rotulo}</p>
       {fecha ? <p className="redcafe-clase-demo-fecha">📅 Próxima clase: <strong>{fecha}</strong></p> : null}
+      <p className="redcafe-clase-demo-modalidad">{clase.modalidad}</p>
       {clase.parrafos.map((t, i) => <p key={i} className={i === 0 ? "es-saludo" : undefined}>{t}</p>)}
       <p>{clase.antesDelBoton}</p>
       <p>
