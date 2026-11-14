@@ -254,25 +254,9 @@ export function HubFlotante() {
               <p className="pr-8 text-[0.6875rem] font-bold uppercase tracking-[0.14em]" style={{ color: "#F7D08A" }}>
                 {CLASE_DEMO.rotulo}
               </p>
-              {CLASE_DEMO.parrafos.map((t, i) => (
-                <p key={i} className={`mt-1.5 text-[0.8125rem] leading-snug text-white ${i === 0 ? "pr-6 font-semibold" : ""}`}>{t}</p>
-              ))}
-              <p className="mt-1.5 text-[0.8125rem] leading-snug text-white">{CLASE_DEMO.antesDelBoton}</p>
-              <a
-                href={CLASE_DEMO.href}
-                target="_blank"
-                rel="noopener noreferrer"
-                onClick={() => setAbierta(false)}
-                className="mt-2 inline-flex min-h-11 items-center justify-center bg-white px-4 text-sm font-bold"
-                style={{ color: "#542004", borderRadius: 4, textDecoration: "none" }}
-              >
-                {CLASE_DEMO.boton} <span aria-hidden="true" className="ml-1">↗</span>
-              </a>
-              {CLASE_DEMO.despues.map((t, i) => (
-                <p key={i} className="mt-1.5 text-[0.8125rem] leading-snug text-white">{t}</p>
-              ))}
-              <Link href={ENLACE_CLASE_DEMO_CURSO} onClick={() => setAbierta(false)} className={"mt-1 " + enlaceCss}>
-                Ver en el curso «De la finca a la taza»
+              <p className="mt-1 pr-6 text-sm font-semibold leading-snug text-white">{CLASE_DEMO.corto}</p>
+              <Link href={ENLACE_CLASE_DEMO_CURSO} onClick={() => setAbierta(false)} className={enlaceCss}>
+                Ver en el curso gratis
               </Link>
             </div>
           )}
