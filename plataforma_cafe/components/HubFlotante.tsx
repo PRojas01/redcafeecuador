@@ -4,7 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { CONFIG } from "@/lib/config";
-import { CLASE_DEMO, ENLACE_CLASE_DEMO_CURSO } from "@/lib/claseDemo";
+import { CLASE_DEMO, ENLACE_CLASE_DEMO_CURSO, proximaClase } from "@/lib/claseDemo";
 
 /*
  Botón flotante de la Comunidad: una cereza de café (dibujo SVG con volumen y
@@ -255,8 +255,9 @@ export function HubFlotante() {
                 {CLASE_DEMO.rotulo}
               </p>
               <p className="mt-1 pr-6 text-sm font-semibold leading-snug text-white">{CLASE_DEMO.corto}</p>
+              <p className="mt-1 text-[0.8125rem] leading-snug" style={{ color: "#F7D08A" }}>📅 Próxima clase: <strong>{proximaClase()}</strong></p>
               <Link href={ENLACE_CLASE_DEMO_CURSO} onClick={() => setAbierta(false)} className={enlaceCss}>
-                Ver en el curso gratis
+                Ver más información
               </Link>
             </div>
           )}
