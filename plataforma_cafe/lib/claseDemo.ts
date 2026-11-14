@@ -10,6 +10,7 @@ export type ClaseDemo = {
   parrafos: string[];
   antesDelBoton: string;
   boton: string;
+  nota: string; // bajo el botón: qué decir al entrar al grupo
   href: string;
   despues: string[];
 };
@@ -26,6 +27,7 @@ export const CLASE_DEMO: ClaseDemo | null = {
   ],
   antesDelBoton: "🔗 Únanse aquí:",
   boton: "Registrarme en la clase de LEGACY (WhatsApp)",
+  nota: "Al unirte, saluda diciendo que vienes de redcafeecuador.com y que te interesa el mundo del café de calidad y de especialidad.",
   href: "https://chat.whatsapp.com/Lt5S7VRZbb8D9bANdHAmoA?s=cl&p=i&iam=2",
   despues: [
     "¡Será una excelente oportunidad para conocer y aprender más sobre el mundo del barismo!",
