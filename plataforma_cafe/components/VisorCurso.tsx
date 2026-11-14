@@ -11,6 +11,7 @@
 import Link from "next/link";
 import { Fragment, useCallback, useEffect, useState } from "react";
 import { CONFIG } from "@/lib/config";
+import { CLASE_DEMO, type ClaseDemo } from "@/lib/claseDemo";
 
 type Bloque = {
   tipo?: string; titulo?: string; texto?: string; url?: string; alt?: string; pie?: string;
@@ -163,6 +164,23 @@ function BarraAvance({ hechas, total }: { hechas: number; total: number }) {
       <div className="redcafe-avance-barra"><span style={{ width: `${pct}%` }} /></div>
       <p className="redcafe-avance-texto"><strong>{pct} %</strong> · {hechas} de {total} lecciones</p>
     </div>
+  );
+}
+
+/* Aviso de la clase demostrativa al inicio del curso; la burbuja enlaza aquí. */
+function ClaseDemoCurso({ clase }: { clase: ClaseDemo }) {
+  return (
+    <aside id="clase-demostrativa" className="redcafe-clase-demo-curso" aria-label="Clase demostrativa de barismo">
+      <p className="redcafe-clase-demo-rotulo">{clase.rotulo}</p>
+      {clase.parrafos.map((t, i) => <p key={i} className={i === 0 ? "es-saludo" : undefined}>{t}</p>)}
+      <p>{clase.antesDelBoton}</p>
+      <p>
+        <a className="redcafe-clase-demo-boton" href={clase.href} target="_blank" rel="noopener noreferrer">
+          {clase.boton} <span aria-hidden="true">↗</span>
+        </a>
+      </p>
+      {clase.despues.map((t, i) => <p key={i}>{t}</p>)}
+    </aside>
   );
 }
 
@@ -355,7 +373,13 @@ export function VisorCurso({ id: idFijo, inicial, respaldo }: { id: string | nul
     );
   }
 
-  const materiales = Array.isArray(c.materiales) ? c.materiales : [];
+  // En el curso de la clase demostrativa, el enlace «Avisarme…» se cambia por
+  // el grupo de WhatsApp de la clase.
+  const materiales = (Array.isArray(c.materiales) ? c.materiales : []).map((m) =>
+    CLASE_DEMO && c.id === CLASE_DEMO.curso && /^avisarme/i.test(String(m.titulo || ""))
+      ? { ...m, tipo: "enlace", titulo: "Clase demostrativa de barismo: unirme al grupo de WhatsApp", url: CLASE_DEMO.href, nota: "Información de la clase, novedades y el enlace de acceso." }
+      : m
+  );
   const nMat = Number(c.materiales_count || 0);
 
   return (
@@ -369,6 +393,7 @@ export function VisorCurso({ id: idFijo, inicial, respaldo }: { id: string | nul
         <p className={"redcafe-curso-costo-ficha " + (precio ? "es-pago" : "es-gratis")}>{precio || "Gratis"}</p>
         <h1 className="redcafe-curso-titulo">{c.titulo || "Curso"}</h1>
         {c.descripcion ? <p className="redcafe-curso-desc">{c.descripcion}</p> : null}
+        {CLASE_DEMO && c.id === CLASE_DEMO.curso ? <ClaseDemoCurso clase={CLASE_DEMO} /> : null}
         {precio ? (
           <p className="redcafe-curso-legacy">
             <a className="redcafe-curso-solicitar" href={waLegacy(c.titulo || "")} target="_blank" rel="noreferrer">Pedir fechas y condiciones a Legacy</a>

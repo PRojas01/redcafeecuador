@@ -13,7 +13,7 @@ window.__redcafeReactListo = window.__redcafeReactListo || function () {
 (function () {
   "use strict";
 
-  var VERSION = "20261114a";
+  var VERSION = "20261114b";
   var WAPP = "593968641376";
   var path = normalizePath(location.pathname);
   var homeAuthChecking = false;
@@ -547,7 +547,7 @@ window.__redcafeReactListo = window.__redcafeReactListo || function () {
    propia al final de <body>, después de hidratar. */
 (function () {
   if (typeof window === "undefined" || !window.ResizeObserver) return;
-  var URL_SELLO = "/img/sello-redcafe.svg?v=20261114a";
+  var URL_SELLO = "/img/sello-redcafe.svg?v=20261114b";
   var capa = null, temporizador = 0, ultimaFirma = "";
   var BANDA = 120;
 
@@ -894,7 +894,7 @@ window.__redcafeReactListo = window.__redcafeReactListo || function () {
   })();
 })();
 
-/* ===== v20261114a · Registro más atractivo =====
+/* ===== v20261114b · Registro más atractivo =====
    Cifras de la Red siempre en vivo (/api/metricas.php?action=cifras), nunca escritas a mano:
    · Portada: línea corta bajo los botones (miembros y provincias) y título sobre las tarjetas.
    · Comunidad: la franja completa «La Red hoy», bajo el subtítulo.
