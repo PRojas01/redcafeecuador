@@ -1,7 +1,7 @@
 /* Red Café Ecuador — Service Worker (PWA básica)
    Precaché de la shell de la app y rutas principales. */
 
-const VERSION = "20261114e";
+const VERSION = "20261114f";
 const CACHE = `redcafe-raiz-v${VERSION}`;
 const BASE = "";
 
