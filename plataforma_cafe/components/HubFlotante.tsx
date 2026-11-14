@@ -105,6 +105,25 @@ const ANUNCIO: Anuncio | null = {
   ],
 };
 
+/* Clase demostrativa de barismo de Legacy: sale arriba en la tarjeta y suma 1
+   al número de la burbuja. Para quitarla, poner CLASE_DEMO = null. */
+const CLASE_DEMO: { rotulo: string; parrafos: string[]; antesDelBoton: string; boton: string; href: string; despues: string[] } | null = {
+  rotulo: "Academia · Clase demostrativa",
+  parrafos: [
+    "☕ ¡Hola a todos!",
+    "En LEGACY estamos organizando una nueva clase demostrativa de BARISMO y queremos invitarlos a participar.",
+    "Hemos creado un nuevo grupo oficial para compartir toda la información de la clase, novedades y el enlace de acceso.",
+    "📲 Para mantenerse informados y participar, les invitamos a unirse a nuestro nuevo grupo:",
+  ],
+  antesDelBoton: "🔗 Únanse aquí:",
+  boton: "Unirme al grupo de WhatsApp",
+  href: "https://chat.whatsapp.com/Lt5S7VRZbb8D9bANdHAmoA?s=cl&p=i&iam=2",
+  despues: [
+    "¡Será una excelente oportunidad para conocer y aprender más sobre el mundo del barismo!",
+    "¡Los esperamos! ☕",
+  ],
+};
+
 type Post = { aviso?: string; created_at?: string; titulo?: string; enlace?: string };
 
 // Novedades del muro que salen solas (además del número del botón).
@@ -219,8 +238,9 @@ export function HubFlotante() {
     setAbierta(!abierta);
   };
 
-  // El número de la burbuja: miembros y lotes nuevos + 1 fijo por los cursos gratis.
-  const alerta = nuevas + 1;
+  // El número de la burbuja: miembros y lotes nuevos + 1 fijo por los cursos
+  // gratis + 1 mientras esté la clase demostrativa.
+  const alerta = nuevas + 1 + (CLASE_DEMO ? 1 : 0);
   const etiqueta = `Novedades de la Red: ${alerta} ${alerta === 1 ? "aviso" : "avisos"}`;
   const enlaceCss = "inline-flex min-h-9 items-center text-[0.8125rem] font-semibold text-white underline underline-offset-4";
 
@@ -231,8 +251,10 @@ export function HubFlotante() {
           id="redcafe-mensaje-temporal"
           role="dialog"
           aria-label="Novedades de la Red"
-          className="redcafe-mensaje-temporal relative w-[min(19rem,calc(100vw-2.5rem))] border border-white/15 px-4 pb-3 pt-3 text-white shadow-2xl"
+          className="redcafe-mensaje-temporal relative w-[min(19rem,calc(100vw-2.5rem))] overflow-y-auto border border-white/15 px-4 pb-3 pt-3 text-white shadow-2xl"
           style={{
+            maxHeight: "calc(100dvh - 7.5rem)",
+            overscrollBehavior: "contain",
             backgroundColor: "#8C3604",
             backgroundImage: "linear-gradient(170deg, rgba(140,54,4,.96), rgba(84,32,4,.97))",
           }}
@@ -245,7 +267,31 @@ export function HubFlotante() {
           >
             <span aria-hidden="true" className="text-lg leading-none">×</span>
           </button>
-          <p className="pr-8 text-[0.6875rem] font-bold uppercase tracking-[0.14em]" style={{ color: "#F7D08A" }}>
+          {CLASE_DEMO && (
+            <div className="redcafe-clase-demo mb-3 border-b pb-3" style={{ borderColor: "rgba(255,255,255,.2)" }}>
+              <p className="pr-8 text-[0.6875rem] font-bold uppercase tracking-[0.14em]" style={{ color: "#F7D08A" }}>
+                {CLASE_DEMO.rotulo}
+              </p>
+              {CLASE_DEMO.parrafos.map((t, i) => (
+                <p key={i} className={`mt-1.5 text-[0.8125rem] leading-snug text-white ${i === 0 ? "pr-6 font-semibold" : ""}`}>{t}</p>
+              ))}
+              <p className="mt-1.5 text-[0.8125rem] leading-snug text-white">{CLASE_DEMO.antesDelBoton}</p>
+              <a
+                href={CLASE_DEMO.href}
+                target="_blank"
+                rel="noopener noreferrer"
+                onClick={() => setAbierta(false)}
+                className="mt-2 inline-flex min-h-11 items-center justify-center bg-white px-4 text-sm font-bold"
+                style={{ color: "#542004", borderRadius: 4, textDecoration: "none" }}
+              >
+                {CLASE_DEMO.boton} <span aria-hidden="true" className="ml-1">↗</span>
+              </a>
+              {CLASE_DEMO.despues.map((t, i) => (
+                <p key={i} className="mt-1.5 text-[0.8125rem] leading-snug text-white">{t}</p>
+              ))}
+            </div>
+          )}
+          <p className={`${CLASE_DEMO ? "" : "pr-8 "}text-[0.6875rem] font-bold uppercase tracking-[0.14em]`} style={{ color: "#F7D08A" }}>
             {novedad ? "Novedades de la Red" : "Academia · Cursos gratis"}
           </p>
           <p className="mt-1 pr-6 text-sm font-semibold leading-snug text-white">
