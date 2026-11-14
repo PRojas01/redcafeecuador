@@ -7,6 +7,7 @@ export type ClaseDemo = {
   curso: string;
   corto: string; // lo que dice la tarjeta de la burbuja
   rotulo: string;
+  modalidad: string;
   parrafos: string[];
   antesDelBoton: string;
   boton: string;
@@ -19,6 +20,7 @@ export const CLASE_DEMO: ClaseDemo | null = {
   curso: "cafe-de-especialidad-de-la-finca-a-la-taza",
   corto: "☕ Clase demostrativa gratis de barismo con LEGACY",
   rotulo: "Academia · Clase demostrativa",
+  modalidad: "📍 Presencial en Cumbayá y 💻 online por Zoom, en la misma fecha y hora.",
   parrafos: [
     "☕ ¡Hola a todos!",
     "En LEGACY estamos organizando una nueva clase demostrativa de BARISMO y queremos invitarlos a participar.",
@@ -30,7 +32,7 @@ export const CLASE_DEMO: ClaseDemo | null = {
   nota: "Al unirte, saluda diciendo que vienes de redcafeecuador.com y que te interesa el mundo del café de calidad y de especialidad.",
   href: "https://chat.whatsapp.com/Lt5S7VRZbb8D9bANdHAmoA?s=cl&p=i&iam=2",
   despues: [
-    "¡Será una excelente oportunidad para conocer y aprender más sobre el mundo del barismo!",
+    "¡Será una excelente oportunidad para conocer y aprender más sobre el mundo del café de especialidad!",
     "¡Los esperamos! ☕",
   ],
 };
