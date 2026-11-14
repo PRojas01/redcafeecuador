@@ -183,6 +183,7 @@ export function ClaseDemoCurso({ clase }: { clase: ClaseDemo }) {
           {clase.boton} <span aria-hidden="true">↗</span>
         </a>
       </p>
+      <p className="redcafe-clase-demo-nota">💬 {clase.nota}</p>
       {clase.despues.map((t, i) => <p key={i}>{t}</p>)}
     </aside>
   );
@@ -381,7 +382,7 @@ export function VisorCurso({ id: idFijo, inicial, respaldo }: { id: string | nul
   // el grupo de WhatsApp de la clase.
   const materiales = (Array.isArray(c.materiales) ? c.materiales : []).map((m) =>
     CLASE_DEMO && c.id === CLASE_DEMO.curso && /^avisarme/i.test(String(m.titulo || ""))
-      ? { ...m, tipo: "enlace", titulo: "Clase demostrativa de barismo: unirme al grupo de WhatsApp", url: CLASE_DEMO.href, nota: "Información de la clase, novedades y el enlace de acceso." }
+      ? { ...m, tipo: "enlace", titulo: "Clase demostrativa de barismo: unirme al grupo de WhatsApp", url: CLASE_DEMO.href, nota: CLASE_DEMO.nota }
       : m
   );
   const nMat = Number(c.materiales_count || 0);
