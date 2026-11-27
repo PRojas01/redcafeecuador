@@ -7,6 +7,7 @@ import { cupo } from "../lib/seguridad.js";
 import { miembroRoles, requiereAdmin, todosLosMiembros } from "../lib/usuarios.js";
 import { config } from "../lib/config.js";
 import { str, today } from "../lib/util.js";
+import { PAIS_DEFECTO, provinciaEcuador } from "../lib/paises.js";
 import { lotesTodos } from "./lotes.js";
 
 const EVENTOS = ["visita", "cta_registro", "registro_paso1", "registro_paso2", "registro_paso3", "registro_enviado", "registro_ok", "activacion_clic"];
@@ -48,25 +49,33 @@ const acciones: Modulo["acciones"] = {
 
   async cifras() {
     const miembros = await todosLosMiembros();
-    let productores = 0, compran = 0;
+    let total = 0, productores = 0, compran = 0, otrosPaises = 0;
+    const paises = new Set<string>();
     const prov = new Map<string, { nombre: string; miembros: number; lotes: number }>();
+    // Solo cuentan las 24 provincias del Ecuador, con su nombre oficial (sin duplicar grafías).
     const sumar = (p: string, campo: "miembros" | "lotes") => {
-      const k = p.toLowerCase();
-      if (!prov.has(k)) prov.set(k, { nombre: p, miembros: 0, lotes: 0 });
-      prov.get(k)![campo]++;
+      if (!prov.has(p)) prov.set(p, { nombre: p, miembros: 0, lotes: 0 });
+      prov.get(p)![campo]++;
     };
     for (const m of miembros) {
-      if ((m.estado ?? "activo") === "inactivo") continue;
+      // Cuentas cerradas, eliminadas, suspendidas o bloqueadas no son miembros de la Red.
+      if ((m.estado ?? "activo") !== "activo" || m.activo === false) continue;
+      total++;
       const roles = miembroRoles(m);
       if (roles.includes("productor")) productores++;
       if (roles.some((r) => ["comprador", "vendedor", "exportador", "bar"].includes(r))) compran++;
-      if (str(m.provincia).trim()) sumar(str(m.provincia).trim(), "miembros");
+      const pais = str(m.pais).trim().toUpperCase() || PAIS_DEFECTO;
+      paises.add(pais);
+      if (pais !== PAIS_DEFECTO) { otrosPaises++; continue; }
+      const p = provinciaEcuador(m.provincia);
+      if (p) sumar(p, "miembros");
     }
     let lotesReales = 0;
     for (const l of await lotesTodos()) {
       if (l.oculto || l.demo || l.ejemplo) continue;
       lotesReales++;
-      if (str(l.provincia).trim()) sumar(str(l.provincia).trim(), "lotes");
+      const p = provinciaEcuador(l.provincia);
+      if (p) sumar(p, "lotes");
     }
     const hoy = today();
     const requerimientos = (await listar("requerimientos")).filter((r) => r.estado === "abierta" && !(str(r.cierra) && str(r.cierra) < hoy)).length;
@@ -79,7 +88,7 @@ const acciones: Modulo["acciones"] = {
       (await listar("servicios-terceros")).filter((s) => !s.oculto && !s.demo && (s.visibilidad ?? "publico") === "publico").length;
     const porProvincia = [...prov.values()].sort((a, b) => b.lotes - a.lotes || b.miembros - a.miembros);
     return {
-      miembros: miembros.length, productores, compran_cafe: compran, provincias: porProvincia.filter((x) => x.miembros > 0).length,
+      miembros: total, miembros_ecuador: total - otrosPaises, miembros_otros_paises: otrosPaises, paises: paises.size, productores, compran_cafe: compran, provincias: porProvincia.filter((x) => x.miembros > 0).length,
       por_provincia: porProvincia.slice(0, 12), lotes_reales: lotesReales, servicios, requerimientos_abiertos: requerimientos,
     };
   },
