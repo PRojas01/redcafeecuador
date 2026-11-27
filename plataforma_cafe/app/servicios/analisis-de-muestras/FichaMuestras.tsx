@@ -6,9 +6,10 @@
    WhatsApp de Red Café para asistencia. Los datos que la persona escribe aquí
    solo viajan en el mensaje de WhatsApp: no se guardan en la Red. */
 import Link from "next/link";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { CONFIG } from "@/lib/config";
-import { MUESTRAS_LEGACY as M, VIDEOS_MUESTRAS, waMuestras, type DatosMuestra } from "@/lib/legacyMuestras";
+import { MUESTRAS_LEGACY as M, VIDEOS_MUESTRAS, faltantes, textoMuestras, waMuestras, type CampoMuestra, type DatosMuestra } from "@/lib/legacyMuestras";
+import { descargar, fichaMuestraPng } from "@/lib/fichaMuestraImagen";
 
 const waRed = () =>
   `https://wa.me/${CONFIG.whatsapp}?text=${encodeURIComponent("Hola Red Café Ecuador, tengo una consulta sobre el servicio de análisis de muestras de café verde de Legacy.")}`;
@@ -53,27 +54,130 @@ function VideosEn({ en }: { en: string }) {
   return <div className="redcafe-curso-videos">{lista.map((v) => <Video key={v.id} {...v} />)}</div>;
 }
 
-function Solicitar({ datos, abajo }: { datos: DatosMuestra; abajo?: boolean }) {
+function AyudaRed() {
   return (
-    <aside className={"redcafe-curso-inscripcion" + (abajo ? " es-abajo" : "")} aria-label="Solicitar el análisis a Legacy">
-      <p className="redcafe-curso-inscripcion-rotulo">{abajo ? "¿Listo para enviar tu muestra?" : "Servicio de pago · lo hace y lo cobra Legacy"}</p>
+    <p className="redcafe-curso-inscripcion-red">
+      ¿Tienes dudas o necesitas ayuda con tu muestra? También te atiende Red Café Ecuador:{" "}
+      <a href={waRed()} target="_blank" rel="noopener noreferrer">escribir a Red Café por WhatsApp <span aria-hidden="true">↗</span></a>
+    </p>
+  );
+}
+
+/* Arriba: lleva al formulario (la solicitud necesita los datos). */
+function IrASolicitud() {
+  return (
+    <aside className="redcafe-curso-inscripcion" aria-label="Solicitar el análisis a Legacy">
+      <p className="redcafe-curso-inscripcion-rotulo">Servicio de pago · lo hace y lo cobra Legacy</p>
       <p>
-        Escribe a Legacy por WhatsApp: tu mensaje ya dice que vienes de redcafeecuador.com
-        {abajo ? " y lleva los datos de tu muestra que completaste en el paso 1" : ""}. Ellos te indican cómo y dónde entregar la muestra y la forma de pago.
+        Completa los datos de tu muestra, tu contacto y la fecha de envío. Con eso se arma la ficha de recepción y el mensaje
+        de WhatsApp a Legacy, que ya dice que vienes de redcafeecuador.com.
       </p>
-      <a className="redcafe-curso-inscripcion-boton" href={waMuestras(datos)} target="_blank" rel="noopener noreferrer" onClick={contarClic}>
-        Solicitar análisis a Legacy <span aria-hidden="true">↗</span>
+      <a className="redcafe-curso-inscripcion-boton" href="#solicitud-muestra">
+        Completar la solicitud <span aria-hidden="true">↓</span>
       </a>
-      <p className="redcafe-curso-inscripcion-red">
-        ¿Tienes dudas o necesitas ayuda con tu muestra? También te atiende Red Café Ecuador:{" "}
-        <a href={waRed()} target="_blank" rel="noopener noreferrer">escribir a Red Café por WhatsApp <span aria-hidden="true">↗</span></a>
-      </p>
+      <AyudaRed />
     </aside>
+  );
+}
+
+/* Paso 4: envía el WhatsApp con todos los datos y la ficha como imagen. */
+function Enviar({ datos, onFalta }: { datos: DatosMuestra; onFalta: (f: CampoMuestra[]) => void }) {
+  const [puedeCompartir, setPuedeCompartir] = useState(false);
+  const [aviso, setAviso] = useState("");
+  useEffect(() => {
+    try {
+      const f = new File(["x"], "x.png", { type: "image/png" });
+      setPuedeCompartir(!!navigator.canShare && navigator.canShare({ files: [f] }));
+    } catch { setPuedeCompartir(false); }
+  }, []);
+  const revisar = () => {
+    const f = faltantes(datos);
+    onFalta(f);
+    if (f.length) setAviso("Falta completar: " + f.map((c) => c.etiqueta).join(", ") + ".");
+    else setAviso("");
+    return f.length === 0;
+  };
+  /* Valida; luego abre el WhatsApp con un enlace normal (pasa por el aviso de
+     «Vas a salir de Red Café») y descarga la ficha para adjuntarla. */
+  const enviar = () => {
+    if (!revisar()) return;
+    contarClic();
+    const a = document.createElement("a");
+    a.href = waMuestras(datos); a.target = "_blank"; a.rel = "noopener noreferrer";
+    document.body.appendChild(a); a.click(); a.remove();
+    fichaMuestraPng(datos).then(descargar).catch(() => {});
+    setAviso("Se descargó la ficha. En el chat de Legacy toca el clip (📎) y adjunta la imagen antes de enviar.");
+  };
+  const compartir = async () => {
+    if (!revisar()) return;
+    try {
+      const f = await fichaMuestraPng(datos);
+      contarClic();
+      await navigator.share({ files: [f], text: textoMuestras(datos) });
+    } catch { /* la persona canceló */ }
+  };
+  const bajar = async () => { if (revisar()) descargar(await fichaMuestraPng(datos)); };
+  return (
+    <aside className="redcafe-curso-inscripcion es-abajo" aria-label="Enviar la solicitud a Legacy">
+      <p className="redcafe-curso-inscripcion-rotulo">Envía tu solicitud</p>
+      <p>
+        El botón abre WhatsApp con Legacy (0963291887) con todos tus datos, que vienes de redcafeecuador.com y la referencia,
+        y descarga la ficha de recepción como imagen para que la adjuntes en el mismo chat.
+      </p>
+      <button type="button" className="redcafe-curso-inscripcion-boton" onClick={enviar}>
+        Enviar solicitud a Legacy por WhatsApp <span aria-hidden="true">↗</span>
+      </button>
+      <div className="redcafe-muestra-acciones">
+        {puedeCompartir ? (
+          <button type="button" onClick={compartir}>Compartir la ficha con los datos (elige el chat de Legacy)</button>
+        ) : null}
+        <button type="button" onClick={bajar}>Descargar solo la ficha</button>
+      </div>
+      {aviso ? <p className="redcafe-muestra-aviso" role="status">{aviso}</p> : null}
+      <AyudaRed />
+    </aside>
+  );
+}
+
+function Campos({ lista, datos, poner, marcados }: { lista: CampoMuestra[]; datos: DatosMuestra; poner: (id: string, v: string) => void; marcados: Set<string> }) {
+  const [hoy, setHoy] = useState("");
+  useEffect(() => { setHoy(new Date(Date.now() - 5 * 3600 * 1000).toISOString().slice(0, 10)); }, []);
+  return (
+    <div className="redcafe-muestra-form">
+      {lista.map((c) => (
+        <label key={c.id} className={marcados.has(c.id) ? "es-falta" : undefined}>
+          <span>{c.etiqueta}{c.opcional ? <em> (opcional)</em> : null}</span>
+          <input
+            type={c.tipo || "text"}
+            name={c.id}
+            id={"muestra-" + c.id}
+            maxLength={120}
+            min={c.tipo === "date" ? hoy || undefined : undefined}
+            required={!c.opcional}
+            aria-invalid={marcados.has(c.id) || undefined}
+            autoComplete={c.id === "nombre" ? "name" : c.id === "telefono" ? "tel" : c.id === "correo" ? "email" : "off"}
+            inputMode={c.tipo === "tel" ? "tel" : undefined}
+            placeholder={c.ayuda || undefined}
+            value={datos[c.id] || ""}
+            onChange={(e) => poner(c.id, e.target.value)}
+          />
+        </label>
+      ))}
+    </div>
   );
 }
 
 export default function FichaMuestras() {
   const [datos, setDatos] = useState<DatosMuestra>({});
+  const [marcados, setMarcados] = useState<Set<string>>(new Set());
+  const poner = (id: string, v: string) => {
+    setDatos((d) => ({ ...d, [id]: v }));
+    if (v.trim()) setMarcados((m) => { const n = new Set(m); n.delete(id); return n; });
+  };
+  const onFalta = (f: CampoMuestra[]) => {
+    setMarcados(new Set(f.map((c) => c.id)));
+    if (f.length) document.getElementById("muestra-" + f[0].id)?.focus();
+  };
   return (
     <section id="redcafe-servicio-muestras" className="redcafe-curso">
       <div className="redcafe-curso-wrap">
@@ -88,7 +192,7 @@ export default function FichaMuestras() {
           su cata y posible venta.
         </p>
 
-        <Solicitar datos={datos} />
+        <IrASolicitud />
 
         <section className="redcafe-curso-oferta" aria-label="Precio y entregables">
           <h2>Precio y entregables</h2>
@@ -110,60 +214,57 @@ export default function FichaMuestras() {
           <ul>
             <li>Completa los datos de tu muestra (paso 1).</li>
             <li>Prepara 400 g de café en verde trillado (paso 2).</li>
-            <li>Escribe a Legacy por WhatsApp y entrega la muestra (paso 3).</li>
-            <li>Legacy tuesta la muestra en 3 curvas y la evalúa (paso 4).</li>
-            <li>Recibes tus resultados y, si quieres, tu muestra va a Cafexporto (paso 5).</li>
+            <li>Escribe tu contacto y la fecha en que enviarás la muestra (paso 3).</li>
+            <li>Envía la solicitud por WhatsApp a Legacy con la ficha adjunta y entrega la muestra (paso 4).</li>
+            <li>Legacy tuesta la muestra en 3 curvas y la evalúa (paso 5).</li>
+            <li>Recibes tus resultados y, si quieres, tu muestra va a Cafexporto (paso 6).</li>
           </ul>
         </div>
 
-        <section className="redcafe-modulo">
-          <header>
-            <p className="redcafe-modulo-num">Paso 1</p>
-            <h3>Información necesaria para la recepción de la muestra</h3>
-            <p className="redcafe-modulo-resumen">Escríbela aquí y viajará en tu mensaje de WhatsApp a Legacy. No se guarda en la Red.</p>
-          </header>
-          <form className="redcafe-muestra-form" onSubmit={(e) => e.preventDefault()}>
-            {M.datos.map((c) => (
-              <label key={c.id}>
-                <span>{c.etiqueta}{c.opcional ? <em> (opcional)</em> : null}</span>
-                <input
-                  type="text"
-                  name={c.id}
-                  maxLength={120}
-                  autoComplete="off"
-                  placeholder={c.ayuda || undefined}
-                  value={datos[c.id] || ""}
-                  onChange={(e) => setDatos((d) => ({ ...d, [c.id]: e.target.value }))}
-                />
-              </label>
-            ))}
-          </form>
-        </section>
+        <form id="solicitud-muestra" className="redcafe-muestra-solicitud" onSubmit={(e) => e.preventDefault()} noValidate>
+          <section className="redcafe-modulo">
+            <header>
+              <p className="redcafe-modulo-num">Paso 1</p>
+              <h3>Información necesaria para la recepción de la muestra</h3>
+              <p className="redcafe-modulo-resumen">Lo que escribas aquí va en tu mensaje de WhatsApp y en la ficha para Legacy. No se guarda en la Red.</p>
+            </header>
+            <Campos lista={M.datos} datos={datos} poner={poner} marcados={marcados} />
+          </section>
+
+          <section className="redcafe-modulo">
+            <header>
+              <p className="redcafe-modulo-num">Paso 2</p>
+              <h3>Condiciones de la muestra</h3>
+            </header>
+            <ul className="redcafe-muestra-lista">
+              {M.condiciones.map((c) => <li key={c}>{c}</li>)}
+            </ul>
+          </section>
+
+          <section className="redcafe-modulo">
+            <header>
+              <p className="redcafe-modulo-num">Paso 3</p>
+              <h3>Contacto y fecha de envío de la muestra</h3>
+              <p className="redcafe-modulo-resumen">Para que Legacy te confirme la recepción y te escriba con los resultados.</p>
+            </header>
+            <Campos lista={M.contacto} datos={datos} poner={poner} marcados={marcados} />
+          </section>
+
+          <section className="redcafe-modulo">
+            <header>
+              <p className="redcafe-modulo-num">Paso 4</p>
+              <h3>Envía la solicitud con la ficha y entrega la muestra</h3>
+              <p className="redcafe-modulo-resumen">
+                Legacy te confirma por WhatsApp dónde entregar la muestra y el pago de {M.precio} más impuestos.
+              </p>
+            </header>
+            <Enviar datos={datos} onFalta={onFalta} />
+          </section>
+        </form>
 
         <section className="redcafe-modulo">
           <header>
-            <p className="redcafe-modulo-num">Paso 2</p>
-            <h3>Condiciones de la muestra</h3>
-          </header>
-          <ul className="redcafe-muestra-lista">
-            {M.condiciones.map((c) => <li key={c}>{c}</li>)}
-          </ul>
-        </section>
-
-        <section className="redcafe-modulo">
-          <header>
-            <p className="redcafe-modulo-num">Paso 3</p>
-            <h3>Solicita el servicio y entrega la muestra</h3>
-            <p className="redcafe-modulo-resumen">
-              Toca «Solicitar análisis a Legacy». El mensaje ya lleva tus datos, que vienes de redcafeecuador.com y la referencia
-              del servicio. Legacy te confirma cómo y dónde entregar la muestra y el pago de {M.precio} más impuestos.
-            </p>
-          </header>
-        </section>
-
-        <section className="redcafe-modulo">
-          <header>
-            <p className="redcafe-modulo-num">Paso 4 · Proceso de evaluación</p>
+            <p className="redcafe-modulo-num">Paso 5 · Proceso de evaluación</p>
             <h3>Tostado de la muestra</h3>
             <p className="redcafe-modulo-resumen">Se diseñan 3 curvas de tueste:</p>
           </header>
@@ -175,15 +276,13 @@ export default function FichaMuestras() {
 
         <section className="redcafe-modulo">
           <header>
-            <p className="redcafe-modulo-num">Paso 5</p>
+            <p className="redcafe-modulo-num">Paso 6</p>
             <h3>Entregables</h3>
           </header>
           <ul className="redcafe-muestra-lista">
             {M.entregables.map((e) => <li key={e.titulo}><strong>{e.titulo}</strong>{e.detalle ? `. ${e.detalle}` : ""}</li>)}
           </ul>
         </section>
-
-        <Solicitar datos={datos} abajo />
 
         <div className="redcafe-curso-pie">
           <Link className="btn-ghost" href="/servicios/">Volver a Servicios</Link>
