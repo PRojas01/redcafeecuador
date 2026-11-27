@@ -9,6 +9,7 @@ import { guardarBitacora, leerBitacora, leerSesion, type Sesion } from "@/lib/se
 import { CamasSecado, CerezaMadura, FincaTerrazas, SacoExportacion } from "@/components/Lamina";
 import { ClaseDemoCurso, VisorCurso } from "@/components/VisorCurso";
 import { CLASE_DEMO } from "@/lib/claseDemo";
+import { FOTOS_CURSOS } from "@/lib/fotos";
 
 const categoriaNombres: Record<string, string> = {
 	produccion: "Producción",
@@ -151,7 +152,9 @@ function CursoLocal() {
 			</Link>
 
 			<div className="mt-4 aspect-[16/6] overflow-hidden rounded-2xl bg-cream-100">
-				{portadasLegacy[curso.id]
+				{FOTOS_CURSOS[curso.id]
+					? <img src={FOTOS_CURSOS[curso.id].src} alt={FOTOS_CURSOS[curso.id].alt} className="h-full w-full object-cover" />
+					: portadasLegacy[curso.id]
 					? <img src={portadasLegacy[curso.id]} alt={`Portada de ${curso.titulo}`} className="h-full w-full object-cover" />
 					: curso.id === idCursoLibre
 						? <img src="/img/academia/cursos/cafe-de-especialidad-de-la-finca-a-la-taza.webp" alt={`Portada de ${curso.titulo}`} className="h-full w-full object-cover" />
