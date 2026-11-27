@@ -13,7 +13,7 @@ window.__redcafeReactListo = window.__redcafeReactListo || function () {
 (function () {
   "use strict";
 
-  var VERSION = "20261127e";
+  var VERSION = "20261127f";
   var WAPP = "593968641376";
   var path = normalizePath(location.pathname);
   var homeAuthChecking = false;
@@ -547,7 +547,7 @@ window.__redcafeReactListo = window.__redcafeReactListo || function () {
    propia al final de <body>, después de hidratar. */
 (function () {
   if (typeof window === "undefined" || !window.ResizeObserver) return;
-  var URL_SELLO = "/img/sello-redcafe.svg?v=20261127e";
+  var URL_SELLO = "/img/sello-redcafe.svg?v=20261127f";
   var capa = null, temporizador = 0, ultimaFirma = "";
   var BANDA = 120;
 
@@ -894,7 +894,7 @@ window.__redcafeReactListo = window.__redcafeReactListo || function () {
   })();
 })();
 
-/* ===== v20261127e · Registro más atractivo =====
+/* ===== v20261127f · Registro más atractivo =====
    Cifras de la Red siempre en vivo (/api/metricas.php?action=cifras), nunca escritas a mano:
    · Portada: línea corta bajo los botones (miembros y provincias) y título sobre las tarjetas.
    · Comunidad: la franja completa «La Red hoy», bajo el subtítulo.
@@ -1096,12 +1096,26 @@ window.__redcafeReactListo = window.__redcafeReactListo || function () {
       return vis.length ? panel(2, "Cursos", vis, String(l.length), "Ver la Academia", "/academia/") : null;
     });
   }
+  // Servicios de pago con página propia (SERVICIOS_PAGADOS de plataforma_cafe/lib/data.ts, sin los gratis).
+  var CONTRATAR = ["asesoria-negocio", "asesoria-exportacion", "curso-especialidad", "curso-barismo", "cert-eudr", "cert-verificacion", "flete-cafe", "pilado-sacos"];
+  function enlaceServicio(s) {
+    var id = String(s.id || "");
+    if (id === "intermediacion-compraventa") return "/servicios/#redcafe-intermediation-service";
+    if (CONTRATAR.indexOf(id) >= 0) return "/servicios/contratar?servicio=" + encodeURIComponent(id);
+    if (s.oficial_redcafe || !id) return "/servicios/";
+    return "/marketplace/?ver=servicios&resaltar=" + encodeURIComponent(id);
+  }
   function servicios() {
     return api("/api/marketplace-servicios.php?action=list", "servicios").then(function (l) {
-      var vis = l.filter(function (s) { return !s.demo; }).map(function (s) {
-        return { href: "/servicios/", img: primeraImg(s), icono: s.icono || "🛠️", nombre: s.titulo || s.nombre || "Servicio", meta: s.provincia || s.categoria || "", precio: s.precio_etiqueta || "" };
+      // Cada servicio enlaza a su propia ficha: los de la Red a su página de contratar, la
+      // intermediación a su bloque en /servicios/ y los de miembros a su tarjeta en el Marketplace.
+      var vis = l.filter(function (s) { return !s.demo && s.id !== "cert-catacion"; }).map(function (s) {
+        return { href: enlaceServicio(s), img: primeraImg(s), icono: s.icono || "🛠️", nombre: s.titulo || s.nombre || "Servicio", meta: s.provincia || s.categoria || "", precio: s.precio_etiqueta || "" };
       });
-      return vis.length ? panel(3, "Servicios", vis, String(vis.length), "Ver servicios", "/servicios/") : null;
+      // Servicio de cata de Legacy: siempre primero en la vista previa.
+      vis.unshift({ href: "/servicios/analisis-de-muestras/", img: "/img/proceso/verde.webp", nombre: "Cata de muestras de café",
+        etiqueta: ["pago", "Formato SCA"], meta: "Legacy · café verde, puntaje y precio", precio: "$50" });
+      return panel(3, "Servicios", vis, String(vis.length), "Ver servicios", "/servicios/");
     });
   }
   function recetas() {
@@ -1126,4 +1140,25 @@ window.__redcafeReactListo = window.__redcafeReactListo || function () {
   }
   pintar();
   setInterval(function () { if (!document.querySelector("#rc-collage .rc-vp")) hecho = false; pintar(); }, 800);
+})();
+
+/* ===== Marketplace: /marketplace/?ver=servicios&resaltar=<id> lleva a la tarjeta de ese servicio =====
+   (lo usa la vista previa de la portada). Solo tras hidratar React; si no aparece en 10 s, no hace nada. */
+(function () {
+  "use strict";
+  if (!/^\/marketplace\/?$/.test(location.pathname)) return;
+  var id = new URLSearchParams(location.search).get("resaltar");
+  if (!id) return;
+  var intentos = 0;
+  var t = setInterval(function () {
+    if (++intentos > 40) { clearInterval(t); return; }
+    if (!(window.__redcafeReactListo && window.__redcafeReactListo())) return;
+    var sel = '[data-solicitar-servicio="' + (window.CSS && CSS.escape ? CSS.escape(id) : id.replace(/["\\]/g, "")) + '"]';
+    var boton = document.querySelector(sel);
+    var tarjeta = boton && boton.closest("article");
+    if (!tarjeta) return;
+    clearInterval(t);
+    tarjeta.classList.add("rc-resaltado");
+    tarjeta.scrollIntoView({ block: "center", behavior: window.matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth" });
+  }, 250);
 })();

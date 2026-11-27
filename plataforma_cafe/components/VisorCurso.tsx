@@ -136,6 +136,27 @@ function VideosEn({ curso, en }: { curso: string; en: string }) {
   return <div className="redcafe-curso-videos">{lista.map((v) => <VideoDiferido key={v.id} v={v} />)}</div>;
 }
 
+/* Al inicio de la ficha: horas de teoría y práctica, y qué incluye. */
+function ResumenLegacy({ id }: { id: string }) {
+  const o = OFERTA_LEGACY[id];
+  if (!o) return null;
+  return (
+    <section className="redcafe-curso-resumen" aria-label="Qué incluye el curso">
+      <ul className="redcafe-curso-horas">
+        {o.horas.map((h) => (
+          <li key={h.etiqueta}>
+            <span className="redcafe-curso-horas-etq">{h.etiqueta}</span>
+            <strong>{h.valor}</strong>
+            {h.detalle ? <span className="redcafe-curso-horas-det">{h.detalle}</span> : null}
+          </li>
+        ))}
+      </ul>
+      <p className="redcafe-curso-resumen-rot">Incluye</p>
+      <ul className="redcafe-curso-incluye">{o.incluye.map((x) => <li key={x}>{x}</li>)}</ul>
+    </section>
+  );
+}
+
 /* Precio, qué incluye, fechas disponibles y condiciones de un curso de Legacy. */
 function OfertaLegacyVista({ id }: { id: string }) {
   const o = OFERTA_LEGACY[id];
@@ -151,8 +172,6 @@ function OfertaLegacyVista({ id }: { id: string }) {
       <p className="redcafe-curso-oferta-precio"><strong>{o.precio}</strong>{o.precioNota ? <span> · {o.precioNota}</span> : null}</p>
       {MOSTRAR_DESCUENTOS && o.descuentos.length ? <ul className="redcafe-curso-oferta-lista">{o.descuentos.map((d) => <li key={d}>{d}</li>)}</ul> : null}
       {!MOSTRAR_DESCUENTOS && hayDescuentos ? <p className="redcafe-curso-oferta-aviso">{CONDICIONES_LEGACY.avisoDescuentos}</p> : null}
-      <h3>Incluye</h3>
-      <ul className="redcafe-curso-oferta-lista es-check">{o.incluye.map((x) => <li key={x}>{x}</li>)}</ul>
       <VideosEn curso={id} en="oferta" />
       <h3>Fechas disponibles</h3>
       {fechas.length ? grupos.map((g) => (
@@ -390,7 +409,10 @@ export function VisorCurso({ id: idFijo, inicial, respaldo }: { id: string | nul
 
   useEffect(() => { void cargar(); }, [cargar]);
 
-  const c: CursoVisor | undefined = datos?.curso ?? inicial;
+  // Cursos de Legacy: el inicio de la ficha sale al momento de su oferta, sin
+  // esperar a la API (antes se veía el esqueleto y luego saltaba todo).
+  const ofertaInicial = id && OFERTA_LEGACY[id] ? { id, categoria: "barismo", ...OFERTA_LEGACY[id].ficha } : undefined;
+  const c: CursoVisor | undefined = datos?.curso ?? inicial ?? ofertaInicial;
   const usarRespaldo = fallo && !datos && !!respaldo;
   useEffect(() => {
     if (usarRespaldo) return;
@@ -543,6 +565,7 @@ export function VisorCurso({ id: idFijo, inicial, respaldo }: { id: string | nul
         <h1 className="redcafe-curso-titulo">{c.titulo || "Curso"}</h1>
         {c.descripcion ? <p className="redcafe-curso-desc">{c.descripcion}</p> : null}
         {CLASE_DEMO && c.id === CLASE_DEMO.curso ? <ClaseDemoCurso clase={CLASE_DEMO} /> : null}
+        {deAliado ? <ResumenLegacy id={c.id} /> : null}
         {deAliado ? <InscripcionLegacy titulo={c.titulo || ""} id={c.id} /> : null}
         {deAliado ? <OfertaLegacyVista id={c.id} /> : null}
         {aviso}
