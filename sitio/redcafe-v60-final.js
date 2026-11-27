@@ -1177,13 +1177,24 @@ window.__redcafeReactListo = window.__redcafeReactListo || function () {
   if (!/^\/marketplace\/?$/.test(location.pathname)) return;
   var id = new URLSearchParams(location.search).get("resaltar");
   if (!id) return;
-  var intentos = 0;
+  var intentos = 0, titulo = "";
+  // Sin sesión la tarjeta no lleva botón con el id (la API no da el WhatsApp a visitantes):
+  // entonces se busca por el título del servicio.
+  fetch("/api/marketplace-servicios.php?action=list", { credentials: "include" }).then(function (r) { return r.json(); }).then(function (j) {
+    var l = (j && j.ok && j.data && j.data.servicios) || [];
+    for (var i = 0; i < l.length; i++) if (String(l[i].id) === id) { titulo = String(l[i].titulo || l[i].nombre || ""); break; }
+  }).catch(function () {});
+  function norm(x) { return String(x || "").replace(/\s+/g, " ").trim().toLowerCase(); }
   var t = setInterval(function () {
     if (++intentos > 40) { clearInterval(t); return; }
     if (!(window.__redcafeReactListo && window.__redcafeReactListo())) return;
     var sel = '[data-solicitar-servicio="' + (window.CSS && CSS.escape ? CSS.escape(id) : id.replace(/["\\]/g, "")) + '"]';
     var boton = document.querySelector(sel);
     var tarjeta = boton && boton.closest("article");
+    if (!tarjeta && titulo) {
+      var hs = document.querySelectorAll("main article h3");
+      for (var i = 0; i < hs.length; i++) if (norm(hs[i].textContent) === norm(titulo)) { tarjeta = hs[i].closest("article"); break; }
+    }
     if (!tarjeta) return;
     clearInterval(t);
     tarjeta.classList.add("rc-resaltado");
