@@ -1120,7 +1120,9 @@ window.__redcafeReactListo = window.__redcafeReactListo || function () {
   function servicios() {
     return api("/api/marketplace-servicios.php?action=list", "servicios").then(function (l) {
       var vis = l.filter(function (s) { return !s.demo; }).map(function (s) {
-        return { href: "/servicios/", img: primeraImg(s), icono: s.icono || "🛠️", nombre: s.titulo || s.nombre || "Servicio", meta: s.provincia || s.categoria || "", precio: s.precio_etiqueta || "" };
+        var nombre = s.titulo || s.nombre || "Servicio";
+        // Cada servicio abre su tarjeta en el Marketplace (pestaña Servicios), resaltada.
+        return { href: "/marketplace/?ver=servicios&servicio=" + encodeURIComponent(nombre), img: primeraImg(s), icono: s.icono || "🛠️", nombre: nombre, meta: s.provincia || s.categoria || "", precio: s.precio_etiqueta || "" };
       });
       // Servicio de cata de Legacy: siempre primero en la vista previa.
       vis.unshift({ href: "/servicios/analisis-de-muestras/", img: "/img/proceso/verde.webp", nombre: "Cata de muestras de café",
@@ -1150,4 +1152,29 @@ window.__redcafeReactListo = window.__redcafeReactListo || function () {
   }
   pintar();
   setInterval(function () { if (!document.querySelector("#rc-collage .rc-vp")) hecho = false; pintar(); }, 800);
+})();
+
+/* Marketplace: /marketplace/?ver=servicios&servicio=<nombre> (enlaces de la vista
+   previa de la portada) lleva a la tarjeta de ese servicio y la resalta. Solo
+   después de que React hidrate. (v20261127f) */
+(function () {
+  if (location.pathname.indexOf("/marketplace") !== 0) return;
+  var buscado = new URLSearchParams(location.search).get("servicio");
+  if (!buscado) return;
+  var norm = function (t) { return String(t || "").replace(/\s+/g, " ").trim().toLowerCase(); };
+  var meta = norm(buscado), intentos = 0;
+  var t = setInterval(function () {
+    if (++intentos > 40) { clearInterval(t); return; }
+    if (!(window.__redcafeReactListo && window.__redcafeReactListo())) return;
+    var titulos = document.querySelectorAll("#redcafe-servicios-propio article h3");
+    for (var i = 0; i < titulos.length; i++) {
+      if (norm(titulos[i].textContent) === meta) {
+        clearInterval(t);
+        var tarjeta = titulos[i].closest("article");
+        tarjeta.classList.add("rc-servicio-buscado");
+        tarjeta.scrollIntoView({ behavior: "smooth", block: "center" });
+        return;
+      }
+    }
+  }, 250);
 })();
