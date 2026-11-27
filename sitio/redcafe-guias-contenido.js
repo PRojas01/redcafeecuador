@@ -698,5 +698,5 @@
     ]
   };
 
-  window.REDCAFE_GUIAS = { version: "20261127c", fuentes: FUENTES, guias: [FINCA, NEGOCIO] };
+  window.REDCAFE_GUIAS = { version: "20261127d", fuentes: FUENTES, guias: [FINCA, NEGOCIO] };
 })();

@@ -34,7 +34,7 @@ export const MUESTRAS_LEGACY = {
   entregables: [
     { titulo: "Recomendaciones de procesamiento futuro", detalle: "Descripción de mejoras o ajustes en el procesamiento del café según el análisis." },
     { titulo: "Recomendación de precio", detalle: "Estimación del precio por libra o kilogramo según calidad y mercado." },
-    { titulo: "Puntaje con formato SAA", detalle: "" },
+    { titulo: "Puntaje con formato SCA", detalle: "" },
     { titulo: "Evaluación de muestra de 100 g de café en verde", detalle: "" },
     { titulo: "Envío de muestra a Cafexporto para su cata y posible venta", detalle: "El cliente paga el envío." },
   ],
