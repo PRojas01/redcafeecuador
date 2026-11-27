@@ -60,3 +60,26 @@ export function documentoValido(doc: string, pais: string): string | null {
   }
   return /^[0-9A-Za-z][0-9A-Za-z.\-\s]{3,19}$/.test(doc) ? doc : null;
 }
+
+/** Las 24 provincias del Ecuador (misma lista que el formulario de registro). */
+export const PROVINCIAS_EC = [
+  "Azuay", "Bolívar", "Cañar", "Carchi", "Chimborazo", "Cotopaxi", "El Oro", "Esmeraldas", "Galápagos", "Guayas", "Imbabura", "Loja",
+  "Los Ríos", "Manabí", "Morona Santiago", "Napo", "Orellana", "Pastaza", "Pichincha", "Santa Elena", "Santo Domingo de los Tsáchilas",
+  "Sucumbíos", "Tungurahua", "Zamora Chinchipe",
+] as const;
+
+const sinTildes = (s: string) => s.normalize("NFD").replace(/[̀-ͯ]/g, "").toLowerCase().replace(/[^a-z ]+/g, " ").replace(/\s+/g, " ").trim();
+const CANONICA = new Map<string, string>(PROVINCIAS_EC.map((p) => [sinTildes(p), p]));
+// Grafías cortas que escriben los miembros y que los lotes antiguos traen.
+for (const [alias, p] of [
+  ["santo domingo", "Santo Domingo de los Tsáchilas"], ["santo domingo de los tsachilas", "Santo Domingo de los Tsáchilas"], ["tsachilas", "Santo Domingo de los Tsáchilas"],
+  ["morona", "Morona Santiago"], ["zamora", "Zamora Chinchipe"],
+] as const) CANONICA.set(alias, p);
+
+/** Nombre oficial de la provincia ecuatoriana escrita en `v`, o «» si no es una de las 24. */
+export function provinciaEcuador(v: unknown): string {
+  let k = sinTildes(typeof v === "string" ? v : "");
+  if (!k) return "";
+  k = k.replace(/^provincia (de )?/, "").trim();
+  return CANONICA.get(k) ?? "";
+}
