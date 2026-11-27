@@ -6587,7 +6587,7 @@ html:not(#s1):not(#s2):not(#s3):not(#s4):not(#s5):not(#s6):not(#s7):not(#s8):not
 #redcafe-curso .redcafe-curso-oferta-mes { font-weight: 700; margin: .6rem 0 .3rem; }
 #redcafe-curso .redcafe-curso-oferta-fechas, #redcafe-curso .redcafe-curso-oferta-opciones { display: grid; gap: .4rem; list-style: none; margin: 0; padding: 0; }
 #redcafe-curso .redcafe-curso-oferta-fechas li, #redcafe-curso .redcafe-curso-oferta-opciones li { background: #fbf6f0; border-radius: 4px; display: flex; flex-direction: column; padding: .45rem .7rem; }
-#redcafe-curso .redcafe-curso-oferta-fechas li.es-agotado strong { text-decoration: line-through; }
-#redcafe-curso .redcafe-curso-oferta-fechas li.es-agotado span { color: #8c3604; font-weight: 700; }
 #redcafe-curso .redcafe-curso-oferta-opciones li span { color: #5c4a3d; font-size: .9rem; margin-top: .15rem; }
 #redcafe-curso .redcafe-curso-oferta-opciones li span.es-precio { color: #3b1a0c; font-size: .95rem; font-weight: 700; }
+#redcafe-curso .redcafe-curso-inscripcion p.redcafe-curso-inscripcion-red { border-top: 1px solid rgba(140, 54, 4, .15); font-size: .9rem; margin-top: .9rem; padding-top: .7rem; }
+#redcafe-curso .redcafe-curso-inscripcion p.redcafe-curso-inscripcion-red a { color: #2f6b45; font-weight: 700; text-decoration: underline; }

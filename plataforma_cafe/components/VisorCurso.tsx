@@ -69,6 +69,9 @@ const waLegacy = (titulo: string, id: string) =>
   `https://wa.me/${WHATSAPP_LEGACY}?text=${encodeURIComponent(
     `Hola Legacy, vengo de redcafeecuador.com. Quiero inscribirme en el curso «${titulo}». ¿Me informan de fechas disponibles, cupos, promociones y formas de pago?\n\nRef.: Red Café Ecuador · academia/${id}`,
   )}`;
+/* WhatsApp de Red Café Ecuador para asistencia y consultas sobre el curso. */
+const waRed = (titulo: string) =>
+  `https://wa.me/${CONFIG.whatsapp}?text=${encodeURIComponent(`Hola Red Café Ecuador, tengo una consulta sobre el curso «${titulo}» de Legacy.`)}`;
 function contarClicLegacy() {
   try {
     const cuerpo = JSON.stringify({ e: "legacy_clic", p: location.pathname });
@@ -139,7 +142,7 @@ function OfertaLegacyVista({ id }: { id: string }) {
   const [hoy, setHoy] = useState("");
   useEffect(() => { setHoy(hoyEcuador()); }, []);
   if (!o) return null;
-  const fechas = o.fechas.filter((f) => !hoy || f.fin >= hoy);
+  const fechas = o.fechas.filter((f) => !f.agotado && (!hoy || f.fin >= hoy));
   const grupos = Array.from(new Set(fechas.map((f) => f.grupo)));
   const hayDescuentos = o.descuentos.length > 0 || o.opciones.some((x) => x.descuento);
   return (
@@ -157,9 +160,9 @@ function OfertaLegacyVista({ id }: { id: string }) {
           <p className="redcafe-curso-oferta-mes">{g}</p>
           <ul className="redcafe-curso-oferta-fechas">
             {fechas.filter((f) => f.grupo === g).map((f) => (
-              <li key={`${f.lugar}-${f.modalidad}-${f.cuando}`} className={f.agotado ? "es-agotado" : undefined}>
+              <li key={`${f.lugar}-${f.modalidad}-${f.cuando}`}>
                 <strong>{f.lugar} · {f.modalidad}</strong>
-                <span>{f.agotado ? "Agotado" : f.cuando}</span>
+                <span>{f.cuando}</span>
               </li>
             ))}
           </ul>
@@ -197,6 +200,10 @@ function InscripcionLegacy({ titulo, id, abajo }: { titulo: string; id: string; 
       <a className="redcafe-curso-inscripcion-boton" href={waLegacy(titulo, id)} target="_blank" rel="noopener noreferrer" onClick={contarClicLegacy}>
         Solicitar inscripción a Legacy <span aria-hidden="true">↗</span>
       </a>
+      <p className="redcafe-curso-inscripcion-red">
+        ¿Tienes dudas o necesitas ayuda con el curso? También te atiende Red Café Ecuador:{" "}
+        <a href={waRed(titulo)} target="_blank" rel="noopener noreferrer">escribir a Red Café por WhatsApp <span aria-hidden="true">↗</span></a>
+      </p>
     </aside>
   );
 }
