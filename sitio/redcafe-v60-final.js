@@ -13,7 +13,7 @@ window.__redcafeReactListo = window.__redcafeReactListo || function () {
 (function () {
   "use strict";
 
-  var VERSION = "20261127c";
+  var VERSION = "20261127f";
   var WAPP = "593968641376";
   var path = normalizePath(location.pathname);
   var homeAuthChecking = false;
@@ -547,7 +547,7 @@ window.__redcafeReactListo = window.__redcafeReactListo || function () {
    propia al final de <body>, después de hidratar. */
 (function () {
   if (typeof window === "undefined" || !window.ResizeObserver) return;
-  var URL_SELLO = "/img/sello-redcafe.svg?v=20261127c";
+  var URL_SELLO = "/img/sello-redcafe.svg?v=20261127f";
   var capa = null, temporizador = 0, ultimaFirma = "";
   var BANDA = 120;
 
@@ -915,7 +915,7 @@ window.__redcafeReactListo = window.__redcafeReactListo || function () {
   })();
 })();
 
-/* ===== v20261127c · Registro más atractivo =====
+/* ===== v20261127f · Registro más atractivo =====
    Cifras de la Red siempre en vivo (/api/metricas.php?action=cifras), nunca escritas a mano:
    · Portada: línea corta bajo los botones (miembros y provincias) y título sobre las tarjetas.
    · Comunidad: la franja completa «La Red hoy», bajo el subtítulo.
@@ -1122,7 +1122,10 @@ window.__redcafeReactListo = window.__redcafeReactListo || function () {
       var vis = l.filter(function (s) { return !s.demo; }).map(function (s) {
         return { href: "/servicios/", img: primeraImg(s), icono: s.icono || "🛠️", nombre: s.titulo || s.nombre || "Servicio", meta: s.provincia || s.categoria || "", precio: s.precio_etiqueta || "" };
       });
-      return vis.length ? panel(3, "Servicios", vis, String(vis.length), "Ver servicios", "/servicios/") : null;
+      // Servicio de cata de Legacy: siempre primero en la vista previa.
+      vis.unshift({ href: "/servicios/analisis-de-muestras/", img: "/img/proceso/verde.webp", nombre: "Cata de muestras de café",
+        etiqueta: ["pago", "Formato SCA"], meta: "Legacy · café verde, puntaje y precio", precio: "$50" });
+      return panel(3, "Servicios", vis, String(vis.length), "Ver servicios", "/servicios/");
     });
   }
   function recetas() {
