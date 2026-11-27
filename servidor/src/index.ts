@@ -11,6 +11,7 @@ import { programarPrecios } from "./modulos/precios.js";
 import { programarRespaldos } from "./modulos/respaldo.js";
 import { programarSalud } from "./lib/salud.js";
 import { restablecerPassAdminDesdeEntorno } from "./lib/admin.js";
+import { actualizarSolicitudesCata } from "./lib/cata-legacy.js";
 
 const app = crearApp();
 
@@ -22,6 +23,8 @@ for (const v of ["DATABASE_URL", "REDCAFE_CLAVE_DATOS"]) {
 // escuchar enseguida aunque la base tarde o falle (la API avisará).
 void asegurarEsquema()
   .then(() => restablecerPassAdminDesdeEntorno())
+  // Solicitudes de cata anteriores → servicio de muestras de Legacy (una sola vez, reversible).
+  .then(() => actualizarSolicitudesCata().then((n) => n && console.log(`[cata] ${n} solicitudes de cata pasadas al servicio de Legacy.`), (e) => console.error("[cata]", e?.message ?? e)))
   .then(() => respaldarSubidasEnBase().then((n) => n && console.log(`[archivos] ${n} fotos/documentos copiados a la base.`), (e) => console.error("[archivos] Respaldo en la base:", e?.message ?? e))).catch((e) => console.error("[esquema] No se pudieron crear las tablas:", e?.message ?? e));
 
 serve({ fetch: app.fetch, port: config.puerto, // Si la plataforma fija PORT (GoDaddy, Render…), hay que escuchar en todas las interfaces.
