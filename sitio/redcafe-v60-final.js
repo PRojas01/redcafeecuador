@@ -13,7 +13,7 @@ window.__redcafeReactListo = window.__redcafeReactListo || function () {
 (function () {
   "use strict";
 
-  var VERSION = "20261127a";
+  var VERSION = "20261127b";
   var WAPP = "593968641376";
   var path = normalizePath(location.pathname);
   var homeAuthChecking = false;
@@ -547,7 +547,7 @@ window.__redcafeReactListo = window.__redcafeReactListo || function () {
    propia al final de <body>, después de hidratar. */
 (function () {
   if (typeof window === "undefined" || !window.ResizeObserver) return;
-  var URL_SELLO = "/img/sello-redcafe.svg?v=20261127a";
+  var URL_SELLO = "/img/sello-redcafe.svg?v=20261127b";
   var capa = null, temporizador = 0, ultimaFirma = "";
   var BANDA = 120;
 
@@ -894,7 +894,7 @@ window.__redcafeReactListo = window.__redcafeReactListo || function () {
   })();
 })();
 
-/* ===== v20261127a · Registro más atractivo =====
+/* ===== v20261127b · Registro más atractivo =====
    Cifras de la Red siempre en vivo (/api/metricas.php?action=cifras), nunca escritas a mano:
    · Portada: línea corta bajo los botones (miembros y provincias) y título sobre las tarjetas.
    · Comunidad: la franja completa «La Red hoy», bajo el subtítulo.
@@ -1005,4 +1005,125 @@ window.__redcafeReactListo = window.__redcafeReactListo || function () {
   // Next cambia de página sin recargar: se repasa cada poco (tres búsquedas en el DOM, sin coste).
   pintar();
   setInterval(pintar, 700);
+})();
+
+/* ===== PROPUESTA · Vista previa bajo «Con tu cuenta gratis puedes» =====
+   Bajo cada tarjeta de la portada (#rc-collage) hay una lista con elementos reales de esa
+   sección (lotes, cursos, servicios, recetas) que se puede deslizar y que rota sola cada 4 s
+   (pausa al tocarla, al pasar el ratón o si la persona pide menos movimiento).
+   En Academia van primero los cursos de pago de Legacy. Datos en vivo de la API pública;
+   si algo falla, la tarjeta queda como estaba. Solo tras hidratar React. */
+(function () {
+  "use strict";
+  // Cursos de pago (aliado Legacy): precio normal de plataforma_cafe/lib/legacyOferta.ts (sin descuentos).
+  var PAGO = {
+    "legacy-barista-en-casa": "$159",
+    "legacy-barismo-profesional": "$399",
+    "legacy-barista-avanzado": "$599"
+  };
+  var MAX = 8;
+  function el(t, c, x) { var e = document.createElement(t); if (c) e.className = c; if (x != null) e.textContent = x; return e; }
+  function api(u, k) {
+    return fetch(u, { credentials: "omit" }).then(function (r) { return r.json(); })
+      .then(function (j) { return (j && j.ok && j.data && j.data[k]) || []; }).catch(function () { return []; });
+  }
+  function dinero(v) { var n = Number(v); return isFinite(n) && n > 0 ? "$" + (n % 1 ? n.toFixed(2) : n) : ""; }
+  function primeraImg(x) { var l = x && (x.imagenes || x.fotos); return Array.isArray(l) && l.length ? (typeof l[0] === "string" ? l[0] : l[0].url || "") : (x && (x.imagen || x.foto)) || ""; }
+  function item(o) {
+    var a = el("a", "rc-vp-item"); a.href = o.href;
+    var f = el("span", "rc-vp-foto");
+    if (o.img) { var i = el("img"); i.src = o.img; i.alt = ""; i.loading = "lazy"; i.decoding = "async"; i.width = 64; i.height = 64; f.appendChild(i); }
+    else { f.textContent = o.icono || "☕"; f.setAttribute("aria-hidden", "true"); }
+    a.appendChild(f);
+    var t = el("span", "rc-vp-texto");
+    if (o.etiqueta) t.appendChild(el("span", "rc-vp-etq rc-vp-etq-" + o.etiqueta[0], o.etiqueta[1]));
+    t.appendChild(el("span", "rc-vp-nombre", o.nombre));
+    if (o.meta) t.appendChild(el("span", "rc-vp-meta", o.meta));
+    a.appendChild(t);
+    if (o.precio) a.appendChild(el("span", "rc-vp-precio", o.precio));
+    return a;
+  }
+  function panel(col, titulo, items, total, verTodo, href) {
+    var p = el("div", "rc-vp rc-vp-c" + col); p.setAttribute("data-redcafe-propio", "");
+    var cab = el("p", "rc-vp-cab");
+    cab.appendChild(el("span", "", titulo));
+    if (total) cab.appendChild(el("b", "rc-vp-total", total));
+    p.appendChild(cab);
+    var lista = el("div", "rc-vp-lista");
+    lista.setAttribute("role", "list"); lista.setAttribute("aria-label", titulo); lista.tabIndex = 0;
+    items.slice(0, MAX).forEach(function (o) { var it = item(o); it.setAttribute("role", "listitem"); lista.appendChild(it); });
+    p.appendChild(lista);
+    var v = el("a", "rc-vp-ver", verTodo + " →"); v.href = href; p.appendChild(v);
+    rotar(lista);
+    return p;
+  }
+  // Rotación: baja un elemento cada 4 s y vuelve arriba al final.
+  var menosMovimiento = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  function rotar(lista) {
+    if (menosMovimiento) return;
+    var pausa = false;
+    ["mouseenter", "focusin", "touchstart"].forEach(function (ev) { lista.addEventListener(ev, function () { pausa = true; }, { passive: true }); });
+    ["mouseleave", "focusout"].forEach(function (ev) { lista.addEventListener(ev, function () { pausa = false; }); });
+    lista.addEventListener("touchend", function () { setTimeout(function () { pausa = false; }, 6000); }, { passive: true });
+    setInterval(function () {
+      if (pausa || document.hidden || lista.scrollHeight <= lista.clientHeight + 4) return;
+      var r = lista.getBoundingClientRect();
+      if (r.bottom < 0 || r.top > window.innerHeight) return;
+      var paso = lista.firstElementChild ? lista.firstElementChild.offsetHeight + 8 : 64;
+      var fin = lista.scrollTop + lista.clientHeight >= lista.scrollHeight - 4;
+      lista.scrollTo({ top: fin ? 0 : lista.scrollTop + paso, behavior: "smooth" });
+    }, 4000);
+  }
+  function lotes() {
+    return api("/api/lotes.php?action=list", "lotes").then(function (l) {
+      var reales = l.filter(function (x) { return !x.demo && !x.ejemplo && !x.oculto && String(x.disponibilidad || "").toLowerCase() !== "agotado"; });
+      var vis = (reales.length ? reales : l).map(function (x) {
+        var precio = dinero(x.precioQuintal) ? dinero(x.precioQuintal) + "/qq" : dinero(x.precioSaco) ? dinero(x.precioSaco) + "/saco" : dinero(x.precioUnidad);
+        return { href: "/marketplace/" + encodeURIComponent(x.id) + "/", img: primeraImg(x) || "/img/proceso/verde.webp", nombre: [x.variedad, x.proceso].filter(Boolean).join(" · ") || "Café de Ecuador", meta: [x.provincia, x.altura ? x.altura + " msnm" : ""].filter(Boolean).join(" · "), precio: precio };
+      });
+      return vis.length ? panel(1, "Lotes publicados", vis, reales.length ? String(reales.length) : "", "Ver todos los lotes", "/marketplace/") : null;
+    });
+  }
+  function cursos() {
+    return api("/api/cursos.php?action=list", "cursos").then(function (l) {
+      var pago = l.filter(function (c) { return PAGO[c.id]; }), libres = l.filter(function (c) { return !PAGO[c.id]; });
+      var vis = pago.concat(libres).map(function (c) {
+        var dePago = !!PAGO[c.id];
+        return { href: "/academia/" + encodeURIComponent(c.id) + "/", img: "/img/academia/cursos/" + c.id + ".webp", nombre: c.titulo || "Curso",
+          etiqueta: dePago ? ["pago", "Certificado"] : ["gratis", "Gratis"],
+          meta: dePago ? "Legacy · " + (c.duracion || "presencial y online") : (c.lecciones ? c.lecciones + " lecciones" : c.nivel || ""), precio: dePago ? PAGO[c.id] : "" };
+      });
+      return vis.length ? panel(2, "Cursos", vis, String(l.length), "Ver la Academia", "/academia/") : null;
+    });
+  }
+  function servicios() {
+    return api("/api/marketplace-servicios.php?action=list", "servicios").then(function (l) {
+      var vis = l.filter(function (s) { return !s.demo; }).map(function (s) {
+        return { href: "/servicios/", img: primeraImg(s), icono: s.icono || "🛠️", nombre: s.titulo || s.nombre || "Servicio", meta: s.provincia || s.categoria || "", precio: s.precio_etiqueta || "" };
+      });
+      return vis.length ? panel(3, "Servicios", vis, String(vis.length), "Ver servicios", "/servicios/") : null;
+    });
+  }
+  function recetas() {
+    var r = [["v60", "Café V60", "Goteo manual · 4 min", "taza"], ["prensa-francesa", "Prensa francesa", "Fácil · 5 min", "molido"],
+      ["aeropress", "Aeropress", "Rápido · 2 min", "tostado"], ["moka-italiana", "Moka italiana", "Intenso · 5 min", "molido"],
+      ["espresso-casero", "Espresso casero", "Con cafetera · 1 min", "taza"], ["cold-brew", "Cold brew", "En frío · 12 h", "tostado"]];
+    return Promise.resolve(panel(4, "Recetas", r.map(function (x) {
+      return { href: "/recetas/" + x[0] + "/", img: "/img/proceso/" + x[3] + ".webp", nombre: x[1], meta: x[2] };
+    }), String(r.length), "Ver recetas", "/recetas/"));
+  }
+  var hecho = false;
+  function pintar() {
+    if (hecho || !(window.__redcafeReactListo && window.__redcafeReactListo())) return;
+    var fila = document.querySelector("#rc-collage .rc-collage-fila");
+    if (!fila || fila.querySelector(".rc-vp")) return;
+    hecho = true;
+    Promise.all([lotes(), cursos(), servicios(), recetas()]).then(function (ps) {
+      if (!document.body.contains(fila) || fila.querySelector(".rc-vp")) { hecho = false; return; }
+      ps.forEach(function (p, i) { fila.appendChild(p || el("div", "rc-vp rc-vp-vacio rc-vp-c" + (i + 1))); });
+      fila.classList.add("rc-con-vp");
+    });
+  }
+  pintar();
+  setInterval(function () { if (!document.querySelector("#rc-collage .rc-vp")) hecho = false; pintar(); }, 800);
 })();
