@@ -23,7 +23,7 @@ const categoriaNombres: Record<string, string> = {
  *  El mensaje lleva el origen redcafeecuador.com para que Legacy sepa de dónde
  *  llega la persona y la Red pueda seguir la pista de cada matrícula. */
 const waLegacy = (titulo: string) =>
-	`https://wa.me/593998569355?text=${encodeURIComponent(
+	`https://wa.me/593963291887?text=${encodeURIComponent(
 		`Hola Legacy, vengo de redcafeecuador.com. Me interesa el curso «${titulo}». ¿Me informan de fechas disponibles, promociones, condiciones y formas de pago?`
 	)}`;
 

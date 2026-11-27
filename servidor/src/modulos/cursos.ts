@@ -228,6 +228,24 @@ function sinContenido(c: Doc): Doc {
   o.modulos = lista(c.modulos).map((m) => ({ titulo: m.titulo ?? "", minutos: m.minutos ?? 0, resumen: m.resumen ?? "", lecciones: lista(m.lecciones).map((l) => ({ titulo: l.titulo ?? "" })) }));
   return o;
 }
+/* Cursos de pago de un aliado (Legacy): la ficha es pública y completa, sin
+   matrícula en la Red. Quien se interesa escribe al aliado desde la ficha con
+   la referencia de redcafeecuador.com. Los textos antiguos que mandaban a
+   matricularse primero en la Red se cambian por el paso nuevo. */
+export const esCursoDeAliado = (c: Doc) => str(c.id).startsWith("legacy-") || c.ficha_abierta === true;
+const sinPasoMatricula = (v: unknown) => typeof v !== "string" ? v : v
+  .replace(/La matrícula en la Red es el primer paso[^.]*\./g, "Para inscribirte, escribe a Legacy con el botón de esta ficha: tu mensaje llega con la referencia de Red Café Ecuador y el pago, la fecha y la logística se acuerdan directamente con ellos.")
+  .replace(/\s*La matrícula se gestiona primero desde la Red;[^.]*\./g, "")
+  .replace(/;\s*la Red gestiona tu matrícula y luego coordinas fecha directamente con ellos\./g, "; la fecha se coordina directamente con ellos.")
+  .replace(/El valor lo confirma Legacy al reservar cupo: no consta en su pensum\./g, "Valor: 599 USD, que se paga a Legacy.")
+  .replace(/Para reservar cupo: matricúlate aquí y la administración de la Red te pone en contacto con Legacy\./g, "Para reservar cupo, escribe a Legacy con el botón «Solicitar inscripción a Legacy».");
+function fichaDeAliado(c: Doc): Doc {
+  const o: Doc = { ...c, ficha_abierta: true };
+  delete o.asociados;
+  for (const k of ["descripcion", "introduccion", "cierre"]) o[k] = sinPasoMatricula(o[k]);
+  o.modulos = lista(c.modulos).map((m) => ({ ...m, resumen: sinPasoMatricula(m.resumen), lecciones: lista(m.lecciones).map((l) => ({ ...l, contenido: sinPasoMatricula(l.contenido) })) }));
+  return o;
+}
 const progresoTodo = () => mapa("progreso-cursos");
 const progresoDe = async (uid: string) => { const p = (await progresoTodo())[uid]; return p && typeof p === "object" ? p : {}; };
 const miembrosPorId = async () => new Map((await todosLosMiembros()).map((m) => [str(m.id), m]));
@@ -328,6 +346,13 @@ const acciones: Modulo["acciones"] = {
     const u = await usuarioActual(ctx);
     const hechas = u ? lista((await progresoDe(str(u.id))).completadas).map(str) : [];
     const propias = hechas.filter((k) => k.startsWith(id + "::"));
+    if (esCursoDeAliado(c)) {
+      return {
+        curso: fichaDeAliado(c), total: totalLecciones(c), completadas: [], avance: 0,
+        puede_editar: u ? puedeEditar(ctx, c, u) : false, acceso: "abierto", acceso_concedido: true,
+        matriculado: false, mi_solicitud: "ninguno", ficha_abierta: true,
+      };
+    }
     const ok = await accesoConcedido(ctx, c, u);
     return {
       curso: ok ? c : sinContenido(c), total: totalLecciones(c), completadas: ok ? propias : [], avance: ok ? resumen(c, hechas).avance : 0,
