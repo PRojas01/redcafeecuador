@@ -21,8 +21,14 @@ export type FechaLegacy = {
   agotado?: boolean;
 };
 export type OpcionLegacy = { titulo: string; precio: string; detalle: string; descuento?: string };
+/** Horas del curso para el resumen del inicio de la ficha. */
+export type HorasLegacy = { etiqueta: string; valor: string; detalle?: string };
 export type OfertaLegacy = {
   nombre: string;
+  /* Lo mismo que trae la API, para pintar el inicio de la ficha al momento
+     (sin esperar a la API y sin saltos cuando llega). */
+  ficha: { titulo: string; nivel: string; duracion: string; descripcion: string };
+  horas: HorasLegacy[];
   precio: string;
   precioNota?: string;
   descuentos: string[];
@@ -42,6 +48,15 @@ const CARRERA: OpcionLegacy = {
 export const OFERTA_LEGACY: Record<string, OfertaLegacy> = {
   "legacy-barismo-profesional": {
     nombre: "Barista Pro",
+    ficha: {
+      titulo: "Barismo Profesional — el curso completo", nivel: "Intermedio", duracion: "25 h presenciales + 50 h de práctica",
+      descripcion: "Curso DE PAGO, dictado por nuestro aliado Legacy Specialty Education. Para trabajar como barista e iniciarte en el tueste y la cata a nivel profesional: espresso, texturización de leche, arte latte y manejo de barra real. Valor: 399 USD, que se paga a Legacy.",
+    },
+    horas: [
+      { etiqueta: "Teoría", valor: "25 h", detalle: "clases presenciales" },
+      { etiqueta: "Práctica", valor: "50 h", detalle: "25 h en barra + 25 h de arte latte (opcionales)" },
+      { etiqueta: "Total", valor: "hasta 75 h" },
+    ],
     precio: "399 USD",
     descuentos: ["359 USD si dejas lista la inscripción pagando en efectivo o transferencia.", "320 USD por persona si vienes con alguien."],
     incluye: [
@@ -66,6 +81,15 @@ export const OFERTA_LEGACY: Record<string, OfertaLegacy> = {
   },
   "legacy-barista-en-casa": {
     nombre: "Barista en Casa",
+    ficha: {
+      titulo: "Barista en Casa — tu inicio en el mundo del café", nivel: "Básico", duracion: "8 horas presenciales",
+      descripcion: "Curso DE PAGO, dictado por nuestro aliado Legacy Specialty Education. Todo lo que hay que saber sobre la extracción de café y sus fórmulas: filtrados, métodos alternativos y desarrollo del olfato y el paladar. 8 horas presenciales. Valor: 159 USD, que se paga a Legacy.",
+    },
+    horas: [
+      { etiqueta: "Teoría y práctica", valor: "8 h", detalle: "presenciales, practicando cada método" },
+      { etiqueta: "Métodos", valor: "3", detalle: "V60, prensa francesa y moka" },
+      { etiqueta: "Plataforma", valor: "3 meses", detalle: "de acceso después del curso" },
+    ],
     precio: "159 USD",
     precioNota: "grupal",
     descuentos: ["143 USD si dejas lista la inscripción pagando en efectivo o transferencia.", "120 USD por persona si vienes con alguien."],
@@ -89,6 +113,15 @@ export const OFERTA_LEGACY: Record<string, OfertaLegacy> = {
   },
   "legacy-barista-avanzado": {
     nombre: "Barista Avanzado",
+    ficha: {
+      titulo: "Barista Avanzado — cafeología aplicada", nivel: "Avanzado", duracion: "27 horas + prácticas en tostadora",
+      descripcion: "Curso DE PAGO, dictado por nuestro aliado Legacy Specialty Education. Recorre la cadena completa —finca, café verde, exportación, tueste y extracción— con salida a finca, catación y práctica en tostadora. Valor: 599 USD, que se paga a Legacy.",
+    },
+    horas: [
+      { etiqueta: "Teoría", valor: "27 h", detalle: "6 días, con salida a finca" },
+      { etiqueta: "Práctica", valor: "10 h", detalle: "en tostadora, más 1 semana en Cafexporto" },
+      { etiqueta: "Total", valor: "27 h + prácticas" },
+    ],
     precio: "599 USD",
     descuentos: [],
     incluye: ["Visita a finca cafetera", "Tueste", "Cata", "Prácticas en Cafexporto"],
