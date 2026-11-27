@@ -3,6 +3,7 @@ import { SERVICIOS_EXTRA, SERVICIOS_PAGADOS } from "@/lib/data";
 import { Icono } from "@/components/Icono";
 import { waLink } from "@/lib/config";
 import { Intermediacion, PrecioServicio } from "@/components/ServiciosVivos";
+import { MUESTRAS_LEGACY, RUTA_MUESTRAS } from "@/lib/legacyMuestras";
 
 export const metadata = {
   title: "Servicios para el sector cafetero",
@@ -32,9 +33,9 @@ const COPY_ESPECIAL: Record<string, { nombre: string; descripcion: string }> = {
 			"Organiza la información de finca y geolocalización necesaria para apoyar procesos de trazabilidad y debida diligencia.",
 	},
 	"cert-catacion": {
-		nombre: "Servicio de catación",
+		nombre: "Servicio de cata: análisis de muestras",
 		descripcion:
-			"Evaluación técnica del lote por profesionales o laboratorios especializados disponibles en la Red.",
+			"Legacy tuesta tu café verde en 3 curvas, lo cata y te da puntaje, recomendación de precio y de procesamiento.",
 	},
 };
 
@@ -121,7 +122,7 @@ export default function ServiciosPage() {
 										return (
 											<Link
 												key={s.id}
-												href={`/servicios/contratar?servicio=${s.id}`}
+												href={s.id === "cert-catacion" ? RUTA_MUESTRAS : `/servicios/contratar?servicio=${s.id}`}
 												className="group flex flex-col rounded-2xl border border-border-soft bg-surface p-6 shadow-sm transition hover:shadow-md"
 											>
 												<Icono nombre={iconoServicio(s.id)} className="h-7 w-7 text-cereza" />
@@ -131,7 +132,15 @@ export default function ServiciosPage() {
 												<p className="mt-1 flex-1 text-sm text-pizarra/80">
 													{copy?.descripcion ?? s.descripcion}
 												</p>
-												<PrecioServicio id={s.id} nombre={copy?.nombre ?? s.nombre} precio={s.precio} unidad={s.unidad} />
+												{s.id === "cert-catacion" ? (
+													// Lo hace y lo cobra Legacy: el precio es el de su ficha, no el del catálogo.
+													<p className="mt-3 text-lg font-bold text-cereza">
+														{MUESTRAS_LEGACY.precio}
+														<span className="text-sm font-normal text-pizarra/60"> {MUESTRAS_LEGACY.precioNota} · ver ficha →</span>
+													</p>
+												) : (
+													<PrecioServicio id={s.id} nombre={copy?.nombre ?? s.nombre} precio={s.precio} unidad={s.unidad} />
+												)}
 											</Link>
 										);
 									})}
