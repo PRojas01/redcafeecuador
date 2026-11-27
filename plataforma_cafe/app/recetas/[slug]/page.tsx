@@ -8,6 +8,7 @@ import { useContenido } from "@/lib/useContenido";
 import { Icono } from "@/components/Icono";
 import { TazaCenital } from "@/components/Lamina";
 import { EstadoError } from "@/components/EstadoError";
+import { FOTOS_RECETAS } from "@/lib/fotos";
 
 function formatoTiempo(min: number): string {
   if (min >= 720) return `${Math.round(min / 60)} h`;
@@ -26,6 +27,7 @@ function Badge({ children, className = "bg-cream-200 text-coffee-700" }: { child
 }
 
 function Detalle({ receta }: { receta: Receta }) {
+  const foto = FOTOS_RECETAS[receta.slug ?? receta.id];
   const difClase =
     receta.dificultad === "fácil"
       ? "bg-green-100 text-green-700"
@@ -35,6 +37,12 @@ function Detalle({ receta }: { receta: Receta }) {
 
   return (
     <>
+      {foto ? (
+        <div className="mt-4 overflow-hidden rounded-2xl border border-border-soft">
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img className="rc-receta-portada" src={foto.src} alt={foto.alt} width={1280} height={720} decoding="async" fetchPriority="high" />
+        </div>
+      ) : (
       <div className="mt-4 overflow-hidden rounded-2xl border border-border-soft">
         <TazaCenital
           className="aspect-[16/6] w-full"
@@ -42,6 +50,7 @@ function Detalle({ receta }: { receta: Receta }) {
           notas={`${formatoTiempo(receta.minutos)} · ${receta.porciones} ${receta.porciones === 1 ? "taza" : "tazas"} · ratio ${receta.ratio}`}
         />
       </div>
+      )}
 
       <div className="mt-6 flex flex-wrap items-center gap-2 text-xs">
         <Badge className="inline-flex items-center gap-1.5 rounded-full bg-gold-500/15 px-3 py-1 font-bold uppercase tracking-wide text-coffee-800">

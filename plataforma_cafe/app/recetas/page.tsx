@@ -6,6 +6,7 @@ import { RECETAS, type Receta } from "@/lib/data";
 import { useContenido } from "@/lib/useContenido";
 import { Icono } from "@/components/Icono";
 import { EstadoVacio } from "@/components/EstadoVacio";
+import { FOTOS_RECETAS } from "@/lib/fotos";
 
 const METODOS = Array.from(new Set(RECETAS.map((r) => r.metodo)));
 const DIFICULTADES = ["fácil", "media", "alta"] as const;
@@ -116,6 +117,18 @@ export default function RecetasPage() {
                     href={`/recetas/${r.slug ?? r.id}`}
                     className="card group flex flex-col overflow-hidden"
                   >
+                    {FOTOS_RECETAS[r.slug ?? r.id] ? (
+                      /* eslint-disable-next-line @next/next/no-img-element */
+                      <img
+                        className="rc-receta-foto"
+                        src={FOTOS_RECETAS[r.slug ?? r.id].src}
+                        alt={FOTOS_RECETAS[r.slug ?? r.id].alt}
+                        width={640}
+                        height={360}
+                        loading="lazy"
+                        decoding="async"
+                      />
+                    ) : null}
                     <div className="flex flex-1 flex-col p-6">
                       <span className="inline-flex w-fit items-center gap-1.5 rounded-full bg-gold-500/15 px-3 py-1 text-xs font-bold uppercase tracking-wide text-coffee-800">
                         <Icono nombre="amante" className="h-3.5 w-3.5" />

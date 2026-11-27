@@ -13,6 +13,7 @@ import { Fragment, useCallback, useEffect, useState } from "react";
 import { CONFIG } from "@/lib/config";
 import { CLASE_DEMO, proximaClase, type ClaseDemo } from "@/lib/claseDemo";
 import { CONDICIONES_LEGACY, MOSTRAR_DESCUENTOS, OFERTA_LEGACY, WHATSAPP_LEGACY, hoyEcuador } from "@/lib/legacyOferta";
+import { FOTOS_CURSOS } from "@/lib/fotos";
 
 type Bloque = {
   tipo?: string; titulo?: string; texto?: string; url?: string; alt?: string; pie?: string;
@@ -439,7 +440,7 @@ export function VisorCurso({ id: idFijo, inicial, respaldo }: { id: string | nul
   const puedeCompletar = !!datos && datos.acceso_concedido !== false && !!(datos.matriculado || datos.puede_editar);
   const precio = PRECIOS[c.id];
   const deAliado = !!precio || !!datos?.ficha_abierta;
-  const portada = PORTADAS_POR_CURSO[c.id] || PORTADAS[c.categoria || "general"] || PORTADAS.general;
+  const portada = FOTOS_CURSOS[c.id]?.src || PORTADAS_POR_CURSO[c.id] || PORTADAS[c.categoria || "general"] || PORTADAS.general;
 
   const completar = async (mi: number, li: number, hecho: boolean) => {
     // Se marca al momento y se deshace si el servidor no lo guarda.
@@ -560,7 +561,7 @@ export function VisorCurso({ id: idFijo, inicial, respaldo }: { id: string | nul
           {c.nivel || ""}{c.duracion ? ` · ${c.duracion}` : ""}{c.autor && c.autor_id ? ` · por ${c.autor}` : ""}
         </p>
         {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img className="redcafe-curso-portada" src={portada} alt="" decoding="async" width={640} height={360} />
+        <img className="redcafe-curso-portada" src={portada} alt={FOTOS_CURSOS[c.id]?.alt || ""} decoding="async" width={640} height={360} />
         <p className={"redcafe-curso-costo-ficha " + (precio ? "es-pago" : "es-gratis")}>{precio || "Gratis"}</p>
         <h1 className="redcafe-curso-titulo">{c.titulo || "Curso"}</h1>
         {c.descripcion ? <p className="redcafe-curso-desc">{c.descripcion}</p> : null}
