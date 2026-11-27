@@ -79,11 +79,70 @@ function contarClicLegacy() {
   } catch { /* la medición nunca bloquea el enlace */ }
 }
 
+/* Videos del canal de YouTube de Legacy Academy (@LEGACYACADEMYDM) que
+   corresponden a cada curso. Se muestra solo la miniatura; el reproductor
+   (youtube-nocookie) se carga al tocarla. */
+const VIDEOS_LEGACY: Record<string, { id: string; titulo: string; dura: string }[]> = {
+  "legacy-barista-en-casa": [
+    { id: "mlQO_dd-SIo", titulo: "Barista en Casa", dura: "0:53" },
+    { id: "OgruUffbTac", titulo: "La importancia de ser barista", dura: "1:21" },
+    { id: "HQgwiUl-yTI", titulo: "Los cursos que ofrece Legacy", dura: "0:40" },
+  ],
+  "legacy-barismo-profesional": [
+    { id: "nb5WmcxGrE4", titulo: "Barista Pro", dura: "0:56" },
+    { id: "Io2ReJQbHW4", titulo: "Cuánto dura Barista Pro", dura: "1:03" },
+    { id: "6qmvy-QLvjo", titulo: "Horas de práctica en barra", dura: "1:22" },
+  ],
+  "legacy-barista-avanzado": [
+    { id: "VFvgbxEdXEE", titulo: "Barista Avanzado", dura: "1:10" },
+    { id: "56Spbktim1I", titulo: "Horas de práctica de Barista Avanzado", dura: "0:59" },
+  ],
+};
+
+function VideoDiferido({ v }: { v: { id: string; titulo: string; dura: string } }) {
+  const [abierto, setAbierto] = useState(false);
+  return (
+    <figure className="redcafe-curso-video">
+      <div className="redcafe-curso-video-marco">
+        {abierto ? (
+          <iframe
+            src={`https://www.youtube-nocookie.com/embed/${v.id}?autoplay=1&rel=0&modestbranding=1`}
+            title={`Video: ${v.titulo}`}
+            allow="autoplay; encrypted-media; picture-in-picture; fullscreen"
+            allowFullScreen
+            referrerPolicy="strict-origin-when-cross-origin"
+          />
+        ) : (
+          <button type="button" onClick={() => setAbierto(true)} aria-label={`Ver el video «${v.titulo}» (${v.dura})`}>
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img src={`https://i.ytimg.com/vi/${v.id}/hqdefault.jpg`} alt="" loading="lazy" decoding="async" referrerPolicy="no-referrer" width={480} height={360} onError={(e) => { e.currentTarget.style.visibility = "hidden"; }} />
+            <span className="redcafe-curso-video-play" aria-hidden="true">▶</span>
+            <span className="redcafe-curso-video-dura" aria-hidden="true">{v.dura}</span>
+          </button>
+        )}
+      </div>
+      <figcaption>{v.titulo}</figcaption>
+    </figure>
+  );
+}
+
+function VideosLegacy({ id }: { id: string }) {
+  const lista = VIDEOS_LEGACY[id];
+  if (!lista || !lista.length) return null;
+  return (
+    <section className="redcafe-curso-videos" aria-label="Videos del curso">
+      <h2>Conoce el curso en video</h2>
+      <div className="redcafe-curso-videos-grid">{lista.map((v) => <VideoDiferido key={v.id} v={v} />)}</div>
+      <p className="redcafe-curso-videos-nota">Videos de Legacy Academy en YouTube. El video se carga solo cuando lo tocas.</p>
+    </section>
+  );
+}
+
 function InscripcionLegacy({ titulo, id, abajo }: { titulo: string; id: string; abajo?: boolean }) {
   return (
     <aside className={"redcafe-curso-inscripcion" + (abajo ? " es-abajo" : "")} aria-label="Inscripción con Legacy">
       <p className="redcafe-curso-inscripcion-rotulo">{abajo ? "¿Te interesa este curso?" : "Curso de pago · lo dicta y lo cobra Legacy"}</p>
-      <p>No necesitas cuenta en Red Café. Escribe a Legacy por WhatsApp: tu mensaje ya dice que vienes de redcafeecuador.com y ellos te confirman fechas, cupos y formas de pago.</p>
+      <p>Escribe a Legacy por WhatsApp: tu mensaje ya dice que vienes de redcafeecuador.com y ellos te confirman fechas, cupos y formas de pago.</p>
       <a className="redcafe-curso-inscripcion-boton" href={waLegacy(titulo, id)} target="_blank" rel="noopener noreferrer" onClick={contarClicLegacy}>
         Solicitar inscripción a Legacy <span aria-hidden="true">↗</span>
       </a>
@@ -427,6 +486,7 @@ export function VisorCurso({ id: idFijo, inicial, respaldo }: { id: string | nul
         {c.descripcion ? <p className="redcafe-curso-desc">{c.descripcion}</p> : null}
         {CLASE_DEMO && c.id === CLASE_DEMO.curso ? <ClaseDemoCurso clase={CLASE_DEMO} /> : null}
         {deAliado ? <InscripcionLegacy titulo={c.titulo || ""} id={c.id} /> : null}
+        {deAliado ? <VideosLegacy id={c.id} /> : null}
         {aviso}
         {datos && !deAliado && datos.acceso_concedido !== false && total ? <BarraAvance hechas={completadas.length} total={total} /> : null}
         {c.introduccion ? <div className="redcafe-curso-intro"><p>{c.introduccion}</p></div> : null}

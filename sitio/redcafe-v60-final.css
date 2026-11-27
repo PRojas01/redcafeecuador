@@ -6563,3 +6563,17 @@ html:not(#s1):not(#s2):not(#s3):not(#s4):not(#s5):not(#s6):not(#s7):not(#s8):not
 #redcafe-curso .redcafe-curso-inscripcion p.redcafe-curso-inscripcion-rotulo { color: #8c3604; font-size: .75rem; font-weight: 700; letter-spacing: .12em; margin-top: 0; text-transform: uppercase; }
 #redcafe-curso .redcafe-curso-inscripcion a.redcafe-curso-inscripcion-boton { align-items: center !important; background: #2f6b45 !important; background-image: none !important; border: 0 !important; border-radius: 4px !important; box-shadow: 0 4px 12px rgba(47, 107, 69, .35) !important; color: #fff !important; display: inline-flex !important; font-size: 1rem !important; font-weight: 700 !important; gap: .4rem; margin-top: .8rem; min-height: 48px !important; opacity: 1 !important; padding: .7rem 1.2rem !important; text-decoration: none !important; }
 #redcafe-curso .redcafe-curso-inscripcion a.redcafe-curso-inscripcion-boton:hover, #redcafe-curso .redcafe-curso-inscripcion a.redcafe-curso-inscripcion-boton:focus-visible { background: #24543a !important; color: #fff !important; }
+#redcafe-curso .redcafe-curso-videos { margin-top: 1.6rem; }
+#redcafe-curso .redcafe-curso-videos h2 { color: #3b1a0c; font-size: 1.35rem; font-weight: 700; margin: 0 0 .7rem; }
+#redcafe-curso .redcafe-curso-videos-grid { display: grid; gap: 1rem; grid-template-columns: 1fr; }
+@media (min-width: 640px) { #redcafe-curso .redcafe-curso-videos-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+#redcafe-curso .redcafe-curso-video { margin: 0; }
+#redcafe-curso .redcafe-curso-video-marco { aspect-ratio: 16 / 9; background: #1e0e06; border-radius: 4px; overflow: hidden; position: relative; }
+#redcafe-curso .redcafe-curso-video-marco button { border: 0; cursor: pointer; display: block; height: 100%; padding: 0; position: relative; width: 100%; background: #1e0e06; }
+#redcafe-curso .redcafe-curso-video-marco img { display: block; height: 100%; object-fit: cover; width: 100%; }
+#redcafe-curso .redcafe-curso-video-marco iframe { border: 0; height: 100%; inset: 0; position: absolute; width: 100%; }
+#redcafe-curso .redcafe-curso-video-play { align-items: center; background: rgba(140, 54, 4, .92); border-radius: 50%; box-shadow: 0 4px 14px rgba(0, 0, 0, .35); color: #fff; display: flex; font-size: 1.4rem; height: 3.6rem; justify-content: center; left: 50%; padding-left: .25rem; position: absolute; top: 50%; transform: translate(-50%, -50%); width: 3.6rem; }
+#redcafe-curso .redcafe-curso-video-marco button:hover .redcafe-curso-video-play, #redcafe-curso .redcafe-curso-video-marco button:focus-visible .redcafe-curso-video-play { background: #2f6b45; }
+#redcafe-curso .redcafe-curso-video-dura { background: rgba(0, 0, 0, .78); border-radius: 3px; bottom: .5rem; color: #fff; font-size: .8rem; font-weight: 600; padding: .1rem .4rem; position: absolute; right: .5rem; }
+#redcafe-curso .redcafe-curso-video figcaption { color: #3b1a0c; font-size: .95rem; font-weight: 600; margin-top: .45rem; }
+#redcafe-curso .redcafe-curso-videos-nota { color: #5c4a3d; font-size: .8rem; margin-top: .6rem; }
