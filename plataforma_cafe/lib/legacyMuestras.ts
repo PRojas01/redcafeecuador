@@ -23,6 +23,14 @@ export const MUESTRAS_LEGACY = {
     { id: "brix", etiqueta: "Promedio de Brix", opcional: true, ayuda: "" },
     { id: "anios", etiqueta: "Años de cultivo", opcional: true, ayuda: "" },
   ],
+  /* Datos de contacto y envío (para que Legacy pueda coordinar la recepción). */
+  contacto: [
+    { id: "nombre", etiqueta: "Nombre de contacto", opcional: false, ayuda: "Quién envía la muestra.", tipo: "text" },
+    { id: "telefono", etiqueta: "Teléfono / WhatsApp", opcional: false, ayuda: "Por ejemplo: 0991234567", tipo: "tel" },
+    { id: "correo", etiqueta: "Correo electrónico", opcional: true, ayuda: "", tipo: "email" },
+    { id: "ciudad", etiqueta: "Ciudad desde donde envías", opcional: false, ayuda: "", tipo: "text" },
+    { id: "fecha", etiqueta: "Fecha en que enviarás la muestra", opcional: false, ayuda: "", tipo: "date" },
+  ],
   /* Condiciones de la muestra. */
   condiciones: ["Muestra de café en verde (trillado)", "Cantidad: 400 g"],
   /* Proceso de evaluación: tostado de la muestra con 3 curvas. */
@@ -48,19 +56,54 @@ export const VIDEOS_MUESTRAS = [
 ];
 
 export type DatosMuestra = Record<string, string>;
+export type CampoMuestra = { id: string; etiqueta: string; opcional: boolean; ayuda: string; tipo?: string };
+
+const CAMPOS: CampoMuestra[] = [...MUESTRAS_LEGACY.datos, ...MUESTRAS_LEGACY.contacto];
+
+/** «2026-12-03» → «jueves 3 de diciembre de 2026». */
+export function fechaLarga(iso: string): string {
+  const m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(iso || "");
+  if (!m) return iso || "";
+  const f = new Date(Date.UTC(+m[1], +m[2] - 1, +m[3], 12));
+  return f.toLocaleDateString("es-EC", { weekday: "long", day: "numeric", month: "long", year: "numeric", timeZone: "UTC" });
+}
+
+/** Valor ya limpio para mostrar (fecha en palabras). */
+export function valorMuestra(c: CampoMuestra, d: DatosMuestra): string {
+  const v = String(d[c.id] || "").trim().slice(0, 120);
+  return c.tipo === "date" ? fechaLarga(v) : v;
+}
+
+/** Campos obligatorios que faltan. */
+export function faltantes(d: DatosMuestra): CampoMuestra[] {
+  return CAMPOS.filter((c) => !c.opcional && !String(d[c.id] || "").trim());
+}
+
+/** Bloques de la ficha de recepción: [título, [etiqueta, valor][]]. */
+export function fichaMuestra(d: DatosMuestra): [string, [string, string][]][] {
+  const filas = (lista: CampoMuestra[]) =>
+    lista.map((c) => [c.etiqueta, valorMuestra(c, d) || (c.opcional ? "—" : "(por completar)")] as [string, string]);
+  return [
+    ["Información de la muestra", filas(MUESTRAS_LEGACY.datos)],
+    ["Condiciones de la muestra", [["Muestra", "Café en verde (trillado)"], ["Cantidad", "400 g"]]],
+    ["Contacto y envío", filas(MUESTRAS_LEGACY.contacto)],
+    ["Servicio", [["Precio", "50 USD más impuestos, por muestra"], ["Evaluación", "Tostado en 3 curvas: Cata, Omni y Filtro"]]],
+  ];
+}
+
+/** Texto completo de la solicitud (mensaje de WhatsApp). */
+export function textoMuestras(d: DatosMuestra = {}): string {
+  const bloques = fichaMuestra(d)
+    .map(([t, filas]) => `*${t}*\n` + filas.map(([e, v]) => `${e}: ${v}`).join("\n"))
+    .join("\n\n");
+  return (
+    `Hola Legacy, vengo de redcafeecuador.com. Quiero solicitar el servicio de muestras: recepción de muestra de café en verde y análisis organoléptico.\n\n` +
+    bloques +
+    `\n\nAdjunto la ficha de recepción de la muestra. ¿Me confirman dónde la entrego?\n\nRef.: Red Café Ecuador · ${REF_MUESTRAS}`
+  );
+}
 
 /** WhatsApp a Legacy con los datos de la muestra y la referencia a la Red. */
 export function waMuestras(d: DatosMuestra = {}): string {
-  const lineas = MUESTRAS_LEGACY.datos
-    .map((c) => {
-      const v = String(d[c.id] || "").trim().slice(0, 120);
-      if (!v && c.opcional) return "";
-      return `${c.etiqueta}: ${v || "(por completar)"}`;
-    })
-    .filter(Boolean);
-  const texto =
-    `Hola Legacy, vengo de redcafeecuador.com. Quiero solicitar el servicio de muestras: recepción de muestra de café en verde y análisis organoléptico (50 USD más impuestos).\n\n` +
-    lineas.join("\n") +
-    `\nMuestra: café en verde (trillado), 400 g.\n\n¿Me indican cómo y dónde entrego la muestra?\n\nRef.: Red Café Ecuador · ${REF_MUESTRAS}`;
-  return `https://wa.me/${WHATSAPP_LEGACY}?text=${encodeURIComponent(texto)}`;
+  return `https://wa.me/${WHATSAPP_LEGACY}?text=${encodeURIComponent(textoMuestras(d))}`;
 }
