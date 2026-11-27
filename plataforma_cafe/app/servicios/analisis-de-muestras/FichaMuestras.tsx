@@ -121,7 +121,7 @@ function Enviar({ datos, onFalta }: { datos: DatosMuestra; onFalta: (f: CampoMue
     <aside className="redcafe-curso-inscripcion es-abajo" aria-label="Enviar la solicitud a Legacy">
       <p className="redcafe-curso-inscripcion-rotulo">Envía tu solicitud</p>
       <p>
-        El botón abre WhatsApp con Legacy (0963291887) con todos tus datos, que vienes de redcafeecuador.com y la referencia,
+        El botón abre el WhatsApp de Legacy con todos tus datos, que vienes de redcafeecuador.com y la referencia,
         y descarga la ficha de recepción como imagen para que la adjuntes en el mismo chat.
       </p>
       <button type="button" className="redcafe-curso-inscripcion-boton" onClick={enviar}>
