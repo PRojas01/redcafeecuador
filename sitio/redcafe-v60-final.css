@@ -6715,3 +6715,10 @@ article.rc-resaltado { outline: 3px solid #8c3604; outline-offset: 3px; scroll-m
 @keyframes rc-resaltar { 0%, 60% { box-shadow: 0 0 0 8px rgba(247, 208, 138, .9); } 100% { box-shadow: none; } }
 @media (prefers-reduced-motion: reduce) { article.rc-resaltado { animation: none; } }
 
+
+/* ===== Fotos de las recetas (listado y ficha) · lib/fotos.ts ===== */
+.rc-receta-foto { display: block; width: 100%; height: auto; aspect-ratio: 16 / 9; object-fit: cover; background: #f6ece1; transition: transform .5s ease; }
+a.card:is(:hover, :focus-visible) .rc-receta-foto { transform: scale(1.04); }
+.rc-receta-portada { display: block; width: 100%; height: auto; aspect-ratio: 16 / 7; object-fit: cover; background: #f6ece1; }
+@media (max-width: 640px) { .rc-receta-portada { aspect-ratio: 16 / 9; } }
+@media (prefers-reduced-motion: reduce) { .rc-receta-foto { transition: none; } }
