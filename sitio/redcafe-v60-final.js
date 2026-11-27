@@ -13,7 +13,7 @@ window.__redcafeReactListo = window.__redcafeReactListo || function () {
 (function () {
   "use strict";
 
-  var VERSION = "20261127h";
+  var VERSION = "20261127j";
   var WAPP = "593968641376";
   var path = normalizePath(location.pathname);
   var homeAuthChecking = false;
@@ -547,7 +547,7 @@ window.__redcafeReactListo = window.__redcafeReactListo || function () {
    propia al final de <body>, después de hidratar. */
 (function () {
   if (typeof window === "undefined" || !window.ResizeObserver) return;
-  var URL_SELLO = "/img/sello-redcafe.svg?v=20261127h";
+  var URL_SELLO = "/img/sello-redcafe.svg?v=20261127j";
   var capa = null, temporizador = 0, ultimaFirma = "";
   var BANDA = 120;
 
@@ -915,7 +915,7 @@ window.__redcafeReactListo = window.__redcafeReactListo || function () {
   })();
 })();
 
-/* ===== v20261127h · Registro más atractivo =====
+/* ===== v20261127j · Registro más atractivo =====
    Cifras de la Red siempre en vivo (/api/metricas.php?action=cifras), nunca escritas a mano:
    · Portada: línea corta bajo los botones (miembros y provincias) y título sobre las tarjetas.
    · Comunidad: la franja completa «La Red hoy», bajo el subtítulo.
@@ -1103,13 +1103,17 @@ window.__redcafeReactListo = window.__redcafeReactListo || function () {
     }, 4000);
   }
   function lotes() {
-    return api("/api/lotes.php?action=list", "lotes").then(function (l) {
+    // La cifra es la misma de Comunidad (lotes_reales de /api/metricas.php?action=cifras).
+    var cifra = fetch("/api/metricas.php?action=cifras", { credentials: "omit" }).then(function (r) { return r.json(); })
+      .then(function (j) { return j && j.ok && j.data ? j.data.lotes_reales : null; }).catch(function () { return null; });
+    return Promise.all([api("/api/lotes.php?action=list", "lotes"), cifra]).then(function (res) {
+      var l = res[0], total = res[1];
       var reales = l.filter(function (x) { return !x.demo && !x.ejemplo && !x.oculto && String(x.disponibilidad || "").toLowerCase() !== "agotado"; });
       var vis = (reales.length ? reales : l).map(function (x) {
         var precio = dinero(x.precioQuintal) ? dinero(x.precioQuintal) + "/qq" : dinero(x.precioSaco) ? dinero(x.precioSaco) + "/saco" : dinero(x.precioUnidad);
         return { href: "/marketplace/" + encodeURIComponent(x.id) + "/", img: primeraImg(x) || "/img/proceso/verde.webp", nombre: [x.variedad, x.proceso].filter(Boolean).join(" · ") || "Café de Ecuador", meta: [x.provincia, x.altura ? x.altura + " msnm" : ""].filter(Boolean).join(" · "), precio: precio };
       });
-      return vis.length ? panel(1, "Lotes publicados", vis, reales.length ? String(reales.length) : "", "Ver todos los lotes", "/marketplace/") : null;
+      return vis.length ? panel(1, "Lotes publicados", vis, total > 0 ? String(Math.floor(total)) : reales.length ? String(reales.length) : "", "Ver todos los lotes", "/marketplace/") : null;
     });
   }
   function cursos() {
@@ -1149,7 +1153,7 @@ window.__redcafeReactListo = window.__redcafeReactListo || function () {
   function recetas() {
     var r = [["v60", "Café V60", "Goteo manual · 4 min"], ["prensa-francesa", "Prensa francesa", "Fácil · 5 min"],
       ["aeropress", "Aeropress", "Rápido · 2 min"], ["moka-italiana", "Moka italiana", "Intenso · 5 min"],
-      ["espresso-casero", "Espresso casero", "Con cafetera · 1 min"], ["cold-brew", "Cold brew", "En frío · 12 h"]];
+      ["espresso-casero", "Espresso casero", "Con cafetera · 1 min"], ["cold-brew", "Cold brew", "En frío · 17 h"]];
     return Promise.resolve(panel(4, "Recetas", r.map(function (x) {
       return { href: "/recetas/" + x[0] + "/", img: "/img/recetas/mini/" + x[0] + ".webp", nombre: x[1], meta: x[2] };
     }), String(r.length), "Ver recetas", "/recetas/"));
@@ -1200,4 +1204,99 @@ window.__redcafeReactListo = window.__redcafeReactListo || function () {
     tarjeta.classList.add("rc-resaltado");
     tarjeta.scrollIntoView({ block: "center", behavior: window.matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth" });
   }, 250);
+})();
+
+/* Sellos de la portada en huecos libres (27-nov-2026)
+   Antes iban a posiciones fijas del CSS (arriba a la derecha en móvil; centro arriba y abajo en
+   escritorio) y, según el ancho (320, 414, 568 apaisado, tablet 768–1023, zoom 200 %), quedaban
+   encima del título, del subtítulo o de la línea de cifras. Ahora se mide la portada ya pintada y
+   cada sello va al hueco libre más cercano a su sitio de siempre, del mayor tamaño que quepa; si no
+   cabe ninguno, no se pone. Solo lee la portada (no toca el DOM de React): escribe una regla en un
+   <style> propio que pisa la del CSS. */
+(function () {
+  if (typeof window === "undefined" || !window.ResizeObserver) return;
+  var SELLO = 'url("/img/sello-redcafe.svg?v=20261127j")';
+  var FONDO = 'url("/img/textura-saco.webp?v=20261127j"), linear-gradient(180deg, #ffffff 0%, #f8efe0 100%)';
+  var NOTS = ""; for (var i = 1; i <= 22; i++) NOTS += ":not(#hs" + i + ")";
+  var estilo = null, temporizador = 0;
+
+  function ocupadas(h) {
+    var hr = h.getBoundingClientRect(), cajas = [], M = 10;
+    function sumar(r) {
+      if (r.width < 1 || r.height < 1) return;
+      cajas.push({ l: r.left - hr.left - M, r: r.right - hr.left + M, t: r.top - hr.top - M, b: r.bottom - hr.top + M });
+    }
+    var tw = document.createTreeWalker(h, NodeFilter.SHOW_TEXT), n;
+    while ((n = tw.nextNode())) {
+      if (!n.nodeValue.trim()) continue;
+      var rg = document.createRange(); rg.selectNodeContents(n);
+      var l = rg.getClientRects(); for (var k = 0; k < l.length; k++) sumar(l[k]);
+    }
+    var els = h.querySelectorAll("a, button, img, video, picture, svg, figure, [class*='galeria'], [class*='foto'], [class*='carrusel'], .rc-hero-extra");
+    for (var j = 0; j < els.length; j++) sumar(els[j].getBoundingClientRect());
+    return { cajas: cajas, w: hr.width, h: hr.height };
+  }
+
+  function libre(z, x, y, s) {
+    if (x < 6 || y < 6 || x + s > z.w - 6 || y + s > z.h - 6) return false;
+    for (var i = 0; i < z.cajas.length; i++) {
+      var c = z.cajas[i];
+      if (x < c.r && x + s > c.l && y < c.b && y + s > c.t) return false;
+    }
+    return true;
+  }
+
+  // Hueco libre más cercano a (px, py), probando de mayor a menor tamaño.
+  function buscar(z, px, py, tamanos, puestos) {
+    for (var t = 0; t < tamanos.length; t++) {
+      var s = tamanos[t], mejor = null;
+      for (var y = 6; y + s <= z.h - 6; y += 8)
+        for (var x = 6; x + s <= z.w - 6; x += 8) {
+          if (!libre(z, x, y, s)) continue;
+          // Un solo sello por franja horizontal (nada de filas de sellos).
+          var choca = puestos.some(function (p) { return y < p.y + p.s + 10 && y + s > p.y - 10; });
+          if (choca) continue;
+          var d = Math.pow(x + s / 2 - px, 2) + Math.pow(y + s / 2 - py, 2);
+          if (!mejor || d < mejor.d) mejor = { x: x, y: y, s: s, d: d };
+        }
+      if (mejor) return mejor;
+    }
+    return null;
+  }
+
+  function colocar() {
+    temporizador = 0;
+    var h = document.getElementById("portada-hero");
+    if (!h) return;
+    var z = ocupadas(h), movil = window.innerWidth < 768, puestos = [];
+    var pedidos = movil
+      ? [{ px: z.w - 50, py: 46, t: [80, 72, 64, 56] }]
+      : [{ px: z.w / 2 - 110, py: z.h - 84, t: [140, 124, 108, 92] }, { px: z.w / 2 + 60, py: 72, t: [100, 88, 76, 64] }];
+    pedidos.forEach(function (q) { var p = buscar(z, q.px, q.py, q.t, puestos); if (p) puestos.push(p); });
+    var img = puestos.map(function () { return SELLO; }).concat([FONDO]).join(", ");
+    var tam = puestos.map(function (p) { return p.s + "px " + p.s + "px"; }).concat(["240px 240px", "auto"]).join(", ");
+    var pos = puestos.map(function (p) { return Math.round(p.x) + "px " + Math.round(p.y) + "px"; }).concat(["0 0", "0 0"]).join(", ");
+    var rep = puestos.map(function () { return "no-repeat"; }).concat(["repeat", "no-repeat"]).join(", ");
+    var css = "html" + NOTS + " body #portada-hero { background-image: " + img + " !important; background-size: " + tam +
+      " !important; background-position: " + pos + " !important; background-repeat: " + rep + " !important; }";
+    if (!estilo || !estilo.isConnected) { estilo = document.createElement("style"); estilo.id = "rc-hero-sellos"; document.head.appendChild(estilo); }
+    if (estilo.textContent !== css) estilo.textContent = css;
+  }
+
+  function programar() { if (temporizador) clearTimeout(temporizador); temporizador = setTimeout(colocar, 250); }
+
+  var intentos = 0;
+  (function esperar() {
+    var listo = window.__redcafeReactListo && window.__redcafeReactListo();
+    if (!listo && intentos++ < 60) { setTimeout(esperar, 200); return; }
+    var h = document.getElementById("portada-hero");
+    if (!h) return;
+    new ResizeObserver(programar).observe(h);
+    if (window.MutationObserver) new MutationObserver(programar).observe(h, { childList: true, subtree: true, characterData: true });
+    window.addEventListener("resize", programar);
+    if (document.fonts && document.fonts.ready) document.fonts.ready.then(programar);
+    // Tras la animación de entrada del título y los botones (≈1 s).
+    setTimeout(programar, 1200);
+    programar();
+  })();
 })();
