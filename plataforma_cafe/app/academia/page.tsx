@@ -8,6 +8,7 @@
  completan los mismos tarjetones (cursos nuevos, avance, autor y verificado).
 */
 import { useEffect, useState } from "react";
+import { OFERTA_LEGACY } from "@/lib/legacyOferta";
 import Link from "next/link";
 import { CURSOS } from "@/lib/data";
 import { CONFIG } from "@/lib/config";
@@ -87,11 +88,7 @@ const GANCHOS: Record<string, string> = {
 };
 
 /* Los 3 cursos de Legacy son de pago; los de Red Café, gratis. */
-const PRECIOS: Record<string, string> = {
-  "legacy-barista-en-casa": "Promoción 143 USD · pareja/grupo 120 USD c/u",
-  "legacy-barismo-profesional": "Promoción 359 USD · pareja/grupo 320 USD c/u",
-  "legacy-barista-avanzado": "Promoción 550 USD",
-};
+const PRECIOS: Record<string, string> = Object.fromEntries(Object.entries(OFERTA_LEGACY).map(([k, o]) => [k, o.precio]));
 
 const portadaDe = (c: CursoLista) => PORTADAS_POR_CURSO[c.id] || PORTADAS[c.categoria || "general"] || PORTADAS.general;
 const selloDe = (c: CursoLista) => SELLOS[c.id] || (PRECIOS[c.id] ? "Formación con Legacy" : "Aprende gratis · a tu ritmo");

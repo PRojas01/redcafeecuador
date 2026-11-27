@@ -6563,10 +6563,7 @@ html:not(#s1):not(#s2):not(#s3):not(#s4):not(#s5):not(#s6):not(#s7):not(#s8):not
 #redcafe-curso .redcafe-curso-inscripcion p.redcafe-curso-inscripcion-rotulo { color: #8c3604; font-size: .75rem; font-weight: 700; letter-spacing: .12em; margin-top: 0; text-transform: uppercase; }
 #redcafe-curso .redcafe-curso-inscripcion a.redcafe-curso-inscripcion-boton { align-items: center !important; background: #2f6b45 !important; background-image: none !important; border: 0 !important; border-radius: 4px !important; box-shadow: 0 4px 12px rgba(47, 107, 69, .35) !important; color: #fff !important; display: inline-flex !important; font-size: 1rem !important; font-weight: 700 !important; gap: .4rem; margin-top: .8rem; min-height: 48px !important; opacity: 1 !important; padding: .7rem 1.2rem !important; text-decoration: none !important; }
 #redcafe-curso .redcafe-curso-inscripcion a.redcafe-curso-inscripcion-boton:hover, #redcafe-curso .redcafe-curso-inscripcion a.redcafe-curso-inscripcion-boton:focus-visible { background: #24543a !important; color: #fff !important; }
-#redcafe-curso .redcafe-curso-videos { margin-top: 1.6rem; }
-#redcafe-curso .redcafe-curso-videos h2 { color: #3b1a0c; font-size: 1.35rem; font-weight: 700; margin: 0 0 .7rem; }
-#redcafe-curso .redcafe-curso-videos-grid { display: grid; gap: 1rem; grid-template-columns: 1fr; }
-@media (min-width: 640px) { #redcafe-curso .redcafe-curso-videos-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+#redcafe-curso .redcafe-curso-videos { display: grid; gap: 1rem; margin: 1rem 0; max-width: 560px; }
 #redcafe-curso .redcafe-curso-video { margin: 0; }
 #redcafe-curso .redcafe-curso-video-marco { aspect-ratio: 16 / 9; background: #1e0e06; border-radius: 4px; overflow: hidden; position: relative; }
 #redcafe-curso .redcafe-curso-video-marco button { border: 0; cursor: pointer; display: block; height: 100%; padding: 0; position: relative; width: 100%; background: #1e0e06; }
@@ -6576,4 +6573,21 @@ html:not(#s1):not(#s2):not(#s3):not(#s4):not(#s5):not(#s6):not(#s7):not(#s8):not
 #redcafe-curso .redcafe-curso-video-marco button:hover .redcafe-curso-video-play, #redcafe-curso .redcafe-curso-video-marco button:focus-visible .redcafe-curso-video-play { background: #2f6b45; }
 #redcafe-curso .redcafe-curso-video-dura { background: rgba(0, 0, 0, .78); border-radius: 3px; bottom: .5rem; color: #fff; font-size: .8rem; font-weight: 600; padding: .1rem .4rem; position: absolute; right: .5rem; }
 #redcafe-curso .redcafe-curso-video figcaption { color: #3b1a0c; font-size: .95rem; font-weight: 600; margin-top: .45rem; }
-#redcafe-curso .redcafe-curso-videos-nota { color: #5c4a3d; font-size: .8rem; margin-top: .6rem; }
+#redcafe-curso .redcafe-curso-oferta { background: #fff; border: 1px solid rgba(140, 54, 4, .2); border-radius: 4px; margin-top: 1.2rem; padding: 1rem 1.1rem; }
+#redcafe-curso .redcafe-curso-oferta h2 { color: #3b1a0c; font-size: 1.3rem; font-weight: 700; margin: 0; }
+#redcafe-curso .redcafe-curso-oferta h3 { color: #8c3604; font-size: .78rem; font-weight: 700; letter-spacing: .1em; margin: 1.1rem 0 .4rem; text-transform: uppercase; }
+#redcafe-curso .redcafe-curso-oferta p, #redcafe-curso .redcafe-curso-oferta li { color: #3b1a0c; font-size: .95rem; line-height: 1.5; }
+#redcafe-curso .redcafe-curso-oferta-precio { margin: .4rem 0 0; }
+#redcafe-curso .redcafe-curso-oferta-precio strong { font-size: 1.6rem; }
+#redcafe-curso .redcafe-curso-oferta-precio span { color: #5c4a3d; }
+#redcafe-curso .redcafe-curso-oferta-aviso { background: #f7d08a; border-radius: 4px; font-weight: 600; margin-top: .6rem; padding: .5rem .7rem; }
+#redcafe-curso .redcafe-curso-oferta-lista { list-style: disc; margin: 0; padding-left: 1.2rem; }
+#redcafe-curso .redcafe-curso-oferta-lista.es-check { list-style: none; padding-left: 0; }
+#redcafe-curso .redcafe-curso-oferta-lista.es-check li::before { color: #2f6b45; content: "✓ "; font-weight: 700; }
+#redcafe-curso .redcafe-curso-oferta-mes { font-weight: 700; margin: .6rem 0 .3rem; }
+#redcafe-curso .redcafe-curso-oferta-fechas, #redcafe-curso .redcafe-curso-oferta-opciones { display: grid; gap: .4rem; list-style: none; margin: 0; padding: 0; }
+#redcafe-curso .redcafe-curso-oferta-fechas li, #redcafe-curso .redcafe-curso-oferta-opciones li { background: #fbf6f0; border-radius: 4px; display: flex; flex-direction: column; padding: .45rem .7rem; }
+#redcafe-curso .redcafe-curso-oferta-fechas li.es-agotado strong { text-decoration: line-through; }
+#redcafe-curso .redcafe-curso-oferta-fechas li.es-agotado span { color: #8c3604; font-weight: 700; }
+#redcafe-curso .redcafe-curso-oferta-opciones li span { color: #5c4a3d; font-size: .9rem; margin-top: .15rem; }
+#redcafe-curso .redcafe-curso-oferta-opciones li span.es-precio { color: #3b1a0c; font-size: .95rem; font-weight: 700; }

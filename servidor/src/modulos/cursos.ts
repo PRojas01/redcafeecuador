@@ -237,6 +237,7 @@ const sinPasoMatricula = (v: unknown) => typeof v !== "string" ? v : v
   .replace(/La matrícula en la Red es el primer paso[^.]*\./g, "Para inscribirte, escribe a Legacy con el botón de esta ficha: tu mensaje llega con la referencia de Red Café Ecuador y el pago, la fecha y la logística se acuerdan directamente con ellos.")
   .replace(/\s*La matrícula se gestiona primero desde la Red;[^.]*\./g, "")
   .replace(/;\s*la Red gestiona tu matrícula y luego coordinas fecha directamente con ellos\./g, "; la fecha se coordina directamente con ellos.")
+  .replace(/El valor lo confirma Legacy al reservar cupo: no consta en su pensum\./g, "Valor: 599 USD, que se paga a Legacy.")
   .replace(/Para reservar cupo: matricúlate aquí y la administración de la Red te pone en contacto con Legacy\./g, "Para reservar cupo, escribe a Legacy con el botón «Solicitar inscripción a Legacy».");
 function fichaDeAliado(c: Doc): Doc {
   const o: Doc = { ...c, ficha_abierta: true };
