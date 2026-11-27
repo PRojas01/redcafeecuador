@@ -12,6 +12,7 @@ import { OFERTA_LEGACY } from "@/lib/legacyOferta";
 import Link from "next/link";
 import { CURSOS } from "@/lib/data";
 import { CONFIG } from "@/lib/config";
+import { FOTOS_CURSOS } from "@/lib/fotos";
 
 type CursoLista = {
   id: string;
@@ -90,7 +91,7 @@ const GANCHOS: Record<string, string> = {
 /* Los 3 cursos de Legacy son de pago; los de Red Café, gratis. */
 const PRECIOS: Record<string, string> = Object.fromEntries(Object.entries(OFERTA_LEGACY).map(([k, o]) => [k, o.precio]));
 
-const portadaDe = (c: CursoLista) => PORTADAS_POR_CURSO[c.id] || PORTADAS[c.categoria || "general"] || PORTADAS.general;
+const portadaDe = (c: CursoLista) => FOTOS_CURSOS[c.id]?.src || PORTADAS_POR_CURSO[c.id] || PORTADAS[c.categoria || "general"] || PORTADAS.general;
 const selloDe = (c: CursoLista) => SELLOS[c.id] || (PRECIOS[c.id] ? "Formación con Legacy" : "Aprende gratis · a tu ritmo");
 const pct = (v: unknown) => {
   const n = Number(v);
@@ -178,7 +179,7 @@ export default function AcademiaPage() {
               return (
                 <Link key={c.id} className="redcafe-curso-card" href={`/academia/${c.id}/`}>
                   {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img className="redcafe-curso-card-portada" src={portadaDe(c)} alt="" width={640} height={360} decoding="async" />
+                  <img className="redcafe-curso-card-portada" src={portadaDe(c)} alt={FOTOS_CURSOS[c.id]?.alt || ""} width={640} height={360} decoding="async" />
                   <span className="redcafe-curso-portada-sello">{selloDe(c)}</span>
                   <p className="redcafe-curso-card-rot">
                     {c.nivel}{c.duracion ? ` · ${c.duracion}` : ""}

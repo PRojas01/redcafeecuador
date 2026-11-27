@@ -1,0 +1,32 @@
+Fotos de las recetas — fuente: Pexels
+Licencia Pexels: uso libre, comercial incluido, sin atribución obligatoria. https://www.pexels.com/license/
+
+aeropress.webp (y mini/aeropress.webp)
+  Fotógrafo: Viktoria Alipatova (https://www.pexels.com/@viktoria-alipatova-1083711)
+  Foto: https://www.pexels.com/photo/man-with-blue-apron-brewing-coffee-using-coffee-press-2074111/
+  Texto alternativo: Barista presiona una Aeropress sobre una jarra de vidrio
+
+cold-brew.webp (y mini/cold-brew.webp)
+  Fotógrafo: shu'kai chen (https://www.pexels.com/@shu-kai-chen-779690361)
+  Foto: https://www.pexels.com/photo/cold-brew-coffee-in-glass-18997241/
+  Texto alternativo: Botella y vaso de cold brew con hielo sobre una bandeja
+
+espresso-casero.webp (y mini/espresso-casero.webp)
+  Fotógrafo: Chevanon Photography (https://www.pexels.com/@chevanon)
+  Foto: https://www.pexels.com/photo/white-ceramic-mug-on-espresso-machine-filling-with-brown-liquid-302894/
+  Texto alternativo: Espresso cayendo de la máquina en una taza blanca
+
+moka-italiana.webp (y mini/moka-italiana.webp)
+  Fotógrafo: GIUSEPPE DE BERGOLIS (https://www.pexels.com/@giuseppe-de-bergolis-416966285)
+  Foto: https://www.pexels.com/photo/moka-pot-brewing-coffee-on-a-gas-stove-41303063/
+  Texto alternativo: Cafetera moka italiana sobre la hornilla de una cocina a gas
+
+prensa-francesa.webp (y mini/prensa-francesa.webp)
+  Fotógrafo: Alexey Demidov (https://www.pexels.com/@alexeydemidov)
+  Foto: https://www.pexels.com/photo/coffe-pot-coffee-cup-and-sugar-on-a-tray-12273081/
+  Texto alternativo: Prensa francesa con café, taza y azucarero sobre una bandeja de mimbre
+
+v60.webp (y mini/v60.webp)
+  Fotógrafo: cottonbro studio (https://www.pexels.com/@cottonbro)
+  Foto: https://www.pexels.com/photo/boy-in-blue-crew-neck-t-shirt-pouring-red-liquid-on-red-ceramic-cup-4787609/
+  Texto alternativo: Barista prepara café filtrado con un gotero V60 rojo

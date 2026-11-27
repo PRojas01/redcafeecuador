@@ -13,7 +13,7 @@ window.__redcafeReactListo = window.__redcafeReactListo || function () {
 (function () {
   "use strict";
 
-  var VERSION = "20261127g";
+  var VERSION = "20261127h";
   var WAPP = "593968641376";
   var path = normalizePath(location.pathname);
   var homeAuthChecking = false;
@@ -547,7 +547,7 @@ window.__redcafeReactListo = window.__redcafeReactListo || function () {
    propia al final de <body>, después de hidratar. */
 (function () {
   if (typeof window === "undefined" || !window.ResizeObserver) return;
-  var URL_SELLO = "/img/sello-redcafe.svg?v=20261127g";
+  var URL_SELLO = "/img/sello-redcafe.svg?v=20261127h";
   var capa = null, temporizador = 0, ultimaFirma = "";
   var BANDA = 120;
 
@@ -915,7 +915,7 @@ window.__redcafeReactListo = window.__redcafeReactListo || function () {
   })();
 })();
 
-/* ===== v20261127g · Registro más atractivo =====
+/* ===== v20261127h · Registro más atractivo =====
    Cifras de la Red siempre en vivo (/api/metricas.php?action=cifras), nunca escritas a mano:
    · Portada: línea corta bajo los botones (miembros y provincias) y título sobre las tarjetas.
    · Comunidad: la franja completa «La Red hoy», bajo el subtítulo.
@@ -1042,6 +1042,9 @@ window.__redcafeReactListo = window.__redcafeReactListo || function () {
     "legacy-barismo-profesional": "$399",
     "legacy-barista-avanzado": "$599"
   };
+  // Cursos gratis con foto propia en /img/cursos/ (misma lista que plataforma_cafe/lib/fotos.ts).
+  var FOTOS_CURSO = { "buenas-practicas": 1, "postcosecha": 1, "ventas-comercial": 1, "formalizacion": 1, "tueste": 1,
+    "trazabilidad": 1, "cafe-especial": 1, "manejo-plagas": 1, "exportacion": 1, "cafe-de-especialidad-de-la-finca-a-la-taza": 1 };
   var MAX = 8;
   function el(t, c, x) { var e = document.createElement(t); if (c) e.className = c; if (x != null) e.textContent = x; return e; }
   function api(u, k) {
@@ -1049,7 +1052,11 @@ window.__redcafeReactListo = window.__redcafeReactListo || function () {
       .then(function (j) { return (j && j.ok && j.data && j.data[k]) || []; }).catch(function () { return []; });
   }
   function dinero(v) { var n = Number(v); return isFinite(n) && n > 0 ? "$" + (n % 1 ? n.toFixed(2) : n) : ""; }
-  function primeraImg(x) { var l = x && (x.imagenes || x.fotos); return Array.isArray(l) && l.length ? (typeof l[0] === "string" ? l[0] : l[0].url || "") : (x && (x.imagen || x.foto)) || ""; }
+  function primeraImg(x) {
+    var l = x && (x.imagenes || x.fotos);
+    var u = Array.isArray(l) && l.length ? (typeof l[0] === "string" ? l[0] : l[0].url || "") : (x && (x.imagen || x.foto)) || "";
+    return /^(\/|https?:|data:image\/)/.test(String(u)) ? u : ""; // solo direcciones de imagen (no clases de color)
+  }
   function item(o) {
     var a = el("a", "rc-vp-item"); a.href = o.href;
     var f = el("span", "rc-vp-foto");
@@ -1110,7 +1117,7 @@ window.__redcafeReactListo = window.__redcafeReactListo || function () {
       var pago = l.filter(function (c) { return PAGO[c.id]; }), libres = l.filter(function (c) { return !PAGO[c.id]; });
       var vis = pago.concat(libres).map(function (c) {
         var dePago = !!PAGO[c.id];
-        return { href: "/academia/" + encodeURIComponent(c.id) + "/", img: "/img/academia/cursos/" + c.id + ".webp", nombre: c.titulo || "Curso",
+        return { href: "/academia/" + encodeURIComponent(c.id) + "/", img: (FOTOS_CURSO[c.id] ? "/img/cursos/mini/" : "/img/academia/cursos/") + c.id + ".webp", nombre: c.titulo || "Curso",
           etiqueta: dePago ? ["pago", "Certificado"] : ["gratis", "Gratis"],
           meta: dePago ? "Legacy · " + (c.duracion || "presencial y online") : (c.lecciones ? c.lecciones + " lecciones" : c.nivel || ""), precio: dePago ? PAGO[c.id] : "" };
       });
@@ -1140,11 +1147,11 @@ window.__redcafeReactListo = window.__redcafeReactListo || function () {
     });
   }
   function recetas() {
-    var r = [["v60", "Café V60", "Goteo manual · 4 min", "taza"], ["prensa-francesa", "Prensa francesa", "Fácil · 5 min", "molido"],
-      ["aeropress", "Aeropress", "Rápido · 2 min", "tostado"], ["moka-italiana", "Moka italiana", "Intenso · 5 min", "molido"],
-      ["espresso-casero", "Espresso casero", "Con cafetera · 1 min", "taza"], ["cold-brew", "Cold brew", "En frío · 12 h", "tostado"]];
+    var r = [["v60", "Café V60", "Goteo manual · 4 min"], ["prensa-francesa", "Prensa francesa", "Fácil · 5 min"],
+      ["aeropress", "Aeropress", "Rápido · 2 min"], ["moka-italiana", "Moka italiana", "Intenso · 5 min"],
+      ["espresso-casero", "Espresso casero", "Con cafetera · 1 min"], ["cold-brew", "Cold brew", "En frío · 12 h"]];
     return Promise.resolve(panel(4, "Recetas", r.map(function (x) {
-      return { href: "/recetas/" + x[0] + "/", img: "/img/proceso/" + x[3] + ".webp", nombre: x[1], meta: x[2] };
+      return { href: "/recetas/" + x[0] + "/", img: "/img/recetas/mini/" + x[0] + ".webp", nombre: x[1], meta: x[2] };
     }), String(r.length), "Ver recetas", "/recetas/"));
   }
   var hecho = false;
