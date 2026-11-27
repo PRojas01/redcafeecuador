@@ -8,7 +8,7 @@
 8:I[7062,["8173","static/chunks/8173-742dddf291619891.js","5739","static/chunks/5739-4bb4b129d8b2b3f4.js","7177","static/chunks/app/layout-50a5a0f10b2ef845.js"],"HubFlotante"]
 9:I[9779,["8173","static/chunks/8173-742dddf291619891.js","5739","static/chunks/5739-4bb4b129d8b2b3f4.js","7177","static/chunks/app/layout-50a5a0f10b2ef845.js"],"RegistrarPWA"]
 a:I[3704,["8173","static/chunks/8173-742dddf291619891.js","5739","static/chunks/5739-4bb4b129d8b2b3f4.js","7177","static/chunks/app/layout-50a5a0f10b2ef845.js"],""]
-b:I[2858,["8173","static/chunks/8173-742dddf291619891.js","7188","static/chunks/app/servicios/analisis-de-muestras/page-fa815928d931b7ce.js"],"default"]
+b:I[2858,["8173","static/chunks/8173-742dddf291619891.js","7188","static/chunks/app/servicios/analisis-de-muestras/page-f6a33ad30d0589bd.js"],"default"]
 c:I[6213,[],"OutletBoundary"]
 e:I[6213,[],"MetadataBoundary"]
 10:I[6213,[],"ViewportBoundary"]
