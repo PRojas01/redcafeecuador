@@ -10,7 +10,7 @@ import { str, today } from "../lib/util.js";
 import { PAIS_DEFECTO, provinciaEcuador } from "../lib/paises.js";
 import { lotesTodos } from "./lotes.js";
 
-const EVENTOS = ["visita", "cta_registro", "registro_paso1", "registro_paso2", "registro_paso3", "registro_enviado", "registro_ok", "activacion_clic"];
+const EVENTOS = ["visita", "cta_registro", "registro_paso1", "registro_paso2", "registro_paso3", "registro_enviado", "registro_ok", "activacion_clic", "legacy_clic"];
 const DIAS = 120;
 
 function rutaCorta(r: string): string {

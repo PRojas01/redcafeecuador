@@ -27,7 +27,7 @@ export type CursoVisor = {
 };
 type Datos = {
   curso: CursoVisor; total: number; completadas: string[]; acceso_concedido?: boolean; matriculado?: boolean;
-  puede_editar?: boolean; mi_solicitud?: string; acceso?: string;
+  puede_editar?: boolean; mi_solicitud?: string; acceso?: string; ficha_abierta?: boolean;
 };
 type Estado = { texto: string; tipo: "" | "is-ok" | "is-error" };
 
@@ -64,10 +64,32 @@ const PRECIOS: Record<string, string> = {
   "legacy-barismo-profesional": "Promoción 359 USD · pareja/grupo 320 USD c/u",
   "legacy-barista-avanzado": "Promoción 550 USD",
 };
-const waLegacy = (titulo: string) =>
+/* Cursos de pago de Legacy: la ficha es pública y completa, sin cuenta en la
+   Red. El botón abre WhatsApp con un mensaje que ya dice que la persona llega
+   de redcafeecuador.com (y la referencia del curso), para que Legacy la
+   identifique; cada clic se cuenta en las métricas propias (sin datos personales). */
+const waLegacy = (titulo: string, id: string) =>
   `https://wa.me/593998569355?text=${encodeURIComponent(
-    `Hola Legacy, vengo de redcafeecuador.com. Me interesa el curso «${titulo}». ¿Me informan de fechas disponibles, promociones, condiciones y formas de pago?`,
+    `Hola Legacy, vengo de redcafeecuador.com. Quiero inscribirme en el curso «${titulo}». ¿Me informan de fechas disponibles, cupos, promociones y formas de pago?\n\nRef.: Red Café Ecuador · academia/${id}`,
   )}`;
+function contarClicLegacy() {
+  try {
+    const cuerpo = JSON.stringify({ e: "legacy_clic", p: location.pathname });
+    if (navigator.sendBeacon) navigator.sendBeacon(CONFIG.api("/api/metricas.php?action=evento"), new Blob([cuerpo], { type: "application/json" }));
+  } catch { /* la medición nunca bloquea el enlace */ }
+}
+
+function InscripcionLegacy({ titulo, id, abajo }: { titulo: string; id: string; abajo?: boolean }) {
+  return (
+    <aside className={"redcafe-curso-inscripcion" + (abajo ? " es-abajo" : "")} aria-label="Inscripción con Legacy">
+      <p className="redcafe-curso-inscripcion-rotulo">{abajo ? "¿Te interesa este curso?" : "Curso de pago · lo dicta y lo cobra Legacy"}</p>
+      <p>No necesitas cuenta en Red Café. Escribe a Legacy por WhatsApp: tu mensaje ya dice que vienes de redcafeecuador.com y ellos te confirman fechas, cupos y formas de pago.</p>
+      <a className="redcafe-curso-inscripcion-boton" href={waLegacy(titulo, id)} target="_blank" rel="noopener noreferrer" onClick={contarClicLegacy}>
+        Solicitar inscripción a Legacy <span aria-hidden="true">↗</span>
+      </a>
+    </aside>
+  );
+}
 
 async function pedir(url: string, cuerpo?: unknown) {
   const r = await fetch(CONFIG.api(url), cuerpo === undefined
@@ -277,6 +299,7 @@ export function VisorCurso({ id: idFijo, inicial, respaldo }: { id: string | nul
   const total = datos?.total ?? 0;
   const puedeCompletar = !!datos && datos.acceso_concedido !== false && !!(datos.matriculado || datos.puede_editar);
   const precio = PRECIOS[c.id];
+  const deAliado = !!precio || !!datos?.ficha_abierta;
   const portada = PORTADAS_POR_CURSO[c.id] || PORTADAS[c.categoria || "general"] || PORTADAS.general;
 
   const completar = async (mi: number, li: number, hecho: boolean) => {
@@ -337,7 +360,7 @@ export function VisorCurso({ id: idFijo, inicial, respaldo }: { id: string | nul
 
   /* Dos puertas: matricularse depende del alumno; la aprobación, del autor. */
   let aviso: React.ReactNode = null;
-  if (datos && (datos.acceso_concedido === false || !puedeCompletar)) {
+  if (datos && !deAliado && (datos.acceso_concedido === false || !puedeCompletar)) {
     const sol = datos.mi_solicitud || "ninguno";
     const moderado = (datos.acceso || "abierto") === "aprobacion";
     let titulo = "", cuerpo = "", accion: React.ReactNode = null, consentimiento: React.ReactNode = null;
@@ -384,7 +407,10 @@ export function VisorCurso({ id: idFijo, inicial, respaldo }: { id: string | nul
   const materiales = (Array.isArray(c.materiales) ? c.materiales : []).map((m) =>
     CLASE_DEMO && c.id === CLASE_DEMO.curso && /^avisarme/i.test(String(m.titulo || ""))
       ? { ...m, tipo: "enlace", titulo: "Clase demostrativa de barismo: unirme al grupo de WhatsApp", url: CLASE_DEMO.href, nota: CLASE_DEMO.nota }
-      : m
+      // En los cursos de Legacy, todo WhatsApp lleva la misma referencia a la Red.
+      : deAliado && /^https:\/\/wa\.me\//i.test(String(m.url || ""))
+        ? { ...m, url: waLegacy(c.titulo || "", c.id) }
+        : m
   );
   const nMat = Number(c.materiales_count || 0);
 
@@ -400,13 +426,9 @@ export function VisorCurso({ id: idFijo, inicial, respaldo }: { id: string | nul
         <h1 className="redcafe-curso-titulo">{c.titulo || "Curso"}</h1>
         {c.descripcion ? <p className="redcafe-curso-desc">{c.descripcion}</p> : null}
         {CLASE_DEMO && c.id === CLASE_DEMO.curso ? <ClaseDemoCurso clase={CLASE_DEMO} /> : null}
-        {precio ? (
-          <p className="redcafe-curso-legacy">
-            <a className="redcafe-curso-solicitar" href={waLegacy(c.titulo || "")} target="_blank" rel="noreferrer">Pedir fechas y condiciones a Legacy</a>
-          </p>
-        ) : null}
+        {deAliado ? <InscripcionLegacy titulo={c.titulo || ""} id={c.id} /> : null}
         {aviso}
-        {datos && datos.acceso_concedido !== false && total ? <BarraAvance hechas={completadas.length} total={total} /> : null}
+        {datos && !deAliado && datos.acceso_concedido !== false && total ? <BarraAvance hechas={completadas.length} total={total} /> : null}
         {c.introduccion ? <div className="redcafe-curso-intro"><p>{c.introduccion}</p></div> : null}
         {(c.objetivos || []).length ? (
           <div className="redcafe-curso-obj"><h2>Al terminar, podrás</h2><ul>{(c.objetivos || []).map((o, i) => <li key={i}>{o}</li>)}</ul></div>
@@ -427,7 +449,7 @@ export function VisorCurso({ id: idFijo, inicial, respaldo }: { id: string | nul
                   {Array.isArray(l.bloques) && l.bloques.length ? (
                     <div className="redcafe-bloques">{l.bloques.map((b, bi) => <Fragment key={bi}><BloqueVista b={b} /></Fragment>)}</div>
                   ) : null}
-                  {puedeCompletar ? (
+                  {deAliado ? null : puedeCompletar ? (
                     <label className="redcafe-leccion-check">
                       <input type="checkbox" data-completar="1" checked={hecha} onChange={(e) => void completar(mi, li, e.target.checked)} />
                       <span>Marcar como completada</span>
@@ -469,10 +491,10 @@ export function VisorCurso({ id: idFijo, inicial, respaldo }: { id: string | nul
           <div className="redcafe-curso-rec"><h2>Recursos y referencias</h2><ul>{(c.recursos || []).map((r, i) => <li key={i}>{r}</li>)}</ul></div>
         ) : null}
         {c.cierre ? <div className="redcafe-curso-cierre"><h2>Para cerrar</h2><p>{c.cierre}</p></div> : null}
-        <AvisoReferencial />
+        {deAliado ? <InscripcionLegacy titulo={c.titulo || ""} id={c.id} abajo /> : <AvisoReferencial />}
         <div className="redcafe-curso-pie">
           <Link className="btn-ghost" href="/academia/">Volver a la Academia</Link>
-          {puedeCompletar && total ? <button type="button" className="redcafe-curso-reiniciar" onClick={reiniciar}>Reiniciar mi avance</button> : null}
+          {puedeCompletar && !deAliado && total ? <button type="button" className="redcafe-curso-reiniciar" onClick={reiniciar}>Reiniciar mi avance</button> : null}
           {aviso ? null : estadoLinea}
         </div>
       </div>
