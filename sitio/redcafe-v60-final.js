@@ -13,7 +13,7 @@ window.__redcafeReactListo = window.__redcafeReactListo || function () {
 (function () {
   "use strict";
 
-  var VERSION = "20261127f";
+  var VERSION = "20261127g";
   var WAPP = "593968641376";
   var path = normalizePath(location.pathname);
   var homeAuthChecking = false;
@@ -547,14 +547,14 @@ window.__redcafeReactListo = window.__redcafeReactListo || function () {
    propia al final de <body>, después de hidratar. */
 (function () {
   if (typeof window === "undefined" || !window.ResizeObserver) return;
-  var URL_SELLO = "/img/sello-redcafe.svg?v=20261127f";
+  var URL_SELLO = "/img/sello-redcafe.svg?v=20261127g";
   var capa = null, temporizador = 0, ultimaFirma = "";
   var BANDA = 120;
 
   function transparente(c) { return !c || c === "transparent" || /rgba\([^)]*,\s*0\)$/.test(c); }
 
   function ocupadas(main) {
-    var cajas = [], els = main.querySelectorAll("*"), i, el, cs, r;
+    var cajas = [], els = main.querySelectorAll("*"), i, el, cs, r, mr = main.getBoundingClientRect();
     for (i = 0; i < els.length; i++) {
       el = els[i];
       if (el.closest(".redcafe-sellos")) continue;
@@ -572,6 +572,12 @@ window.__redcafeReactListo = window.__redcafeReactListo || function () {
         (!transparente(cs.backgroundColor) && (cs.backgroundImage || "").indexOf("textura-saco") < 0) ||
         (cs.backgroundImage !== "none" && (cs.backgroundImage || "").indexOf("textura-saco") < 0) ||
         (!saco && cs.boxShadow !== "none");
+      // Tarjetas con la textura de saco (módulos y precio de los cursos, etc.): esquinas redondeadas y
+      // más estrechas que la página. Son tarjetas, no huecos: el sello no va encima ni a caballo.
+      if (saco && !marca && (parseFloat(cs.borderTopLeftRadius) || 0) > 2 && r.width < mr.width - 4) marca = true;
+      // Títulos, párrafos y listas ocupan su caja entera: un sello pegado al final de una línea corta
+      // parece metido en el texto.
+      if (!marca && /^(H1|H2|H3|H4|H5|H6|P|LI|DT|DD|BLOCKQUOTE|FIGCAPTION)$/.test(el.tagName) && (el.textContent || "").trim()) marca = true;
       var bt = parseFloat(cs.borderTopWidth) || 0, bb = parseFloat(cs.borderBottomWidth) || 0, bl = parseFloat(cs.borderLeftWidth) || 0, bd = parseFloat(cs.borderRightWidth) || 0;
       if (!saco && !marca && bt && bb && bl && bd) marca = true;
       if (marca) { cajas.push(r); continue; }
@@ -642,13 +648,28 @@ window.__redcafeReactListo = window.__redcafeReactListo || function () {
       }
       return false;
     }
-    for (var c = 0; c < cand.length && puestos.length < maximo; c++) {
-      var k = cand[c], t2 = k.t;
+    // Repartidos a lo largo de la página: un tramo por sello y, en cada tramo, el hueco más grande.
+    // (Antes se tomaban los mayores de toda la página y se amontonaban arriba, en columna.)
+    var tramo = alto / maximo;
+    function poner(k) {
+      var t2 = k.t;
       while (t2 >= MIN && choca(k.x, k.y, t2)) t2 -= PASO_T;
-      if (t2 < MIN) continue;
-      if (puestos.length >= 4 && t2 < (movil ? 64 : 84)) continue;
+      if (t2 < MIN) return false;
       var s2 = Math.round(t2 * .88), m2 = Math.round((t2 - s2) / 2);
       puestos.push({ x: k.x + m2, y: k.y + m2, s: s2 });
+      return true;
+    }
+    for (var tr = 0; tr < maximo; tr++) {
+      var y0 = mr.top + tr * tramo, y1 = y0 + tramo;
+      // Alterna izquierda y derecha para que no formen una columna.
+      var medio = (izq + derecha) / 2, lado = tr % 2, hecho = false;
+      for (var pasada = 0; pasada < 2 && !hecho; pasada++)
+        for (var c = 0; c < cand.length; c++) {
+          var k = cand[c];
+          if (k.y < y0 || k.y >= y1) continue;
+          if (pasada === 0 && ((k.x + k.t / 2 > medio) ? 1 : 0) !== lado) continue;
+          if (poner(k)) { hecho = true; break; }
+        }
     }
     puestos.sort(function (a, b) { return a.y - b.y; });
     if (!capa || !capa.isConnected) {
@@ -894,7 +915,7 @@ window.__redcafeReactListo = window.__redcafeReactListo || function () {
   })();
 })();
 
-/* ===== v20261127f · Registro más atractivo =====
+/* ===== v20261127g · Registro más atractivo =====
    Cifras de la Red siempre en vivo (/api/metricas.php?action=cifras), nunca escritas a mano:
    · Portada: línea corta bajo los botones (miembros y provincias) y título sobre las tarjetas.
    · Comunidad: la franja completa «La Red hoy», bajo el subtítulo.
