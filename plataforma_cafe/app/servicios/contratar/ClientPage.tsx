@@ -10,6 +10,7 @@ import { CerezaMadura, SelloOrigen } from "@/components/Lamina";
 import { Skeleton } from "@/components/Skeleton";
 import { CONFIG } from "@/lib/config";
 import { PayPalButton } from "@/components/PayPalButton";
+import { MUESTRAS_LEGACY, RUTA_MUESTRAS } from "@/lib/legacyMuestras";
 
 const ICONO_SERVICIO = {
   "asesoria-negocio": "administracion",
@@ -80,6 +81,23 @@ function ContratarInner() {
         <p className="mt-2 text-pizarra/70">El servicio que buscas no existe o no está disponible.</p>
         <Link href="/servicios" className="mt-6 inline-flex min-h-11 items-center rounded-xl bg-cereza px-6 py-3 text-sm font-semibold text-white hover:bg-cereza/90">
           ← Volver a servicios
+        </Link>
+      </div>
+    );
+  }
+
+  // El servicio de cata lo hace y lo cobra Legacy: la solicitud se hace desde su ficha.
+  if (servicio.id === "cert-catacion") {
+    return (
+      <div className="mx-auto max-w-2xl px-4 py-16 text-center">
+        <p className="text-sm font-semibold uppercase tracking-widest text-cereza">Servicios de la Red</p>
+        <h1 className="mt-4 font-titulo text-2xl font-bold text-cafe">{MUESTRAS_LEGACY.corto}</h1>
+        <p className="mt-2 text-pizarra/80">
+          El servicio de cata lo hace Legacy. En su ficha tienes el procedimiento paso a paso, el precio
+          ({MUESTRAS_LEGACY.precio} {MUESTRAS_LEGACY.precioNota}) y el botón para solicitarlo por WhatsApp.
+        </p>
+        <Link href={RUTA_MUESTRAS} className="mt-6 inline-flex min-h-11 items-center rounded-xl bg-cereza px-6 py-3 text-sm font-semibold text-white hover:bg-cereza/90">
+          Ver la ficha del servicio →
         </Link>
       </div>
     );

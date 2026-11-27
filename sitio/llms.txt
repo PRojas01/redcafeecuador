@@ -16,6 +16,7 @@ Red Café Ecuador (redcafeecuador.com) es una iniciativa de Pedro Rojas ([Linked
 - [Calculadora de venta de café](https://redcafeecuador.com/servicios/calculadora/): venta bruta, sacos equivalentes, costos e ingreso neto por lote.
 - [Finanzas para productores](https://redcafeecuador.com/servicios/finanzas/): costo por quintal, margen y rentabilidad.
 - [Dossier de trazabilidad EUDR](https://redcafeecuador.com/servicios/eudr/): expedientes de trazabilidad para lotes que van a la Unión Europea (no es una certificación oficial).
+- [Servicio de cata: análisis de muestras de café verde](https://redcafeecuador.com/servicios/analisis-de-muestras/): Legacy tuesta la muestra (400 g) en 3 curvas, la cata y entrega puntaje, recomendación de precio y de procesamiento; 50 USD más impuestos.
 - [Asesoría](https://redcafeecuador.com/asesoria/): técnica, comercial y de exportación.
 - [Laboratorio de catación](https://redcafeecuador.com/laboratorio/): catación SCA, puntajes y control de calidad.
 

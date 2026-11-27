@@ -14,6 +14,7 @@ const PUBLICAS = [
   "/servicios/",
   "/servicios/precios/",
   "/servicios/eudr/",
+  "/servicios/analisis-de-muestras/",
   "/servicios/calculadora/",
   "/servicios/finanzas/",
   "/servicios/factura/",
