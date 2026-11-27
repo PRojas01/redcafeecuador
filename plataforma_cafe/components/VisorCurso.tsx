@@ -12,6 +12,7 @@ import Link from "next/link";
 import { Fragment, useCallback, useEffect, useState } from "react";
 import { CONFIG } from "@/lib/config";
 import { CLASE_DEMO, proximaClase, type ClaseDemo } from "@/lib/claseDemo";
+import { CONDICIONES_LEGACY, MOSTRAR_DESCUENTOS, OFERTA_LEGACY, WHATSAPP_LEGACY, hoyEcuador } from "@/lib/legacyOferta";
 
 type Bloque = {
   tipo?: string; titulo?: string; texto?: string; url?: string; alt?: string; pie?: string;
@@ -27,7 +28,7 @@ export type CursoVisor = {
 };
 type Datos = {
   curso: CursoVisor; total: number; completadas: string[]; acceso_concedido?: boolean; matriculado?: boolean;
-  puede_editar?: boolean; mi_solicitud?: string; acceso?: string;
+  puede_editar?: boolean; mi_solicitud?: string; acceso?: string; ficha_abierta?: boolean;
 };
 type Estado = { texto: string; tipo: "" | "is-ok" | "is-error" };
 
@@ -59,15 +60,153 @@ const PORTADAS: Record<string, string> = {
   legal: "/img/academia/certificacion.webp",
   general: "/img/academia/basico.webp",
 };
-const PRECIOS: Record<string, string> = {
-  "legacy-barista-en-casa": "Promoción 143 USD · pareja/grupo 120 USD c/u",
-  "legacy-barismo-profesional": "Promoción 359 USD · pareja/grupo 320 USD c/u",
-  "legacy-barista-avanzado": "Promoción 550 USD",
-};
-const waLegacy = (titulo: string) =>
-  `https://wa.me/593998569355?text=${encodeURIComponent(
-    `Hola Legacy, vengo de redcafeecuador.com. Me interesa el curso «${titulo}». ¿Me informan de fechas disponibles, promociones, condiciones y formas de pago?`,
+const PRECIOS: Record<string, string> = Object.fromEntries(Object.entries(OFERTA_LEGACY).map(([k, o]) => [k, o.precio]));
+/* Cursos de pago de Legacy: la ficha es pública y completa, sin cuenta en la
+   Red. El botón abre WhatsApp con un mensaje que ya dice que la persona llega
+   de redcafeecuador.com (y la referencia del curso), para que Legacy la
+   identifique; cada clic se cuenta en las métricas propias (sin datos personales). */
+const waLegacy = (titulo: string, id: string) =>
+  `https://wa.me/${WHATSAPP_LEGACY}?text=${encodeURIComponent(
+    `Hola Legacy, vengo de redcafeecuador.com. Quiero inscribirme en el curso «${titulo}». ¿Me informan de fechas disponibles, cupos, promociones y formas de pago?\n\nRef.: Red Café Ecuador · academia/${id}`,
   )}`;
+/* WhatsApp de Red Café Ecuador para asistencia y consultas sobre el curso. */
+const waRed = (titulo: string) =>
+  `https://wa.me/${CONFIG.whatsapp}?text=${encodeURIComponent(`Hola Red Café Ecuador, tengo una consulta sobre el curso «${titulo}» de Legacy.`)}`;
+function contarClicLegacy() {
+  try {
+    const cuerpo = JSON.stringify({ e: "legacy_clic", p: location.pathname });
+    if (navigator.sendBeacon) navigator.sendBeacon(CONFIG.api("/api/metricas.php?action=evento"), new Blob([cuerpo], { type: "application/json" }));
+  } catch { /* la medición nunca bloquea el enlace */ }
+}
+
+/* Videos del canal de YouTube de Legacy Academy (@LEGACYACADEMYDM) que
+   corresponden a cada curso. Se muestra solo la miniatura; el reproductor
+   (youtube-nocookie) se carga al tocarla. */
+type VideoLegacy = { id: string; titulo: string; dura: string; en: string };
+/* «en» dice dónde va cada video dentro del contenido: "intro", "objetivos",
+   "oferta" (precios y fechas) o "leccion:<módulo>:<lección>" (desde 0). */
+const VIDEOS_LEGACY: Record<string, VideoLegacy[]> = {
+  "legacy-barista-en-casa": [
+    { id: "HQgwiUl-yTI", titulo: "Los cursos que ofrece Legacy", dura: "0:40", en: "intro" },
+    { id: "OgruUffbTac", titulo: "La importancia de ser barista", dura: "1:21", en: "objetivos" },
+    { id: "mlQO_dd-SIo", titulo: "Barista en Casa", dura: "0:53", en: "leccion:0:0" },
+  ],
+  "legacy-barismo-profesional": [
+    { id: "Io2ReJQbHW4", titulo: "Cuánto dura Barista Pro", dura: "1:03", en: "oferta" },
+    { id: "nb5WmcxGrE4", titulo: "Barista Pro", dura: "0:56", en: "leccion:0:0" },
+    { id: "6qmvy-QLvjo", titulo: "Horas de práctica en barra", dura: "1:22", en: "leccion:2:1" },
+  ],
+  "legacy-barista-avanzado": [
+    { id: "VFvgbxEdXEE", titulo: "Barista Avanzado", dura: "1:10", en: "leccion:0:0" },
+    { id: "56Spbktim1I", titulo: "Horas de práctica de Barista Avanzado", dura: "0:59", en: "leccion:6:0" },
+  ],
+};
+
+function VideoDiferido({ v }: { v: VideoLegacy }) {
+  const [abierto, setAbierto] = useState(false);
+  return (
+    <figure className="redcafe-curso-video">
+      <div className="redcafe-curso-video-marco">
+        {abierto ? (
+          <iframe
+            src={`https://www.youtube-nocookie.com/embed/${v.id}?autoplay=1&rel=0&modestbranding=1`}
+            title={`Video: ${v.titulo}`}
+            allow="autoplay; encrypted-media; picture-in-picture; fullscreen"
+            allowFullScreen
+            referrerPolicy="strict-origin-when-cross-origin"
+          />
+        ) : (
+          <button type="button" onClick={() => setAbierto(true)} aria-label={`Ver el video «${v.titulo}» (${v.dura})`}>
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img src={`https://i.ytimg.com/vi/${v.id}/hqdefault.jpg`} alt="" loading="lazy" decoding="async" referrerPolicy="no-referrer" width={480} height={360} onError={(e) => { e.currentTarget.style.visibility = "hidden"; }} />
+            <span className="redcafe-curso-video-play" aria-hidden="true">▶</span>
+            <span className="redcafe-curso-video-dura" aria-hidden="true">{v.dura}</span>
+          </button>
+        )}
+      </div>
+      <figcaption>{v.titulo}</figcaption>
+    </figure>
+  );
+}
+
+/* Videos de Legacy Academy (YouTube) que van en este punto del contenido. */
+function VideosEn({ curso, en }: { curso: string; en: string }) {
+  const lista = (VIDEOS_LEGACY[curso] || []).filter((v) => v.en === en);
+  if (!lista.length) return null;
+  return <div className="redcafe-curso-videos">{lista.map((v) => <VideoDiferido key={v.id} v={v} />)}</div>;
+}
+
+/* Precio, qué incluye, fechas disponibles y condiciones de un curso de Legacy. */
+function OfertaLegacyVista({ id }: { id: string }) {
+  const o = OFERTA_LEGACY[id];
+  const [hoy, setHoy] = useState("");
+  useEffect(() => { setHoy(hoyEcuador()); }, []);
+  if (!o) return null;
+  const fechas = o.fechas.filter((f) => !f.agotado && (!hoy || f.fin >= hoy));
+  const grupos = Array.from(new Set(fechas.map((f) => f.grupo)));
+  const hayDescuentos = o.descuentos.length > 0 || o.opciones.some((x) => x.descuento);
+  return (
+    <section className="redcafe-curso-oferta" aria-label="Precio, fechas y condiciones">
+      <h2>Precio, fechas y condiciones</h2>
+      <p className="redcafe-curso-oferta-precio"><strong>{o.precio}</strong>{o.precioNota ? <span> · {o.precioNota}</span> : null}</p>
+      {MOSTRAR_DESCUENTOS && o.descuentos.length ? <ul className="redcafe-curso-oferta-lista">{o.descuentos.map((d) => <li key={d}>{d}</li>)}</ul> : null}
+      {!MOSTRAR_DESCUENTOS && hayDescuentos ? <p className="redcafe-curso-oferta-aviso">{CONDICIONES_LEGACY.avisoDescuentos}</p> : null}
+      <h3>Incluye</h3>
+      <ul className="redcafe-curso-oferta-lista es-check">{o.incluye.map((x) => <li key={x}>{x}</li>)}</ul>
+      <VideosEn curso={id} en="oferta" />
+      <h3>Fechas disponibles</h3>
+      {fechas.length ? grupos.map((g) => (
+        <div key={g} className="redcafe-curso-oferta-grupo">
+          <p className="redcafe-curso-oferta-mes">{g}</p>
+          <ul className="redcafe-curso-oferta-fechas">
+            {fechas.filter((f) => f.grupo === g).map((f) => (
+              <li key={`${f.lugar}-${f.modalidad}-${f.cuando}`}>
+                <strong>{f.lugar} · {f.modalidad}</strong>
+                <span>{f.cuando}</span>
+              </li>
+            ))}
+          </ul>
+        </div>
+      )) : <p>{o.sinFechas || "Escribe a Legacy para conocer la próxima fecha."}</p>}
+      {o.opciones.length ? (
+        <>
+          <h3>Otras opciones</h3>
+          <ul className="redcafe-curso-oferta-opciones">
+            {o.opciones.map((x) => (
+              <li key={x.titulo}>
+                <strong>{x.titulo}</strong>
+                <span className="es-precio">{x.precio}</span>
+                <span>{x.detalle}{MOSTRAR_DESCUENTOS && x.descuento ? ` ${x.descuento}` : ""}</span>
+              </li>
+            ))}
+          </ul>
+        </>
+      ) : null}
+      <h3>Condiciones</h3>
+      <ul className="redcafe-curso-oferta-lista">
+        {MOSTRAR_DESCUENTOS ? <li>{CONDICIONES_LEGACY.reserva}</li> : null}
+        <li>{CONDICIONES_LEGACY.universitaria}</li>
+        <li>El curso lo dicta y lo cobra Legacy; el pago se acuerda directamente con ellos.</li>
+      </ul>
+    </section>
+  );
+}
+
+function InscripcionLegacy({ titulo, id, abajo }: { titulo: string; id: string; abajo?: boolean }) {
+  return (
+    <aside className={"redcafe-curso-inscripcion" + (abajo ? " es-abajo" : "")} aria-label="Inscripción con Legacy">
+      <p className="redcafe-curso-inscripcion-rotulo">{abajo ? "¿Te interesa este curso?" : "Curso de pago · lo dicta y lo cobra Legacy"}</p>
+      <p>Escribe a Legacy por WhatsApp: tu mensaje ya dice que vienes de redcafeecuador.com y ellos te confirman fechas, cupos y formas de pago.</p>
+      <a className="redcafe-curso-inscripcion-boton" href={waLegacy(titulo, id)} target="_blank" rel="noopener noreferrer" onClick={contarClicLegacy}>
+        Solicitar inscripción a Legacy <span aria-hidden="true">↗</span>
+      </a>
+      <p className="redcafe-curso-inscripcion-red">
+        ¿Tienes dudas o necesitas ayuda con el curso? También te atiende Red Café Ecuador:{" "}
+        <a href={waRed(titulo)} target="_blank" rel="noopener noreferrer">escribir a Red Café por WhatsApp <span aria-hidden="true">↗</span></a>
+      </p>
+    </aside>
+  );
+}
 
 async function pedir(url: string, cuerpo?: unknown) {
   const r = await fetch(CONFIG.api(url), cuerpo === undefined
@@ -277,6 +416,7 @@ export function VisorCurso({ id: idFijo, inicial, respaldo }: { id: string | nul
   const total = datos?.total ?? 0;
   const puedeCompletar = !!datos && datos.acceso_concedido !== false && !!(datos.matriculado || datos.puede_editar);
   const precio = PRECIOS[c.id];
+  const deAliado = !!precio || !!datos?.ficha_abierta;
   const portada = PORTADAS_POR_CURSO[c.id] || PORTADAS[c.categoria || "general"] || PORTADAS.general;
 
   const completar = async (mi: number, li: number, hecho: boolean) => {
@@ -337,7 +477,7 @@ export function VisorCurso({ id: idFijo, inicial, respaldo }: { id: string | nul
 
   /* Dos puertas: matricularse depende del alumno; la aprobación, del autor. */
   let aviso: React.ReactNode = null;
-  if (datos && (datos.acceso_concedido === false || !puedeCompletar)) {
+  if (datos && !deAliado && (datos.acceso_concedido === false || !puedeCompletar)) {
     const sol = datos.mi_solicitud || "ninguno";
     const moderado = (datos.acceso || "abierto") === "aprobacion";
     let titulo = "", cuerpo = "", accion: React.ReactNode = null, consentimiento: React.ReactNode = null;
@@ -384,7 +524,10 @@ export function VisorCurso({ id: idFijo, inicial, respaldo }: { id: string | nul
   const materiales = (Array.isArray(c.materiales) ? c.materiales : []).map((m) =>
     CLASE_DEMO && c.id === CLASE_DEMO.curso && /^avisarme/i.test(String(m.titulo || ""))
       ? { ...m, tipo: "enlace", titulo: "Clase demostrativa de barismo: unirme al grupo de WhatsApp", url: CLASE_DEMO.href, nota: CLASE_DEMO.nota }
-      : m
+      // En los cursos de Legacy, todo WhatsApp lleva la misma referencia a la Red.
+      : deAliado && /^https:\/\/wa\.me\//i.test(String(m.url || ""))
+        ? { ...m, url: waLegacy(c.titulo || "", c.id) }
+        : m
   );
   const nMat = Number(c.materiales_count || 0);
 
@@ -400,17 +543,16 @@ export function VisorCurso({ id: idFijo, inicial, respaldo }: { id: string | nul
         <h1 className="redcafe-curso-titulo">{c.titulo || "Curso"}</h1>
         {c.descripcion ? <p className="redcafe-curso-desc">{c.descripcion}</p> : null}
         {CLASE_DEMO && c.id === CLASE_DEMO.curso ? <ClaseDemoCurso clase={CLASE_DEMO} /> : null}
-        {precio ? (
-          <p className="redcafe-curso-legacy">
-            <a className="redcafe-curso-solicitar" href={waLegacy(c.titulo || "")} target="_blank" rel="noreferrer">Pedir fechas y condiciones a Legacy</a>
-          </p>
-        ) : null}
+        {deAliado ? <InscripcionLegacy titulo={c.titulo || ""} id={c.id} /> : null}
+        {deAliado ? <OfertaLegacyVista id={c.id} /> : null}
         {aviso}
-        {datos && datos.acceso_concedido !== false && total ? <BarraAvance hechas={completadas.length} total={total} /> : null}
+        {datos && !deAliado && datos.acceso_concedido !== false && total ? <BarraAvance hechas={completadas.length} total={total} /> : null}
         {c.introduccion ? <div className="redcafe-curso-intro"><p>{c.introduccion}</p></div> : null}
+        {deAliado ? <VideosEn curso={c.id} en="intro" /> : null}
         {(c.objetivos || []).length ? (
           <div className="redcafe-curso-obj"><h2>Al terminar, podrás</h2><ul>{(c.objetivos || []).map((o, i) => <li key={i}>{o}</li>)}</ul></div>
         ) : null}
+        {deAliado ? <VideosEn curso={c.id} en="objetivos" /> : null}
         {(c.modulos || []).map((m, mi) => (
           <section key={mi} className="redcafe-modulo">
             <header>
@@ -427,7 +569,7 @@ export function VisorCurso({ id: idFijo, inicial, respaldo }: { id: string | nul
                   {Array.isArray(l.bloques) && l.bloques.length ? (
                     <div className="redcafe-bloques">{l.bloques.map((b, bi) => <Fragment key={bi}><BloqueVista b={b} /></Fragment>)}</div>
                   ) : null}
-                  {puedeCompletar ? (
+                  {deAliado ? <VideosEn curso={c.id} en={`leccion:${mi}:${li}`} /> : puedeCompletar ? (
                     <label className="redcafe-leccion-check">
                       <input type="checkbox" data-completar="1" checked={hecha} onChange={(e) => void completar(mi, li, e.target.checked)} />
                       <span>Marcar como completada</span>
@@ -469,10 +611,10 @@ export function VisorCurso({ id: idFijo, inicial, respaldo }: { id: string | nul
           <div className="redcafe-curso-rec"><h2>Recursos y referencias</h2><ul>{(c.recursos || []).map((r, i) => <li key={i}>{r}</li>)}</ul></div>
         ) : null}
         {c.cierre ? <div className="redcafe-curso-cierre"><h2>Para cerrar</h2><p>{c.cierre}</p></div> : null}
-        <AvisoReferencial />
+        {deAliado ? <InscripcionLegacy titulo={c.titulo || ""} id={c.id} abajo /> : <AvisoReferencial />}
         <div className="redcafe-curso-pie">
           <Link className="btn-ghost" href="/academia/">Volver a la Academia</Link>
-          {puedeCompletar && total ? <button type="button" className="redcafe-curso-reiniciar" onClick={reiniciar}>Reiniciar mi avance</button> : null}
+          {puedeCompletar && !deAliado && total ? <button type="button" className="redcafe-curso-reiniciar" onClick={reiniciar}>Reiniciar mi avance</button> : null}
           {aviso ? null : estadoLinea}
         </div>
       </div>
