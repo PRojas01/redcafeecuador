@@ -3656,7 +3656,7 @@ input[type="password"] { padding-right: 3.2rem; }
 #redcafe-guias .redcafe-guia-vacio { color: #6a645b; font-size: .8rem; }
 #redcafe-guias .redcafe-guia-academia { margin-top: .6rem; }
 #redcafe-guias .redcafe-guia-academia a { color: var(--rce-hoja, #3f6b4a); font-size: .82rem; font-weight: 700; text-decoration: none; }
-/* 20261127h guía: detalles, variedades por zona, «Siguiente» y «Llevar a la IA» */
+/* 20261127j guía: detalles, variedades por zona, «Siguiente» y «Llevar a la IA» */
 #redcafe-guias .redcafe-guia-detalles { color: #3f3b34; font-size: .82rem; line-height: 1.5; margin: .4rem 0 0; padding-left: 1.1rem; }
 #redcafe-guias .redcafe-guia-detalles li { margin: .2rem 0; }
 #redcafe-guias .redcafe-guia-zonas { background: rgba(63,107,74,.06); border-radius: .5rem; margin-top: .55rem; padding: .55rem .7rem; }
@@ -6198,7 +6198,7 @@ html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5):not(#o6):not(#o7):not(#o8):not
 html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5):not(#o6):not(#o7):not(#o8):not(#o9):not(#o10):not(#o11):not(#o12):not(#o13):not(#o14) body :is(.btn-primary, button.bg-cereza, button[class*="bg-cafe"]):disabled, html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5):not(#o6):not(#o7):not(#o8):not(#o9):not(#o10):not(#o11):not(#o12):not(#o13):not(#o14) body main .btn-primary:disabled { opacity: 1 !important; background-color: #e6d3c4 !important; background-image: none !important; color: #5e2402 !important; border-color: #d4b9a5 !important; box-shadow: none !important; }
 html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5):not(#o6):not(#o7):not(#o8):not(#o9):not(#o10):not(#o11):not(#o12):not(#o13):not(#o14) body :is([data-redcafe-route] main > div > section:first-child):is([data-redcafe-propio], [id^="redcafe-"], [class*="redcafe-"]):not([class*="hero"]) :is(h1, h2, h3, h4) { color: #2f2a24 !important; }
 
-/* ===== v20261127h · Fondo «crema tostada» y tarjetas compactas en móvil =====
+/* ===== v20261127j · Fondo «crema tostada» y tarjetas compactas en móvil =====
    Fondo: neutros teñidos con el tono del café (OKLCH h≈70, croma bajo) en vez del
    gris verdoso #f3f1ea. Jerarquía de superficies: página #fbf6f0 < sección alterna
    #f6ece1 < tarjeta blanca. Contraste medido (WCAG / APCA Lc):
@@ -6251,7 +6251,7 @@ html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5):not(#o6):not(#o7):not(#o8):not
 html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5):not(#o6):not(#o7):not(#o8):not(#o9):not(#o10):not(#o11):not(#o12):not(#o13):not(#o14):not(#o15):not(#o16):not(#o17) body :is([data-redcafe-route] main > div > section:first-child):is([data-redcafe-propio], [id^="redcafe-"], [class*="redcafe-"]):not([class*="hero"]),
 html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5):not(#o6):not(#o7):not(#o8):not(#o9):not(#o10):not(#o11):not(#o12):not(#o13):not(#o14):not(#o15):not(#o16):not(#o17) body main section.bg-crema-oscuro,
 html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5):not(#o6):not(#o7):not(#o8):not(#o9):not(#o10):not(#o11):not(#o12):not(#o13):not(#o14):not(#o15):not(#o16):not(#o17) body #redcafe-afil-guia,
-html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5):not(#o6):not(#o7):not(#o8):not(#o9):not(#o10):not(#o11):not(#o12):not(#o13):not(#o14):not(#o15):not(#o16):not(#o17) body :is(#forma-parte, #redcafe-home-price-strip) { background-image: url("/img/textura-saco.webp?v=20261127h") !important; background-size: 240px 240px !important; background-repeat: repeat !important; }
+html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5):not(#o6):not(#o7):not(#o8):not(#o9):not(#o10):not(#o11):not(#o12):not(#o13):not(#o14):not(#o15):not(#o16):not(#o17) body :is(#forma-parte, #redcafe-home-price-strip) { background-image: url("/img/textura-saco.webp?v=20261127j") !important; background-size: 240px 240px !important; background-repeat: repeat !important; }
 /* Marketplace (2026-11-11): filtros arriba y mapa debajo (orden en React); aviso de dos dedos en el mapa táctil. */
 html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5):not(#o6):not(#o7):not(#o8):not(#o9):not(#o10):not(#o11):not(#o12):not(#o13):not(#o14):not(#o15):not(#o16):not(#o17) body .redcafe-mapa-aviso { margin: 8px 8px 0 0 !important; padding: 4px 9px; border-radius: 6px; background: rgba(255, 255, 255, .94); color: #3b1a0c; font: 600 12px/1.3 Inter, system-ui, sans-serif; box-shadow: 0 1px 4px rgba(59, 26, 12, .18); pointer-events: none; }
 html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5):not(#o6):not(#o7):not(#o8):not(#o9):not(#o10):not(#o11):not(#o12):not(#o13):not(#o14):not(#o15):not(#o16):not(#o17) body [data-redcafe-pestanas]:first-child { margin-top: 0 !important; }
@@ -6261,15 +6261,15 @@ html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5):not(#o6):not(#o7):not(#o8):not
   html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5):not(#o6):not(#o7):not(#o8):not(#o9):not(#o10):not(#o11):not(#o12):not(#o13):not(#o14):not(#o15):not(#o16):not(#o17) body .redcafe-market-publicar > * { width: 100% !important; min-width: 0 !important; padding-left: .4rem !important; padding-right: .4rem !important; white-space: nowrap; font-size: clamp(.8rem, 3.6vw, .95rem) !important; justify-content: center; text-align: center; }
 }
 /* Portada: la zona del título y subtítulo lleva la textura de saco y el sello de Red Café (tinta al 34 %), solo en huecos sin texto. */
-html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5):not(#o6):not(#o7):not(#o8):not(#o9):not(#o10):not(#o11):not(#o12):not(#o13):not(#o14):not(#o15):not(#o16):not(#o17) body #portada-hero { background-image: url("/img/textura-saco.webp?v=20261127h"), linear-gradient(180deg, #ffffff 0%, #f8efe0 100%) !important; background-size: 240px 240px, auto !important; background-repeat: repeat, no-repeat !important; }
+html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5):not(#o6):not(#o7):not(#o8):not(#o9):not(#o10):not(#o11):not(#o12):not(#o13):not(#o14):not(#o15):not(#o16):not(#o17) body #portada-hero { background-image: url("/img/textura-saco.webp?v=20261127j"), linear-gradient(180deg, #ffffff 0%, #f8efe0 100%) !important; background-size: 240px 240px, auto !important; background-repeat: repeat, no-repeat !important; }
 @media (max-width: 767px) {
-  html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5):not(#o6):not(#o7):not(#o8):not(#o9):not(#o10):not(#o11):not(#o12):not(#o13):not(#o14):not(#o15):not(#o16):not(#o17) body #portada-hero { background-image: url("/img/sello-redcafe.svg?v=20261127h"), url("/img/textura-saco.webp?v=20261127h"), linear-gradient(180deg, #ffffff 0%, #f8efe0 100%) !important; background-size: 80px 80px, 240px 240px, auto !important; background-repeat: no-repeat, repeat, no-repeat !important; background-position: right 10px top 6px, 0 0, 0 0 !important; }
+  html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5):not(#o6):not(#o7):not(#o8):not(#o9):not(#o10):not(#o11):not(#o12):not(#o13):not(#o14):not(#o15):not(#o16):not(#o17) body #portada-hero { background-image: url("/img/sello-redcafe.svg?v=20261127j"), url("/img/textura-saco.webp?v=20261127j"), linear-gradient(180deg, #ffffff 0%, #f8efe0 100%) !important; background-size: 80px 80px, 240px 240px, auto !important; background-repeat: no-repeat, repeat, no-repeat !important; background-position: right 10px top 6px, 0 0, 0 0 !important; }
 }
 @media (min-width: 768px) {
-  html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5):not(#o6):not(#o7):not(#o8):not(#o9):not(#o10):not(#o11):not(#o12):not(#o13):not(#o14):not(#o15):not(#o16):not(#o17) body #portada-hero { background-image: url("/img/sello-redcafe.svg?v=20261127h"), url("/img/sello-redcafe.svg?v=20261127h"), url("/img/textura-saco.webp?v=20261127h"), linear-gradient(180deg, #ffffff 0%, #f8efe0 100%) !important; background-size: 140px 140px, 100px 100px, 240px 240px, auto !important; background-repeat: no-repeat, no-repeat, repeat, no-repeat !important; background-position: calc(50% - 110px) calc(100% - 14px), calc(50% + 60px) 22px, 0 0, 0 0 !important; }
+  html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5):not(#o6):not(#o7):not(#o8):not(#o9):not(#o10):not(#o11):not(#o12):not(#o13):not(#o14):not(#o15):not(#o16):not(#o17) body #portada-hero { background-image: url("/img/sello-redcafe.svg?v=20261127j"), url("/img/sello-redcafe.svg?v=20261127j"), url("/img/textura-saco.webp?v=20261127j"), linear-gradient(180deg, #ffffff 0%, #f8efe0 100%) !important; background-size: 140px 140px, 100px 100px, 240px 240px, auto !important; background-repeat: no-repeat, no-repeat, repeat, no-repeat !important; background-position: calc(50% - 110px) calc(100% - 14px), calc(50% + 60px) 22px, 0 0, 0 0 !important; }
 }
 
-/* ---------- Efectos de entrada y movimiento (11-nov-2026, v20261127h) -----
+/* ---------- Efectos de entrada y movimiento (11-nov-2026, v20261127j) -----
    Solo CSS: no toca el DOM ni la hidratación de React. Todo dentro de
    «prefers-reduced-motion: no-preference». La aparición al bajar usa
    animation-timeline (navegadores que no la soportan muestran todo quieto)
@@ -6327,7 +6327,7 @@ html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5):not(#o6):not(#o7):not(#o8):not
   html:not(#o1):not(#o2):not(#o3):not(#o4):not(#o5):not(#o6):not(#o7):not(#o8):not(#o9):not(#o10):not(#o11):not(#o12):not(#o13):not(#o14):not(#o15):not(#o16):not(#o17):not(#o18) body main :is(.rc-collage-foto, #perfiles a.group, #forma-parte a.rounded-xl, a.rounded-2xl, a.rounded-xl):active { transform: scale(.98) !important; transition: transform .12s ease !important; }
 }
 
-/* ---------- Botones que invitan a tocarlos (11-nov-2026, v20261127h) ------
+/* ---------- Botones que invitan a tocarlos (11-nov-2026, v20261127j) ------
    Halo que late en los botones principales, destello al pasar el ratón y
    elevación con sombra. Solo CSS y solo sin «reducir movimiento». */
 @keyframes rc-ef-halo { 0% { outline: 0 solid rgba(247, 208, 138, .0); outline-offset: 0; } 6% { outline: 3px solid rgba(247, 208, 138, .9); outline-offset: 0; } 40%, 100% { outline: 3px solid rgba(247, 208, 138, 0); outline-offset: 6px; } }
@@ -6389,7 +6389,7 @@ html:not(#p1):not(#p2):not(#p3):not(#p4):not(#p5):not(#p6):not(#p7):not(#p8):not
 }
 
 /* ==========================================================================
-   v20261127h · Acabado «impreso en papel», botones unificados y movimiento
+   v20261127j · Acabado «impreso en papel», botones unificados y movimiento
    (12-nov-2026). Solo CSS, sin cambiar la paleta ni la estructura.
    1. Títulos con Figtree (OFL; alternativa libre a Alibaba Sans, que es
       propietaria de Alibaba/Monotype).
@@ -6434,7 +6434,7 @@ html:not(#q1):not(#q2):not(#q3):not(#q4):not(#q5):not(#q6):not(#q7):not(#q8):not
 /* 4. Acabado de papel impreso: grano fino sobre todo (también sobre el texto, como tinta) */
 html:not(#q1):not(#q2):not(#q3):not(#q4):not(#q5):not(#q6):not(#q7):not(#q8):not(#q9):not(#q10):not(#q11):not(#q12):not(#q13):not(#q14):not(#q15):not(#q16):not(#q17):not(#q18):not(#q19):not(#q20) body::after {
   content: ""; position: fixed; inset: 0; z-index: 2147483000; pointer-events: none;
-  background: url("/img/textura-papel.webp?v=20261127h") 0 0 / 256px 256px repeat; mix-blend-mode: multiply; opacity: .9;
+  background: url("/img/textura-papel.webp?v=20261127j") 0 0 / 256px 256px repeat; mix-blend-mode: multiply; opacity: .9;
 }
 /* Tarjetas claras como cartulina: borde de papel, canto iluminado y sombra larga y suave */
 html:not(#q1):not(#q2):not(#q3):not(#q4):not(#q5):not(#q6):not(#q7):not(#q8):not(#q9):not(#q10):not(#q11):not(#q12):not(#q13):not(#q14):not(#q15):not(#q16):not(#q17):not(#q18):not(#q19):not(#q20) body main :is(.bg-white, .bg-cream-50, article.rounded-2xl, div.rounded-2xl.border, div.rounded-xl.border, a.group.rounded-2xl, .redcafe-card, .rce-card):not(section):not(#portada-hero):not(#portada-hero *):not(button):not(.btn-primary):not(.btn-accent) {
@@ -6495,7 +6495,7 @@ html:not(#q1):not(#q2):not(#q3):not(#q4):not(#q5):not(#q6):not(#q7):not(#q8):not
   html:not(#q1):not(#q2):not(#q3):not(#q4):not(#q5):not(#q6):not(#q7):not(#q8):not(#q9):not(#q10):not(#q11):not(#q12):not(#q13):not(#q14):not(#q15):not(#q16):not(#q17):not(#q18):not(#q19):not(#q20) body main > :first-child .btn-primary[href*="/afiliate/"] { animation: rc-ef-halo 4s 1.6s ease-out infinite, rc-ef-latido 4s 1.6s ease-in-out infinite; }
 }
 
-/* ===== v20261127h · Encabezados oscuros de «Crear perfil» y socios =====
+/* ===== v20261127j · Encabezados oscuros de «Crear perfil» y socios =====
    Las reglas de fondo crema y textura de saco (v20261110a/20261111) alcanzaban a
    .redcafe-afil-hero / .redcafe-socios-hero porque su clase no contiene «bg-» ni «gradient»:
    el texto blanco quedaba sobre crema (contraste ≈ 1,1:1). Se devuelve el café profundo. */
@@ -6503,7 +6503,7 @@ html:not(#r1):not(#r2):not(#r3):not(#r4):not(#r5):not(#r6):not(#r7):not(#r8):not
 /* Admin: enlace «Gestionar avisos» de la cabecera en crema (antes texto oscuro sobre café, 1,8:1). */
 html:not(#r1):not(#r2):not(#r3):not(#r4):not(#r5):not(#r6):not(#r7):not(#r8):not(#r9):not(#r10):not(#r11):not(#r12):not(#r13):not(#r14):not(#r15):not(#r16):not(#r17):not(#r18):not(#r19):not(#r20) body .redcafe-nav-extra > a[href="#rc-admin-recordatorios"] { color: #f7f0df !important; white-space: nowrap; font-size: .875rem; font-weight: 600; text-decoration: underline; text-underline-offset: 3px; }
 
-/* ===== v20261127h · Registro más atractivo (propuesta, paquete A) =====
+/* ===== v20261127j · Registro más atractivo (propuesta, paquete A) =====
    1. Portada: «Entrar» (crema) a la izquierda y «Crear cuenta gratis» (café) a la derecha.
    2. Portada: miembros y provincias en vivo bajo los botones (los pinta
       redcafe-v60-final.js; aquí se reserva el hueco para que la página no salte).
@@ -6545,7 +6545,7 @@ html:not(#s1):not(#s2):not(#s3):not(#s4):not(#s5):not(#s6):not(#s7):not(#s8):not
 html:not(#s1):not(#s2):not(#s3):not(#s4):not(#s5):not(#s6):not(#s7):not(#s8):not(#s9):not(#s10):not(#s11):not(#s12):not(#s13):not(#s14):not(#s15):not(#s16):not(#s17):not(#s18):not(#s19):not(#s20) body main h2.rc-gana-titulo { box-sizing: border-box; height: 3.25rem; margin: 0 !important; padding: .9rem 1rem 0 !important; font-family: var(--rc-fuente-titulo, Figtree, Inter, sans-serif); font-size: 1.375rem !important; line-height: 1.75rem !important; font-weight: 700 !important; color: #8c3604 !important; }
 @media (min-width: 768px) { html:not(#s1):not(#s2):not(#s3):not(#s4):not(#s5):not(#s6):not(#s7):not(#s8):not(#s9):not(#s10):not(#s11):not(#s12):not(#s13):not(#s14):not(#s15):not(#s16):not(#s17):not(#s18):not(#s19):not(#s20) body main h2.rc-gana-titulo { text-align: center; font-size: 1.625rem !important; } }
 
-/* Clase demostrativa de barismo al inicio del curso «De la finca a la taza» (v20261127h) */
+/* Clase demostrativa de barismo al inicio del curso «De la finca a la taza» (v20261127j) */
 :is(#redcafe-curso, #rc-curso-local) .redcafe-clase-demo-curso { background: #fff; border: 1px solid rgba(140, 54, 4, .25); border-left: 4px solid #8c3604; border-radius: 4px; margin-top: 1.2rem; padding: 1rem 1.1rem; scroll-margin-top: 6rem; box-shadow: 0 6px 18px rgba(60, 30, 0, .08); }
 :is(#redcafe-curso, #rc-curso-local) .redcafe-clase-demo-curso p { color: #3b1a0c; font-size: .95rem; line-height: 1.55; margin: .45rem 0 0; }
 :is(#redcafe-curso, #rc-curso-local) .redcafe-clase-demo-curso p.redcafe-clase-demo-rotulo { color: #8c3604; font-size: .75rem; font-weight: 700; letter-spacing: .12em; margin-top: 0; text-transform: uppercase; }
@@ -6556,7 +6556,7 @@ html:not(#s1):not(#s2):not(#s3):not(#s4):not(#s5):not(#s6):not(#s7):not(#s8):not
 :is(#redcafe-curso, #rc-curso-local) .redcafe-clase-demo-curso p.redcafe-clase-demo-nota { border-left: 3px solid #2f6b45; color: #3b1a0c; font-size: .9rem; font-style: italic; padding-left: .6rem; }
 :is(#redcafe-curso, #rc-curso-local) .redcafe-clase-demo-curso p.redcafe-clase-demo-modalidad { font-weight: 600; }
 
-/* Cursos de pago de Legacy: ficha abierta y botón directo de inscripción por WhatsApp con referencia a la Red (v20261127h) */
+/* Cursos de pago de Legacy: ficha abierta y botón directo de inscripción por WhatsApp con referencia a la Red (v20261127j) */
 #redcafe-curso .redcafe-curso-inscripcion { background: #fff; border: 1px solid rgba(140, 54, 4, .25); border-left: 4px solid #2f6b45; border-radius: 4px; box-shadow: 0 6px 18px rgba(60, 30, 0, .08); margin-top: 1.2rem; padding: 1rem 1.1rem; }
 #redcafe-curso .redcafe-curso-inscripcion.es-abajo { margin-top: 2rem; }
 #redcafe-curso .redcafe-curso-inscripcion p { color: #3b1a0c; font-size: .95rem; line-height: 1.55; margin: .45rem 0 0; }
@@ -6671,9 +6671,13 @@ html:not(#s1):not(#s2):not(#s3):not(#s4):not(#s5):not(#s6):not(#s7):not(#s8):not
 .rc-vp-ver { display: inline-flex; align-items: center; min-height: 44px; margin-top: auto; font-size: .85rem; font-weight: 700; color: #8c3604 !important; text-decoration: underline !important; text-underline-offset: 3px; transition: gap .2s ease, letter-spacing .2s ease; }
 .rc-vp-ver:hover { letter-spacing: .02em; }
 .rc-vp-vacio { padding: 0; border: 0; background: transparent; }
-@media (max-width: 767px) {
+/* Hasta 1023 px la fila del collage tiene 2 columnas: los paneles 3 y 4 van debajo de sus fotos
+   (antes, de 768 a 1023 px, quedaban en columnas 3 y 4 de 27 px y la vista previa no se veía). */
+@media (max-width: 1023px) {
   .rc-con-vp > .rc-collage-foto:nth-child(n+3) { grid-row: 3; }
   .rc-vp-c3, .rc-vp-c4 { grid-row: 4; } .rc-vp-c3 { grid-column: 1; } .rc-vp-c4 { grid-column: 2; }
+}
+@media (max-width: 767px) {
   .rc-vp { padding: .6rem .5rem .75rem; }
   .rc-vp-lista { --rc-vp-alto: 108px; }
   .rc-vp-item { grid-template-columns: 40px 1fr; align-content: center; gap: .1rem .45rem; }
@@ -6682,7 +6686,7 @@ html:not(#s1):not(#s2):not(#s3):not(#s4):not(#s5):not(#s6):not(#s7):not(#s8):not
   .rc-vp-nombre { display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 2; white-space: normal; font-size: .85rem; }
 }
 @media (prefers-reduced-motion: reduce) { .rc-vp-item, .rc-vp-item::before, .rc-vp-foto img { transition: none; } .rc-vp-lista { scroll-behavior: auto; } }
-/* Ficha de cata: solicitud con contacto, fecha de envío y ficha adjunta (v20261127h) */
+/* Ficha de cata: solicitud con contacto, fecha de envío y ficha adjunta (v20261127j) */
 #redcafe-servicio-muestras .redcafe-modulo .redcafe-curso-inscripcion { box-shadow: none; margin-top: 1rem; }
 #redcafe-servicio-muestras .redcafe-muestra-acciones { display: flex; flex-wrap: wrap; gap: .5rem; margin-top: .7rem; }
 #redcafe-servicio-muestras .redcafe-muestra-acciones button { background: #fff !important; border: 1px solid #2f6b45 !important; border-radius: 4px !important; color: #24543a !important; cursor: pointer; font-size: .92rem !important; font-weight: 600 !important; min-height: 44px; padding: .5rem .9rem !important; text-align: left; }
@@ -6694,7 +6698,7 @@ html:not(#s1):not(#s2):not(#s3):not(#s4):not(#s5):not(#s6):not(#s7):not(#s8):not
 #redcafe-servicio-muestras .redcafe-curso-inscripcion button.redcafe-curso-inscripcion-boton:hover, #redcafe-servicio-muestras .redcafe-curso-inscripcion button.redcafe-curso-inscripcion-boton:focus-visible { background: #24543a !important; color: #fff !important; }
 #redcafe-servicio-muestras .redcafe-curso-inscripcion button.redcafe-curso-inscripcion-boton { cursor: pointer; font-family: inherit; text-align: left; }
 
-/* Fichas de cursos sin parpadeo: el título, la bajada y la portada no se animan al aparecer (la ficha se completa cuando llega la API y la animación se repetía) (v20261127h) */
+/* Fichas de cursos sin parpadeo: el título, la bajada y la portada no se animan al aparecer (la ficha se completa cuando llega la API y la animación se repetía) (v20261127j) */
 :is(#redcafe-curso, #rc-curso-local) :is(h1, h1 + p, .redcafe-curso-desc, .redcafe-curso-portada, .redcafe-curso-costo-ficha) { animation: none !important; opacity: 1 !important; transform: none !important; }
 #redcafe-curso .redcafe-curso-portada { aspect-ratio: 16 / 9; height: auto; object-fit: cover; }
 /* Cursos de Legacy: resumen al inicio con horas de teoría y práctica, y qué incluye */
@@ -6710,7 +6714,7 @@ html:not(#s1):not(#s2):not(#s3):not(#s4):not(#s5):not(#s6):not(#s7):not(#s8):not
 #redcafe-curso .redcafe-curso-incluye li { color: #3b1a0c; font-size: .95rem; line-height: 1.45; }
 #redcafe-curso .redcafe-curso-incluye li::before { color: #2f6b45; content: "✓ "; font-weight: 700; }
 @media (max-width: 380px) { #redcafe-curso .redcafe-curso-horas { grid-template-columns: 1fr; } }
-/* Servicio abierto desde la vista previa de la portada (v20261127h) */
+/* Servicio abierto desde la vista previa de la portada (v20261127j) */
 article.rc-resaltado { outline: 3px solid #8c3604; outline-offset: 3px; scroll-margin-top: 6rem; animation: rc-resaltar 2.4s ease-out 1; }
 @keyframes rc-resaltar { 0%, 60% { box-shadow: 0 0 0 8px rgba(247, 208, 138, .9); } 100% { box-shadow: none; } }
 @media (prefers-reduced-motion: reduce) { article.rc-resaltado { animation: none; } }
